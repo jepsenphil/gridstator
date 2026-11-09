@@ -45,6 +45,8 @@ export const ControllerBuildSchema = BuildRefSchema.extend({
   updatable: z.boolean(),
   /** Why workers cannot update to it (e.g. the controller runs an unbundled build). */
   reason: z.string().nullable(),
+  /** Distinct from worker package availability: the controller can install and restart itself. */
+  selfUpdate: z.object({ available: z.boolean(), reason: z.string().nullable() }).optional(),
 });
 export type ControllerBuild = z.infer<typeof ControllerBuildSchema>;
 
@@ -126,8 +128,8 @@ export const RolloutSchema = z.object({
   finishedAt: TimestampSchema.nullable(),
   /** Skip draining: cancel running jobs and update straight away. */
   now: z.boolean(),
-  /** Jobs still running after this long are cancelled. */
-  drainTimeoutSeconds: z.number().int().positive(),
+  /** Explicit cancellation deadline; null waits for running jobs without cancelling them. */
+  drainTimeoutSeconds: z.number().int().positive().nullable(),
   nodes: z.array(RolloutNodeSchema),
 });
 export type Rollout = z.infer<typeof RolloutSchema>;
@@ -168,7 +170,8 @@ export const StartUpdateRequestSchema = z.object({
     .int()
     .positive()
     .max(7 * 24 * 3600)
-    .default(3600),
+    .nullable()
+    .default(null),
 });
 export type StartUpdateRequest = z.input<typeof StartUpdateRequestSchema>;
 

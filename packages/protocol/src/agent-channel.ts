@@ -112,6 +112,8 @@ export const ControllerWelcomeSchema = z.object({
   nodeId: z.string(),
   name: z.string(),
   settings: NodeSettingsSchema,
+  /** A coordinated endpoint move. The same pinned CA must validate the new address. */
+  controllerUrl: z.string().max(2048).optional(),
   /** For active jobs the controller still tracks: replay logs after this sequence number. */
   resume: z.array(z.object({ jobId: z.string(), logSeq: z.number().int().nonnegative() })),
 });

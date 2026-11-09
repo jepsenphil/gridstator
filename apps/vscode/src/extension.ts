@@ -11,12 +11,14 @@ import {
   fetchPinnedCa,
   normalizeControllerUrl,
   writeClientConfig,
+  watchClientConfig,
 } from '@gridstator/client';
 import { Dashboard } from './dashboard';
 import { CancelledByUser, Launcher, isGroup } from './launcher';
 import type { LaunchItem, LaunchOptions } from './messages';
 import { ResultsIntegration } from './results';
 import { ClusterState } from './state';
+import { LocalController } from './local-controller';
 import {
   ClusterTreeProvider,
   JobsTreeProvider,
@@ -55,10 +57,29 @@ function command(id: string, fn: (...args: never[]) => unknown): vscode.Disposab
 export async function activate(context: vscode.ExtensionContext): Promise<GridstatorApi> {
   const log = vscode.window.createOutputChannel('Gridstator');
   const configPath = () => config<string>('configPath', '') || undefined;
-  const state = new ClusterState(configPath, () => config<number>('jobHistory', 100), log);
+  const local = new LocalController(context, configPath, log);
+  const state = new ClusterState(
+    configPath,
+    () => config<number>('jobHistory', 100),
+    log,
+    async () => {
+      if (config<boolean>('autoConnect', true)) {
+        try {
+          await local.prepare();
+        } catch (err) {
+          log.appendLine(`Automatic local sign-in: ${errorMessage(err)}`);
+        }
+      }
+    },
+    (authenticationFailed) => ({
+      canRestoreLocalAccess:
+        local.canRestore || Boolean(authenticationFailed && local.matchesLocal),
+      publicUrl: local.matchesLocal ? local.host?.url : undefined,
+    }),
+  );
   const launcher = new Launcher(state, log);
   const results = new ResultsIntegration(state, launcher, log);
-  const dashboard = new Dashboard(context, state, launcher, log);
+  const dashboard = new Dashboard(context, state, launcher, log, local);
   dashboard.results = results;
   const jobsTree = new JobsTreeProvider(state);
   context.subscriptions.push(
@@ -107,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       status.text = `$(server-environment) ${online}/${nodes.length}${running ? `  $(sync~spin) ${running}` : ''}${queued ? `  $(clock) ${queued}` : ''}`;
       status.command = 'gridstator.openDashboard';
       const target = config<string>('defaultNode', '');
-      status.tooltip = `Gridstator: ${online} of ${nodes.length} nodes online, ${running} running, ${queued} queued\nTarget: ${target || 'automatic'}\n${c.url} (${c.user})`;
+      status.tooltip = `Gridstator: ${online} of ${nodes.length} nodes online, ${running} running, ${queued} queued\nController: ${c.controller?.hostname ?? c.url}\nVersion: ${c.version ?? 'unknown'}\nTarget: ${target || 'automatic'}\n${c.url} (${c.user})`;
       status.backgroundColor = undefined;
     }
     status.show();
@@ -233,8 +254,38 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   };
 
   // ---- commands --------------------------------------------------------------------------------
+  let stopWatching = () => {};
+  let configTimer: NodeJS.Timeout | undefined;
+  const onCredentialsChanged = () => {
+    if (configTimer) clearTimeout(configTimer);
+    configTimer = setTimeout(() => {
+      if (config<boolean>('autoConnect', true)) {
+        local.reset();
+        void state.connect();
+      }
+    }, 150);
+  };
+  const watchCredentials = () => {
+    stopWatching();
+    stopWatching = watchClientConfig(
+      configPath() ?? defaultClientConfigPath(),
+      onCredentialsChanged,
+    );
+  };
+  watchCredentials();
+  context.subscriptions.push({
+    dispose: () => {
+      stopWatching();
+      if (configTimer) clearTimeout(configTimer);
+    },
+  });
   context.subscriptions.push(
     command('gridstator.openDashboard', () => dashboard.show('overview')),
+    command('gridstator.openSettings', () => dashboard.show('settings')),
+    command('gridstator.restoreLocalAccess', async () => {
+      await local.restore();
+      await state.connect();
+    }),
     command('gridstator.openRun', (itemId?: string, job?: string) =>
       dashboard.show('run', itemId ? { itemId: job ? `${itemId}#${job}` : itemId } : {}),
     ),
@@ -509,15 +560,25 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       if (
         e.affectsConfiguration('gridstator.configPath') ||
         e.affectsConfiguration('gridstator.jobHistory')
-      )
+      ) {
+        local.reset();
+        watchCredentials();
         void state.connect();
+      }
+      if (
+        e.affectsConfiguration('gridstator.autoConnect') &&
+        config<boolean>('autoConnect', true)
+      ) {
+        local.reset();
+        void state.connect();
+      }
       if (e.affectsConfiguration('gridstator.defaultNode')) renderStatus();
     }),
   );
 
   void vscode.commands.executeCommand('setContext', 'gridstator.connection', 'connecting');
   void launcher.refresh();
-  await state.connect();
+  if (config<boolean>('autoConnect', true)) await state.connect();
   return { state, launcher, results, dashboard };
 }
 

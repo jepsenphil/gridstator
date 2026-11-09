@@ -98,8 +98,27 @@ and run the printed `gridstator login https://… --fingerprint … --token …`
 
 Download `gridstator-<version>.vsix` from the release and install it with **Extensions: Install from
 VSIX…** (or `code --install-extension gridstator-0.1.0.vsix`). With Remote SSH, install it in the
-remote window, so it runs where your code is. It uses the same client configuration as the CLI;
-otherwise run **Gridstator: Sign In to Controller**.
+remote window, so it runs where your code is. It connects automatically using the CLI's shared
+client configuration. All windows using the same remote account pick up credential changes
+without reloading. On the controller host, the account owning its data automatically gets a shared
+admin login; other clients can use **Gridstator: Sign In to Controller** once.
+
+The dashboard's **Settings** tab shows controller/extension/worker versions and build identifiers,
+editor preferences, tokens, retention and update policies. Admins can install official releases
+(stable by default, prereleases opt-in) or upload a controller package. Published release checksums
+are verified before installation. Updates wait for jobs to finish; cancelling jobs is explicit.
+
+On the controller host, Settings can manage the systemd user service and change the listening
+address/port with **Apply & Restart**. Supply a public HTTPS URL reachable by workers. The move
+retains previous listeners for offline/older workers, verifies reconnection and recovers the
+previous configuration if verification fails. An overlapping bind-address change requires a new
+port so the old listener can remain available. A stopped service offers **Start Controller** and
+is never started merely by opening VS Code. Service stop/restart waits for the embedded worker to
+be idle; if it is busy, the action explains that its jobs must finish first.
+
+Revoking the shared local login offers **Restore Local Access** rather than creating another token
+automatically. `gridstator.autoConnect` can disable automatic connection. The extension ships its
+own host helper, so it does not require an updated global CLI for local setup.
 
 ## 7. Try it
 
@@ -150,8 +169,9 @@ gridstator agents cancel               # stop a running rollout
 ```
 
 Updates roll through the cluster one worker at a time. The controller stops placing jobs on the
-worker, waits for running jobs to finish (they are cancelled after `--drain-timeout`, default 1h,
-or straight away with `--now`), and tells the agent to download the controller's build. The agent
+worker, waits for running jobs to finish without a deadline, and tells the agent to download the
+controller's build. Jobs are cancelled only when explicitly requested with `--now` or after an
+explicit `--drain-timeout`. The agent
 checks the download's sha256, installs it into its version store and restarts on it. The worker is
 done when it reconnects on the new build. If the download fails, the new version keeps crashing,
 or the worker does not come back within 15 minutes, the launcher returns to the previous version,

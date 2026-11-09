@@ -170,15 +170,20 @@ export function registerAgentsCommands(program: Command): void {
     )
     .argument('[nodes...]', 'node names or ids (default: every online worker that is not current)')
     .option('--now', 'do not wait for running jobs: cancel them and update straight away')
-    .option('--drain-timeout <duration>', 'cancel jobs still running after this long', '1h')
+    .option(
+      '--drain-timeout <duration>',
+      'explicitly cancel jobs still running after this long (default: wait without cancelling)',
+    )
     .option('--wait', 'follow the rollout until it finishes or halts')
     .action(
-      async (nodes: string[], opts: { now?: boolean; drainTimeout: string; wait?: boolean }) =>
+      async (nodes: string[], opts: { now?: boolean; drainTimeout?: string; wait?: boolean }) =>
         withClient(async (client) => {
           const view = await client.startUpdate({
             ...(nodes.length > 0 ? { nodes } : {}),
             now: opts.now ?? false,
-            drainTimeoutSeconds: Math.max(1, Math.round(parseDuration(opts.drainTimeout) / 1000)),
+            drainTimeoutSeconds: opts.drainTimeout
+              ? Math.max(1, Math.round(parseDuration(opts.drainTimeout) / 1000))
+              : null,
           });
           const r = view.rollout;
           if (!r || r.nodes.length === 0) {

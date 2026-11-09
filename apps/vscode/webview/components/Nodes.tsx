@@ -63,6 +63,9 @@ function NodeCard({
   const m = node.metrics;
   const info = node.info;
   const active = data.jobs.filter((j) => node.activeJobs.includes(j.id));
+  const isController =
+    !!data.connection.controller?.machineId &&
+    node.info?.machineId === data.connection.controller.machineId;
   return (
     <div ref={ref}>
       <Card
@@ -71,6 +74,7 @@ function NodeCard({
           <>
             <span className={`dot dot-${st.className}`} /> {node.name}{' '}
             <span className="muted small">{st.label}</span>
+            {isController ? <span className="pill">Controller + worker</span> : null}
             {node.update && node.update.state !== 'current' ? (
               <span
                 className={cx('pill', 'update-pill', `update-${node.update.state}`)}
@@ -330,28 +334,65 @@ export function Nodes({
   busy: Record<string, boolean>;
   dispatch: Dispatch<Action>;
 }) {
-  if (data.nodes.length === 0) {
-    return (
-      <Empty icon="server" title="No worker nodes yet">
-        On the controller run <code>gridstator token create --join</code>, then run the printed{' '}
-        <code>gridstator agent join …</code> command on each worker.
-      </Empty>
-    );
-  }
+  const controller = data.connection.controller;
+  const controllerHasWorker =
+    !!controller && data.nodes.some((node) => node.info?.machineId === controller.machineId);
   const notCurrent = data.nodes.filter(
     (n) => n.update && n.update.state !== 'current' && n.update.state !== 'unknown',
   );
   const build = data.nodes.find((n) => n.update?.state === 'current')?.update?.build;
   return (
     <div className="stack">
+      {controller && !controllerHasWorker ? (
+        <Card
+          className="controller-card"
+          title={
+            <>
+              <Icon name="server-environment" /> {controller.hostname}
+              <span className="pill">Controller</span>
+            </>
+          }
+          actions={
+            <Button
+              kind="secondary"
+              icon="settings-gear"
+              onClick={() => dispatch({ type: 'go', view: 'settings' })}
+            >
+              Settings
+            </Button>
+          }
+        >
+          <dl className="props compact">
+            <dt>Connection</dt>
+            <dd>
+              {data.connection.status} · {data.connection.url}
+            </dd>
+            <dt>Version</dt>
+            <dd>{data.connection.version ?? 'Unknown'}</dd>
+            <dt>Build</dt>
+            <dd>
+              <code>{data.connection.build?.id ?? 'Not reported'}</code>
+            </dd>
+            <dt>Worker</dt>
+            <dd>This machine is not registered as a worker.</dd>
+          </dl>
+        </Card>
+      ) : null}
       {notCurrent.length > 0 ? (
         <div className="banner banner-warn">
           <Icon name="cloud-download" /> {notCurrent.length} reachable worker(s) not on the
           controller’s build: {notCurrent.map((n) => `${n.name} (${n.update?.state})`).join(', ')}.
-          Run <code>gridstator agents status</code> for details.
+          <Button kind="ghost" onClick={() => dispatch({ type: 'go', view: 'settings' })}>
+            Manage updates
+          </Button>
         </div>
       ) : build ? (
         <div className="muted small">Every reachable worker runs {build}.</div>
+      ) : null}
+      {data.nodes.length === 0 ? (
+        <Empty icon="server" title="No worker nodes yet">
+          Create a worker join token in Settings, then run the join command on each worker.
+        </Empty>
       ) : null}
       {data.nodes.map((n) => (
         <NodeCard

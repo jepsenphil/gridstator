@@ -21,8 +21,27 @@ code lives.
 ## Getting started
 
 1. Set up a controller and workers (see the [project README](https://github.com/jepsenphil/gridstator#quick-start)).
-2. Run **Gridstator: Sign In to Controller** (or `gridstator login …` in a terminal on the same machine).
+2. Open a folder. The extension automatically reuses the CLI login for that remote account.
+   On the controller host, the account that owns the controller data gets one shared admin login
+   automatically. All open SSH windows observe login changes. On other machines, use
+   **Gridstator: Sign In to Controller** or `gridstator login …` once.
 3. Open the Gridstator view and press ▶ next to a task, workflow, script or Dockerfile.
 
 Jobs run the files saved on disk; the extension asks before running when editors have unsaved
 changes (`gridstator.unsavedFiles`).
+
+Open **Settings** in the dashboard for connection details, editor preferences, component versions,
+tokens, retention and worker update policies. Admins can find official releases or upload a
+controller package; downloads are checksum verified and managed installs retain rollback support.
+Worker updates wait for running jobs to finish by default. Controller updates wait for any worker
+on the controller machine to finish before restarting.
+
+Controller-host SSH windows can start, stop and restart the user service and apply listening
+address/port changes. A public HTTPS URL lets workers learn the new endpoint. Previous listeners
+remain available for offline or older workers; a failed migration restores the previous setup.
+Overlapping bindings, such as changing `0.0.0.0` to a specific address on the same port, require a
+new port so the old listener can remain available. These controls manage Linux/systemd user
+services. Opening a window never starts a deliberately stopped controller.
+
+Use **Restore Local Access** after revoking a local login. Custom configuration paths and explicit
+environment connections remain authoritative. Disable `gridstator.autoConnect` to connect manually.

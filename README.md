@@ -134,8 +134,18 @@ gridstator actions run deploy.yml -e workflow_dispatch -i environment=staging
 
 Install the extension from `gridstator.vsix` (**Extensions: Install from VSIX…**, or
 `code --install-extension gridstator.vsix`; build it with `pnpm package:vscode`). In a Remote SSH
-window, install it on the remote side, where your code is. Then run **Gridstator: Sign In to
-Controller** (or `gridstator login` in that machine's terminal; both share the same configuration).
+window, install it on the remote side, where your code is. The extension connects automatically
+using that account's CLI configuration. All windows on the same SSH account pick up login changes
+without a reload. On the controller host, an account that owns the controller data gets a shared
+local admin login automatically. Other machines can use **Gridstator: Sign In to Controller** or
+`gridstator login` once. Revoked local access offers **Restore Local Access** instead of silently
+creating another token.
+
+The dashboard shows the controller hostname and identifies machines that run both controller and
+worker. Its **Settings** tab includes component versions/builds, editor preferences, tokens,
+retention, update policies and official release installation. Updates wait for running jobs by
+default. Controller-host SSH windows also have user-service and listening-address controls; a
+stopped controller stays stopped until **Start Controller** is selected.
 
 Open the Gridstator Activity Bar view and press ▶ next to a task, workflow job, package script or
 Dockerfile, or open the dashboard (**Gridstator: Open Dashboard**) for logs, steps, artifacts and node

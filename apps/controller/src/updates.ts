@@ -94,8 +94,8 @@ const META_KEY = 'updates';
 const ACTIVE: ReadonlyArray<RolloutNode['state']> = ['draining', 'updating'];
 
 /**
- * Brings workers to the controller's build: one node at a time, draining it first (cancelling
- * jobs after the drain timeout, or straight away with `now`), then nudging its agent to download
+ * Brings workers to the controller's build: one node at a time, draining it first (waiting for
+ * jobs unless cancellation was explicitly requested), then nudging its agent to download
  * the build. A node is done when it reconnects on the target build; a failed download, a launcher
  * rollback or a timeout fails the node and halts the rollout until an operator starts a new one.
  *
@@ -146,6 +146,10 @@ export class UpdateManager {
       const parsed = JSON.parse(raw) as Persisted;
       // A rollout (or failure) for another build is moot once the controller runs a new one.
       if (parsed.rollout && parsed.rollout.target.id !== this.build.ref.id) parsed.rollout = null;
+      // Older automatic rollouts inherited a one-hour cancellation deadline. Continuing those
+      // after an upgrade must honor the new default of preserving running jobs.
+      if (parsed.rollout?.startedBy === 'auto-update' && !parsed.rollout.now)
+        parsed.rollout.drainTimeoutSeconds = null;
       for (const [id, f] of Object.entries(parsed.failures ?? {}))
         if (f.target !== this.build.ref.id) delete parsed.failures[id];
       return { version: 1, rollout: parsed.rollout ?? null, failures: parsed.failures ?? {} };
@@ -481,7 +485,9 @@ export class UpdateManager {
           return true;
         }
         const timedOut =
-          active.startedAt !== null && now - active.startedAt > r.drainTimeoutSeconds * 1000;
+          r.drainTimeoutSeconds !== null &&
+          active.startedAt !== null &&
+          now - active.startedAt > r.drainTimeoutSeconds * 1000;
         if ((r.now || timedOut) && !active.cancelled) {
           active.cancelled = true;
           active.detail = r.now
@@ -635,7 +641,7 @@ export class UpdateManager {
           startedAt: now,
           finishedAt: null,
           now: false,
-          drainTimeoutSeconds: 3600,
+          drainTimeoutSeconds: null,
           nodes: [],
         };
         this.state.rollout = target;

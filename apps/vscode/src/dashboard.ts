@@ -9,6 +9,8 @@ import type { ResultsIntegration } from './results';
 import type { DashboardState, FromWebview, ToWebview, View } from './messages';
 import { mapRemotePath } from './problems';
 import type { ClusterState } from './state';
+import type { LocalController } from './local-controller';
+import { DashboardSettings, settingsBusyKey } from './settings';
 
 export class Dashboard implements vscode.Disposable {
   private panel: vscode.WebviewPanel | undefined;
@@ -18,18 +20,36 @@ export class Dashboard implements vscode.Disposable {
   private logAbort: AbortController | undefined;
   private selectedJob: string | null = null;
   private readonly disposables: vscode.Disposable[] = [];
+  private readonly settings: DashboardSettings;
+  private settingsTimer: NodeJS.Timeout | undefined;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly state: ClusterState,
     private readonly launcher: Launcher,
     private readonly log: vscode.OutputChannel,
+    local: LocalController,
   ) {
+    this.settings = new DashboardSettings(
+      context,
+      state,
+      local,
+      (m) => this.post(m),
+      () => this.scheduleState(),
+    );
+    let previousClient = state.client;
     this.disposables.push(
-      state.onDidChange(() => this.scheduleState()),
+      this.settings,
+      state.onDidChange(() => {
+        this.scheduleState();
+        if (previousClient !== state.client) {
+          previousClient = state.client;
+          if (this.panel) void this.settings.refresh();
+        }
+      }),
       launcher.onDidChange(() => this.scheduleState()),
       vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('gridstator.defaultNode')) this.scheduleState();
+        if (e.affectsConfiguration('gridstator')) this.scheduleState();
       }),
     );
   }
@@ -58,6 +78,9 @@ export class Dashboard implements vscode.Disposable {
     );
     panel.iconPath = vscode.Uri.joinPath(media, 'gridstator.svg');
     this.panel = panel;
+    this.settingsTimer = setInterval(() => {
+      void this.settings.refresh();
+    }, 10_000);
     this.ready = false;
     const nonce = randomBytes(16).toString('base64');
     const asset = (p: string) =>
@@ -88,6 +111,8 @@ export class Dashboard implements vscode.Disposable {
       this.pending = [];
       this.logAbort?.abort();
       this.selectedJob = null;
+      if (this.settingsTimer) clearInterval(this.settingsTimer);
+      this.settingsTimer = undefined;
     });
   }
 
@@ -120,6 +145,7 @@ export class Dashboard implements vscode.Disposable {
         loading: this.launcher.loading,
       },
       myJobIds: [...this.state.myJobs],
+      settings: this.settings.snapshot(),
     };
   }
 
@@ -153,6 +179,11 @@ export class Dashboard implements vscode.Disposable {
   }
 
   private async handle(m: FromWebview): Promise<void> {
+    const settingsKey = settingsBusyKey(m);
+    if (settingsKey)
+      return this.guarded(settingsKey, async () => {
+        await this.settings.handle(m);
+      });
     switch (m.type) {
       case 'ready': {
         this.ready = true;
@@ -162,6 +193,7 @@ export class Dashboard implements vscode.Disposable {
         } satisfies ToWebview);
         for (const p of this.pending.splice(0)) void this.panel?.webview.postMessage(p);
         if (this.selectedJob) void this.streamLogs(this.selectedJob);
+        void this.settings.refresh();
         return;
       }
       case 'selectJob':
@@ -318,6 +350,7 @@ export class Dashboard implements vscode.Disposable {
 
   dispose(): void {
     if (this.stateTimer) clearTimeout(this.stateTimer);
+    if (this.settingsTimer) clearInterval(this.settingsTimer);
     this.logAbort?.abort();
     this.panel?.dispose();
     for (const d of this.disposables) d.dispose();

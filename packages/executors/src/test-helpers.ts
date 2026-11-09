@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { cp, mkdir, readFile } from 'node:fs/promises';
 import type { Readable } from 'node:stream';
+import { newId } from '@gridstator/shared';
 import {
   JobSpecSchema,
   type Artifact,
@@ -19,8 +20,6 @@ export function commandAvailable(bin: string, args: string[]): boolean {
   }
 }
 
-let counter = 0;
-
 export interface TestContext {
   context: ExecutionContext;
   out: string[];
@@ -36,10 +35,7 @@ export async function testContext(
   spec: JobSpecInput,
   opts: { workDir: string; sourceDir?: string; tar?: () => Readable; signal?: AbortSignal },
 ): Promise<TestContext> {
-  counter++;
-  const jobId = `01TEST${Date.now().toString(36).toUpperCase()}${String(counter).padStart(4, '0')}`
-    .slice(0, 26)
-    .padEnd(26, '0');
+  const jobId = newId();
   const out: string[] = [];
   const err: string[] = [];
   const system: string[] = [];

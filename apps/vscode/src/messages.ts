@@ -12,6 +12,14 @@ import type {
   LogEntry,
   Node,
   NodeSettingsPatch,
+  ClusterSettings,
+  ClusterSettingsPatch,
+  ControllerBuild,
+  CreateTokenRequest,
+  ReleaseView,
+  StartUpdateRequest,
+  TokenView,
+  UpdatesView,
 } from '@gridstator/protocol';
 
 export type ConnectionStatus = 'signedOut' | 'connecting' | 'connected' | 'error';
@@ -19,11 +27,63 @@ export type ConnectionStatus = 'signedOut' | 'connecting' | 'connected' | 'error
 export interface ConnectionInfo {
   status: ConnectionStatus;
   url: string | null;
+  publicUrl?: string;
   user: string | null;
   role: string | null;
   clusterId: string | null;
+  caFingerprint?: string;
   version: string | null;
   error: string | null;
+  controller?: { hostname: string; machineId: string };
+  build?: ControllerBuild;
+  configPath?: string;
+  source?: string;
+  extensionVersion?: string;
+  canRestoreLocalAccess?: boolean;
+}
+
+export interface EditorPreferences {
+  autoConnect: boolean;
+  configPath: string;
+  defaultNode: string;
+  unsavedFiles: 'prompt' | 'saveAll' | 'ignore';
+  notifications: 'all' | 'failures' | 'none';
+  problemMatching: boolean;
+  testResults: boolean;
+  jobHistory: number;
+}
+
+export interface LocalControllerHost {
+  available: boolean;
+  dataDir: string;
+  hostname: string;
+  host: string;
+  port: number;
+  url: string;
+  service: {
+    installed: boolean;
+    state: 'active' | 'inactive' | 'failed' | 'unknown';
+    scope: 'user';
+    canManage?: boolean;
+    reason?: string | null;
+  };
+  aliases: Array<{ host: string; port: number }>;
+  clusterId?: string | null;
+  caFingerprint?: string | null;
+  reason?: string | null;
+}
+
+export interface SettingsView {
+  preferences: EditorPreferences;
+  cluster: ClusterSettings | null;
+  updates: UpdatesView | null;
+  tokens: TokenView[] | null;
+  releases: ReleaseView[];
+  includePrereleases: boolean;
+  releaseError?: string | null;
+  host: LocalControllerHost | null;
+  extension: { version: string; build: string };
+  error?: string | null;
 }
 
 export interface WorkflowInputInfo {
@@ -108,11 +168,13 @@ export interface DashboardState {
   launcher: { items: LaunchItem[]; defaultNode: string; loading: boolean };
   /** Jobs submitted from this VS Code window (rerun and problem matching apply to these). */
   myJobIds: string[];
+  settings?: SettingsView;
 }
 
-export type View = 'overview' | 'jobs' | 'run' | 'nodes' | 'job' | 'group';
+export type View = 'overview' | 'jobs' | 'run' | 'nodes' | 'job' | 'group' | 'settings';
 
 export type ToWebview =
+  | { type: 'tokenCreated'; token: string; info: TokenView }
   | { type: 'state'; state: DashboardState }
   | {
       type: 'navigate';
@@ -130,6 +192,21 @@ export type ToWebview =
   | { type: 'toast'; level: 'info' | 'error'; message: string };
 
 export type FromWebview =
+  | { type: 'refreshSettings' }
+  | { type: 'savePreferences'; patch: Partial<EditorPreferences> }
+  | { type: 'saveClusterSettings'; patch: ClusterSettingsPatch }
+  | { type: 'createToken'; request: CreateTokenRequest }
+  | { type: 'revokeToken'; id: string }
+  | { type: 'requestReleases'; includePrereleases: boolean }
+  | { type: 'installRelease'; tag: string }
+  | { type: 'uploadControllerBuild' }
+  | { type: 'startRollout'; request: StartUpdateRequest }
+  | { type: 'cancelRollout' }
+  | { type: 'cancelControllerInstall' }
+  | { type: 'hostService'; action: 'start' | 'stop' | 'restart' }
+  | { type: 'saveHostConfiguration'; host: string; port: number; url: string }
+  | { type: 'restoreLocalAccess' }
+  | { type: 'openExtensionUpdates' }
   | { type: 'ready' }
   | { type: 'selectJob'; jobId: string | null }
   | { type: 'cancel'; jobId: string }

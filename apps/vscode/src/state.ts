@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
-import { GRIDSTATOR_VERSION, GridstatorError, errorMessage } from '@gridstator/shared';
+import {
+  GRIDSTATOR_VERSION,
+  GridstatorError,
+  errorMessage,
+  defaultClientConfigPath,
+} from '@gridstator/shared';
 import { isTerminal, type Job, type JobGroup, type Node } from '@gridstator/protocol';
 import { GridstatorClient, resolveConnection, type EventStream } from '@gridstator/client';
 import type { ConnectionInfo } from './messages';
@@ -47,7 +52,11 @@ export class ClusterState implements vscode.Disposable {
   constructor(
     private readonly configPath: () => string | undefined,
     private readonly historyLimit: () => number,
-    private readonly log: vscode.OutputChannel,
+    private readonly log: Pick<vscode.OutputChannel, 'appendLine'>,
+    private readonly prepareConnection?: () => Promise<void>,
+    private readonly connectionDetails?: (
+      authenticationFailed?: boolean,
+    ) => Partial<ConnectionInfo>,
   ) {}
 
   get connected(): boolean {
@@ -93,14 +102,31 @@ export class ClusterState implements vscode.Disposable {
     this.client = undefined;
     let conn;
     try {
+      await this.prepareConnection?.();
       conn = await resolveConnection(this.configPath() || undefined);
     } catch (err) {
+      if (gen !== this.generation || this.disposed) return;
       this.nodes.clear();
       this.jobs.clear();
-      this.setConnection({ ...DISCONNECTED, status: 'signedOut', error: errorMessage(err) });
+      this.groups.clear();
+      this.setConnection({
+        ...DISCONNECTED,
+        ...this.connectionDetails?.(),
+        status: 'signedOut',
+        error: errorMessage(err),
+        configPath: this.configPath() || defaultClientConfigPath(),
+      });
       return;
     }
-    this.setConnection({ status: 'connecting', url: conn.url, error: null });
+    if (gen !== this.generation || this.disposed) return;
+    this.setConnection({
+      status: 'connecting',
+      url: conn.url,
+      error: null,
+      configPath: this.configPath() || defaultClientConfigPath(),
+      source: conn.source,
+      ...this.connectionDetails?.(),
+    });
     const client = new GridstatorClient({
       ...conn,
       userAgent: `gridstator-vscode/${GRIDSTATOR_VERSION}`,
@@ -117,10 +143,16 @@ export class ClusterState implements vscode.Disposable {
         return;
       }
       this.client = client;
+      if (this.connection.clusterId && this.connection.clusterId !== cluster.clusterId) {
+        this.myJobs.clear();
+        this.myGroups.clear();
+        this.jobs.clear();
+      }
       this.nodes.clear();
       for (const n of nodes) this.nodes.set(n.id, n);
       const previous = new Map(this.jobs);
       this.jobs.clear();
+      this.groups.clear();
       for (const g of groups) this.upsertGroup(g, false);
       for (const j of jobs) {
         this.jobs.set(j.id, j);
@@ -138,7 +170,11 @@ export class ClusterState implements vscode.Disposable {
         user: cluster.whoami.name,
         role: cluster.whoami.role,
         clusterId: cluster.clusterId,
+        caFingerprint: cluster.caFingerprint,
         version: cluster.version,
+        controller: cluster.controller,
+        build: cluster.build,
+        extensionVersion: GRIDSTATOR_VERSION,
         error: null,
       });
       this.log.appendLine(
@@ -156,7 +192,11 @@ export class ClusterState implements vscode.Disposable {
       const fatal =
         err instanceof GridstatorError &&
         (err.code === 'UNAUTHORIZED' || err.code === 'TLS_PIN_MISMATCH');
-      this.setConnection({ status: 'error', error: message });
+      this.setConnection({
+        status: 'error',
+        error: message,
+        ...this.connectionDetails?.(err instanceof GridstatorError && err.code === 'UNAUTHORIZED'),
+      });
       if (!fatal) this.scheduleReconnect(gen);
     }
   }

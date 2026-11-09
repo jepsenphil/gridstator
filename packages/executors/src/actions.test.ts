@@ -48,12 +48,53 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo about to fail && exit 3
+  nested:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare nested container input
+        run: mkdir -p exchange && echo from-runner > exchange/input.txt
+      - name: Run a container with the workspace mounted
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import http from 'node:http';
+          const request = (method, path, body) => new Promise((resolve, reject) => {
+            const req = http.request({
+              socketPath: '/var/run/docker.sock', method, path,
+              headers: { 'content-type': 'application/json' },
+            }, (res) => {
+              let data = '';
+              res.setEncoding('utf8');
+              res.on('data', chunk => data += chunk);
+              res.on('end', () => res.statusCode >= 300
+                ? reject(new Error(data)) : resolve(data ? JSON.parse(data) : {}));
+            });
+            req.on('error', reject);
+            req.end(body === undefined ? undefined : JSON.stringify(body));
+          });
+          const child = await request('POST', '/containers/create', {
+            Image: 'node:24-bookworm-slim',
+            Cmd: ['node', '-e', 'const fs = require("node:fs"); if (fs.readFileSync("/workspace/exchange/input.txt", "utf8").trim() !== "from-runner") process.exit(1); fs.writeFileSync("/workspace/exchange/output.txt", "from-child");'],
+            HostConfig: { Binds: [process.cwd() + ':/workspace'] },
+          });
+          try {
+            await request('POST', '/containers/' + child.Id + '/start');
+            const result = await request('POST', '/containers/' + child.Id + '/wait');
+            assert.equal(result.StatusCode, 0, 'nested container must see files created by the runner');
+          } finally {
+            await request('DELETE', '/containers/' + child.Id + '?force=true');
+          }
+          NODE
+      - name: Read nested container output
+        run: test "$(cat exchange/output.txt)" = from-child && echo nested-volume-roundtrip
   calls:
     uses: ./.github/workflows/called.yml
   slow:
     runs-on: ubuntu-latest
     steps:
-      - run: for i in $(seq 1 120); do echo "tick $i"; sleep 1; done
+      - run: |
+          mkdir -p cancellation-created && echo cleanup > cancellation-created/file.txt
+          for i in $(seq 1 120); do echo "tick $i"; sleep 1; done
 `;
 
 const CALLED = `on: workflow_call
@@ -196,6 +237,18 @@ describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, 
     expect(r.outputs?.steps?.some((s) => s.status === 'failure')).toBe(true);
   });
 
+  it('shares runner-created files and nested container output when Docker access is enabled', async () => {
+    const tc = await testContext(
+      { ...base, job: 'nested', dockerSocket: true },
+      { workDir: join(tmp, 'nested-work'), sourceDir: src },
+    );
+    const result = await executor().run(tc.context);
+    expect(result.error, tc.out.join('')).toBeNull();
+    expect(result.outcome).toBe('succeeded');
+    expect(tc.out.join('')).toContain('nested-volume-roundtrip');
+    await expect(rm(tc.context.workDir, { recursive: true })).resolves.toBeUndefined();
+  });
+
   it('rejects a workflow path that is not in the snapshot', async () => {
     const tc = await testContext(
       { ...base, workflow: '.github/workflows/missing.yml' },
@@ -207,7 +260,7 @@ describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, 
   it('cancels a running workflow and removes its containers', async () => {
     const ac = new AbortController();
     const tc = await testContext(
-      { ...base, job: 'slow' },
+      { ...base, job: 'slow', dockerSocket: true },
       { workDir: join(tmp, 'w4'), sourceDir: src, signal: ac.signal },
     );
     const p = executor().run(tc.context);
@@ -240,5 +293,6 @@ describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, 
         .toString()
         .trim(),
     ).toBe('');
+    await expect(rm(tc.context.workDir, { recursive: true })).resolves.toBeUndefined();
   });
 });

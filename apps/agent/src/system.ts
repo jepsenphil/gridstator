@@ -1,6 +1,6 @@
 import { statfs } from 'node:fs/promises';
 import { availableParallelism, cpus, freemem, hostname, loadavg, release, totalmem } from 'node:os';
-import { GRIDSTATOR_VERSION } from '@gridstator/shared';
+import { GRIDSTATOR_VERSION, machineIdentity } from '@gridstator/shared';
 import type { NodeInfo, NodeMetrics } from '@gridstator/protocol';
 import { probeCommandVersion, type DockerCli } from '@gridstator/executors';
 
@@ -30,6 +30,7 @@ export async function collectNodeInfo(
     act.error = 'git is not installed (required for workflow jobs)';
   return {
     hostname: hostname(),
+    machineId: await machineIdentity(),
     platform: process.platform,
     osRelease: release(),
     arch: process.arch,

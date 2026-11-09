@@ -105,6 +105,7 @@ try {
       '--skip-release-notes',
     ],
     extensionTestsEnv: {
+      GRIDSTATOR_CONTROLLER_DATA: env.GRIDSTATOR_CONTROLLER_DATA,
       GRIDSTATOR_CONFIG: env.GRIDSTATOR_CONFIG,
       GRIDSTATOR_CACHE: env.GRIDSTATOR_CACHE,
       GRIDSTATOR_IT_NODE: targetNode,

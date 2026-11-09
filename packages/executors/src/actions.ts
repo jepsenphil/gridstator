@@ -102,7 +102,13 @@ export function actArgs(
     labels,
   ];
   if (spec.job) args.push('-j', spec.job);
-  if (!spec.dockerSocket) args.push('--container-daemon-socket', '-');
+  if (spec.dockerSocket) {
+    // Nested `docker run -v "$PWD:..."` resolves paths on the worker, so share the staged
+    // snapshot with the runner rather than giving it a separate container-only copy.
+    args.push('--bind');
+  } else {
+    args.push('--container-daemon-socket', '-');
+  }
   for (const [label, image] of Object.entries({ ...defaultPlatforms, ...spec.platforms }))
     args.push('-P', `${label}=${image}`);
   for (const [k, v] of Object.entries(spec.inputs)) args.push('--input', `${k}=${v}`);
@@ -122,6 +128,47 @@ function freeLoopbackPort(): Promise<number> {
       );
     });
   });
+}
+
+/** Container-created files in a bound snapshot must remain removable by the worker. */
+async function restoreSnapshotOwnership(
+  docker: DockerCli,
+  src: string,
+  spec: ActionsJobSpec,
+  ids: { jobId: string; nodeId: string },
+): Promise<void> {
+  const images = new Set(Object.values({ ...DEFAULT_ACT_PLATFORMS, ...spec.platforms }));
+  for (const image of images) {
+    const cached = await docker.exec(['image', 'inspect', image], { timeoutMs: 15_000 });
+    if (cached.code !== 0) continue;
+    await docker.check(
+      [
+        'run',
+        '--rm',
+        '--pull=never',
+        '--network=none',
+        '--read-only',
+        '--user=0:0',
+        '--label',
+        `${LABEL_MANAGED}=true`,
+        '--label',
+        `${LABEL_JOB}=${ids.jobId}`,
+        '--label',
+        `${LABEL_NODE}=${ids.nodeId}`,
+        '--mount',
+        `type=bind,src=${src},dst=/workspace`,
+        '--entrypoint=sh',
+        image,
+        '-c',
+        // Resolve the owner inside Docker's user namespace, including rootless daemons.
+        // -h keeps snapshot symlinks from changing ownership outside the mounted directory.
+        'chown -Rh "$(stat -c "%u:%g" /workspace)" /workspace',
+      ],
+      { timeoutMs: 60_000 },
+    );
+    return;
+  }
+  throw new Error('No cached runner image is available to restore snapshot ownership');
 }
 
 async function git(cwd: string, args: string[], env: NodeJS.ProcessEnv): Promise<void> {
@@ -147,8 +194,9 @@ async function listFiles(dir: string): Promise<string[]> {
 
 /**
  * Runs a GitHub Actions workflow (or one job of it) with nektos/act against the job's snapshot.
- * act copies the staged files into its containers and skips `actions/checkout` for the current
- * repository, so the workflow sees exactly the submitted working tree.
+ * act copies the staged files into its containers (or binds the staged snapshot for workflows
+ * with Docker access) and skips `actions/checkout` for the current repository, so the workflow
+ * sees exactly the submitted working tree.
  */
 export class ActionsExecutor implements Executor {
   readonly kind = 'actions' as const;
@@ -324,6 +372,11 @@ export class ActionsExecutor implements Executor {
       );
       if (removed.containers.length > 0)
         ctx.system(`Removed ${removed.containers.length} leftover workflow container(s)`);
+      if (spec.dockerSocket) {
+        await restoreSnapshotOwnership(this.opts.docker, src, spec, ctx).catch((err: unknown) =>
+          ctx.system(`Could not restore staged snapshot ownership: ${(err as Error).message}`),
+        );
+      }
     }
 
     if (outcome.stopReason && stoppedAt !== undefined) parser.markCancelled(stoppedAt);

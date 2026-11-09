@@ -6,6 +6,7 @@ export * from './paths.js';
 export * from './logger.js';
 export * from './tls.js';
 export * from './install.js';
+export * from './machine.js';
 
 export const GRIDSTATOR_VERSION = '0.1.0';
 

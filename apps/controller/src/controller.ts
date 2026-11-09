@@ -36,6 +36,10 @@ export interface ControllerFileConfig {
   version: 1;
   host: string;
   port: number;
+  /** New agents persist this address after validating it with their pinned cluster CA. */
+  publicUrl?: string;
+  /** Keep old endpoints available for offline workers and older agents. */
+  aliases?: Array<{ host: string; port: number }>;
 }
 
 export function controllerPaths(dataDir: string) {
@@ -165,6 +169,8 @@ export interface ControllerOptions {
   /** Downloads toolchain archives (default: HTTPS from nodejs.org / GitHub). */
   toolchainFetcher?: Fetcher;
   toolchainPins?: ConstructorParameters<typeof ToolchainMirror>[0]['pins'];
+  /** Injectable official release downloads, for deterministic tests. */
+  releaseFetcher?: Fetcher;
 }
 
 export interface RunningController {
@@ -243,8 +249,9 @@ export async function startController(options: ControllerOptions): Promise<Runni
     logger: logger.child({ component: 'cluster' }),
     ...(options.timing ? { timing: options.timing } : {}),
     updates,
+    controllerEndpoint: () => fileConfig?.publicUrl,
   });
-  const app = await buildServer({
+  const deps = {
     store,
     cluster,
     auth,
@@ -261,13 +268,23 @@ export async function startController(options: ControllerOptions): Promise<Runni
     caPem: pki.caPem,
     fingerprint: pki.fingerprint,
     tls: { key: pki.serverKeyPem, cert: pki.serverChainPem },
-  });
+    ...(options.releaseFetcher ? { releaseFetcher: options.releaseFetcher } : {}),
+  };
+  const app = await buildServer(deps);
+  const aliasApps: FastifyInstance[] = [];
 
   const retention = () =>
     runRetention({ store, logs, logsDir: paths.logs, blobs, settings: settings.get(), logger });
   try {
     await app.listen({ host, port });
+    for (const alias of fileConfig?.aliases ?? []) {
+      if (alias.host === host && alias.port === port) continue;
+      const legacy = await buildServer(deps);
+      aliasApps.push(legacy);
+      await legacy.listen(alias);
+    }
   } catch (err) {
+    await Promise.allSettled([app.close(), ...aliasApps.map((alias) => alias.close())]);
     store.close();
     const code = (err as NodeJS.ErrnoException).code;
     if (code === 'EADDRINUSE') {
@@ -326,7 +343,7 @@ export async function startController(options: ControllerOptions): Promise<Runni
       // Do not leave a half-written update package behind.
       await build.prepare().catch(() => undefined);
       hub.closeAll();
-      await app.close();
+      await Promise.all([app.close(), ...aliasApps.map((alias) => alias.close())]);
       store.close();
       logger.info('controller stopped');
     },

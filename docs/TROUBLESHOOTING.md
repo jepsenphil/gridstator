@@ -52,6 +52,14 @@ agent; capabilities are detected at agent start.
 **`A node named "x" is already registered`** when joining — pick another `--name`, or remove the old
 node first (`gridstator nodes remove x`).
 
+**`Invalid update request: drainTimeoutSeconds: … expected number, received null`** or
+**`This controller cannot wait indefinitely …`** — the client is newer than the running
+controller. Update the controller first with
+`gridstator controller publish-build <current-package.tgz>`, then retry **Update workers**. For a
+workspace build, prepare the package with `pnpm pack:release`. Rebuilding the extension alone does
+not update the controller service. Older controllers cancel remaining jobs after one hour if the
+deadline is omitted, so omitting it does not preserve the default behavior of waiting for jobs.
+
 ## Jobs
 
 **A job stays `queued`** — `gridstator job <id>` (or the dashboard) shows why:
@@ -97,6 +105,12 @@ if your workflow allows.
 **`docker: command not found` / cannot connect to Docker inside a workflow** — the Docker socket is
 not mounted by default. Use `--docker-socket` (or `actions.dockerSocket: true`) for workflows that
 build images; see [SECURITY.md](SECURITY.md) for what that allows.
+
+**A nested Docker container cannot see files created by a workflow step** — Docker-enabled
+workflows share the worker's staged snapshot directory with the runner. Update older Gridstator
+workers if a nested `docker run -v "$PWD:…"` sees a separate copy or cannot write its report.
+Start a new job after changing `gridstator.yml`; **Retry** preserves the original snapshot and
+job settings.
 
 **`gridstator actions list` says a job cannot run** — act runs Linux containers only; Windows and
 macOS runners are not supported locally.

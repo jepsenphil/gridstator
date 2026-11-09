@@ -6,6 +6,7 @@ import { Readable } from 'node:stream';
 import tar from 'tar-stream';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { JobSpecSchema, type JobSpecInput } from '@gridstator/protocol';
+import { newId } from '@gridstator/shared';
 import {
   ContainerExecutor,
   DockerCli,
@@ -38,15 +39,11 @@ afterAll(async () => {
   await rm(tmp, { recursive: true, force: true });
 });
 
-let counter = 0;
 function ctx(
   spec: Partial<JobSpecInput> & { command: string[] },
   opts: { tar?: () => Readable; signal?: AbortSignal } = {},
 ) {
-  counter++;
-  const jobId = `01TEST${Date.now().toString(36).toUpperCase()}${String(counter).padStart(4, '0')}`
-    .slice(0, 26)
-    .padEnd(26, '0');
+  const jobId = newId();
   const out: string[] = [];
   const err: string[] = [];
   const system: string[] = [];

@@ -12,6 +12,10 @@ export type ToolStatus = z.infer<typeof ToolStatusSchema>;
 /** Static facts about a worker, refreshed on every (re)connect. */
 export const NodeInfoSchema = z.object({
   hostname: z.string().max(255),
+  /** Opaque identity; distinguishes a controller's worker from hosts with the same name. */
+  machineId: z.string().max(128).optional(),
+  /** Authenticated report of the endpoint used by this worker, for coordinated moves. */
+  controllerUrl: z.string().max(2048).optional(),
   platform: z.string().max(32),
   osRelease: z.string().max(255),
   arch: z.string().max(32),

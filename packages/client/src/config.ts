@@ -1,4 +1,6 @@
 import { readFile } from 'node:fs/promises';
+import { watchFile, unwatchFile } from 'node:fs';
+import { resolve } from 'node:path';
 import { z } from 'zod';
 import {
   GridstatorError,
@@ -17,6 +19,14 @@ export const ClientConfigSchema = z.object({
   tokenName: z.string().optional(),
 });
 export type ClientConfig = z.infer<typeof ClientConfigSchema>;
+
+/** Watches the shared login, including atomic replacements and creation after first sign-in. */
+export function watchClientConfig(path: string, changed: () => void, intervalMs = 500): () => void {
+  const file = resolve(path);
+  const listener = () => changed();
+  watchFile(file, { persistent: false, interval: intervalMs }, listener);
+  return () => unwatchFile(file, listener);
+}
 
 export async function readClientConfig(
   path = defaultClientConfigPath(),

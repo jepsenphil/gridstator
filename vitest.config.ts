@@ -17,7 +17,7 @@ export const alias = {
 };
 
 export default defineConfig({
-  resolve: { alias },
+  resolve: { alias: { ...alias, vscode: pkg('./apps/vscode/src/test-vscode.ts') } },
   test: {
     include: ['packages/*/src/**/*.test.ts', 'apps/*/src/**/*.test.ts'],
     testTimeout: 20_000,

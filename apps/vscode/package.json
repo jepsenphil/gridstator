@@ -33,7 +33,8 @@
   "main": "./dist/extension.js",
   "activationEvents": [
     "workspaceContains:gridstator.yml",
-    "workspaceContains:.github/workflows/*.yml"
+    "workspaceContains:.github/workflows/*.yml",
+    "onStartupFinished"
   ],
   "contributes": {
     "viewsContainers": {
@@ -116,28 +117,28 @@
       },
       {
         "command": "gridstator.runCommand",
-        "title": "Run Command on Cluster…",
+        "title": "Run Command on Cluster\u2026",
         "category": "Gridstator",
         "icon": "$(terminal)"
       },
       {
         "command": "gridstator.runTask",
-        "title": "Run Task on Cluster…",
+        "title": "Run Task on Cluster\u2026",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.runScript",
-        "title": "Run Package Script on Cluster…",
+        "title": "Run Package Script on Cluster\u2026",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.runWorkflow",
-        "title": "Run GitHub Actions Workflow on Cluster…",
+        "title": "Run GitHub Actions Workflow on Cluster\u2026",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.buildImage",
-        "title": "Build Docker Image on Cluster…",
+        "title": "Build Docker Image on Cluster\u2026",
         "category": "Gridstator"
       },
       {
@@ -147,7 +148,7 @@
       },
       {
         "command": "gridstator.selectTarget",
-        "title": "Select Target Worker…",
+        "title": "Select Target Worker\u2026",
         "category": "Gridstator",
         "icon": "$(target)"
       },
@@ -197,12 +198,12 @@
       },
       {
         "command": "gridstator.node.setConcurrency",
-        "title": "Set Maximum Concurrent Jobs…",
+        "title": "Set Maximum Concurrent Jobs\u2026",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.node.setReservation",
-        "title": "Set Reserved Resources…",
+        "title": "Set Reserved Resources\u2026",
         "category": "Gridstator"
       },
       {
@@ -210,6 +211,17 @@
         "title": "Manage Node",
         "category": "Gridstator",
         "icon": "$(gear)"
+      },
+      {
+        "command": "gridstator.openSettings",
+        "title": "Open Settings",
+        "category": "Gridstator",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "gridstator.restoreLocalAccess",
+        "title": "Restore Local Access",
+        "category": "Gridstator"
       }
     ],
     "menus": {
@@ -405,6 +417,12 @@
           "minimum": 10,
           "maximum": 500,
           "description": "Number of recent jobs to load."
+        },
+        "gridstator.autoConnect": {
+          "type": "boolean",
+          "default": true,
+          "scope": "machine",
+          "markdownDescription": "Connect automatically using this remote account\u2019s shared CLI login. On the controller host, set up local admin access automatically."
         }
       }
     }
@@ -432,6 +450,7 @@
     "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^4.1.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "@gridstator/controller": "workspace:*"
   }
 }

@@ -4,11 +4,17 @@ import { createReadStream, readFileSync } from 'node:fs';
 import { chmod, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { WebSocket } from 'ws';
-import { decodeWsData, packageIdentity, type BuildIdentity } from '@gridstator/shared';
+import {
+  decodeWsData,
+  packageIdentity,
+  silentLogger,
+  type BuildIdentity,
+} from '@gridstator/shared';
 import {
   AGENT_PROTOCOL_VERSION,
+  DEFAULT_CLUSTER_SETTINGS,
   ControllerMessageSchema,
   inUpdateWindow,
   type AgentBuild,
@@ -23,6 +29,7 @@ import {
 import { GridstatorClient, readBody } from '@gridstator/client';
 import { initController, startController, type RunningController } from './controller.js';
 import type { Fetcher } from './toolchain.js';
+import { UpdateManager, type UpdateNode } from './updates.js';
 
 const TIMING = {
   heartbeatTimeoutMs: 5_000,
@@ -411,6 +418,48 @@ describe('rolling updates', () => {
     await setSettings({ autoUpdate: 'off' });
   });
 
+  it('waits without cancelling running jobs by default, even beyond the old drain deadline', () => {
+    let now = Date.now();
+    const worker: UpdateNode = {
+      id: 'draining-worker',
+      name: 'draining-worker',
+      online: true,
+      build: agentBuild(OLD),
+      agentVersion: '0.1.0',
+      autoUpdate: 'off',
+      activeJobs: 1,
+      platform: 'linux',
+      arch: 'x64',
+    };
+    const cancelJobs = vi.fn();
+    const sendUpdateCheck = vi.fn(() => true);
+    const manager = new UpdateManager({
+      store: ctrl.store,
+      build: ctrl.build,
+      settings: () => ({ ...DEFAULT_CLUSTER_SETTINGS, autoUpdate: 'off' }),
+      logger: silentLogger(),
+      now: () => now,
+    });
+    manager.attach({
+      nodes: () => [worker],
+      node: (id) => (id === worker.id ? worker : undefined),
+      cancelJobs,
+      sendUpdateCheck,
+      changed: () => undefined,
+      requestSchedule: () => undefined,
+    });
+    expect(manager.start({}, 'test').rollout?.drainTimeoutSeconds).toBeNull();
+    now += 8 * 24 * 3600_000;
+    manager.tick();
+    expect(manager.view().rollout?.nodes[0]?.state).toBe('draining');
+    expect(cancelJobs).not.toHaveBeenCalled();
+    expect(sendUpdateCheck).not.toHaveBeenCalled();
+    worker.activeJobs = 0;
+    manager.tick();
+    expect(manager.view().rollout?.nodes[0]?.state).toBe('updating');
+    expect(sendUpdateCheck).toHaveBeenCalledOnce();
+  });
+
   it('drains, updates one node at a time and finishes when nodes return on the new build', async () => {
     const a = addAgent('a');
     const b = addAgent('b');
@@ -418,7 +467,8 @@ describe('rolling updates', () => {
     await b.connect(agentBuild(OLD));
     const job = await runJobOn(a);
 
-    const started = await admin.startUpdate({});
+    const started = await admin.startUpdate({ now: false, drainTimeoutSeconds: null });
+    expect(started.rollout?.drainTimeoutSeconds).toBeNull();
     expect(started.rollout?.nodes.map((n) => n.name).sort()).toEqual(['a', 'b']);
     // a is draining (its job keeps running) and takes no new jobs.
     const draining = await waitForUpdateState('a', 'updating');

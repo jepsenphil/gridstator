@@ -101,6 +101,7 @@ export class Cluster {
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
   private readonly updates: UpdateManager | undefined;
+  private readonly controllerEndpoint: (() => string | undefined) | undefined;
 
   constructor(deps: {
     store: Store;
@@ -110,6 +111,7 @@ export class Cluster {
     logger: Logger;
     timing?: Partial<ClusterTiming>;
     updates?: UpdateManager;
+    controllerEndpoint?: () => string | undefined;
   }) {
     this.store = deps.store;
     this.logs = deps.logs;
@@ -118,6 +120,7 @@ export class Cluster {
     this.log = deps.logger;
     this.timing = { ...DEFAULT_TIMING, ...deps.timing };
     this.updates = deps.updates;
+    this.controllerEndpoint = deps.controllerEndpoint;
     this.updates?.attach(this.updateHost());
   }
 
@@ -958,7 +961,15 @@ export class Cluster {
     }
     rt.welcomed = true;
     rt.metrics = null;
-    conn.send({ type: 'welcome', nodeId, name: node.name, settings, resume });
+    const controllerUrl = this.controllerEndpoint?.();
+    conn.send({
+      type: 'welcome',
+      nodeId,
+      name: node.name,
+      settings,
+      resume,
+      ...(controllerUrl ? { controllerUrl } : {}),
+    });
     for (const active of hello.activeJobs) {
       if (!matched.has(active.jobId)) {
         conn.send({

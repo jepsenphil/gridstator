@@ -114,6 +114,8 @@ export type SnapshotView = z.infer<typeof SnapshotViewSchema>;
 export const ClusterViewSchema = z.object({
   clusterId: z.string(),
   version: z.string(),
+  /** Optional so newer clients can connect to older controllers. */
+  controller: z.object({ hostname: z.string(), machineId: z.string() }).optional(),
   /** Optional so newer clients can read older controllers. */
   build: ControllerBuildSchema.optional(),
   caFingerprint: z.string(),
@@ -148,6 +150,7 @@ export const ClusterSettingsSchema = z.object({
 });
 export type ClusterSettings = z.infer<typeof ClusterSettingsSchema>;
 export const ClusterSettingsPatchSchema = ClusterSettingsSchema.partial();
+export type ClusterSettingsPatch = z.infer<typeof ClusterSettingsPatchSchema>;
 export const DEFAULT_CLUSTER_SETTINGS: ClusterSettings = {
   jobRetentionDays: 90,
   logRetentionDays: 30,

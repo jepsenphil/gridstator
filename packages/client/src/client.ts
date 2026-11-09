@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData } from '@gridstator/shared';
 import {
   AGENT_UPDATE_PATH,
+  ListReleasesResponseSchema,
+  ClusterSettingsSchema,
   AgentUpdateCheckResponseSchema,
   AgentToolchainResponseSchema,
   PublishBuildResponseSchema,
@@ -56,11 +58,14 @@ import {
   type PublishBuildResponse,
   type StartUpdateRequest,
   type UpdatesView,
+  type ReleaseView,
+  type ClusterSettings,
 } from '@gridstator/protocol';
 import {
   createPinnedAgent,
   errorFromResponse,
   networkError,
+  normalizeControllerUrl,
   pinnedTlsOptions,
   rawRequest,
   readBody,
@@ -88,14 +93,14 @@ interface RequestOptions<T> {
 
 /** Typed client for the controller's v1 API. Shared by the CLI, agents and the VS Code extension. */
 export class GridstatorClient {
-  readonly url: string;
+  private baseUrl: string;
   private readonly ca: string;
   private readonly token: string;
   private readonly agent: Agent;
   private readonly userAgent: string;
 
   constructor(options: ClientOptions) {
-    this.url = options.url.replace(/\/+$/, '');
+    this.baseUrl = options.url.replace(/\/+$/, '');
     this.ca = options.ca;
     this.token = options.token;
     this.agent = createPinnedAgent({ ca: options.ca });
@@ -104,6 +109,15 @@ export class GridstatorClient {
 
   close(): void {
     this.agent.destroy();
+  }
+
+  get url(): string {
+    return this.baseUrl;
+  }
+
+  /** Retargets the same pinned-CA client so active job runners keep their shared client. */
+  setControllerUrl(url: string): void {
+    this.baseUrl = normalizeControllerUrl(url);
   }
 
   private buildUrl(path: string, query?: Record<string, string | number | undefined>): string {
@@ -185,6 +199,31 @@ export class GridstatorClient {
 
   cluster(): Promise<ClusterView> {
     return this.request('GET', '/v1/cluster', { schema: ClusterViewSchema });
+  }
+
+  getSettings(): Promise<ClusterSettings> {
+    return this.request('GET', '/v1/settings', { schema: ClusterSettingsSchema });
+  }
+
+  updateSettings(patch: Partial<ClusterSettings>): Promise<ClusterSettings> {
+    return this.request('PATCH', '/v1/settings', { json: patch, schema: ClusterSettingsSchema });
+  }
+
+  async listReleases(includePrereleases = false): Promise<ReleaseView[]> {
+    const response = await this.request('GET', '/v1/releases', {
+      query: { prerelease: includePrereleases ? 'true' : undefined },
+      schema: ListReleasesResponseSchema,
+      timeoutMs: 30_000,
+    });
+    return response.releases;
+  }
+
+  installRelease(tag: string): Promise<PublishBuildResponse> {
+    return this.request('POST', `/v1/releases/${encodeURIComponent(tag)}/install`, {
+      json: {},
+      schema: PublishBuildResponseSchema,
+      timeoutMs: 10 * 60_000,
+    });
   }
 
   async listNodes(): Promise<Node[]> {
@@ -354,8 +393,34 @@ export class GridstatorClient {
     return this.request('GET', '/v1/updates', { schema: UpdatesViewSchema });
   }
 
-  startUpdate(req: StartUpdateRequest): Promise<UpdatesView> {
-    return this.request('POST', '/v1/updates', { json: req, schema: UpdatesViewSchema });
+  async startUpdate(req: StartUpdateRequest = {}): Promise<UpdatesView> {
+    // Older controllers default an omitted deadline to cancelling jobs after one hour. Keep
+    // indefinite draining explicit; only immediate updates can safely omit a null deadline.
+    const json = {
+      ...req,
+      drainTimeoutSeconds: req.drainTimeoutSeconds ?? (req.now ? undefined : null),
+    };
+    try {
+      return await this.request('POST', '/v1/updates', { json, schema: UpdatesViewSchema });
+    } catch (err) {
+      if (
+        json.drainTimeoutSeconds === null &&
+        err instanceof GridstatorError &&
+        err.code === 'BAD_REQUEST' &&
+        err.message ===
+          'Invalid update request: drainTimeoutSeconds: Invalid input: expected number, received null'
+      ) {
+        throw new GridstatorError(
+          'CONFLICT',
+          'This controller cannot wait indefinitely for running jobs during worker updates. Update the controller first, then retry the worker update.',
+          {
+            hint: 'Install a current controller package with `gridstator controller publish-build <package.tgz>`.',
+            cause: err,
+          },
+        );
+      }
+      throw err;
+    }
   }
 
   cancelUpdate(): Promise<UpdatesView> {

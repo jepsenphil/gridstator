@@ -38,6 +38,7 @@ import { DockerCli } from '@gridstator/executors';
 import { c, info, lanAddress } from '../output.js';
 import { withClient } from './client.js';
 import { addSettingsFlags, settingsFromFlags, type SettingsFlags } from '../settings-flags.js';
+import { registerLocalControllerCommands } from './local.js';
 
 function onShutdown(handler: (signal: string) => Promise<void>, logger: Logger): void {
   let shuttingDown = false;
@@ -63,6 +64,7 @@ export function registerServerCommands(program: Command): void {
   const controller = program
     .command('controller')
     .description('Run and manage the cluster controller');
+  registerLocalControllerCommands(controller);
 
   controller
     .command('init')
@@ -164,7 +166,7 @@ export function registerServerCommands(program: Command): void {
       // After switching to a published build: stop cleanly and let systemd start the new one.
       const restart = () => {
         void (async () => {
-          await agent?.stop().catch(() => undefined);
+          await agent?.stop({ drain: true }).catch(() => undefined);
           await ctrl?.close().catch(() => undefined);
           process.exit(RESTART_EXIT_CODE);
         })();

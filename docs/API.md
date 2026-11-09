@@ -42,11 +42,14 @@ summarizes them.
 
 | Method & path | Notes |
 |---|---|
-| `GET /v1/cluster` | `{ clusterId, version, build: ControllerBuild, caFingerprint, startedAt, nodes: {total, online}, jobs: {<state>: count}, whoami: {name, role} }` |
+| `GET /v1/cluster` | `{ clusterId, version, build: ControllerBuild, controller: {hostname, machineId}, caFingerprint, startedAt, nodes: {total, online}, jobs: {<state>: count}, whoami: {name, role} }` |
 | `GET /v1/settings` | `{ jobRetentionDays, logRetentionDays, snapshotRetentionDays, autoUpdate: "off"\|"follow"\|"window", updateWindow: {start, end} \| null }` |
 | `PATCH /v1/settings` | admin; partial update of the above (`window` mode needs `updateWindow`, times are `HH:MM` controller local time) |
 
-`ControllerBuild`: `{ id, version, sha256, updatable, reason }`. `id` is `<version>-<first 12 hex of
+`ControllerBuild`: `{ id, version, sha256, updatable, reason, selfUpdate?: {available, reason} }`.
+Controller identity and self-update capability are optional for compatibility with older servers.
+`machineId` is an opaque host identifier shared with the worker on that machine.
+`id` is `<version>-<first 12 hex of
 sha256>` (`<version>-unbundled` for a workspace build, which workers cannot update to).
 
 ### Worker updates
@@ -54,9 +57,11 @@ sha256>` (`<version>-unbundled` for a workspace build, which workers cannot upda
 | Method & path | Auth | Notes |
 |---|---|---|
 | `GET /v1/updates` | client | `{ controller: ControllerBuild, autoUpdate, updateWindow, rollout: Rollout \| null }` |
-| `POST /v1/updates` | admin | body: `{ nodes?: string[], now?: boolean, drainTimeoutSeconds?: number }`; starts a rollout (or adds to the running one) → same as `GET` |
+| `POST /v1/updates` | admin | body: `{ nodes?: string[], now?: boolean, drainTimeoutSeconds?: number \| null }`; starts a rollout (or adds to the running one); `null` (default) waits without cancelling running jobs → same as `GET` |
 | `POST /v1/updates/cancel` | admin | halts the running rollout |
 | `POST /v1/controller/build?sha256=<hex>` | admin | body: a gridstator `.tgz` (`application/gzip`); the controller installs it and restarts on it → `{ action: "none"\|"restarting", from, to }` |
+| `GET /v1/releases?prerelease=true` | client | `{releases: [{tag, version, name, url, publishedAt, prerelease, notes, packageName}]}` from the official repository; prereleases excluded by default |
+| `POST /v1/releases/:tag/install` | admin | downloads an official release, verifies its published SHA-256 checksum and installs through the managed controller updater → `{action, from, to}` |
 
 `GET /v1/updates` also returns `toolchain: [{ name: "act"|"node", version, source:
 "pinned"|"override"|"off", platforms: [{ platform, state: "ready"|"preparing"|"failed", reason }]

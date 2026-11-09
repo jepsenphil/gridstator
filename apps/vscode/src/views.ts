@@ -35,7 +35,9 @@ export function jobDescription(job: Job, now = Date.now()): string {
 
 // ---- cluster ---------------------------------------------------------------------------------
 
-export class ClusterTreeProvider implements vscode.TreeDataProvider<Node> {
+type ClusterElement = Node | { kind: 'controller' };
+
+export class ClusterTreeProvider implements vscode.TreeDataProvider<ClusterElement> {
   private readonly emitter = new vscode.EventEmitter<void>();
   readonly onDidChangeTreeData = this.emitter.event;
 
@@ -43,14 +45,43 @@ export class ClusterTreeProvider implements vscode.TreeDataProvider<Node> {
     state.onDidChange(() => this.emitter.fire());
   }
 
-  getChildren(): Node[] {
-    return this.state.connected ? this.state.nodeList() : [];
+  getChildren(): ClusterElement[] {
+    if (!this.state.connected) return [];
+    const nodes = this.state.nodeList();
+    const controller = this.state.connection.controller;
+    const colocated = nodes.some((n) =>
+      n.info?.machineId
+        ? n.info.machineId === controller?.machineId
+        : n.info?.hostname === controller?.hostname,
+    );
+    return controller && !colocated ? [{ kind: 'controller' }, ...nodes] : nodes;
   }
 
-  getTreeItem(n: Node): vscode.TreeItem {
+  getTreeItem(n: ClusterElement): vscode.TreeItem {
+    if ('kind' in n) {
+      const item = new vscode.TreeItem(
+        this.state.connection.controller?.hostname ?? 'Controller',
+        vscode.TreeItemCollapsibleState.None,
+      );
+      item.id = `controller:${this.state.connection.clusterId}`;
+      item.description = `controller · v${this.state.connection.version ?? '?'}`;
+      item.iconPath = new vscode.ThemeIcon('server-process');
+      item.contextValue = 'controller';
+      item.tooltip = `${this.state.connection.url}\nController ${this.state.connection.build?.id ?? this.state.connection.version ?? 'unknown version'}`;
+      item.command = { command: 'gridstator.openSettings', title: 'Controller Settings' };
+      return item;
+    }
     const item = new vscode.TreeItem(n.name, vscode.TreeItemCollapsibleState.None);
     const online = n.status === 'online';
     const parts: string[] = [];
+    const controller = this.state.connection.controller;
+    if (
+      controller &&
+      (n.info?.machineId
+        ? n.info.machineId === controller.machineId
+        : n.info?.hostname === controller.hostname)
+    )
+      parts.push('controller + worker');
     if (!online) parts.push('offline');
     else {
       if (n.metrics)

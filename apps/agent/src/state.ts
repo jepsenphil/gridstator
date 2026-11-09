@@ -5,6 +5,8 @@ import { GridstatorError, readJsonFile, writeJsonFile } from '@gridstator/shared
 export const AgentStateSchema = z.object({
   version: z.literal(1),
   controllerUrl: z.string(),
+  /** Previous pinned endpoints let a partially completed controller move recover safely. */
+  controllerFallbackUrls: z.array(z.string()).max(8).optional(),
   caPem: z.string(),
   caFingerprint: z.string(),
   nodeId: z.string(),

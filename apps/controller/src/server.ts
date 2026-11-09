@@ -1,10 +1,17 @@
 import { createReadStream } from 'node:fs';
+import { hostname } from 'node:os';
 import type { Readable } from 'node:stream';
 import websocket from '@fastify/websocket';
 import Fastify, { LogController, type FastifyInstance, type FastifyRequest } from 'fastify';
 import type { WebSocket } from 'ws';
 import type { z } from 'zod';
-import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData, type Logger } from '@gridstator/shared';
+import {
+  GridstatorError,
+  GRIDSTATOR_VERSION,
+  decodeWsData,
+  machineIdentity,
+  type Logger,
+} from '@gridstator/shared';
 import {
   AGENT_UPDATE_PATH,
   AgentMessageSchema,
@@ -43,6 +50,8 @@ import type { SelfUpdater } from './self-update.js';
 import type { SettingsService } from './settings.js';
 import type { ToolchainMirror } from './toolchain.js';
 import type { UpdateManager } from './updates.js';
+import { ReleaseService } from './releases.js';
+import type { Fetcher } from './toolchain.js';
 
 declare module 'fastify' {
   interface FastifyContextConfig {
@@ -70,6 +79,8 @@ export interface ServerDeps {
   caPem: string;
   fingerprint: string;
   tls: { key: string; cert: string };
+  releaseFetcher?: Fetcher;
+  controllerEndpoint?: () => string | undefined;
 }
 
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024 * 1024;
@@ -103,6 +114,23 @@ function snapshotView(s: SnapshotRow): SnapshotView {
 
 export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
   const { store, cluster, auth, hub, logs, blobs, logger } = deps;
+  const controller = { hostname: hostname(), machineId: await machineIdentity() };
+  const releases = new ReleaseService(deps.selfUpdater, deps.releaseFetcher);
+  const requireIdleControllerWorker = () => {
+    const busy = cluster
+      .listNodes()
+      .filter(
+        (node) =>
+          node.activeJobs.length > 0 &&
+          (node.info?.machineId
+            ? node.info.machineId === controller.machineId
+            : node.info?.hostname === controller.hostname),
+      );
+    if (busy.length > 0)
+      throw new GridstatorError('CONFLICT', 'The controller’s worker still has running jobs.', {
+        hint: 'Drain the controller’s worker and wait for its jobs to finish before installing a controller update.',
+      });
+  };
   const app = Fastify({
     https: { key: deps.tls.key, cert: deps.tls.cert, minVersion: 'TLSv1.2' },
     loggerInstance: logger.child({ component: 'http' }),
@@ -181,7 +209,8 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
     return {
       clusterId: deps.clusterId,
       version: GRIDSTATOR_VERSION,
-      build: deps.build.view(),
+      controller,
+      build: { ...deps.build.view(), selfUpdate: deps.selfUpdater.capability() },
       caFingerprint: deps.fingerprint,
       startedAt: cluster.startedAt,
       nodes: { total: nodes.length, online: nodes.filter((n) => n.status === 'online').length },
@@ -197,9 +226,28 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
     return next;
   });
 
+  app.get<{ Querystring: { prerelease?: string } }>('/v1/releases', async (req) => ({
+    releases: await releases.list(req.query.prerelease === 'true'),
+  }));
+
+  app.post<{ Params: { tag: string } }>(
+    '/v1/releases/:tag/install',
+    { config: { auth: 'admin' } },
+    async (req) => {
+      requireIdleControllerWorker();
+      return releases.install(req.params.tag);
+    },
+  );
+
   // ---- worker updates ----------------------------------------------------------------------
 
-  app.get('/v1/updates', async () => deps.updates.view());
+  app.get('/v1/updates', async () => {
+    const view = deps.updates.view();
+    return {
+      ...view,
+      controller: { ...view.controller, selfUpdate: deps.selfUpdater.capability() },
+    };
+  });
 
   app.post('/v1/updates', { config: { auth: 'admin' } }, async (req) =>
     deps.updates.start(
@@ -273,6 +321,12 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
         throw new GridstatorError('BAD_REQUEST', 'Pass the package sha256 as ?sha256=<hex>');
       if (req.headers['content-type'] !== 'application/gzip')
         throw new GridstatorError('BAD_REQUEST', 'Send the package as application/gzip');
+      try {
+        requireIdleControllerWorker();
+      } catch (err) {
+        (req.body as Readable).resume();
+        throw err;
+      }
       return deps.selfUpdater.publish(req.body as Readable, sha256);
     },
   );

@@ -7,6 +7,7 @@ import { Jobs } from './components/Jobs';
 import { Nodes } from './components/Nodes';
 import { Overview } from './components/Overview';
 import { Run } from './components/Run';
+import { Settings } from './components/Settings';
 import { initialState, reducer, type UiState } from './store';
 import { cx, loadUiState, saveUiState, send } from './util';
 
@@ -15,6 +16,7 @@ const TABS: Array<{ view: View; label: string; icon: string }> = [
   { view: 'jobs', label: 'Jobs', icon: 'list-unordered' },
   { view: 'run', label: 'Run', icon: 'play' },
   { view: 'nodes', label: 'Nodes', icon: 'server' },
+  { view: 'settings', label: 'Settings', icon: 'settings-gear' },
 ];
 
 export function App() {
@@ -98,15 +100,27 @@ export function App() {
                   : 'dot-bad',
             )}
           />
-          <span className="small ellipsis" title={c.url ?? ''}>
-            {c.status === 'connected'
-              ? `${c.user} @ ${c.url?.replace('https://', '')}`
-              : c.status === 'connecting'
-                ? 'connecting…'
-                : c.status === 'signedOut'
-                  ? 'signed out'
-                  : 'offline'}
-          </span>
+          <div
+            className="conn-label"
+            title={`${c.url ?? ''}${c.user ? ` · ${c.user} (${c.role ?? ''})` : ''}`}
+          >
+            <span className="small ellipsis controller-name">
+              {c.controller
+                ? `Controller · ${c.controller.hostname}`
+                : c.status === 'connected'
+                  ? `Controller · ${c.url?.replace('https://', '')}`
+                  : 'Gridstator controller'}
+            </span>
+            <span className="small muted ellipsis">
+              {c.status === 'connected'
+                ? `${c.user} · v${c.version}`
+                : c.status === 'connecting'
+                  ? 'connecting…'
+                  : c.status === 'signedOut'
+                    ? 'signed out'
+                    : 'offline'}
+            </span>
+          </div>
           <Button
             kind="ghost"
             icon="refresh"
@@ -135,9 +149,15 @@ export function App() {
               <Button kind="secondary" icon="refresh" onClick={() => send({ type: 'refresh' })}>
                 Retry
               </Button>
-              <Button icon="sign-in" onClick={() => send({ type: 'signIn' })}>
-                Sign in
-              </Button>
+              {c.canRestoreLocalAccess ? (
+                <Button icon="key" onClick={() => send({ type: 'restoreLocalAccess' })}>
+                  Restore local access
+                </Button>
+              ) : (
+                <Button icon="sign-in" onClick={() => send({ type: 'signIn' })}>
+                  Sign in
+                </Button>
+              )}
             </>
           ) : null}
         </div>
@@ -175,6 +195,14 @@ export function App() {
         ) : null}
         {state.view === 'nodes' ? (
           <Nodes data={data} focus={state.nodeId} busy={state.busy} dispatch={dispatch} />
+        ) : null}
+        {state.view === 'settings' ? (
+          <Settings
+            data={data}
+            busy={state.busy}
+            createdToken={state.createdToken}
+            dismissToken={() => dispatch({ type: 'dismissToken' })}
+          />
         ) : null}
       </main>
 

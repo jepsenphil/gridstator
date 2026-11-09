@@ -10,6 +10,23 @@ const require = createRequire(import.meta.url);
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 
+// Host integration ships with the extension; it must not depend on an older global CLI.
+const localCli = {
+  entryPoints: [join(root, '../cli/src/main.ts')],
+  outfile: join(root, 'dist/local-cli.mjs'),
+  bundle: true,
+  platform: 'node',
+  format: 'esm',
+  target: 'node22',
+  external: ['bufferutil', 'utf-8-validate'],
+  sourcemap: !production,
+  minify: production,
+  banner: {
+    js: "import { createRequire as __gstCreateRequire } from 'node:module'; import { fileURLToPath as __gstFileURLToPath } from 'node:url'; import { dirname as __gstDirname } from 'node:path'; const require = __gstCreateRequire(import.meta.url); const __filename = __gstFileURLToPath(import.meta.url); const __dirname = __gstDirname(__filename);",
+  },
+  logLevel: 'warning',
+};
+
 /** @type {import('esbuild').BuildOptions} */
 const extension = {
   entryPoints: [join(root, 'src/extension.ts')],
@@ -45,10 +62,10 @@ for (const f of ['codicon.css', 'codicon.ttf'])
   await copyFile(join(codicons, f), join(root, 'media/codicons', f));
 
 if (watch) {
-  const ctxs = await Promise.all([context(extension), context(webview)]);
+  const ctxs = await Promise.all([context(extension), context(webview), context(localCli)]);
   await Promise.all(ctxs.map((c) => c.watch()));
   process.stdout.write('Watching extension and webview sources…\n');
 } else {
-  await Promise.all([build(extension), build(webview)]);
+  await Promise.all([build(extension), build(webview), build(localCli)]);
   process.stdout.write(`Built extension and dashboard${production ? ' (production)' : ''}\n`);
 }

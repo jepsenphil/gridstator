@@ -125,6 +125,15 @@ export class SelfUpdater {
     if (rec?.to === install.id) await rm(switchFile(this.dataDir), { force: true });
   }
 
+  capability(): { available: boolean; reason: string | null } {
+    const reason = !this.build.install
+      ? 'Install the controller as a managed service to enable updates.'
+      : !this.onRestart
+        ? 'Run the controller as a service so it can restart after an update.'
+        : null;
+    return { available: reason === null, reason };
+  }
+
   async publish(body: Readable, sha256: string): Promise<PublishBuildResponse> {
     const install = this.build.install;
     if (!install) {

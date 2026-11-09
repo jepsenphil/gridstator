@@ -41,6 +41,7 @@ import type { AgentState } from './state.js';
 import { MetricsSampler, actBinary, collectNodeInfo } from './system.js';
 import { AgentToolchain } from './toolchain.js';
 import { Updater } from './updater.js';
+import { relocateController } from './relocation.js';
 
 export interface AgentOptions {
   dataDir: string;
@@ -92,6 +93,8 @@ export class Agent {
   private toolchain: AgentToolchain | undefined;
   private updating = false;
   private reconnectAttempt = 0;
+  private relocating = false;
+  private desiredControllerUrl: string | undefined;
   private reconnectTimer: NodeJS.Timeout | undefined;
   private heartbeatTimer: NodeJS.Timeout | undefined;
   private statusListeners = new Set<(s: AgentStatus, detail?: string) => void>();
@@ -163,6 +166,7 @@ export class Agent {
     const info = await collectNodeInfo(this.docker, actBin);
     this.info = {
       ...info,
+      controllerUrl: this.client.url,
       build: await this.updater.describe(this.toolchain.tools(info.act, managedAct !== undefined)),
     };
     await this.updater.startWatchdog();
@@ -310,8 +314,44 @@ export class Agent {
         'disconnected from controller',
       );
       this.setStatus('disconnected', `retrying in ${Math.round(delay / 1000)}s`);
-      this.reconnectTimer = setTimeout(() => this.connect(), delay);
+      this.reconnectTimer = setTimeout(() => void this.reconnect(), delay);
     });
+  }
+
+  private async reconnect(): Promise<void> {
+    if (this.stopping || this.fatal || this.updateOnly) return;
+    if (this.reconnectAttempt >= 2) {
+      for (const url of this.opts.state.controllerFallbackUrls ?? []) {
+        try {
+          if (await relocateController(this.opts.dataDir, this.opts.state, this.client, url)) {
+            if (this.info) this.info.controllerUrl = this.client.url;
+            break;
+          }
+        } catch {
+          /* An unavailable fallback never changes the pinned connection. */
+        }
+      }
+    }
+    this.connect();
+  }
+
+  private async moveController(url: string): Promise<void> {
+    if (this.relocating || this.stopping || url === this.client.url) return;
+    this.relocating = true;
+    try {
+      if (await relocateController(this.opts.dataDir, this.opts.state, this.client, url)) {
+        if (this.info) this.info.controllerUrl = this.client.url;
+        this.log.info({ controller: this.client.url }, 'controller address verified and saved');
+        this.ws?.close(1000, 'reconnecting at the new controller address');
+      }
+    } catch (err) {
+      this.log.debug(
+        { error: errorMessage(err) },
+        'new controller address is not reachable yet; keeping current connection',
+      );
+    } finally {
+      this.relocating = false;
+    }
   }
 
   private send(msg: AgentMessage): boolean {
@@ -324,7 +364,10 @@ export class Agent {
   private handle(msg: ControllerMessage): void {
     switch (msg.type) {
       case 'welcome':
-        return this.onWelcome(msg.settings, msg.resume);
+        this.onWelcome(msg.settings, msg.resume);
+        this.desiredControllerUrl = msg.controllerUrl;
+        if (msg.controllerUrl) void this.moveController(msg.controllerUrl);
+        return;
       case 'job.assign':
         return this.onAssign(msg);
       case 'job.cancel':
@@ -516,6 +559,9 @@ export class Agent {
 
   private async heartbeat(): Promise<void> {
     if (!this.welcomed) return;
+    if (this.desiredControllerUrl && this.desiredControllerUrl !== this.client.url) {
+      void this.moveController(this.desiredControllerUrl);
+    }
     try {
       const metrics = await this.sampler.sample();
       this.send({ type: 'heartbeat', metrics, activeJobs: this.activeJobIds });

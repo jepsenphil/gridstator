@@ -1,4 +1,4 @@
-import type { JobEvent, LogEntry } from '@gridstator/protocol';
+import type { CreateTokenResponse, JobEvent, LogEntry } from '@gridstator/protocol';
 import type { TestSummary } from '@gridstator/reports';
 import type { DashboardState, ToWebview, View } from '../src/messages';
 
@@ -34,6 +34,8 @@ export interface UiState {
   events: Record<string, JobEvent[]>;
   busy: Record<string, boolean>;
   toasts: Toast[];
+  /** Shown once after creation; never persisted with the webview's navigation state. */
+  createdToken: CreateTokenResponse | null;
 }
 
 export const initialState: UiState = {
@@ -48,6 +50,7 @@ export const initialState: UiState = {
   events: {},
   busy: {},
   toasts: [],
+  createdToken: null,
 };
 
 export type Action =
@@ -60,7 +63,8 @@ export type Action =
       itemId?: string | null;
       groupId?: string | null;
     }
-  | { type: 'dismissToast'; id: number };
+  | { type: 'dismissToast'; id: number }
+  | { type: 'dismissToken' };
 
 const MAX_LINES = 200_000;
 let toastId = 0;
@@ -99,8 +103,19 @@ function appendLogs(prev: JobLogs | undefined, entries: LogEntry[], reset: boole
 
 export function reducer(state: UiState, action: Action): UiState {
   switch (action.type) {
+    case 'tokenCreated':
+      return { ...state, createdToken: { token: action.token, info: action.info } };
+    case 'dismissToken':
+      return { ...state, createdToken: null };
     case 'state':
-      return { ...state, data: action.state };
+      return {
+        ...state,
+        data: action.state,
+        createdToken:
+          state.data?.connection.clusterId === action.state.connection.clusterId
+            ? state.createdToken
+            : null,
+      };
     case 'navigate':
     case 'go':
       return {

@@ -23,14 +23,25 @@ const THEME = `
   --vscode-textCodeBlock-background: #2b2b2b; --vscode-inputValidation-errorBackground: #5a1d1d; --vscode-inputValidation-errorBorder: #be1100;
 }`;
 
-async function open(page: Page, initial = state()): Promise<void> {
+const LIGHT_THEME = `${THEME}\n:root {
+  --vscode-foreground: #1f1f1f; --vscode-descriptionForeground: #575757; --vscode-editor-background: #ffffff;
+  --vscode-editorWidget-background: #f6f6f6; --vscode-widget-border: #d4d4d4; --vscode-list-hoverBackground: #eeeeee;
+  --vscode-button-secondaryBackground: #e5e5e5; --vscode-button-secondaryForeground: #262626; --vscode-button-secondaryHoverBackground: #d8d8d8;
+  --vscode-input-background: #ffffff; --vscode-input-foreground: #1f1f1f; --vscode-input-border: #b6b6b6;
+  --vscode-dropdown-background: #ffffff; --vscode-dropdown-foreground: #1f1f1f; --vscode-badge-background: #e5e5e5; --vscode-badge-foreground: #262626;
+  --vscode-textLink-foreground: #005fb8; --vscode-testing-iconPassed: #237b4b; --vscode-testing-iconFailed: #b5200d;
+  --vscode-editorWarning-foreground: #8a5d00; --vscode-textCodeBlock-background: #f0f0f0;
+  --vscode-inputValidation-errorBackground: #fff0f0; --vscode-inputValidation-errorBorder: #b5200d;
+}`;
+
+async function open(page: Page, initial = state(), theme = THEME): Promise<void> {
   const file = join(shots, '..', '.fixture.html');
   writeFileSync(
     file,
-    `<!doctype html><html><head><meta charset="utf-8"><style>${THEME}</style>
+    `<!doctype html><html><head><meta charset="utf-8"><style>${theme}</style>
      <link rel="stylesheet" href="file://${media}codicons/codicon.css"><link rel="stylesheet" href="file://${media}dashboard.css"></head>
      <body><div id="root"></div>
-     <script>window.__sent = []; window.acquireVsCodeApi = () => ({ postMessage: (m) => window.__sent.push(m), getState: () => undefined, setState: () => {} });</script>
+     <script>window.__sent = []; window.acquireVsCodeApi = () => ({ postMessage: (m) => window.__sent.push(m), getState: () => undefined, setState: (state) => { window.__saved = state; } });</script>
      <script src="file://${media}dashboard.js"></script></body></html>`,
   );
   await page.goto(`file://${file}`);
@@ -290,3 +301,198 @@ test('shows a connection banner with working actions when offline', async ({ pag
   expect(msgs).toContainEqual({ type: 'refresh' });
   expect(msgs).toContainEqual({ type: 'signIn' });
 });
+
+test('controller identity stays visible with and without a worker', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('.controller-name')).toHaveText('Controller · laptop');
+  await page.getByRole('tab', { name: 'Nodes', exact: true }).click();
+  await expect(page.locator('.node-card', { hasText: 'laptop' })).toContainText(
+    'Controller + worker',
+  );
+  await push(page, { type: 'state', state: state({ nodes: [] }) });
+  await expect(page.locator('.controller-card')).toContainText('laptop');
+  await expect(page.locator('.controller-card')).toContainText('Controller');
+  await expect(page.getByText('No worker nodes yet')).toBeVisible();
+});
+
+test('settings save preferences and cluster configuration without losing drafts to live job updates', async ({
+  page,
+}) => {
+  const initial = state();
+  await open(page, initial);
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await expect.poll(() => sent(page)).toContainEqual({ type: 'refreshSettings' });
+  await page.getByLabel('Recent job history').fill('150');
+  await push(page, { type: 'state', state: { ...initial, jobs: initial.jobs.slice(1) } });
+  await expect(page.getByLabel('Recent job history')).toHaveValue('150');
+  await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
+  await page.getByLabel('Keep jobs (days)').fill('120');
+  await page.getByLabel('Worker auto-updates', { exact: true }).selectOption('window');
+  await page.getByLabel('Update window start').fill('23:00');
+  await page.getByLabel('Update window end').fill('05:00');
+  await page.getByRole('button', { name: 'Save cluster settings', exact: true }).click();
+  const messages = await sent(page);
+  expect(messages).toContainEqual({
+    type: 'savePreferences',
+    patch: { ...initial.settings!.preferences, jobHistory: 150 },
+  });
+  expect(messages).toContainEqual({
+    type: 'saveClusterSettings',
+    patch: {
+      ...initial.settings!.cluster,
+      jobRetentionDays: 120,
+      autoUpdate: 'window',
+      updateWindow: { start: '23:00', end: '05:00' },
+    },
+  });
+});
+
+test('settings create usable worker tokens from loopback connections and keep secrets out of persisted navigation', async ({
+  page,
+}) => {
+  const initial = state();
+  initial.connection = {
+    ...initial.connection,
+    url: 'https://127.0.0.1:7300',
+    publicUrl: 'https://192.168.1.77:7300',
+  };
+  await open(page, initial);
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await page.getByLabel('Token name', { exact: true }).fill('build-worker');
+  await page.getByLabel('Token type').selectOption('join');
+  await page.getByRole('button', { name: 'Create token', exact: true }).click();
+  expect(await sent(page)).toContainEqual({
+    type: 'createToken',
+    request: { kind: 'join', name: 'build-worker', role: 'operator', maxUses: 1 },
+  });
+  await push(page, {
+    type: 'tokenCreated',
+    token: 'gsj_fixture_secret',
+    info: { ...initial.settings!.tokens![0]!, name: 'build-worker', kind: 'join' },
+  });
+  await expect(page.locator('.token-secret')).toContainText('gsj_fixture_secret');
+  expect(
+    await page.evaluate(() => JSON.stringify((window as unknown as { __saved: unknown }).__saved)),
+  ).not.toContain('gsj_fixture_secret');
+  await page.getByRole('button', { name: 'Copy token', exact: true }).click();
+  expect(await sent(page)).toContainEqual({ type: 'copy', text: 'gsj_fixture_secret' });
+  await page.getByRole('button', { name: 'Copy join command', exact: true }).click();
+  expect(await sent(page)).toContainEqual({
+    type: 'copy',
+    text: `gridstator agent join 'https://192.168.1.77:7300' --fingerprint 'sha256:${'0'.repeat(64)}' --token 'gsj_fixture_secret'`,
+  });
+  await page.getByRole('button', { name: 'Dismiss token', exact: true }).click();
+  await expect(page.locator('.token-secret')).toHaveCount(0);
+  await page.getByTitle('Revoke developer-laptop').click();
+  expect(await sent(page)).toContainEqual({ type: 'revokeToken', id: 'fixture-token' });
+});
+
+test('settings post release, safe rollout and local host actions', async ({ page }) => {
+  await open(page);
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Check for releases', exact: true }).click();
+  await page.getByRole('button', { name: 'Install selected release', exact: true }).click();
+  await page.getByRole('button', { name: 'Update workers', exact: true }).click();
+  await page.getByRole('button', { name: 'Stop controller', exact: true }).click();
+  await page.getByLabel('Listening port').fill('7400');
+  await page.getByLabel('Controller URL for workers').fill('https://192.168.1.77:7400');
+  await page.getByRole('button', { name: 'Apply & restart', exact: true }).click();
+  const messages = await sent(page);
+  expect(messages).toContainEqual({ type: 'requestReleases', includePrereleases: false });
+  expect(messages).toContainEqual({ type: 'installRelease', tag: 'v0.2.0' });
+  expect(messages).toContainEqual({
+    type: 'startRollout',
+    request: { now: false, drainTimeoutSeconds: null },
+  });
+  expect(messages).toContainEqual({ type: 'hostService', action: 'stop' });
+  expect(messages).toContainEqual({
+    type: 'saveHostConfiguration',
+    host: '0.0.0.0',
+    port: 7400,
+    url: 'https://192.168.1.77:7400',
+  });
+});
+
+test('offline settings remain available and offer explicit local recovery and service start', async ({
+  page,
+}) => {
+  const initial = state();
+  await open(page, {
+    ...initial,
+    connection: {
+      ...initial.connection,
+      status: 'error',
+      error: 'Token revoked',
+      canRestoreLocalAccess: true,
+    },
+    settings: {
+      ...initial.settings!,
+      cluster: null,
+      tokens: null,
+      host: {
+        ...initial.settings!.host!,
+        service: { installed: true, state: 'inactive', scope: 'user', canManage: true },
+      },
+    },
+  });
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await expect(page.getByLabel('Recent job history')).toBeEnabled();
+  await page
+    .locator('#settings-connection')
+    .getByRole('button', { name: 'Restore local access', exact: true })
+    .click();
+  await page.getByRole('button', { name: 'Start controller', exact: true }).click();
+  expect(await sent(page)).toContainEqual({ type: 'restoreLocalAccess' });
+  expect(await sent(page)).toContainEqual({ type: 'hostService', action: 'start' });
+  await expect(page.getByRole('button', { name: 'Create token', exact: true })).toBeDisabled();
+});
+
+test('operator settings show versions and preferences while disabling cluster administration', async ({
+  page,
+}) => {
+  const initial = state();
+  await open(page, {
+    ...initial,
+    connection: { ...initial.connection, role: 'operator', canRestoreLocalAccess: false },
+    settings: {
+      ...initial.settings!,
+      tokens: null,
+      host: {
+        ...initial.settings!.host!,
+        available: false,
+        reason: 'Host controls are available on the controller host.',
+      },
+    },
+  });
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await expect(page.getByLabel('Recent job history')).toBeEnabled();
+  await expect(page.getByLabel('Keep jobs (days)')).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Create token', exact: true })).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Install selected release', exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Update workers', exact: true })).toBeDisabled();
+  await expect(page.getByRole('table', { name: 'Component versions' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Stop controller', exact: true })).toHaveCount(0);
+});
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const viewport of ['desktop', 'narrow'] as const) {
+    test(`settings render without page overflow in ${theme} ${viewport}`, async ({ page }) => {
+      await page.setViewportSize(
+        viewport === 'desktop' ? { width: 1280, height: 860 } : { width: 390, height: 844 },
+      );
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await open(page, state(), theme === 'dark' ? THEME : LIGHT_THEME);
+      await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+      await expect(page.locator('.controller-name')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Connection', exact: true })).toBeVisible();
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+      await page.screenshot({ path: `${shots}settings-${theme}-${viewport}.png`, fullPage: true });
+      expect(errors).toEqual([]);
+    });
+  }
+}

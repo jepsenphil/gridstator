@@ -1044,3 +1044,257 @@ select {
 .update-unknown {
   color: var(--vscode-disabledForeground, inherit);
 }
+
+/* Settings extend the editor's native form vocabulary. */
+.conn-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.controller-name {
+  font-weight: 600;
+}
+.settings-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1120px;
+  margin: 0 auto;
+  align-items: start;
+}
+.settings-nav {
+  position: sticky;
+  top: 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.settings-nav a {
+  padding: 7px 9px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 3px;
+}
+.settings-nav a:hover,
+.settings-nav a:focus-visible {
+  color: var(--vscode-foreground);
+  background: var(--hover);
+}
+.settings-nav a:focus-visible,
+.release-notes summary:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}
+.settings-content {
+  min-width: 0;
+}
+.settings-section {
+  padding: 4px 0 28px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 80px;
+}
+.settings-section:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+.settings-section-heading {
+  margin-bottom: 18px;
+}
+.settings-section-heading p,
+.settings-description {
+  margin: 5px 0 0;
+  max-width: 72ch;
+  line-height: 1.5;
+}
+.settings-form {
+  max-width: 780px;
+}
+.settings-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 14px 18px;
+}
+.settings-wide {
+  grid-column: 1 / -1;
+}
+.settings-check {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.5;
+}
+.settings-check input {
+  margin: 0;
+  flex: none;
+  accent-color: var(--vscode-button-background);
+}
+.settings-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.settings-fieldset:disabled {
+  opacity: 0.65;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.settings-connection {
+  max-width: 780px;
+}
+.settings-section .props dd {
+  overflow-wrap: anywhere;
+}
+.settings-table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.settings-table-wrap:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 2px;
+}
+.settings-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 520px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+.settings-table th,
+.settings-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.settings-table th:first-child,
+.settings-table td:first-child {
+  padding-left: 0;
+}
+.settings-table thead th {
+  color: var(--muted);
+  font-size: 0.88em;
+  font-weight: 500;
+}
+.settings-table tbody th {
+  font-weight: 500;
+}
+.settings-table tr > :nth-child(2) {
+  white-space: nowrap;
+}
+.settings-table tr:last-child > * {
+  border-bottom: 0;
+}
+.settings-subheading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.settings-update-workers {
+  margin-top: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.settings-update-workers > p {
+  line-height: 1.5;
+  max-width: 72ch;
+}
+.rollout-progress {
+  margin-top: 14px;
+}
+.release-notes summary {
+  cursor: pointer;
+  color: var(--vscode-textLink-foreground);
+}
+.release-notes pre {
+  font: inherit;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 10px 12px;
+  background: var(--vscode-textCodeBlock-background);
+}
+.token-secret {
+  padding: 14px;
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: var(--radius);
+}
+.token-secret p {
+  margin: 5px 0 10px;
+}
+.token-secret .code-block {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .brand {
+    order: 1;
+  }
+  .conn {
+    order: 2;
+    max-width: calc(100% - 140px);
+  }
+  .tabs {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: none;
+  }
+  .conn .controller-name {
+    display: block;
+  }
+  .conn-label > .muted {
+    display: none;
+  }
+  .settings-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .settings-nav {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .settings-nav a {
+    flex: none;
+  }
+  .settings-section {
+    scroll-margin-top: 110px;
+  }
+  .app > .banner {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 600px) {
+  .tabs .tab > .codicon {
+    display: none;
+  }
+  .settings-table-wrap::after {
+    content: 'Scroll horizontally to see every column.';
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.85em;
+  }
+}

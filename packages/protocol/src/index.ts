@@ -4,6 +4,7 @@ export * from './job.js';
 export * from './group.js';
 export * from './node.js';
 export * from './update.js';
+export * from './release.js';
 export * from './toolchain.js';
 export * from './manifest.js';
 export * from './api.js';
