@@ -1,3 +1,4 @@
+import { chmodSync } from 'node:fs';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import type {
   Artifact,
@@ -230,10 +231,25 @@ export class Store {
 
   constructor(path: string) {
     this.db = new DatabaseSync(path);
+    // The database holds token hashes and job secrets: owner-only, including WAL side files.
+    for (const f of [path, `${path}-wal`, `${path}-shm`]) {
+      try {
+        chmodSync(f, 0o600);
+      } catch {
+        // side files appear lazily
+      }
+    }
     this.db.exec(
       'PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;',
     );
     this.migrate();
+    for (const f of [`${path}-wal`, `${path}-shm`]) {
+      try {
+        chmodSync(f, 0o600);
+      } catch {
+        // not created yet
+      }
+    }
   }
 
   close(): void {
