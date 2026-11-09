@@ -1,0 +1,17 @@
+# Gridstator configuration for this example. See docs/ARCHITECTURE.md.
+version: 1
+project: example-node-project
+
+defaults:
+  image: node:24-bookworm-slim
+  resources:
+    cpus: 1
+    memory: 1g
+
+tasks:
+  test:
+    description: Run the test suite (no dependencies to install)
+    command: node --test
+  slow:
+    description: A long-running job, useful for trying cancellation
+    command: for i in $(seq 1 300); do echo "tick $i"; sleep 1; done

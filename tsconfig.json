@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/protocol" },
+    { "path": "packages/scheduler" },
+    { "path": "packages/snapshot" },
+    { "path": "packages/executors" },
+    { "path": "packages/client" },
+    { "path": "apps/controller" },
+    { "path": "apps/agent" },
+    { "path": "apps/cli" }
+  ]
+}

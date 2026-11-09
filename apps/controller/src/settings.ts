@@ -1,0 +1,30 @@
+import {
+  ClusterSettingsSchema,
+  DEFAULT_CLUSTER_SETTINGS,
+  type ClusterSettings,
+} from '@gridstator/protocol';
+import type { Store } from './db.js';
+
+const KEY = 'cluster_settings';
+
+export class SettingsService {
+  private readonly store: Store;
+
+  constructor(store: Store) {
+    this.store = store;
+  }
+
+  get(): ClusterSettings {
+    const raw = this.store.getMeta(KEY);
+    const parsed = raw
+      ? ClusterSettingsSchema.safeParse({ ...DEFAULT_CLUSTER_SETTINGS, ...JSON.parse(raw) })
+      : undefined;
+    return parsed?.success ? parsed.data : { ...DEFAULT_CLUSTER_SETTINGS };
+  }
+
+  update(patch: Partial<ClusterSettings>): ClusterSettings {
+    const next = ClusterSettingsSchema.parse({ ...this.get(), ...patch });
+    this.store.setMeta(KEY, JSON.stringify(next));
+    return next;
+  }
+}

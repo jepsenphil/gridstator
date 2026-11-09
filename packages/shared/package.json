@@ -1,0 +1,20 @@
+{
+  "name": "@gridstator/shared",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "pino": "^10.4.0",
+    "pino-pretty": "^13.2.0"
+  }
+}

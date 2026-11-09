@@ -1,0 +1,11 @@
+{
+  "name": "gridstator-example-node-project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free Node.js project used to try Gridstator and to validate snapshots.",
+  "scripts": {
+    "test": "node --test",
+    "test:shard": "node --test --test-shard=${SHARD:-1/1}"
+  }
+}

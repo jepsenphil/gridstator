@@ -1,0 +1,30 @@
+{
+  "name": "gridstator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multiple machines. One workflow. Distributed builds and tests for your LAN.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "gridstator": "./dist/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "default": "./dist/main.js"
+    }
+  },
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "@gridstator/agent": "workspace:*",
+    "@gridstator/client": "workspace:*",
+    "@gridstator/controller": "workspace:*",
+    "@gridstator/executors": "workspace:*",
+    "@gridstator/protocol": "workspace:*",
+    "@gridstator/shared": "workspace:*",
+    "@gridstator/snapshot": "workspace:*",
+    "commander": "^15.1.0"
+  }
+}
