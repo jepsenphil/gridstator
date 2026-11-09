@@ -119,6 +119,19 @@ Install the new version on every machine (`npm install -g <new tarball>`) and re
 The controller migrates its database automatically. Run the same version everywhere: an agent
 whose protocol version differs from the controller's is refused with a message saying so.
 
+### Self-updating installs
+
+`install-service` copies the installed package into the service's own version store,
+`<data dir>/install/versions/<version>-<hash>/` (owned by the service user, so no root is needed to
+update), and the unit starts `<data dir>/install/launcher.mjs`. The launcher runs the active version
+from `install/state.json`. If a new version fails to start three times, or does not report itself
+healthy in time, the launcher goes back to the previous version.
+
+Services installed before this existed run the global install in place. To convert one, install the
+new tarball once and rerun `install-service` with the same options plus `--force`. Services
+installed from the unbundled workspace build (`apps/cli/dist/main.js`) always run in place. Use the
+release tarball, or `pnpm bundle` and `apps/cli/release`, to get a self-updating install.
+
 ## Uninstalling
 
 ```bash

@@ -1,11 +1,21 @@
 import { execFile } from 'node:child_process';
 import { existsSync, realpathSync } from 'node:fs';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { chown, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
 import type { Command } from 'commander';
-import { GridstatorError } from '@gridstator/shared';
+import {
+  activateVersion,
+  bundledPackageDir,
+  defaultAgentDataDir,
+  defaultControllerDataDir,
+  GridstatorError,
+  installFromPackageDir,
+  installRoot,
+  launcherPath,
+  writeLauncher,
+} from '@gridstator/shared';
 import { c, info } from '../output.js';
 
 const execFileAsync = promisify(execFile);
@@ -66,13 +76,30 @@ export function renderUnit(o: UnitOptions): string {
   return lines.join('\n');
 }
 
-async function lookupUser(name: string): Promise<{ name: string; home: string }> {
+interface SystemUser {
+  name: string;
+  home: string;
+  uid: number;
+  gid: number;
+}
+
+async function lookupUser(name: string): Promise<SystemUser> {
   const passwd = await readFile('/etc/passwd', 'utf8');
   for (const line of passwd.split('\n')) {
     const f = line.split(':');
-    if (f[0] === name && f[5]) return { name, home: f[5] };
+    if (f[0] === name && f[5]) return { name, home: f[5], uid: Number(f[2]), gid: Number(f[3]) };
   }
   throw new GridstatorError('BAD_REQUEST', `User ${name} does not exist`);
+}
+
+/** Hands a tree created by root (sudo install-service --system) to the service user. */
+async function chownTree(path: string, uid: number, gid: number): Promise<void> {
+  await chown(path, uid, gid);
+  for (const entry of await readdir(path, { withFileTypes: true })) {
+    const p = join(path, entry.name);
+    if (entry.isDirectory()) await chownTree(p, uid, gid);
+    else await chown(p, uid, gid);
+  }
 }
 
 async function systemctl(args: string[]): Promise<void> {
@@ -131,10 +158,17 @@ async function install(role: ServiceRole, flags: InstallFlags): Promise<void> {
   if (dataDir) args.push('--data-dir', dataDir);
   if (role === 'controller' && flags.withAgent)
     args.push('--with-agent', ...(flags.agentName ? ['--agent-name', flags.agentName] : []));
+  // A bundled build is copied into the role's version store and started through the launcher, so
+  // the service can update itself and roll back. The unbundled workspace build cannot be copied
+  // (it needs node_modules) and is started in place.
+  const pkgDir = bundledPackageDir(script);
+  const root = installRoot(
+    dataDir ?? (role === 'agent' ? defaultAgentDataDir() : defaultControllerDataDir()),
+  );
   const unit = renderUnit({
     role,
     node: process.execPath,
-    script,
+    script: pkgDir ? launcherPath(root) : script,
     args,
     ...(targetUser ? { user: targetUser } : {}),
     pathDirs: [
@@ -153,8 +187,23 @@ async function install(role: ServiceRole, flags: InstallFlags): Promise<void> {
   const file = join(dir, unitName(role));
   if (existsSync(file) && !flags.force) {
     throw new GridstatorError('CONFLICT', `${file} already exists`, {
-      hint: 'Pass --force to replace it.',
+      hint: 'Pass --force to replace it (this also converts an existing service to a self-updating install).',
     });
+  }
+  if (pkgDir) {
+    const created = await mkdir(root, { recursive: true });
+    const id = await installFromPackageDir(root, pkgDir);
+    await activateVersion(root, id);
+    await writeLauncher(root);
+    if (targetUser) await chownTree(created ?? root, targetUser.uid, targetUser.gid);
+    info(`Installed version ${id} into ${root} (updates and rollbacks happen there).`);
+  } else {
+    info(
+      c.yellow(
+        `${script} is not a bundled build, so this service runs it in place and cannot update itself. Install the release tarball (or run \`pnpm bundle\` and use apps/cli/release) for self-updates.`,
+        process.stderr,
+      ),
+    );
   }
   await mkdir(dir, { recursive: true });
   await writeFile(file, unit, { mode: 0o644 });
