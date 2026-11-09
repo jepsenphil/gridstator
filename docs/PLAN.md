@@ -66,7 +66,8 @@ the changed version.* Validated across two machines and in the automated e2e tes
 | Packed tarball installed into a clean npm prefix; init → start → snapshot run | pass |
 | Manual: controller restart mid-job (15/15 log lines, job succeeded) | pass |
 | Manual: `kill -9` agent mid-job → orphan container removed on restart, job `lost`, auto-retry succeeded | pass |
-| Node 22 | not run locally; covered by the CI matrix |
+| Node 22 | not run locally; **passes in CI** (GitHub Actions, first run on 2026-11-09) |
+| GitHub Actions CI: Node 22 + 24 checks, end-to-end with Docker, bundle + smoke test | pass |
 
 ## Two-machine validation (2026-11-09)
 

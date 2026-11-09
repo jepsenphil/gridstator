@@ -1,5 +1,7 @@
 # Gridstator
 
+[![CI](https://github.com/jepsenphil/gridstator/actions/workflows/ci.yml/badge.svg)](https://github.com/jepsenphil/gridstator/actions/workflows/ci.yml)
+
 **Multiple machines. One workflow.**
 
 Gridstator turns the computers on your local network into a development compute cluster. Run your
