@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { LabelSchema, TimestampSchema } from './common.js';
+import { AgentBuildSchema, NodeAutoUpdateSchema, NodeUpdateStatusSchema } from './update.js';
 
 export const ToolStatusSchema = z.object({
   available: z.boolean(),
@@ -22,6 +23,8 @@ export const NodeInfoSchema = z.object({
   act: ToolStatusSchema,
   /** Executor kinds this agent can run, e.g. ["command"]. */
   executors: z.array(z.string()).max(32),
+  /** The exact build the agent runs; absent for agents older than self-update. */
+  build: AgentBuildSchema.optional(),
 });
 export type NodeInfo = z.infer<typeof NodeInfoSchema>;
 
@@ -47,6 +50,7 @@ export const NodeSettingsSchema = z.object({
   }),
   labels: z.array(LabelSchema).max(64),
   schedulingMode: SchedulingModeSchema,
+  autoUpdate: NodeAutoUpdateSchema.default('inherit'),
 });
 export type NodeSettings = z.infer<typeof NodeSettingsSchema>;
 
@@ -60,6 +64,7 @@ export const NodeSettingsPatchSchema = z.object({
     .optional(),
   labels: NodeSettingsSchema.shape.labels.optional(),
   schedulingMode: SchedulingModeSchema.optional(),
+  autoUpdate: NodeAutoUpdateSchema.optional(),
 });
 export type NodeSettingsPatch = z.infer<typeof NodeSettingsPatchSchema>;
 
@@ -72,6 +77,7 @@ export function defaultNodeSettings(info: Pick<NodeInfo, 'cpus' | 'memoryTotalMb
     },
     labels: [],
     schedulingMode: 'enabled',
+    autoUpdate: 'inherit',
   };
 }
 
@@ -95,6 +101,8 @@ export const NodeSchema = z.object({
   lastSeenAt: TimestampSchema.nullable(),
   connectedAt: TimestampSchema.nullable(),
   createdAt: TimestampSchema,
+  /** Optional so newer clients can read older controllers. */
+  update: NodeUpdateStatusSchema.optional(),
 });
 export type Node = z.infer<typeof NodeSchema>;
 

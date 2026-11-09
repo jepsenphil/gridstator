@@ -35,6 +35,7 @@ function node(
       reserved: { cpus: 0, memoryMb: 0 },
       labels: [],
       schedulingMode: 'enabled',
+      autoUpdate: 'inherit',
     },
     effectiveLabels: ['os=linux', 'arch=x64', 'docker'],
     allocated: { cpus: 0, memoryMb: 0, jobs: 0 },
@@ -88,6 +89,7 @@ describe('schedule', () => {
         reserved: { cpus: 6, memoryMb: 24 * 1024 },
         labels: [],
         schedulingMode: 'enabled',
+        autoUpdate: 'inherit',
       },
     });
     const small = job({ resources: { cpus: 2, memoryMb: 4096 } });
@@ -112,6 +114,7 @@ describe('schedule', () => {
         reserved: { cpus: 0, memoryMb: 0 },
         labels: [],
         schedulingMode: 'enabled',
+        autoUpdate: 'inherit',
       },
     });
     const r = schedule([job(), job()], [n]);
@@ -126,6 +129,7 @@ describe('schedule', () => {
         reserved: { cpus: 0, memoryMb: 0 },
         labels: [],
         schedulingMode: 'draining',
+        autoUpdate: 'inherit',
       },
     });
     const j = job();
@@ -206,6 +210,7 @@ describe('schedule', () => {
         reserved: { cpus: 0, memoryMb: 0 },
         labels: [],
         schedulingMode: 'enabled',
+        autoUpdate: 'inherit',
       },
       allocated: { cpus: 1, memoryMb: 1, jobs: 1 },
     });

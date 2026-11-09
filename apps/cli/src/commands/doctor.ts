@@ -100,6 +100,23 @@ export async function runDoctor(): Promise<Check[]> {
         ? 'Start an agent (`gridstator agent start`) or `controller start --with-agent`.'
         : undefined,
     );
+    if (cluster.build) {
+      const behind = nodes.filter(
+        (n) => n.update && n.update.state !== 'current' && n.update.state !== 'unknown',
+      );
+      const known = nodes.filter((n) => n.update && n.update.state !== 'unknown');
+      // A behind worker is a warning, not a failure: `agents status --check` is the hard gate.
+      add(
+        'worker versions',
+        behind.length === 0 ? 'ok' : 'warn',
+        behind.length === 0
+          ? `${known.length} reachable worker(s) run controller build ${cluster.build.id}`
+          : `${behind.length} of ${known.length} reachable worker(s) not on ${cluster.build.id}: ${behind
+              .map((n) => `${n.name} (${n.update?.state})`)
+              .join(', ')}`,
+        behind.length > 0 ? 'See `gridstator agents status`.' : undefined,
+      );
+    }
     for (const n of nodes) {
       if (n.status !== 'online') continue;
       if (n.health === 'degraded') add(`node ${n.name}`, 'warn', n.healthIssues.join('; '));

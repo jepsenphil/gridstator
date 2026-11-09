@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -7,12 +7,17 @@ import {
   activateVersion,
   bundledPackageDir,
   confirmPending,
+  detectBuild,
   installFromPackageDir,
   installFromTarball,
   LAUNCHER_MAX_ATTEMPTS,
   launcherPath,
+  packageIdentity,
   packageVersionId,
+  packPackage,
   readInstallState,
+  refreshLauncher,
+  setManagedNode,
   writeLauncher,
 } from './install.js';
 
@@ -44,6 +49,7 @@ writeFileSync(process.env.OUT, JSON.stringify({
   argv: process.argv.slice(1),
   root: process.env.GRIDSTATOR_INSTALL_ROOT,
   version: process.env.GRIDSTATOR_INSTALL_VERSION,
+  node: process.env.FAKE_NODE ?? null,
 }));`;
   await writeFile(join(dir, 'dist', 'gridstator.mjs'), body);
   return dir;
@@ -84,6 +90,49 @@ describe('version store', () => {
     expect(await readFile(join(root, 'versions', tid, 'dist', 'gridstator.mjs'), 'utf8')).toContain(
       '"t"',
     );
+  });
+});
+
+describe('build identity', () => {
+  it('identifies a managed install from the launcher environment', async () => {
+    const id = await installFromPackageDir(root, await fakePackage('a'));
+    const build = await detectBuild('9.9.9', '/somewhere/else.js', {
+      GRIDSTATOR_INSTALL_ROOT: root,
+      GRIDSTATOR_INSTALL_VERSION: id,
+    });
+    expect(build).toMatchObject({
+      id,
+      version: '0.2.0',
+      packageDir: join(root, 'versions', id),
+      install: { root, id },
+    });
+    expect(build.sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(id.endsWith(build.sha256!.slice(0, 12))).toBe(true);
+  });
+
+  it('identifies a bundled package, and falls back for the workspace build', async () => {
+    const pkg = await fakePackage('b');
+    const bundled = await detectBuild('9.9.9', join(pkg, 'dist', 'gridstator.mjs'), {});
+    expect(bundled).toMatchObject({
+      id: (await packageIdentity(pkg)).id,
+      packageDir: pkg,
+      install: null,
+    });
+    expect(await detectBuild('9.9.9', '/repo/apps/cli/dist/main.js', {})).toEqual({
+      id: '9.9.9-unbundled',
+      version: '9.9.9',
+      sha256: null,
+      packageDir: null,
+      install: null,
+    });
+  });
+
+  it('packs a package into a tarball that installs as the same build', async () => {
+    const pkg = await fakePackage('p');
+    const tgz = join(tmp, 'out', 'p.tgz');
+    await mkdir(join(tmp, 'out'));
+    await packPackage(pkg, tgz);
+    expect(await installFromTarball(root, tgz)).toBe(await packageVersionId(pkg));
   });
 });
 
@@ -162,5 +211,84 @@ describe('launcher', () => {
     const r = launch();
     expect(r.status).toBe(1);
     expect(r.stderr).toContain(`version ${a} is missing`);
+  });
+});
+
+describe('managed Node.js', () => {
+  /** A "node" that runs the real one, marking the environment so the test can tell. */
+  async function fakeNode(name: string, opts: { broken?: boolean } = {}): Promise<string> {
+    const file = join(tmp, `${name}.sh`);
+    await writeFile(
+      file,
+      opts.broken
+        ? '#!/bin/sh\nexit 9\n'
+        : `#!/bin/sh\nFAKE_NODE=${name} exec ${JSON.stringify(process.execPath)} "$@"\n`,
+    );
+    await chmod(file, 0o755);
+    return file;
+  }
+
+  it('re-executes the launcher under the managed binary and keeps it once confirmed', async () => {
+    const a = await installFromPackageDir(root, await fakePackage('a'));
+    await activateVersion(root, a);
+    await writeLauncher(root);
+    const node = await fakeNode('managed');
+    await setManagedNode(root, node, Date.now() + 60_000);
+    expect(await readInstallState(root)).toMatchObject({
+      node,
+      pending: { id: a, previous: a, previousNode: null, attempts: 0 },
+    });
+    const r = launch('agent', 'start');
+    expect(r.status).toBe(0);
+    const out = JSON.parse(await readFile(r.out, 'utf8')) as Record<string, unknown>;
+    expect(out).toMatchObject({
+      name: 'a',
+      node: 'managed',
+      argv: [expect.any(String), 'agent', 'start'],
+    });
+    // One launch counts once, although the launcher ran twice.
+    expect((await readInstallState(root))?.pending?.attempts).toBe(1);
+    expect(await confirmPending(root, a)).toBe(true);
+    // Activating another version keeps the managed binary.
+    const b = await installFromPackageDir(root, await fakePackage('b'));
+    await activateVersion(root, b);
+    expect((await readInstallState(root))?.node).toBe(node);
+  });
+
+  it('goes back to the previous binary when the new one keeps failing', async () => {
+    const a = await installFromPackageDir(root, await fakePackage('a'));
+    await activateVersion(root, a);
+    await writeLauncher(root);
+    await setManagedNode(root, await fakeNode('broken', { broken: true }), Date.now() + 60_000);
+    for (let i = 0; i < LAUNCHER_MAX_ATTEMPTS; i++) expect(launch().status).toBe(9);
+    const r = launch();
+    expect(r.status).toBe(0);
+    expect(r.stderr).toContain('rolled back');
+    const out = JSON.parse(await readFile(r.out, 'utf8')) as Record<string, unknown>;
+    expect(out).toMatchObject({ name: 'a', node: null });
+    const state = await readInstallState(root);
+    expect(state).toMatchObject({
+      current: a,
+      lastRollback: { from: a, to: a, reason: 'crashed' },
+    });
+    expect(state?.node).toBeUndefined();
+  });
+
+  it('combines with a version switch and rewrites older launchers', async () => {
+    const a = await installFromPackageDir(root, await fakePackage('a'));
+    const b = await installFromPackageDir(root, await fakePackage('b'));
+    await activateVersion(root, a);
+    await activateVersion(root, b, { deadline: Date.now() + 60_000 });
+    const node = await fakeNode('n2');
+    await setManagedNode(root, node, Date.now() + 60_000);
+    expect(await readInstallState(root)).toMatchObject({
+      current: b,
+      node,
+      pending: { id: b, previous: a, previousNode: null },
+    });
+    await writeFile(launcherPath(root), '// launcher-version: 1\n');
+    expect(await refreshLauncher(root)).toBe(true);
+    expect(await refreshLauncher(root)).toBe(false);
+    expect(launch().status).toBe(0);
   });
 });

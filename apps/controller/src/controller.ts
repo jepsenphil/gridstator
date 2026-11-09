@@ -3,17 +3,21 @@ import { rename } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import {
+  GRIDSTATOR_VERSION,
   GridstatorError,
+  detectBuild,
   ensureDir,
   newId,
   readJsonFile,
   silentLogger,
   writeJsonFile,
+  type BuildIdentity,
   type Logger,
 } from '@gridstator/shared';
 import type { NodeInfo, NodeSettingsPatch } from '@gridstator/protocol';
 import { BlobStore } from '@gridstator/snapshot';
 import { Auth } from './auth.js';
+import { BuildSource } from './build.js';
 import { Cluster, type ClusterTiming } from './cluster.js';
 import { Store } from './db.js';
 import { EventHub } from './hub.js';
@@ -21,7 +25,10 @@ import { LogStore } from './logs.js';
 import { generatePki, loadPki, pkiPaths } from './pki.js';
 import { runRetention } from './retention.js';
 import { buildServer } from './server.js';
+import { SelfUpdater, recoverAfterRollback } from './self-update.js';
 import { SettingsService } from './settings.js';
+import { ToolchainMirror, type Fetcher } from './toolchain.js';
+import { UpdateManager, type UpdateTiming } from './updates.js';
 
 export const DEFAULT_CONTROLLER_PORT = 7300;
 
@@ -107,6 +114,40 @@ export async function initController(options: {
   }
 }
 
+/**
+ * Issues a client token by writing to the controller's database directly (works while the
+ * controller runs). For recovery when no admin token is at hand: access to the data directory is
+ * already full control of the cluster.
+ */
+export async function issueClientTokenOffline(options: {
+  dataDir: string;
+  name: string;
+  role: 'admin' | 'operator';
+}): Promise<{ token: string; url: string; caPem: string; fingerprint: string }> {
+  const paths = controllerPaths(options.dataDir);
+  if (!existsSync(paths.db) || !existsSync(paths.pki.caCert)) {
+    throw new GridstatorError('CONFIG', `No controller is initialized in ${options.dataDir}`);
+  }
+  const fileConfig = await readJsonFile<ControllerFileConfig>(paths.config);
+  const pki = await loadPki(options.dataDir);
+  const store = new Store(paths.db);
+  try {
+    const { token } = new Auth(store).issue({
+      kind: 'client',
+      name: options.name,
+      role: options.role,
+    });
+    return {
+      token,
+      url: `https://127.0.0.1:${fileConfig?.port ?? DEFAULT_CONTROLLER_PORT}`,
+      caPem: pki.caPem,
+      fingerprint: pki.fingerprint,
+    };
+  } finally {
+    store.close();
+  }
+}
+
 export interface ControllerOptions {
   dataDir: string;
   /** Overrides controller.json. */
@@ -116,6 +157,14 @@ export interface ControllerOptions {
   timing?: Partial<ClusterTiming>;
   maxLogBytesPerJob?: number;
   retentionIntervalMs?: number;
+  /** The build workers update to; default: the running process's build. */
+  build?: BuildIdentity;
+  updateTiming?: Partial<UpdateTiming>;
+  /** Asked to stop and exit for a restart after switching to a published build. */
+  onRestart?: () => void;
+  /** Downloads toolchain archives (default: HTTPS from nodejs.org / GitHub). */
+  toolchainFetcher?: Fetcher;
+  toolchainPins?: ConstructorParameters<typeof ToolchainMirror>[0]['pins'];
 }
 
 export interface RunningController {
@@ -127,6 +176,8 @@ export interface RunningController {
   caPem: string;
   cluster: Cluster;
   store: Store;
+  updates: UpdateManager;
+  build: BuildSource;
   app: FastifyInstance;
   /** Registers (or re-uses) a node for an agent running in this process (embedded mode). */
   registerLocalAgent(
@@ -150,6 +201,8 @@ export async function startController(options: ControllerOptions): Promise<Runni
   const host = options.host ?? fileConfig?.host ?? '0.0.0.0';
   const port = options.port ?? fileConfig?.port ?? DEFAULT_CONTROLLER_PORT;
   const pki = await loadPki(options.dataDir);
+  const identity = options.build ?? (await detectBuild(GRIDSTATOR_VERSION));
+  await recoverAfterRollback(options.dataDir, paths.db, identity, logger);
   const store = new Store(paths.db);
   const clusterId = store.getMeta('cluster_id') ?? 'unknown';
   const blobs = new BlobStore(paths.cas);
@@ -158,6 +211,30 @@ export async function startController(options: ControllerOptions): Promise<Runni
   const hub = new EventHub();
   const auth = new Auth(store);
   const settings = new SettingsService(store);
+  const build = new BuildSource(identity, options.dataDir, logger.child({ component: 'updates' }));
+  const toolchain = new ToolchainMirror({
+    dir: join(options.dataDir, 'toolchain'),
+    settings: () => settings.get(),
+    logger: logger.child({ component: 'toolchain' }),
+    ...(options.toolchainFetcher ? { fetcher: options.toolchainFetcher } : {}),
+    ...(options.toolchainPins ? { pins: options.toolchainPins } : {}),
+    onReady: () => updates.tick(),
+  });
+  const updates = new UpdateManager({
+    store,
+    build,
+    settings: () => settings.get(),
+    logger: logger.child({ component: 'updates' }),
+    ...(options.updateTiming ? { timing: options.updateTiming } : {}),
+    toolchain,
+  });
+  const selfUpdater = new SelfUpdater({
+    dataDir: options.dataDir,
+    build: identity,
+    store,
+    logger: logger.child({ component: 'self-update' }),
+    ...(options.onRestart ? { onRestart: options.onRestart } : {}),
+  });
   const cluster = new Cluster({
     store,
     logs,
@@ -165,6 +242,7 @@ export async function startController(options: ControllerOptions): Promise<Runni
     auth,
     logger: logger.child({ component: 'cluster' }),
     ...(options.timing ? { timing: options.timing } : {}),
+    updates,
   });
   const app = await buildServer({
     store,
@@ -174,6 +252,10 @@ export async function startController(options: ControllerOptions): Promise<Runni
     logs,
     blobs,
     settings,
+    updates,
+    build,
+    toolchain,
+    selfUpdater,
     logger,
     clusterId,
     caPem: pki.caPem,
@@ -198,6 +280,10 @@ export async function startController(options: ControllerOptions): Promise<Runni
   const address = app.server.address();
   const boundPort = typeof address === 'object' && address ? address.port : port;
   cluster.start();
+  void build.prepare().then(() => updates.tick());
+  await selfUpdater
+    .confirm()
+    .catch((err: unknown) => logger.error({ err }, 'could not confirm the controller update'));
   const retentionTimer = setInterval(() => {
     retention()
       .then((r) => logger.info(r, 'retention sweep finished'))
@@ -219,6 +305,8 @@ export async function startController(options: ControllerOptions): Promise<Runni
     caPem: pki.caPem,
     cluster,
     store,
+    updates,
+    build,
     app,
     registerLocalAgent(name, info, nodeSettings) {
       const existing = store.nodeByName(name);
@@ -235,6 +323,8 @@ export async function startController(options: ControllerOptions): Promise<Runni
       closed = true;
       clearInterval(retentionTimer);
       cluster.stop();
+      // Do not leave a half-written update package behind.
+      await build.prepare().catch(() => undefined);
       hub.closeAll();
       await app.close();
       store.close();

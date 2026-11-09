@@ -143,6 +143,11 @@ export const ControllerNodeSettingsSchema = z.object({
   settings: NodeSettingsSchema,
 });
 
+/** Asks the agent to call the update endpoint now (see AGENT_UPDATE_PATH). */
+export const ControllerUpdateCheckSchema = z.object({
+  type: z.literal('update.check'),
+});
+
 export const ControllerErrorSchema = z.object({
   type: z.literal('error'),
   code: z.string(),
@@ -157,6 +162,7 @@ export const ControllerMessageSchema = z.discriminatedUnion('type', [
   ControllerJobCancelSchema,
   ControllerJobAckSchema,
   ControllerNodeSettingsSchema,
+  ControllerUpdateCheckSchema,
   ControllerErrorSchema,
 ]);
 export type ControllerMessage = z.infer<typeof ControllerMessageSchema>;

@@ -2,11 +2,14 @@ import { mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import type { WebSocket } from 'ws';
 import {
+  GRIDSTATOR_VERSION,
   GridstatorError,
   decodeWsData,
+  detectBuild,
   errorMessage,
   silentLogger,
   writeFileAtomic,
+  type BuildIdentity,
   type Logger,
 } from '@gridstator/shared';
 import {
@@ -36,6 +39,8 @@ import { readSpool, removeSpool } from './log-pipeline.js';
 import { JobRunner } from './runner.js';
 import type { AgentState } from './state.js';
 import { MetricsSampler, actBinary, collectNodeInfo } from './system.js';
+import { AgentToolchain } from './toolchain.js';
+import { Updater } from './updater.js';
 
 export interface AgentOptions {
   dataDir: string;
@@ -49,9 +54,17 @@ export interface AgentOptions {
   cacheMaxBytes?: number;
   maxLogBytesPerJob?: number;
   keepFailedWorkspaces?: boolean;
+  /** The running build; detected when omitted. */
+  build?: BuildIdentity;
+  /**
+   * Let the controller update this agent. Only for `agent start` from a managed install: an agent
+   * embedded in the controller process must never touch the controller's version store.
+   */
+  selfUpdate?: boolean;
 }
 
-export type AgentStatus = 'connecting' | 'connected' | 'disconnected' | 'stopped';
+/** `restarting`: a new version is installed; stop and exit with RESTART_EXIT_CODE. */
+export type AgentStatus = 'connecting' | 'connected' | 'disconnected' | 'stopped' | 'restarting';
 
 /**
  * Worker agent: keeps one outbound WebSocket to the controller, runs assigned jobs, and buffers
@@ -73,6 +86,11 @@ export class Agent {
   private welcomed = false;
   private stopping = false;
   private fatal: string | undefined;
+  /** The controller speaks another agent protocol; only the update endpoint is used. */
+  private updateOnly = false;
+  private updater: Updater | undefined;
+  private toolchain: AgentToolchain | undefined;
+  private updating = false;
   private reconnectAttempt = 0;
   private reconnectTimer: NodeJS.Timeout | undefined;
   private heartbeatTimer: NodeJS.Timeout | undefined;
@@ -123,7 +141,31 @@ export class Agent {
     mkdirSync(this.dirs.work, { recursive: true, mode: 0o700 });
     mkdirSync(this.dirs.tmp, { recursive: true, mode: 0o700 });
     await this.cache.init();
-    this.info = await collectNodeInfo(this.docker);
+    const build = this.opts.build ?? (await detectBuild(GRIDSTATOR_VERSION));
+    this.updater = new Updater({
+      client: this.client,
+      build,
+      selfUpdate: this.opts.selfUpdate ?? false,
+      tmpDir: this.dirs.tmp,
+      logger: this.log,
+      restart: () => this.setStatus('restarting'),
+    });
+    this.toolchain = new AgentToolchain({
+      dataDir: this.opts.dataDir,
+      client: this.client,
+      logger: this.log,
+      installRoot: this.updater.managed ? (build.install?.root ?? null) : null,
+    });
+    await this.toolchain.load();
+    // An explicit GRIDSTATOR_ACT wins; then the managed act; then act from PATH.
+    const managedAct = process.env['GRIDSTATOR_ACT'] ? undefined : this.toolchain.actPath();
+    const actBin = managedAct ?? actBinary();
+    const info = await collectNodeInfo(this.docker, actBin);
+    this.info = {
+      ...info,
+      build: await this.updater.describe(this.toolchain.tools(info.act, managedAct !== undefined)),
+    };
+    await this.updater.startWatchdog();
     if (this.info.docker.available) {
       const root = await this.docker
         .exec(['info', '--format', '{{.DockerRootDir}}'])
@@ -146,7 +188,7 @@ export class Agent {
           'actions',
           new ActionsExecutor({
             docker: this.docker,
-            actBin: actBinary(),
+            actBin,
             actHome: join(this.opts.dataDir, 'act-home'),
             tmpDir: this.dirs.tmp,
           }),
@@ -201,7 +243,7 @@ export class Agent {
   // ---- connection ----------------------------------------------------------------------------
 
   private connect(): void {
-    if (this.stopping || this.fatal) return;
+    if (this.stopping || this.fatal || this.updateOnly) return;
     this.setStatus('connecting');
     const ws = this.client.openWebSocket('/v1/agent/ws');
     this.ws = ws;
@@ -258,7 +300,7 @@ export class Agent {
     ws.on('close', (code, reason) => {
       if (this.ws === ws) this.ws = undefined;
       this.welcomed = false;
-      if (this.stopping || this.fatal) return;
+      if (this.stopping || this.fatal || this.updateOnly) return;
       const delay =
         Math.min(30_000, 1000 * 2 ** Math.min(this.reconnectAttempt, 5)) *
         (0.75 + Math.random() * 0.5);
@@ -294,14 +336,50 @@ export class Agent {
         this.settings = msg.settings;
         this.log.info({ settings: msg.settings }, 'node settings changed');
         return;
+      case 'update.check':
+        void this.onUpdateCheck();
+        return;
       case 'error':
         this.log.error({ code: msg.code }, msg.message);
+        if (msg.code === 'PROTOCOL_MISMATCH' && this.updater?.startUpdateOnly()) {
+          this.updateOnly = true;
+          this.setStatus('disconnected', 'waiting for an update from the controller');
+          this.ws?.close();
+          return;
+        }
         if (msg.fatal) {
           this.fatal = msg.message;
           this.setStatus('stopped', msg.message);
           this.ws?.close();
         }
         return;
+    }
+  }
+
+  /** Updates the build, then (on a current build) the toolchain; restarts once if needed. */
+  private async onUpdateCheck(): Promise<void> {
+    const updater = this.updater;
+    if (!updater || this.updating || this.stopping) return;
+    this.updating = true;
+    try {
+      const outcome = await updater.check();
+      let restart = outcome === 'restart';
+      if (outcome === 'none' && updater.managed && this.toolchain && this.info) {
+        try {
+          restart = await this.toolchain.sync(this.info.platform, this.info.arch);
+        } catch (err) {
+          const message = `toolchain: ${errorMessage(err)}`;
+          this.log.error({ err: message }, 'toolchain update failed');
+          await this.client
+            .reportAgentUpdate(updater.buildId, message)
+            .catch((e: unknown) =>
+              this.log.warn({ err: errorMessage(e) }, 'could not report the failed update'),
+            );
+        }
+      }
+      if (restart) this.setStatus('restarting');
+    } finally {
+      this.updating = false;
     }
   }
 
@@ -326,6 +404,7 @@ export class Agent {
     }
     this.welcomed = true;
     this.setStatus('connected');
+    void this.updater?.joined();
     this.log.info(
       { node: this.opts.state.name, resumed: resume.length },
       'connected to controller',
@@ -470,6 +549,7 @@ export class Agent {
     await new Promise((r) => setTimeout(r, 200));
     if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    this.updater?.stop();
     this.ws?.close(1001, 'agent shutting down');
     this.client.close();
     this.setStatus('stopped');

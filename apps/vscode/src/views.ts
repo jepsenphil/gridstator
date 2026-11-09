@@ -61,14 +61,21 @@ export class ClusterTreeProvider implements vscode.TreeDataProvider<Node> {
       parts.push(`${n.activeJobs.length}/${n.settings.maxConcurrency} jobs`);
       if (n.settings.schedulingMode !== 'enabled') parts.push(n.settings.schedulingMode);
     }
+    const update = n.update?.state;
+    if (update === 'behind' || update === 'failed' || update === 'updating')
+      parts.push(update === 'behind' ? 'update pending' : `update ${update}`);
     item.description = parts.join(' · ');
     item.iconPath = !online
       ? new vscode.ThemeIcon('debug-disconnect', new vscode.ThemeColor('disabledForeground'))
-      : n.health === 'degraded'
-        ? new vscode.ThemeIcon('warning', new vscode.ThemeColor('list.warningForeground'))
-        : n.settings.schedulingMode !== 'enabled'
-          ? new vscode.ThemeIcon('debug-pause', new vscode.ThemeColor('list.warningForeground'))
-          : new vscode.ThemeIcon('vm-running', new vscode.ThemeColor('testing.iconPassed'));
+      : update === 'updating'
+        ? new vscode.ThemeIcon('sync~spin', new vscode.ThemeColor('list.warningForeground'))
+        : update === 'behind' || update === 'failed'
+          ? new vscode.ThemeIcon('cloud-download', new vscode.ThemeColor('list.warningForeground'))
+          : n.health === 'degraded'
+            ? new vscode.ThemeIcon('warning', new vscode.ThemeColor('list.warningForeground'))
+            : n.settings.schedulingMode !== 'enabled'
+              ? new vscode.ThemeIcon('debug-pause', new vscode.ThemeColor('list.warningForeground'))
+              : new vscode.ThemeIcon('vm-running', new vscode.ThemeColor('testing.iconPassed'));
     item.contextValue = `node.${n.settings.schedulingMode}`;
     const md = new vscode.MarkdownString(undefined, true);
     md.appendMarkdown(
@@ -88,6 +95,11 @@ export class ClusterTreeProvider implements vscode.TreeDataProvider<Node> {
     if (n.effectiveLabels.length)
       md.appendMarkdown(`Labels: ${n.effectiveLabels.map((l) => `\`${l}\``).join(' ')}\n\n`);
     for (const issue of n.healthIssues) md.appendMarkdown(`$(warning) ${issue}\n\n`);
+    if (n.update) {
+      md.appendMarkdown(
+        `Build ${n.update.build ?? 'unknown'} — ${n.update.state}${n.update.detail ? `: ${n.update.detail}` : ''} (auto-update ${n.update.autoUpdate})\n\n`,
+      );
+    }
     item.tooltip = md;
     item.command = { command: 'gridstator.node.open', title: 'Manage Node', arguments: [n] };
     item.id = `node:${n.id}`;

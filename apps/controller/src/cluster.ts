@@ -36,6 +36,7 @@ import type { Auth, Principal } from './auth.js';
 import type { GroupRow, JobRow, NodeRow, Store } from './db.js';
 import type { EventHub } from './hub.js';
 import type { LogStore } from './logs.js';
+import type { UpdateHost, UpdateManager, UpdateNode } from './updates.js';
 
 export interface ClusterTiming {
   /** An agent connection without a heartbeat for this long is closed. */
@@ -99,6 +100,7 @@ export class Cluster {
   private scheduleQueued = false;
   private timers: NodeJS.Timeout[] = [];
   private stopped = false;
+  private readonly updates: UpdateManager | undefined;
 
   constructor(deps: {
     store: Store;
@@ -107,6 +109,7 @@ export class Cluster {
     auth: Auth;
     logger: Logger;
     timing?: Partial<ClusterTiming>;
+    updates?: UpdateManager;
   }) {
     this.store = deps.store;
     this.logs = deps.logs;
@@ -114,6 +117,52 @@ export class Cluster {
     this.auth = deps.auth;
     this.log = deps.logger;
     this.timing = { ...DEFAULT_TIMING, ...deps.timing };
+    this.updates = deps.updates;
+    this.updates?.attach(this.updateHost());
+  }
+
+  private updateNode(row: NodeRow, allocs = this.allocations()): UpdateNode {
+    const rt = this.runtime(row.id);
+    return {
+      id: row.id,
+      name: row.name,
+      online: rt.conn !== undefined && rt.welcomed,
+      build: row.info?.build,
+      agentVersion: row.info?.agentVersion,
+      autoUpdate: row.settings.autoUpdate,
+      activeJobs: allocs.get(row.id)?.jobs.length ?? 0,
+      platform: row.info?.platform,
+      arch: row.info?.arch,
+    };
+  }
+
+  private updateHost(): UpdateHost {
+    return {
+      nodes: () => {
+        const allocs = this.allocations();
+        return this.store.listNodes().map((n) => this.updateNode(n, allocs));
+      },
+      node: (idOrName) => {
+        const row = this.store.nodeById(idOrName) ?? this.store.nodeByName(idOrName);
+        return row ? this.updateNode(row) : undefined;
+      },
+      sendUpdateCheck: (nodeId) => {
+        const rt = this.runtimes.get(nodeId);
+        return rt?.conn && rt.welcomed ? rt.conn.send({ type: 'update.check' }) : false;
+      },
+      cancelJobs: (nodeId, reason) => {
+        for (const job of this.store.jobsOnNode(nodeId, DISPATCHED)) {
+          try {
+            this.cancel(job.id, 'update');
+            this.note(job, 'update', 'update', reason);
+          } catch (err) {
+            this.log.warn({ err, jobId: job.id }, 'could not cancel job for update');
+          }
+        }
+      },
+      changed: (nodeId) => this.emitNode(nodeId),
+      requestSchedule: () => this.requestSchedule(),
+    };
   }
 
   start(): void {
@@ -219,6 +268,9 @@ export class Cluster {
       health: !online ? 'unknown' : issues.length > 0 ? 'degraded' : 'ok',
       healthIssues: issues,
       info: row.info,
+      ...(this.updates
+        ? { update: this.updates.status(this.updateNode(row, allocs), row.last_seen_at) }
+        : {}),
       metrics: online ? rt.metrics : null,
       settings: row.settings,
       effectiveLabels: [...automaticLabels(row.info), ...row.settings.labels],
@@ -635,7 +687,10 @@ export class Cluster {
         online: rt.conn !== undefined && rt.welcomed,
         info: n.info,
         metrics: rt.metrics,
-        settings: n.settings,
+        // A node draining or restarting for an update takes no new jobs.
+        settings: this.updates?.isHeld(n.id)
+          ? { ...n.settings, schedulingMode: 'draining' as const }
+          : n.settings,
         effectiveLabels: [...automaticLabels(n.info), ...n.settings.labels],
         allocated: { cpus: a?.cpus ?? 0, memoryMb: a?.memoryMb ?? 0, jobs: a?.jobs.length ?? 0 },
         groups: groupsByNode.get(n.id) ?? new Map<string, number>(),
@@ -753,6 +808,7 @@ export class Cluster {
     this.log.info({ node: node.name, settings }, 'node settings updated');
     this.emitNode(node.id);
     this.requestSchedule();
+    if (patch.autoUpdate !== undefined) this.updates?.tick();
     return this.nodeView(this.store.nodeById(node.id)!);
   }
 
@@ -858,7 +914,7 @@ export class Cluster {
       conn.send({
         type: 'error',
         code: 'PROTOCOL_MISMATCH',
-        message: `Agent protocol v${hello.protocolVersion} is not compatible with controller protocol v${AGENT_PROTOCOL_VERSION}; install the same Gridstator version on both machines`,
+        message: `Agent protocol v${hello.protocolVersion} is not compatible with controller protocol v${AGENT_PROTOCOL_VERSION}; managed agents update themselves, others need the controller's version installed`,
         fatal: true,
       });
       conn.close(4002, 'protocol mismatch');
@@ -921,6 +977,7 @@ export class Cluster {
     );
     this.emitNode(nodeId);
     this.requestSchedule();
+    this.updates?.agentJoined(nodeId);
   }
 
   private onHeartbeat(
@@ -1132,6 +1189,7 @@ export class Cluster {
         for (const [nodeId, exp] of rej) if (exp < now) rej.delete(nodeId);
         if (rej.size === 0) this.rejections.delete(jobId);
       }
+      this.updates?.tick();
     } catch (err) {
       this.log.error({ err }, 'sweep failed');
     }
@@ -1151,6 +1209,7 @@ export function mergeSettings(
     },
     labels: patch.labels ?? base.labels,
     schedulingMode: patch.schedulingMode ?? base.schedulingMode,
+    autoUpdate: patch.autoUpdate ?? base.autoUpdate ?? 'inherit',
   };
   return NodeSettingsSchema.parse(merged);
 }

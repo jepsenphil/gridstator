@@ -10,11 +10,14 @@ export function actBinary(): string {
   return process.env['GRIDSTATOR_ACT'] ?? 'act';
 }
 
-export async function collectNodeInfo(docker: DockerCli): Promise<NodeInfo> {
+export async function collectNodeInfo(
+  docker: DockerCli,
+  actBin: string = actBinary(),
+): Promise<NodeInfo> {
   const [dockerStatus, buildx, act, git] = await Promise.all([
     docker.probe(),
     docker.probeBuildx(),
-    probeCommandVersion(actBinary(), ['--version']),
+    probeCommandVersion(actBin, ['--version']),
     probeCommandVersion('git', ['--version']),
   ]);
   const executors: NodeInfo['executors'] = [];

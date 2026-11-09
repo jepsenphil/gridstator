@@ -114,10 +114,81 @@ gridstator actions list
 
 ## Upgrading
 
-Install the new version on every machine (`npm install -g <new tarball>`) and restart the services
-(`systemctl --user restart gridstator-controller`, `sudo systemctl restart gridstator-agent`).
-The controller migrates its database automatically. Run the same version everywhere: an agent
-whose protocol version differs from the controller's is refused with a message saying so.
+Hand the controller the new build; workers installed with `install-service` follow it on their
+own (see [Worker updates](#worker-updates)):
+
+```bash
+gridstator controller publish-build gridstator-<version>.tgz   # a release tarball (admin)
+gridstator controller publish-build                            # or the build running this command
+```
+
+The controller installs the build into its version store, copies its database, and restarts on it
+(its service must be a self-updating install, see below). The new version confirms itself once it is
+serving. If it keeps crashing or does not confirm itself in time, the launcher returns to the
+previous version and the controller puts back the copy of the database taken before the switch;
+the newer database is kept as `controller.db.failed-<version>`. A development build works the same
+way: run `pnpm bundle`, then `node apps/cli/release/dist/gridstator.mjs controller publish-build`.
+
+Without a self-updating controller, install the new version (`npm install -g <new tarball>`) and
+restart its service; it migrates its database automatically. Workers that are not self-updating
+need the same version installed by hand and their service restarted.
+
+### Worker updates
+
+A worker is **current** when it runs the controller's exact build: the same version and the same
+sha256 of the bundled entry point, so two dev builds with one version number are told apart.
+`gridstator agents status` lists every worker as `current`, `behind`, `updating`, `failed`, or
+`unknown` (offline; the last build it reported is shown). `gridstator status` and `gridstator
+doctor` summarise the same, and VS Code shows it on each node.
+
+```bash
+gridstator agents status               # who runs what
+gridstator agents status --check       # exit code 3 if a reachable worker is not current (CI, scripts)
+gridstator agents update               # update every online worker that is behind (admin)
+gridstator agents update big-box --now # cancel its running jobs instead of waiting for them
+gridstator agents cancel               # stop a running rollout
+```
+
+Updates roll through the cluster one worker at a time. The controller stops placing jobs on the
+worker, waits for running jobs to finish (they are cancelled after `--drain-timeout`, default 1h,
+or straight away with `--now`), and tells the agent to download the controller's build. The agent
+checks the download's sha256, installs it into its version store and restarts on it. The worker is
+done when it reconnects on the new build. If the download fails, the new version keeps crashing,
+or the worker does not come back within 15 minutes, the launcher returns to the previous version,
+the worker is marked `failed`, and the rollout halts. Failed workers are not retried automatically;
+fix the cause and run `gridstator agents update` again.
+
+Auto-update decides when this happens without you:
+
+| Mode | Behaviour |
+|---|---|
+| `follow` (default) | update as soon as a worker is behind |
+| `window` | update only inside a daily window (controller's local time) |
+| `off` | only on `gridstator agents update` |
+
+```bash
+gridstator agents set --auto-update window --window 02:00-05:00   # cluster default
+gridstator agents set big-box --auto-update off                   # one worker
+gridstator agents set big-box --auto-update inherit               # back to the default
+```
+
+#### act and Node.js
+
+Self-updating workers also run the act and Node.js versions the controller's build pins (with their
+sha256), and they count as `current` only when they do. The controller downloads each archive once,
+checks it, and serves it to workers, so workers need no internet access; Node.js is switched by the
+launcher (in place, no root needed) and is switched back if the agent fails on it. To pick other
+versions or stop managing a tool:
+
+```bash
+gridstator agents set --act 0.2.96 --node pinned   # a version, "pinned" (the build's), or "off"
+```
+
+Workers can update only when the controller runs a bundled build (the release tarball, or
+`pnpm bundle`), because that is what they download. Agents from before this feature, and agents not
+installed with `install-service`, show as `behind` with what to do; install the new version on them
+once. An agent whose agent-channel protocol no longer matches the controller's still updates itself
+through a separate update endpoint that never changes.
 
 ### Self-updating installs
 
@@ -131,6 +202,17 @@ Services installed before this existed run the global install in place. To conve
 new tarball once and rerun `install-service` with the same options plus `--force`. Services
 installed from the unbundled workspace build (`apps/cli/dist/main.js`) always run in place. Use the
 release tarball, or `pnpm bundle` and `apps/cli/release`, to get a self-updating install.
+
+### Lost the admin token
+
+On the controller machine, as the user that owns its data directory:
+
+```bash
+gridstator controller token create --name admin-recovered --login
+```
+
+This writes a new admin token straight into the controller's database (it may be running) and logs
+this machine in with it. Without `--login` it prints the token.
 
 ## Uninstalling
 

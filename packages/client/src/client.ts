@@ -5,6 +5,11 @@ import { WebSocket } from 'ws';
 import { z } from 'zod';
 import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData } from '@gridstator/shared';
 import {
+  AGENT_UPDATE_PATH,
+  AgentUpdateCheckResponseSchema,
+  AgentToolchainResponseSchema,
+  PublishBuildResponseSchema,
+  UpdatesViewSchema,
   ArtifactSchema,
   JobGroupSchema,
   ListGroupsResponseSchema,
@@ -46,6 +51,11 @@ import {
   type ServerEventMessage,
   type SnapshotView,
   type TokenView,
+  type AgentUpdateCheckResponse,
+  type AgentToolchainResponse,
+  type PublishBuildResponse,
+  type StartUpdateRequest,
+  type UpdatesView,
 } from '@gridstator/protocol';
 import {
   createPinnedAgent,
@@ -335,6 +345,68 @@ export class GridstatorClient {
   getSnapshot(id: string): Promise<SnapshotView> {
     return this.request('GET', `/v1/snapshots/${encodeURIComponent(id)}`, {
       schema: SnapshotViewSchema,
+    });
+  }
+
+  // ---- worker updates ----------------------------------------------------------------------
+
+  updates(): Promise<UpdatesView> {
+    return this.request('GET', '/v1/updates', { schema: UpdatesViewSchema });
+  }
+
+  startUpdate(req: StartUpdateRequest): Promise<UpdatesView> {
+    return this.request('POST', '/v1/updates', { json: req, schema: UpdatesViewSchema });
+  }
+
+  cancelUpdate(): Promise<UpdatesView> {
+    return this.request('POST', '/v1/updates/cancel', { json: {}, schema: UpdatesViewSchema });
+  }
+
+  /** Agent side of the update endpoint (whose shape never changes). */
+  checkAgentUpdate(
+    current: string,
+    mode: 'normal' | 'update-only',
+  ): Promise<AgentUpdateCheckResponse> {
+    return this.request('GET', AGENT_UPDATE_PATH, {
+      query: { current, mode },
+      schema: AgentUpdateCheckResponseSchema,
+      timeoutMs: 30_000,
+    });
+  }
+
+  downloadAgentUpdate(buildId: string): Promise<IncomingMessage> {
+    return this.send('GET', `${AGENT_UPDATE_PATH}/package/${encodeURIComponent(buildId)}`, {});
+  }
+
+  async reportAgentUpdate(target: string, error: string): Promise<void> {
+    await this.request('POST', `${AGENT_UPDATE_PATH}/report`, {
+      json: { target, error: error.slice(0, 4096) },
+      timeoutMs: 30_000,
+    });
+  }
+
+  /** Toolchain the controller offers an agent on this platform. */
+  agentToolchain(platform: string, arch: string): Promise<AgentToolchainResponse> {
+    return this.request('GET', '/v1/agent/toolchain', {
+      query: { platform, arch },
+      schema: AgentToolchainResponseSchema,
+      timeoutMs: 30_000,
+    });
+  }
+
+  downloadToolchain(name: string, version: string, platform: string): Promise<IncomingMessage> {
+    const path = [name, version, platform].map(encodeURIComponent).join('/');
+    return this.send('GET', `/v1/agent/toolchain/${path}`, {});
+  }
+
+  /** Hands the controller a build (npm-style .tgz) to switch to (admin). */
+  publishBuild(body: Readable, sha256: string): Promise<PublishBuildResponse> {
+    return this.request('POST', '/v1/controller/build', {
+      query: { sha256 },
+      body,
+      contentType: 'application/gzip',
+      schema: PublishBuildResponseSchema,
+      timeoutMs: 10 * 60_000,
     });
   }
 

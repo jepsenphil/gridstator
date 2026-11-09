@@ -3,6 +3,8 @@ import { DigestSchema, TimestampSchema } from './common.js';
 import { JobSpecSchema, JobSchema, LogEntrySchema } from './job.js';
 import { NodeInfoSchema, NodeSettingsPatchSchema, NodeSchema } from './node.js';
 import { JobStateSchema } from './states.js';
+import { AutoUpdateModeSchema, ControllerBuildSchema, UpdateWindowSchema } from './update.js';
+import { ToolchainSettingsSchema } from './toolchain.js';
 
 export const API_PREFIX = '/v1';
 
@@ -112,6 +114,8 @@ export type SnapshotView = z.infer<typeof SnapshotViewSchema>;
 export const ClusterViewSchema = z.object({
   clusterId: z.string(),
   version: z.string(),
+  /** Optional so newer clients can read older controllers. */
+  build: ControllerBuildSchema.optional(),
   caFingerprint: z.string(),
   startedAt: TimestampSchema,
   nodes: z.object({ total: z.number().int(), online: z.number().int() }),
@@ -135,6 +139,12 @@ export const ClusterSettingsSchema = z.object({
   logRetentionDays: z.number().int().min(1).max(3650),
   /** Snapshots unused for this long, and not referenced by active jobs, are deleted. */
   snapshotRetentionDays: z.number().int().min(1).max(3650),
+  /** Default auto-update mode for workers (each node can override it). */
+  autoUpdate: AutoUpdateModeSchema,
+  /** Daily window for `window` mode, in the controller's local time. */
+  updateWindow: UpdateWindowSchema.nullable(),
+  /** Overrides of the build's pinned act / Node.js versions for self-updating workers. */
+  toolchain: ToolchainSettingsSchema,
 });
 export type ClusterSettings = z.infer<typeof ClusterSettingsSchema>;
 export const ClusterSettingsPatchSchema = ClusterSettingsSchema.partial();
@@ -142,4 +152,7 @@ export const DEFAULT_CLUSTER_SETTINGS: ClusterSettings = {
   jobRetentionDays: 90,
   logRetentionDays: 30,
   snapshotRetentionDays: 7,
+  autoUpdate: 'follow',
+  updateWindow: null,
+  toolchain: { act: null, node: null },
 };

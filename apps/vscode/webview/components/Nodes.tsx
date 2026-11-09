@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type Dispatch } from 'react';
-import type { Node, SchedulingMode } from '@gridstator/protocol';
+import type { Node, NodeAutoUpdate, SchedulingMode } from '@gridstator/protocol';
 import type { DashboardState } from '../../src/messages';
 import type { Action } from '../store';
 import { ago, cx, formatBytes, send } from '../util';
@@ -71,6 +71,14 @@ function NodeCard({
           <>
             <span className={`dot dot-${st.className}`} /> {node.name}{' '}
             <span className="muted small">{st.label}</span>
+            {node.update && node.update.state !== 'current' ? (
+              <span
+                className={cx('pill', 'update-pill', `update-${node.update.state}`)}
+                title={node.update.detail ?? undefined}
+              >
+                {node.update.state === 'unknown' ? 'version unknown' : node.update.state}
+              </span>
+            ) : null}
           </>
         }
         actions={
@@ -102,6 +110,29 @@ function NodeCard({
             <Icon name="warning" /> {h}
           </div>
         ))}
+        {node.update &&
+        (node.update.state === 'behind' ||
+          node.update.state === 'failed' ||
+          node.update.state === 'updating') ? (
+          <div
+            className={cx(
+              'banner',
+              node.update.state === 'failed'
+                ? 'banner-error'
+                : node.update.state === 'updating'
+                  ? 'banner-info'
+                  : 'banner-warn',
+            )}
+          >
+            <Icon name={node.update.state === 'updating' ? 'sync' : 'cloud-download'} />{' '}
+            {node.update.state === 'updating'
+              ? 'Updating'
+              : node.update.state === 'failed'
+                ? 'Update failed'
+                : 'Not on the controller’s build'}
+            {node.update.detail ? `: ${node.update.detail}` : ''}
+          </div>
+        ) : null}
         <div className="node-grid">
           <div>
             <div className="metric">
@@ -174,6 +205,35 @@ function NodeCard({
                     {l}
                   </span>
                 ))}
+              </dd>
+              <dt>Build</dt>
+              <dd>
+                {node.update?.build ??
+                  info?.build?.id ??
+                  (info ? `v${info.agentVersion} (no build id)` : '–')}
+                {info?.build ? ` · node ${info.build.node}` : ''}
+              </dd>
+              <dt>Auto-update</dt>
+              <dd>
+                <select
+                  aria-label={`Auto-update for ${node.name}`}
+                  value={node.settings.autoUpdate}
+                  disabled={busy}
+                  onChange={(e) =>
+                    send({
+                      type: 'updateNode',
+                      nodeId: node.id,
+                      patch: { autoUpdate: e.target.value as NodeAutoUpdate },
+                    })
+                  }
+                >
+                  <option value="inherit">
+                    Cluster default{node.update ? ` (${node.update.autoUpdate})` : ''}
+                  </option>
+                  <option value="follow">Follow the controller</option>
+                  <option value="window">In the update window</option>
+                  <option value="off">Off</option>
+                </select>
               </dd>
               <dt>Last seen</dt>
               <dd>{ago(node.lastSeenAt)}</dd>
@@ -278,8 +338,21 @@ export function Nodes({
       </Empty>
     );
   }
+  const notCurrent = data.nodes.filter(
+    (n) => n.update && n.update.state !== 'current' && n.update.state !== 'unknown',
+  );
+  const build = data.nodes.find((n) => n.update?.state === 'current')?.update?.build;
   return (
     <div className="stack">
+      {notCurrent.length > 0 ? (
+        <div className="banner banner-warn">
+          <Icon name="cloud-download" /> {notCurrent.length} reachable worker(s) not on the
+          controller’s build: {notCurrent.map((n) => `${n.name} (${n.update?.state})`).join(', ')}.
+          Run <code>gridstator agents status</code> for details.
+        </div>
+      ) : build ? (
+        <div className="muted small">Every reachable worker runs {build}.</div>
+      ) : null}
       {data.nodes.map((n) => (
         <NodeCard
           key={n.id}

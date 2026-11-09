@@ -52,8 +52,10 @@ import {
   jobRow,
   lanAddress,
   nodeRow,
+  notCurrent,
   printJson,
   stateColor,
+  summarizeVersions,
   table,
 } from '../output.js';
 import { parseLabels } from '../settings-flags.js';
@@ -573,8 +575,15 @@ export function registerClientCommands(program: Command): void {
           `${c.bold('Controller')} ${client.url}  v${cluster.version}  cluster ${cluster.clusterId}  (signed in as ${cluster.whoami.name})\n`,
         );
         process.stdout.write(
-          `${c.bold('Nodes')} ${cluster.nodes.online}/${cluster.nodes.total} online\n\n`,
+          `${c.bold('Nodes')} ${cluster.nodes.online}/${cluster.nodes.total} online\n`,
         );
+        if (cluster.build) {
+          const bad = notCurrent(nodes).length;
+          process.stdout.write(
+            `${c.bold('Workers')} ${summarizeVersions(nodes, cluster.build.id)}${bad > 0 ? c.dim('  (see `gridstator agents status`)') : ''}\n`,
+          );
+        }
+        process.stdout.write('\n');
         if (nodes.length > 0)
           process.stdout.write(table(NODE_HEADERS, nodes.map(nodeRow)) + '\n\n');
         const counts = JOB_STATES.filter((s) => (cluster.jobs[s] ?? 0) > 0).map(
@@ -638,7 +647,12 @@ export function registerClientCommands(program: Command): void {
             `  docker        ${n.info.docker.available ? n.info.docker.version : `unavailable (${n.info.docker.error})`}`,
             `  buildx        ${n.info.buildx.available ? (n.info.buildx.version ?? 'yes') : 'unavailable'}`,
             `  act           ${n.info.act.available ? (n.info.act.version ?? 'yes') : 'unavailable'}`,
-            `  agent         v${n.info.agentVersion}`,
+            `  agent         ${n.info.build ? `${n.info.build.id}${n.info.build.managed ? ' (managed)' : ''}, node ${n.info.build.node}` : `v${n.info.agentVersion}`}`,
+          );
+        }
+        if (n.update) {
+          lines.push(
+            `  update        ${n.update.state}${n.update.detail ? ` (${n.update.detail})` : ''}; auto-update ${n.update.autoUpdate}${n.settings.autoUpdate === 'inherit' ? '' : ' (node override)'}`,
           );
         }
         if (n.metrics) {

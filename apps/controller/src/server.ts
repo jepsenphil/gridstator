@@ -1,11 +1,19 @@
+import { createReadStream } from 'node:fs';
+import type { Readable } from 'node:stream';
 import websocket from '@fastify/websocket';
 import Fastify, { LogController, type FastifyInstance, type FastifyRequest } from 'fastify';
 import type { WebSocket } from 'ws';
 import type { z } from 'zod';
 import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData, type Logger } from '@gridstator/shared';
 import {
+  AGENT_UPDATE_PATH,
   AgentMessageSchema,
+  AgentUpdateCheckQuerySchema,
+  AgentUpdateReportSchema,
   BlobDigestsRequestSchema,
+  ToolNameSchema,
+  ToolPlatformSchema,
+  toolPlatform,
   ClientEventMessageSchema,
   ClusterSettingsPatchSchema,
   CreateSnapshotRequestSchema,
@@ -14,6 +22,7 @@ import {
   LogsQuerySchema,
   PatchNodeRequestSchema,
   RegisterAgentRequestSchema,
+  StartUpdateRequestSchema,
   SubmitGroupRequestSchema,
   SubmitJobRequestSchema,
   isTerminal,
@@ -29,7 +38,11 @@ import type { AgentConnection, Cluster } from './cluster.js';
 import type { SnapshotRow, Store } from './db.js';
 import type { EventHub } from './hub.js';
 import type { LogStore } from './logs.js';
+import type { BuildSource } from './build.js';
+import type { SelfUpdater } from './self-update.js';
 import type { SettingsService } from './settings.js';
+import type { ToolchainMirror } from './toolchain.js';
+import type { UpdateManager } from './updates.js';
 
 declare module 'fastify' {
   interface FastifyContextConfig {
@@ -48,6 +61,10 @@ export interface ServerDeps {
   logs: LogStore;
   blobs: BlobStore;
   settings: SettingsService;
+  updates: UpdateManager;
+  build: BuildSource;
+  toolchain: ToolchainMirror;
+  selfUpdater: SelfUpdater;
   logger: Logger;
   clusterId: string;
   caPem: string;
@@ -97,6 +114,7 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
   await app.register(websocket, { options: { maxPayload: 64 * 1024 * 1024 } });
 
   app.addContentTypeParser('application/x-tar', (_req, payload, done) => done(null, payload));
+  app.addContentTypeParser('application/gzip', (_req, payload, done) => done(null, payload));
 
   app.addHook('onRequest', async (req) => {
     const requirement = req.routeOptions.config.auth ?? 'client';
@@ -163,6 +181,7 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
     return {
       clusterId: deps.clusterId,
       version: GRIDSTATOR_VERSION,
+      build: deps.build.view(),
       caFingerprint: deps.fingerprint,
       startedAt: cluster.startedAt,
       nodes: { total: nodes.length, online: nodes.filter((n) => n.status === 'online').length },
@@ -172,9 +191,99 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
   });
 
   app.get('/v1/settings', async () => deps.settings.get());
-  app.patch('/v1/settings', { config: { auth: 'admin' } }, async (req) =>
-    deps.settings.update(parse(ClusterSettingsPatchSchema, req.body, 'settings')),
+  app.patch('/v1/settings', { config: { auth: 'admin' } }, async (req) => {
+    const next = deps.settings.update(parse(ClusterSettingsPatchSchema, req.body, 'settings'));
+    deps.updates.tick();
+    return next;
+  });
+
+  // ---- worker updates ----------------------------------------------------------------------
+
+  app.get('/v1/updates', async () => deps.updates.view());
+
+  app.post('/v1/updates', { config: { auth: 'admin' } }, async (req) =>
+    deps.updates.start(
+      parse(StartUpdateRequestSchema, req.body ?? {}, 'update request'),
+      principal(req).name,
+    ),
   );
+
+  app.post('/v1/updates/cancel', { config: { auth: 'admin' } }, async (req) =>
+    deps.updates.cancel(principal(req).name),
+  );
+
+  // The three agent update routes must keep their shape forever: agents of any version, including
+  // ones whose agent-channel protocol no longer matches, use them to update (see update.ts).
+  app.get(AGENT_UPDATE_PATH, { config: { auth: 'agent' } }, async (req) => {
+    const nodeId = principal(req).nodeId;
+    if (!nodeId) throw new GridstatorError('FORBIDDEN', 'agent credential is not bound to a node');
+    const q = parse(AgentUpdateCheckQuerySchema, req.query, 'update check');
+    return deps.updates.check(nodeId, q.current, q.mode);
+  });
+
+  app.get<{ Params: { id: string } }>(
+    `${AGENT_UPDATE_PATH}/package/:id`,
+    { config: { auth: 'agent' } },
+    async (req, reply) => {
+      const pkg = deps.build.package;
+      if (!pkg || req.params.id !== deps.build.ref.id)
+        throw new GridstatorError('NOT_FOUND', `Build ${req.params.id} is not available`);
+      reply.header('content-length', pkg.size);
+      return reply.type('application/gzip').send(createReadStream(pkg.path));
+    },
+  );
+
+  // Toolchain archives for self-updating agents (not part of the frozen update routes).
+  app.get<{ Querystring: { platform?: string; arch?: string } }>(
+    '/v1/agent/toolchain',
+    { config: { auth: 'agent' } },
+    async (req) => {
+      const platform = toolPlatform(req.query.platform ?? '', req.query.arch ?? '');
+      return { tools: platform ? deps.toolchain.offer(platform) : [] };
+    },
+  );
+
+  app.get<{ Params: { name: string; version: string; platform: string } }>(
+    '/v1/agent/toolchain/:name/:version/:platform',
+    { config: { auth: 'agent' } },
+    async (req, reply) => {
+      const name = ToolNameSchema.safeParse(req.params.name);
+      const platform = ToolPlatformSchema.safeParse(req.params.platform);
+      const archive =
+        name.success && platform.success
+          ? deps.toolchain.archive(name.data, req.params.version, platform.data)
+          : undefined;
+      if (!archive)
+        throw new GridstatorError(
+          'NOT_FOUND',
+          `${req.params.name} ${req.params.version} for ${req.params.platform} is not available`,
+        );
+      reply.header('content-length', archive.size);
+      return reply.type('application/gzip').send(archive.open());
+    },
+  );
+
+  // Controller self-update: install a build (e.g. a dev build) and restart on it.
+  app.post<{ Querystring: { sha256?: string } }>(
+    '/v1/controller/build',
+    { config: { auth: 'admin' } },
+    async (req) => {
+      const sha256 = req.query.sha256 ?? '';
+      if (!/^[0-9a-f]{64}$/.test(sha256))
+        throw new GridstatorError('BAD_REQUEST', 'Pass the package sha256 as ?sha256=<hex>');
+      if (req.headers['content-type'] !== 'application/gzip')
+        throw new GridstatorError('BAD_REQUEST', 'Send the package as application/gzip');
+      return deps.selfUpdater.publish(req.body as Readable, sha256);
+    },
+  );
+
+  app.post(`${AGENT_UPDATE_PATH}/report`, { config: { auth: 'agent' } }, async (req, reply) => {
+    const nodeId = principal(req).nodeId;
+    if (!nodeId) throw new GridstatorError('FORBIDDEN', 'agent credential is not bound to a node');
+    const body = parse(AgentUpdateReportSchema, req.body, 'update report');
+    deps.updates.report(nodeId, body.target, body.error);
+    reply.status(204).send();
+  });
 
   // ---- nodes -------------------------------------------------------------------------------
 

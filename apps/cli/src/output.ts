@@ -158,3 +158,21 @@ export function exitCodeForJob(job: Job): number {
       return 1;
   }
 }
+
+/** Workers that count against `--check`: reachable and not on the controller's build. */
+export function notCurrent(nodes: Node[]): Node[] {
+  return nodes.filter(
+    (n) => n.update !== undefined && n.update.state !== 'current' && n.update.state !== 'unknown',
+  );
+}
+
+export function summarizeVersions(nodes: Node[], controllerBuild: string): string {
+  const current = nodes.filter((n) => n.update?.state === 'current').length;
+  const unknown = nodes.filter((n) => n.update?.state === 'unknown').length;
+  const behind = notCurrent(nodes).length;
+  const reachable = nodes.length - unknown;
+  const parts = [`${current}/${reachable} reachable worker(s) on ${controllerBuild}`];
+  if (behind > 0) parts.push(`${behind} not current`);
+  if (unknown > 0) parts.push(`${unknown} offline (unknown)`);
+  return parts.join(', ');
+}

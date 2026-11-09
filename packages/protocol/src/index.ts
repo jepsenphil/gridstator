@@ -3,6 +3,8 @@ export * from './common.js';
 export * from './job.js';
 export * from './group.js';
 export * from './node.js';
+export * from './update.js';
+export * from './toolchain.js';
 export * from './manifest.js';
 export * from './api.js';
 export * from './agent-channel.js';

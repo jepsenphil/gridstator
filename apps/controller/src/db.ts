@@ -212,7 +212,11 @@ function parseNode(row: Row): NodeRow {
   return {
     ...(row as unknown as NodeRow),
     info: row['info'] ? (JSON.parse(row['info'] as string) as NodeInfo) : null,
-    settings: JSON.parse(row['settings'] as string) as NodeSettings,
+    // Rows written before auto-update existed have no autoUpdate field.
+    settings: {
+      autoUpdate: 'inherit',
+      ...(JSON.parse(row['settings'] as string) as Partial<NodeSettings>),
+    } as NodeSettings,
   };
 }
 

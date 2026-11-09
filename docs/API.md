@@ -42,9 +42,42 @@ summarizes them.
 
 | Method & path | Notes |
 |---|---|
-| `GET /v1/cluster` | `{ clusterId, version, caFingerprint, startedAt, nodes: {total, online}, jobs: {<state>: count}, whoami: {name, role} }` |
-| `GET /v1/settings` | `{ jobRetentionDays, logRetentionDays, snapshotRetentionDays }` |
-| `PATCH /v1/settings` | admin; partial update of the above |
+| `GET /v1/cluster` | `{ clusterId, version, build: ControllerBuild, caFingerprint, startedAt, nodes: {total, online}, jobs: {<state>: count}, whoami: {name, role} }` |
+| `GET /v1/settings` | `{ jobRetentionDays, logRetentionDays, snapshotRetentionDays, autoUpdate: "off"\|"follow"\|"window", updateWindow: {start, end} \| null }` |
+| `PATCH /v1/settings` | admin; partial update of the above (`window` mode needs `updateWindow`, times are `HH:MM` controller local time) |
+
+`ControllerBuild`: `{ id, version, sha256, updatable, reason }`. `id` is `<version>-<first 12 hex of
+sha256>` (`<version>-unbundled` for a workspace build, which workers cannot update to).
+
+### Worker updates
+
+| Method & path | Auth | Notes |
+|---|---|---|
+| `GET /v1/updates` | client | `{ controller: ControllerBuild, autoUpdate, updateWindow, rollout: Rollout \| null }` |
+| `POST /v1/updates` | admin | body: `{ nodes?: string[], now?: boolean, drainTimeoutSeconds?: number }`; starts a rollout (or adds to the running one) → same as `GET` |
+| `POST /v1/updates/cancel` | admin | halts the running rollout |
+| `POST /v1/controller/build?sha256=<hex>` | admin | body: a gridstator `.tgz` (`application/gzip`); the controller installs it and restarts on it → `{ action: "none"\|"restarting", from, to }` |
+
+`GET /v1/updates` also returns `toolchain: [{ name: "act"|"node", version, source:
+"pinned"|"override"|"off", platforms: [{ platform, state: "ready"|"preparing"|"failed", reason }]
+}]`; `PATCH /v1/settings` takes `toolchain: { act, node }` (each `null` for the build's pin, `"off"`,
+or a version).
+
+`Rollout`: `{ id, target, state: "running"|"halted"|"finished", haltReason, startedBy, startedAt,
+finishedAt, now, drainTimeoutSeconds, nodes: [{ nodeId, name, state:
+"pending"|"draining"|"updating"|"done"|"failed"|"skipped", detail, auto, startedAt, finishedAt }] }`.
+
+Agents use three routes whose shape never changes, so agents of any version can update:
+
+| Method & path | Auth | Notes |
+|---|---|---|
+| `GET /v1/agent/update?current=<build id>&mode=normal\|update-only` | agent | `{ action: "none", reason }` or `{ action: "update", build, package: {sha256, size}, confirmWithinSeconds }` |
+| `GET /v1/agent/update/package/:buildId` | agent | the build as an npm-style `.tgz` |
+| `POST /v1/agent/update/report` | agent | body: `{ target, error }`: the update could not be installed |
+
+Toolchain archives (not part of the frozen routes): `GET /v1/agent/toolchain?platform=&arch=` →
+`{ tools: [{ name, version, platform, state, sha256, size, bin, reason }] }`, and
+`GET /v1/agent/toolchain/:name/:version/:platform` → the `.tar.gz`.
 
 ### Nodes
 
@@ -52,7 +85,7 @@ summarizes them.
 |---|---|---|
 | `GET /v1/nodes` | client | `{ nodes: Node[] }` |
 | `GET /v1/nodes/:idOrName` | client | `Node` |
-| `PATCH /v1/nodes/:idOrName` | client | body: `{ maxConcurrency?, reserved?: {cpus?, memoryMb?}, labels?, schedulingMode?: "enabled"\|"disabled"\|"draining" }` |
+| `PATCH /v1/nodes/:idOrName` | client | body: `{ maxConcurrency?, reserved?: {cpus?, memoryMb?}, labels?, schedulingMode?: "enabled"\|"disabled"\|"draining", autoUpdate?: "inherit"\|"off"\|"follow"\|"window" }` |
 | `DELETE /v1/nodes/:idOrName[?force=true]` | admin | revokes the agent credential; 409 if jobs are active unless `force` |
 | `POST /v1/agents/register` | join | body: `{ name, info: NodeInfo, settings? }` → `{ nodeId, name, credential }`; consumes one use of the join token |
 
@@ -60,7 +93,10 @@ summarizes them.
 `healthIssues[]`, `info` (hostname, platform, arch, cpus, memoryTotalMb, docker/buildx/act status,
 executors), `metrics` (cpuPercent, memoryAvailableMb, diskFreeMb, diskTotalMb, load1),
 `settings`, `effectiveLabels` (automatic `os=…`, `arch=…`, `docker`, `buildx`, `act` plus user
-labels), `activeJobs[]`, `allocated`, `allocatable`, `lastSeenAt`, `connectedAt`, `createdAt`.
+labels), `activeJobs[]`, `allocated`, `allocatable`, `lastSeenAt`, `connectedAt`, `createdAt`,
+`update` (`{ state: "current"|"behind"|"updating"|"failed"|"unknown", build, detail, autoUpdate,
+canUpdate }`, compared against the controller's build). `info.build` is the agent's
+`{ id, version, sha256, managed, node, lastRollback }`.
 
 ### Jobs (client)
 
@@ -215,4 +251,7 @@ subscribe again with the last sequence number you saw; no entry is delivered twi
 
 The agent channel is documented in [ARCHITECTURE.md §6.1](ARCHITECTURE.md#61-agent-channel-protocol)
 and defined in `packages/protocol/src/agent-channel.ts`. It is versioned separately
-(`AGENT_PROTOCOL_VERSION`); mismatched agents are refused with an actionable error.
+(`AGENT_PROTOCOL_VERSION`); mismatched agents are refused with `PROTOCOL_MISMATCH`. Self-updating
+agents then poll `GET /v1/agent/update` in `update-only` mode until the controller hands them its
+build. The controller sends `{ type: "update.check" }` to ask a connected agent to call that
+endpoint now.

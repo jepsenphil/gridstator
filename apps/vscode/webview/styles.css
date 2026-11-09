@@ -1028,3 +1028,19 @@ select {
 .ok-text {
   color: var(--ok);
 }
+
+.update-pill {
+  margin-left: 6px;
+}
+.update-behind {
+  color: var(--warn);
+}
+.update-failed {
+  color: var(--bad);
+}
+.update-updating {
+  color: var(--accent);
+}
+.update-unknown {
+  color: var(--vscode-disabledForeground, inherit);
+}

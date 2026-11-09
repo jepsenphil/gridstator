@@ -1,9 +1,16 @@
-import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { createReadStream, existsSync } from 'node:fs';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pipeline } from 'node:stream/promises';
 import type { Command } from 'commander';
 import {
+  GRIDSTATOR_VERSION,
   GridstatorError,
   createLogger,
+  detectBuild,
+  packPackage,
   defaultAgentDataDir,
   defaultClientConfigPath,
   defaultControllerDataDir,
@@ -11,18 +18,25 @@ import {
   shortFingerprint,
   type Logger,
 } from '@gridstator/shared';
-import { initController, startController, type RunningController } from '@gridstator/controller';
+import {
+  initController,
+  issueClientTokenOffline,
+  startController,
+  type RunningController,
+} from '@gridstator/controller';
 import {
   Agent,
   collectNodeInfo,
   defaultNodeName,
   joinCluster,
+  RESTART_EXIT_CODE,
   readAgentState,
   writeAgentState,
 } from '@gridstator/agent';
 import { readClientConfig, writeClientConfig } from '@gridstator/client';
 import { DockerCli } from '@gridstator/executors';
 import { c, info, lanAddress } from '../output.js';
+import { withClient } from './client.js';
 import { addSettingsFlags, settingsFromFlags, type SettingsFlags } from '../settings-flags.js';
 
 function onShutdown(handler: (signal: string) => Promise<void>, logger: Logger): void {
@@ -146,12 +160,22 @@ export function registerServerCommands(program: Command): void {
     ) => {
       const logger = createLogger({ name: 'controller' });
       let ctrl: RunningController;
+      let agent: Agent | undefined;
+      // After switching to a published build: stop cleanly and let systemd start the new one.
+      const restart = () => {
+        void (async () => {
+          await agent?.stop().catch(() => undefined);
+          await ctrl?.close().catch(() => undefined);
+          process.exit(RESTART_EXIT_CODE);
+        })();
+      };
       try {
         ctrl = await startController({
           dataDir: opts.dataDir,
           ...(opts.host ? { host: opts.host } : {}),
           ...(opts.port ? { port: Number(opts.port) } : {}),
           logger,
+          onRestart: restart,
         });
       } catch (err) {
         if (err instanceof GridstatorError) throw err;
@@ -162,7 +186,6 @@ export function registerServerCommands(program: Command): void {
         );
       }
       logger.info(`CA fingerprint ${ctrl.fingerprint} (${shortFingerprint(ctrl.fingerprint)})`);
-      let agent: Agent | undefined;
       if (opts.withAgent) {
         const agentDir = join(opts.dataDir, 'agent');
         let state = await readAgentState(agentDir);
@@ -196,6 +219,111 @@ export function registerServerCommands(program: Command): void {
       }, logger);
     },
   );
+
+  controller
+    .command('publish-build')
+    .description(
+      "Switch the controller to another build, which workers then follow: this CLI's own bundled build, or a gridstator .tgz (admin)",
+    )
+    .argument('[tarball]', 'gridstator package (.tgz); default: the build running this command')
+    .option('--no-wait', 'do not wait for the controller to come back on the new build')
+    .action(async (tarball: string | undefined, opts: { wait: boolean }) =>
+      withClient(async (client) => {
+        let file = tarball;
+        let tmp: string | undefined;
+        if (!file) {
+          const build = await detectBuild(GRIDSTATOR_VERSION);
+          if (!build.packageDir)
+            throw new GridstatorError('CONFIG', 'This gridstator is an unbundled workspace build', {
+              hint: 'Run `pnpm bundle` and use apps/cli/release/dist/gridstator.mjs, or pass a .tgz.',
+            });
+          tmp = await mkdtemp(join(tmpdir(), 'gridstator-publish-'));
+          file = join(tmp, `gridstator-${build.id}.tgz`);
+          await packPackage(build.packageDir, file);
+        }
+        try {
+          const hash = createHash('sha256');
+          await pipeline(createReadStream(file), hash);
+          const res = await client.publishBuild(createReadStream(file), hash.digest('hex'));
+          if (res.action === 'none') {
+            info(c.green(`The controller already runs ${res.to}.`, process.stderr));
+            return;
+          }
+          info(`Controller is switching from ${res.from} to ${res.to} and restarting.`);
+          if (!opts.wait) return;
+          const deadline = Date.now() + 3 * 60_000;
+          let wentDown = false;
+          for (;;) {
+            await new Promise((r) => setTimeout(r, 2000));
+            const view = await client.cluster().catch(() => undefined);
+            if (!view) wentDown = true;
+            else if (view.build?.id === res.to) break;
+            else if (wentDown && view.build?.id === res.from)
+              throw new GridstatorError(
+                'INTERNAL',
+                `The controller came back on ${res.from}: the launcher rolled the update back`,
+                { hint: 'See the controller service log (journalctl).' },
+              );
+            if (Date.now() > deadline)
+              throw new GridstatorError(
+                'UNAVAILABLE',
+                `The controller did not come back on ${res.to}`,
+                { hint: 'See the controller service log (journalctl).' },
+              );
+          }
+          info(
+            c.green(
+              `The controller runs ${res.to}. Workers follow it as auto-update allows (see \`gridstator agents status\`).`,
+              process.stderr,
+            ),
+          );
+        } finally {
+          if (tmp) await rm(tmp, { recursive: true, force: true });
+        }
+      }),
+    );
+
+  controller
+    .command('token')
+    .description('Recovery: issue client tokens directly in the controller database')
+    .command('create')
+    .description(
+      'Issue a client token without an admin token (needs access to the data directory; works while the controller runs)',
+    )
+    .requiredOption('--name <name>', 'token name, e.g. "admin-recovered"')
+    .option('--role <role>', 'admin or operator', 'admin')
+    .option('--data-dir <dir>', 'controller data directory', defaultControllerDataDir())
+    .option('--login', "save it as this machine's client login (replaces the current one)")
+    .action(async (opts: { name: string; role: string; dataDir: string; login?: boolean }) => {
+      if (opts.role !== 'admin' && opts.role !== 'operator')
+        throw new GridstatorError('BAD_REQUEST', '--role must be admin or operator');
+      const issued = await issueClientTokenOffline({
+        dataDir: opts.dataDir,
+        name: opts.name,
+        role: opts.role,
+      });
+      if (opts.login) {
+        await writeClientConfig(
+          {
+            version: 1,
+            url: issued.url,
+            caPem: issued.caPem,
+            caFingerprint: issued.fingerprint,
+            token: issued.token,
+            tokenName: opts.name,
+          },
+          defaultClientConfigPath(),
+        );
+        info(
+          c.green(`Logged in to ${issued.url} as "${opts.name}" (${opts.role}).`, process.stderr),
+        );
+      } else {
+        process.stdout.write(`${issued.token}\n`);
+        info(
+          `Log in with: gridstator login ${issued.url} --fingerprint ${issued.fingerprint} --token <the token above>`,
+        );
+      }
+    });
 
   const agent = program.command('agent').description('Run a worker agent on this machine');
 
@@ -272,11 +400,16 @@ export function registerServerCommands(program: Command): void {
         logger,
         cacheMaxBytes: parseBytes(opts.cacheSize),
         keepFailedWorkspaces: opts.keepFailed ?? false,
+        // Updates replace the version the launcher starts, so only managed installs take them.
+        selfUpdate: true,
       });
       a.onStatus((status, detail) => {
         if (status === 'stopped' && detail) {
           logger.error(detail);
           void a.stop().then(() => process.exit(4));
+        } else if (status === 'restarting') {
+          // systemd (Restart=on-failure) starts the launcher again, which runs the new version.
+          void a.stop().then(() => process.exit(RESTART_EXIT_CODE));
         }
       });
       await a.start();

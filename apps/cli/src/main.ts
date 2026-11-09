@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command, CommanderError } from 'commander';
 import { GRIDSTATOR_VERSION, GridstatorError } from '@gridstator/shared';
+import { registerAgentsCommands } from './commands/agents.js';
 import { registerClientCommands, exitState } from './commands/client.js';
 import { registerDoctorCommand } from './commands/doctor.js';
 import { registerServerCommands } from './commands/server.js';
@@ -27,6 +28,7 @@ program
   .exitOverride();
 
 registerClientCommands(program);
+registerAgentsCommands(program);
 registerWorkloadCommands(program);
 registerDoctorCommand(program);
 registerServerCommands(program);
