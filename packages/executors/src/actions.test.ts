@@ -31,6 +31,10 @@ jobs:
         with: { ref: "\${{ github.sha }}", persist-credentials: false }
       - name: Show snapshot file
         run: cat value.txt
+      # The job must see its workflow exactly as written, not act's rewritten copy.
+      - name: Workflow as written
+        run: |
+          grep -q '[w]ith: { ref:' .github/workflows/test.yml && echo workflow-as-written
       - name: Context
         run: echo "repo=$GITHUB_REPOSITORY ref=$GITHUB_REF_NAME input=\${{ inputs.who }}"
       - name: Secrets
@@ -44,10 +48,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo about to fail && exit 3
+  calls:
+    uses: ./.github/workflows/called.yml
   slow:
     runs-on: ubuntu-latest
     steps:
       - run: for i in $(seq 1 120); do echo "tick $i"; sleep 1; done
+`;
+
+const CALLED = `on: workflow_call
+jobs:
+  inner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "\${{ github.sha }}" }
+      - name: Called workflow sees the snapshot
+        run: cat value.txt
 `;
 
 beforeAll(async () => {
@@ -55,6 +72,7 @@ beforeAll(async () => {
   src = join(tmp, 'src');
   await mkdir(join(src, '.github', 'workflows'), { recursive: true });
   await writeFile(join(src, '.github', 'workflows', 'test.yml'), WORKFLOW);
+  await writeFile(join(src, '.github', 'workflows', 'called.yml'), CALLED);
   await writeFile(join(src, 'value.txt'), 'from the snapshot\n');
   if (available) execFileSync('docker', ['pull', '-q', IMAGE], { stdio: 'ignore' });
 });
@@ -130,6 +148,7 @@ describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, 
     expect(r.error).toBeNull();
     expect(r.outcome).toBe('succeeded');
     expect(out).toContain('from the snapshot');
+    expect(out).toContain('workflow-as-written');
     expect(out).toContain('repo=acme/widgets ref=feature/x input=tester');
     expect(out).toContain('single=***');
     expect(out).not.toContain('single-secret-value');
@@ -153,6 +172,17 @@ describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, 
         .toString()
         .trim(),
     ).toBe('');
+  });
+
+  it('points checkouts in a called local workflow at the snapshot', async () => {
+    const tc = await testContext(
+      { ...base, job: 'calls' },
+      { workDir: join(tmp, 'w5'), sourceDir: src },
+    );
+    const r = await executor().run(tc.context);
+    expect(r.error).toBeNull();
+    expect(tc.out.join('')).toContain('from the snapshot');
+    expect(tc.system.join('\n')).toContain('.github/workflows/called.yml: job inner');
   });
 
   it('reports failed workflow jobs', async () => {

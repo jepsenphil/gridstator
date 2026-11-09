@@ -1,13 +1,13 @@
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { homedir } from 'node:os';
 import { join, relative, sep } from 'node:path';
 import { promisify } from 'node:util';
 import type { ActionsJobSpec, JobOutputs } from '@gridstator/protocol';
 import { ActLogParser, LineSplitter } from './act-log.js';
-import { repoSlug, rewriteSnapshotCheckouts } from './checkout-rewrite.js';
+import { repoSlug, writeActWorkflows } from './checkout-rewrite.js';
 import { cleanupJobResources } from './container.js';
 import { type DockerCli, LABEL_JOB, LABEL_MANAGED, LABEL_NODE } from './docker.js';
 import {
@@ -170,17 +170,6 @@ export class ActionsExecutor implements Executor {
     const workflow = await resolveInside(src, spec.workflow, 'file');
     if ('error' in workflow) return failed(`Workflow ${workflow.error}`);
 
-    // Point same-repository checkouts at the snapshot (see checkout-rewrite.ts). Done before the
-    // snapshot commit so the job's working tree stays clean.
-    for (const r of await rewriteSnapshotCheckouts(src, repoSlug(spec.git?.remoteUrl))) {
-      const what = Object.entries(r.removed)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(', ');
-      ctx.system(
-        `${r.file}: job ${r.job}, step "${r.step}" checks out the snapshot (ignoring ${what})`,
-      );
-    }
-
     // act derives github.sha/ref/repository from git; give it a repository that mirrors the
     // developer's branch and remote, with one commit containing exactly the snapshot.
     const gitEnv = {
@@ -204,6 +193,28 @@ export class ActionsExecutor implements Executor {
         await git(src, ['remote', 'add', 'origin', spec.git.remoteUrl], gitEnv);
     } catch (err) {
       return failed(`Could not prepare the git context for act: ${(err as Error).message}`);
+    }
+
+    // Point same-repository checkouts at the snapshot (see checkout-rewrite.ts). act parses
+    // rewritten copies inside .git; the job's own .github/workflows stay exactly as written.
+    let actWorkflow = workflow.path;
+    try {
+      const prepared = await writeActWorkflows(src, repoSlug(spec.git?.remoteUrl));
+      for (const r of prepared.rewrites) {
+        const what = Object.entries(r.removed)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(', ');
+        ctx.system(
+          `${r.file}: job ${r.job}, step "${r.step}" checks out the snapshot (ignoring ${what})`,
+        );
+      }
+      const rel = relative(await realpath(src), workflow.path)
+        .split(sep)
+        .join('/');
+      const copy = prepared.copies.get(rel);
+      if (copy) actWorkflow = join(src, ...copy.split('/'));
+    } catch (err) {
+      return failed(`Could not prepare the workflows for act: ${(err as Error).message}`);
     }
 
     await mkdir(this.opts.actHome, { recursive: true, mode: 0o700 });
@@ -269,7 +280,7 @@ export class ActionsExecutor implements Executor {
       spec,
       {
         src,
-        workflow: workflow.path,
+        workflow: actWorkflow,
         secretFile,
         varFile,
         envFile,
