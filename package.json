@@ -21,9 +21,9 @@
     "gridstator": "node apps/cli/dist/main.js",
     "pack:release": "pnpm bundle && cd apps/cli/release && npm pack",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
-    "test:ui": "pnpm --filter gridstator-vscode build && pnpm --filter gridstator-vscode exec playwright test",
+    "test:ui": "pnpm build && pnpm --filter gridstator-vscode exec playwright test",
     "test:vscode": "pnpm build && cd apps/vscode && xvfb-run -a node test/run-integration.mjs",
-    "package:vscode": "pnpm --filter gridstator-vscode package"
+    "package:vscode": "pnpm build && pnpm --filter gridstator-vscode package"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
