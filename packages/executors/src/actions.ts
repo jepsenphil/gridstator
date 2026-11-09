@@ -7,6 +7,7 @@ import { join, relative, sep } from 'node:path';
 import { promisify } from 'node:util';
 import type { ActionsJobSpec, JobOutputs } from '@gridstator/protocol';
 import { ActLogParser, LineSplitter } from './act-log.js';
+import { repoSlug, rewriteSnapshotCheckouts } from './checkout-rewrite.js';
 import { cleanupJobResources } from './container.js';
 import { type DockerCli, LABEL_JOB, LABEL_MANAGED, LABEL_NODE } from './docker.js';
 import {
@@ -168,6 +169,17 @@ export class ActionsExecutor implements Executor {
     await ctx.materialize(src);
     const workflow = await resolveInside(src, spec.workflow, 'file');
     if ('error' in workflow) return failed(`Workflow ${workflow.error}`);
+
+    // Point same-repository checkouts at the snapshot (see checkout-rewrite.ts). Done before the
+    // snapshot commit so the job's working tree stays clean.
+    for (const r of await rewriteSnapshotCheckouts(src, repoSlug(spec.git?.remoteUrl))) {
+      const what = Object.entries(r.removed)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(', ');
+      ctx.system(
+        `${r.file}: job ${r.job}, step "${r.step}" checks out the snapshot (ignoring ${what})`,
+      );
+    }
 
     // act derives github.sha/ref/repository from git; give it a repository that mirrors the
     // developer's branch and remote, with one commit containing exactly the snapshot.

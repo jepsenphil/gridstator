@@ -26,7 +26,9 @@ jobs:
   ok:
     runs-on: ubuntu-latest
     steps:
+      # act alone would run the real checkout for this (raw ref != github.ref).
       - uses: actions/checkout@v4
+        with: { ref: "\${{ github.sha }}", persist-credentials: false }
       - name: Show snapshot file
         run: cat value.txt
       - name: Context

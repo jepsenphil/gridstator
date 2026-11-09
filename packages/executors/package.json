@@ -15,7 +15,8 @@
   ],
   "dependencies": {
     "@gridstator/protocol": "workspace:*",
-    "@gridstator/shared": "workspace:*"
+    "@gridstator/shared": "workspace:*",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@types/tar-stream": "^3.1.5",

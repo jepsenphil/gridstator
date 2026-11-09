@@ -5,3 +5,4 @@ export * from './container.js';
 export * from './build.js';
 export * from './act-log.js';
 export * from './actions.js';
+export * from './checkout-rewrite.js';
