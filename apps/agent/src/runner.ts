@@ -1,16 +1,29 @@
+import { createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
+import { mkdir, rm, stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { pipeline as streamPipeline } from 'node:stream/promises';
 import type { Logger } from '@gridstator/shared';
 import { errorMessage } from '@gridstator/shared';
 import {
+  checkSnapshotPath,
   parseManifest,
   type AgentJobResult,
+  type Artifact,
   type ControllerJobAssign,
+  type JobOutputs,
   type LogEntry,
   type Manifest,
 } from '@gridstator/protocol';
 import type { GridstatorClient } from '@gridstator/client';
 import type { ExecutionResult, Executor } from '@gridstator/executors';
-import { unpackBlobsInto, workspaceTar, type BlobStore } from '@gridstator/snapshot';
+import {
+  materializeSnapshot,
+  packBlobs,
+  unpackBlobsInto,
+  workspaceTar,
+  type BlobStore,
+} from '@gridstator/snapshot';
 import { LogPipeline } from './log-pipeline.js';
 
 const DOWNLOAD_BATCH = 5000;
@@ -53,11 +66,15 @@ export interface RunnerDeps {
   nodeId: string;
   nodeName: string;
   logsDir: string;
+  /** Parent of per-job work directories. */
+  workRoot: string;
   maxLogBytes: number;
   logger: Logger;
   /** Sends a batch of log entries if the controller channel is ready. */
   sendLogs: (runner: JobRunner, entries: LogEntry[]) => void;
   sendPhase: (runner: JobRunner, phase: 'starting' | 'running') => void;
+  /** Sends structured progress if the controller channel is ready. */
+  sendOutputs: (runner: JobRunner, outputs: JobOutputs) => void;
   /** Persists and sends the terminal result. */
   complete: (runner: JobRunner, result: AgentJobResult) => void;
 }
@@ -73,6 +90,8 @@ export class JobRunner {
   private readonly deps: RunnerDeps;
   private readonly abort = new AbortController();
   private abandonReason: string | undefined;
+  /** Latest structured progress, sent with the result. */
+  outputs: JobOutputs | null = null;
   readonly pipeline: LogPipeline;
   readonly done: Promise<void>;
   private resolveDone!: () => void;
@@ -90,6 +109,22 @@ export class JobRunner {
       sink: (entries) => deps.sendLogs(this, entries),
     });
     this.done = new Promise((r) => (this.resolveDone = r));
+  }
+
+  /** Hashes a file, uploads it to the controller if missing, and returns its artifact record. */
+  private async uploadArtifact(name: string, filePath: string): Promise<Artifact> {
+    if (checkSnapshotPath(name)) throw new Error(`invalid artifact name "${name}"`);
+    const hash = createHash('sha256');
+    await streamPipeline(createReadStream(filePath), hash);
+    const digest = 'sha256:' + hash.digest('hex');
+    const size = (await stat(filePath)).size;
+    const missing = await this.deps.client.missingBlobs([digest]);
+    if (missing.length > 0) {
+      await this.deps.client.uploadBlobs(
+        packBlobs([{ digest, size, open: () => createReadStream(filePath) }]),
+      );
+    }
+    return { name, digest, size };
   }
 
   get logSeq(): number {
@@ -117,6 +152,7 @@ export class JobRunner {
     const { spec } = this.assign;
     const log = this.deps.logger.child({ jobId: this.jobId });
     let result: ExecutionResult;
+    const workDir = join(this.deps.workRoot, this.jobId);
     this.deps.sendPhase(this, 'starting');
     try {
       this.pipeline.system(
@@ -131,6 +167,8 @@ export class JobRunner {
         );
       }
       const manifest = this.manifest;
+      await rm(workDir, { recursive: true, force: true });
+      await mkdir(workDir, { recursive: true, mode: 0o700 });
       result = await this.deps.executor.run({
         jobId: this.jobId,
         assignmentId: this.assignmentId,
@@ -139,6 +177,15 @@ export class JobRunner {
         attempt: this.assign.attempt,
         spec,
         workspaceTar: manifest ? () => workspaceTar(manifest, this.deps.cache) : null,
+        materialize: manifest
+          ? (dest) => materializeSnapshot(manifest, this.deps.cache, dest)
+          : null,
+        workDir,
+        uploadArtifact: (name, filePath) => this.uploadArtifact(name, filePath),
+        reportOutputs: (outputs) => {
+          this.outputs = outputs;
+          this.deps.sendOutputs(this, outputs);
+        },
         output: (stream, chunk) => this.pipeline.output(stream, chunk),
         system: (m) => this.pipeline.system(m),
         onRunning: () => {
@@ -151,6 +198,9 @@ export class JobRunner {
       log.error({ err }, 'job setup failed');
       result = { outcome: 'failed', exitCode: null, error: errorMessage(err), oomKilled: false };
     }
+    await rm(workDir, { recursive: true, force: true }).catch((err: unknown) =>
+      log.warn({ err }, 'could not remove the job work directory'),
+    );
     const outcome: AgentJobResult['outcome'] =
       this.abandonReason && result.outcome !== 'succeeded' ? 'lost' : result.outcome;
     const error = outcome === 'lost' ? (this.abandonReason ?? null) : result.error;
@@ -173,6 +223,8 @@ export class JobRunner {
       oomKilled: result.oomKilled,
       finishedAt: Date.now(),
       logSeq: this.pipeline.lastSeq,
+      outputs: result.outputs ?? this.outputs,
+      artifacts: result.artifacts ?? [],
     });
     log.info({ outcome, exitCode: result.exitCode }, 'job finished');
   }

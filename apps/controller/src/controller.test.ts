@@ -2,13 +2,14 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import type { z } from 'zod';
 import type { WebSocket } from 'ws';
 import { GridstatorError, decodeWsData } from '@gridstator/shared';
 import {
   AGENT_PROTOCOL_VERSION,
+  type AgentMessageSchema,
   ControllerMessageSchema,
   serializeManifest,
-  type AgentMessage,
   type ControllerMessage,
   type Job,
   type JobSpecInput,
@@ -82,7 +83,7 @@ async function waitForState(id: string, state: JobState, timeoutMs = 5000): Prom
 class FakeAgent {
   readonly received: ControllerMessage[] = [];
   ws!: WebSocket;
-  private client: GridstatorClient;
+  readonly client: GridstatorClient;
 
   constructor(
     readonly nodeId: string,
@@ -92,7 +93,7 @@ class FakeAgent {
   }
 
   async connect(
-    hello: Partial<Extract<AgentMessage, { type: 'hello' }>> = {},
+    hello: Partial<Extract<z.input<typeof AgentMessageSchema>, { type: 'hello' }>> = {},
   ): Promise<Extract<ControllerMessage, { type: 'welcome' }>> {
     this.received.length = 0;
     this.ws = this.client.openWebSocket('/v1/agent/ws');
@@ -114,7 +115,7 @@ class FakeAgent {
     return this.next('welcome');
   }
 
-  send(msg: AgentMessage): void {
+  send(msg: z.input<typeof AgentMessageSchema>): void {
     this.ws.send(JSON.stringify(msg));
   }
 
@@ -676,5 +677,80 @@ describe('snapshots and blobs', () => {
       ]),
     );
     await expect(admin.createSnapshot(bd)).rejects.toThrow(/".." path segment/);
+  });
+});
+
+describe('outputs and artifacts', () => {
+  it('publishes live outputs and stores artifacts uploaded by the agent', async () => {
+    const agent = await addAgent('n1');
+    await agent.connect();
+    const job = await admin.submitJob(SPEC);
+    const assign = await agent.next('job.assign');
+    const ids = { jobId: job.id, assignmentId: assign.assignmentId };
+    agent.send({ type: 'job.state', ...ids, phase: 'running', ts: Date.now() });
+    const step = {
+      id: 's1',
+      group: 'CI/test',
+      name: 'Run tests',
+      status: 'running' as const,
+      startedAt: Date.now(),
+      durationMs: null,
+    };
+    agent.send({ type: 'job.outputs', ...ids, outputs: { steps: [step] } });
+    await waitFor(
+      async () =>
+        (await admin.getJob(job.id)).outputs?.steps?.[0]?.name === 'Run tests' || undefined,
+      'live outputs',
+    );
+
+    const content = Buffer.from('<testsuites/>');
+    const digest = digestOf(content);
+    // Agents upload artifact blobs with their own credential.
+    expect(await agent.client.missingBlobs([digest])).toEqual([digest]);
+    await agent.client.uploadBlobs(
+      packBlobs([
+        {
+          digest,
+          size: content.length,
+          open: async function* () {
+            yield content;
+          },
+        },
+      ]),
+    );
+    agent.send({
+      type: 'job.result',
+      result: {
+        ...ids,
+        outcome: 'succeeded',
+        exitCode: 0,
+        error: null,
+        oomKilled: false,
+        finishedAt: Date.now(),
+        logSeq: 0,
+        outputs: { steps: [{ ...step, status: 'success', durationMs: 1200 }] },
+        artifacts: [{ name: 'reports/junit.xml', digest, size: content.length }],
+      },
+    });
+    const done = await waitForState(job.id, 'succeeded');
+    expect(done.outputs?.steps?.[0]).toMatchObject({ status: 'success', durationMs: 1200 });
+    expect(done.artifacts).toEqual([{ name: 'reports/junit.xml', digest, size: content.length }]);
+    expect(await admin.listArtifacts(job.id)).toHaveLength(1);
+    const res = await admin.downloadArtifact(job.id, 'reports/junit.xml');
+    const chunks: Buffer[] = [];
+    for await (const c of res) chunks.push(c as Buffer);
+    expect(Buffer.concat(chunks).toString()).toBe('<testsuites/>');
+    await expect(admin.downloadArtifact(job.id, 'nope.txt')).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+    });
+    // Outputs from a stale assignment are ignored.
+    agent.send({
+      type: 'job.outputs',
+      jobId: job.id,
+      assignmentId: 'stale',
+      outputs: { steps: [] },
+    });
+    await new Promise((r) => setTimeout(r, 200));
+    expect((await admin.getJob(job.id)).outputs?.steps).toHaveLength(1);
   });
 });

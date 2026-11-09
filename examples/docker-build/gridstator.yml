@@ -1,0 +1,14 @@
+version: 1
+project: example-docker-build
+
+builds:
+  app:
+    description: Production image
+    stage: runner
+    tags: [gridstator-example:dev]
+    buildArgs:
+      APP_VERSION: '1.0.0'
+  export:
+    description: Production image exported as a tar artifact
+    stage: runner
+    output: tar

@@ -11,6 +11,9 @@ export default tseslint.config(
       '**/node_modules/**',
       'coverage/**',
       'examples/**',
+      'apps/vscode/media/**',
+      'apps/vscode/.vscode-test/**',
+      'apps/vscode/test-results/**',
     ],
   },
   js.configs.recommended,
@@ -19,7 +22,13 @@ export default tseslint.config(
     languageOptions: {
       globals: { ...globals.node },
       parserOptions: {
-        project: ['./packages/*/tsconfig.json', './apps/*/tsconfig.json', './tsconfig.tests.json'],
+        project: [
+          './packages/*/tsconfig.json',
+          './apps/*/tsconfig.json',
+          './apps/vscode/webview/tsconfig.json',
+          './apps/vscode/test/tsconfig.json',
+          './tsconfig.tests.json',
+        ],
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -45,8 +54,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.js', '**/*.mjs'],
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
     ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    // VS Code loads extension test suites with require().
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs' },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
     files: ['**/*.test.ts', 'tests/**/*.ts'],

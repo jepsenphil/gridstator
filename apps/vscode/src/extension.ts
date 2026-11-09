@@ -1,0 +1,480 @@
+import * as vscode from 'vscode';
+import {
+  GridstatorError,
+  defaultClientConfigPath,
+  errorMessage,
+  formatDuration,
+} from '@gridstator/shared';
+import { isTerminal, type Job, type Node, type NodeSettingsPatch } from '@gridstator/protocol';
+import {
+  GridstatorClient,
+  fetchPinnedCa,
+  normalizeControllerUrl,
+  writeClientConfig,
+} from '@gridstator/client';
+import { Dashboard } from './dashboard';
+import { CancelledByUser, Launcher } from './launcher';
+import type { LaunchItem, LaunchOptions } from './messages';
+import { ResultsIntegration } from './results';
+import { ClusterState } from './state';
+import {
+  ClusterTreeProvider,
+  JobsTreeProvider,
+  LauncherTreeProvider,
+  type LauncherElement,
+} from './views';
+
+export interface GridstatorApi {
+  state: ClusterState;
+  launcher: Launcher;
+  results: ResultsIntegration;
+  dashboard: Dashboard;
+}
+
+function config<T>(key: string, fallback: T): T {
+  return vscode.workspace.getConfiguration('gridstator').get<T>(key, fallback);
+}
+
+function showError(err: unknown): void {
+  if (err instanceof CancelledByUser) return;
+  const message =
+    err instanceof GridstatorError && err.hint ? `${err.message}. ${err.hint}` : errorMessage(err);
+  void vscode.window.showErrorMessage(`Gridstator: ${message}`);
+}
+
+function command(id: string, fn: (...args: never[]) => unknown): vscode.Disposable {
+  return vscode.commands.registerCommand(id, async (...args: never[]) => {
+    try {
+      await fn(...args);
+    } catch (err) {
+      showError(err);
+    }
+  });
+}
+
+export async function activate(context: vscode.ExtensionContext): Promise<GridstatorApi> {
+  const log = vscode.window.createOutputChannel('Gridstator');
+  const configPath = () => config<string>('configPath', '') || undefined;
+  const state = new ClusterState(configPath, () => config<number>('jobHistory', 100), log);
+  const launcher = new Launcher(state, log);
+  const results = new ResultsIntegration(state, launcher, log);
+  const dashboard = new Dashboard(context, state, launcher, log);
+  const jobsTree = new JobsTreeProvider(state);
+  context.subscriptions.push(
+    log,
+    state,
+    launcher,
+    results,
+    dashboard,
+    jobsTree,
+    vscode.window.registerTreeDataProvider('gridstator.cluster', new ClusterTreeProvider(state)),
+    vscode.window.registerTreeDataProvider('gridstator.jobs', jobsTree),
+    vscode.window.registerTreeDataProvider(
+      'gridstator.launcher',
+      new LauncherTreeProvider(launcher),
+    ),
+  );
+
+  // ---- status bar ------------------------------------------------------------------------------
+  const status = vscode.window.createStatusBarItem(
+    'gridstator.status',
+    vscode.StatusBarAlignment.Left,
+    10,
+  );
+  status.name = 'Gridstator';
+  const renderStatus = () => {
+    const c = state.connection;
+    if (c.status === 'signedOut') {
+      status.text = '$(server-environment) Gridstator: Sign in';
+      status.command = 'gridstator.signIn';
+      status.tooltip = 'Connect to a Gridstator controller';
+      status.backgroundColor = undefined;
+    } else if (c.status === 'error' || c.status === 'connecting') {
+      status.text =
+        c.status === 'connecting' ? '$(sync~spin) Gridstator' : '$(warning) Gridstator: offline';
+      status.command = 'gridstator.refresh';
+      status.tooltip = c.error ?? 'Connecting…';
+      status.backgroundColor =
+        c.status === 'error' ? new vscode.ThemeColor('statusBarItem.warningBackground') : undefined;
+    } else {
+      const nodes = state.nodeList();
+      const online = nodes.filter((n) => n.status === 'online').length;
+      const running = state
+        .jobList()
+        .filter((j) => ['assigned', 'starting', 'running'].includes(j.state)).length;
+      const queued = state.jobList().filter((j) => j.state === 'queued').length;
+      status.text = `$(server-environment) ${online}/${nodes.length}${running ? `  $(sync~spin) ${running}` : ''}${queued ? `  $(clock) ${queued}` : ''}`;
+      status.command = 'gridstator.openDashboard';
+      const target = config<string>('defaultNode', '');
+      status.tooltip = `Gridstator: ${online} of ${nodes.length} nodes online, ${running} running, ${queued} queued\nTarget: ${target || 'automatic'}\n${c.url} (${c.user})`;
+      status.backgroundColor = undefined;
+    }
+    status.show();
+  };
+  context.subscriptions.push(status, state.onDidChange(renderStatus));
+  renderStatus();
+
+  // ---- notifications ---------------------------------------------------------------------------
+  context.subscriptions.push(
+    state.onJobFinished((job) => {
+      if (!state.myJobs.has(job.id)) return;
+      const mode = config<string>('notifications', 'failures');
+      const ok = job.state === 'succeeded';
+      if (mode === 'none' || (mode === 'failures' && ok)) return;
+      const took =
+        job.startedAt && job.finishedAt
+          ? ` in ${formatDuration(job.finishedAt - job.startedAt)}`
+          : '';
+      const text = `${job.name} ${job.state} on ${job.nodeName ?? 'the cluster'}${took}${job.error && !ok ? `: ${job.error}` : ''}`;
+      const actions = ok ? ['Show Details'] : ['Show Details', 'Retry'];
+      const show = ok
+        ? vscode.window.showInformationMessage
+        : job.state === 'cancelled'
+          ? vscode.window.showInformationMessage
+          : vscode.window.showErrorMessage;
+      void show(`Gridstator: ${text}`, ...actions).then(async (choice) => {
+        if (choice === 'Show Details') dashboard.show('job', { jobId: job.id });
+        if (choice === 'Retry') {
+          try {
+            const next = await state.requireClient().retryJob(job.id);
+            state.myJobs.add(next.id);
+            const origin = launcher.origins.get(job.id);
+            if (origin) launcher.origins.set(next.id, origin);
+            state.upsertJob(next);
+            dashboard.show('job', { jobId: next.id });
+          } catch (err) {
+            showError(err);
+          }
+        }
+      });
+    }),
+  );
+
+  // ---- helpers ---------------------------------------------------------------------------------
+  let lastJob: string | undefined;
+  const launchAndShow = async (itemId: string, options: LaunchOptions = {}) => {
+    const job = await launcher.launch({ itemId, options });
+    lastJob = job.id;
+    dashboard.show('job', { jobId: job.id });
+    return job;
+  };
+  const pickItem = async (
+    kind: LaunchItem['kind'],
+    placeHolder: string,
+  ): Promise<LaunchItem | undefined> => {
+    if (launcher.items.length === 0) await launcher.refresh();
+    const items = launcher.items.filter((i) => i.kind === kind);
+    if (items.length === 0) {
+      void vscode.window.showInformationMessage(
+        `Gridstator: nothing of that kind found in this workspace.`,
+      );
+      return undefined;
+    }
+    const picked = await vscode.window.showQuickPick(
+      items.map((i) => ({
+        label: i.label,
+        description: i.description,
+        detail: i.warnings.join(' · ') || undefined,
+        item: i,
+      })),
+      { placeHolder, matchOnDescription: true },
+    );
+    return picked?.item;
+  };
+  const nodeArg = (n: Node | undefined): Node => {
+    if (!n) throw new GridstatorError('BAD_REQUEST', 'Select a node in the Cluster view');
+    return n;
+  };
+  const updateNode = async (n: Node, patch: NodeSettingsPatch) => {
+    state.upsertNode(await state.requireClient().updateNode(n.id, patch));
+  };
+
+  // ---- commands --------------------------------------------------------------------------------
+  context.subscriptions.push(
+    command('gridstator.openDashboard', () => dashboard.show('overview')),
+    command('gridstator.openRun', (itemId?: string, job?: string) =>
+      dashboard.show('run', itemId ? { itemId: job ? `${itemId}#${job}` : itemId } : {}),
+    ),
+    command('gridstator.refresh', async () => {
+      await Promise.all([state.connect(), launcher.refresh()]);
+    }),
+    command('gridstator.signIn', async () => {
+      const url = await vscode.window.showInputBox({
+        title: 'Gridstator: Sign In (1/3)',
+        prompt: 'Controller URL',
+        placeHolder: 'https://192.168.1.20:7300',
+        value: state.connection.url ?? '',
+        ignoreFocusOut: true,
+        validateInput: (v) => {
+          try {
+            normalizeControllerUrl(v);
+            return undefined;
+          } catch (err) {
+            return errorMessage(err);
+          }
+        },
+      });
+      if (!url) return;
+      const fingerprint = await vscode.window.showInputBox({
+        title: 'Gridstator: Sign In (2/3)',
+        prompt:
+          'Cluster CA fingerprint (printed by `gridstator controller init` and `gridstator token create`)',
+        placeHolder: 'sha256:…',
+        ignoreFocusOut: true,
+      });
+      if (!fingerprint) return;
+      const token = await vscode.window.showInputBox({
+        title: 'Gridstator: Sign In (3/3)',
+        prompt: 'Client token (gsc_…)',
+        password: true,
+        ignoreFocusOut: true,
+      });
+      if (!token) return;
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Gridstator: verifying the controller…',
+        },
+        async () => {
+          const base = normalizeControllerUrl(url);
+          const ca = await fetchPinnedCa(base, fingerprint);
+          const client = new GridstatorClient({ url: base, ca, token });
+          try {
+            const cluster = await client.cluster();
+            await writeClientConfig(
+              {
+                version: 1,
+                url: base,
+                caPem: ca,
+                caFingerprint: cluster.caFingerprint,
+                token,
+                tokenName: cluster.whoami.name,
+              },
+              configPath() ?? defaultClientConfigPath(),
+            );
+            void vscode.window.showInformationMessage(
+              `Gridstator: signed in to ${base} as ${cluster.whoami.name}. The CLI on this machine uses the same connection.`,
+            );
+          } finally {
+            client.close();
+          }
+        },
+      );
+      await state.connect();
+    }),
+    command('gridstator.runCommand', async () => {
+      const folder = vscode.workspace.workspaceFolders?.[0];
+      if (!folder) throw new GridstatorError('BAD_REQUEST', 'Open a folder first');
+      const cmd = await vscode.window.showInputBox({
+        prompt: 'Command to run in a container on the cluster (from the workspace root)',
+        placeHolder: 'npm ci && npm test',
+        ignoreFocusOut: true,
+      });
+      if (!cmd) return;
+      await launchAndShow(`command:${folder.name}`, { command: cmd });
+    }),
+    command('gridstator.runTask', async () => {
+      const item = await pickItem('task', 'Task from gridstator.yml');
+      if (item) await launchAndShow(item.id);
+    }),
+    command('gridstator.runScript', async () => {
+      const item = await pickItem('script', 'Package script to run on the cluster');
+      if (item) await launchAndShow(item.id);
+    }),
+    command('gridstator.runWorkflow', async () => {
+      const item = await pickItem('workflow', 'GitHub Actions workflow');
+      if (!item?.workflow) return;
+      const jobs = item.workflow.jobs.filter((j) => j.runnable);
+      const pick = await vscode.window.showQuickPick(
+        [
+          { label: '$(run-all) Whole workflow', id: '' },
+          ...jobs.map((j) => ({
+            label: j.id,
+            description: j.name !== j.id ? j.name : undefined,
+            detail: j.warnings.join(' · ') || undefined,
+            id: j.id,
+          })),
+        ],
+        { placeHolder: 'Run the whole workflow or one job' },
+      );
+      if (!pick) return;
+      const events = item.workflow.events.length ? item.workflow.events : ['push'];
+      const event =
+        events.length === 1
+          ? events[0]
+          : await vscode.window.showQuickPick(events, {
+              placeHolder: `Triggering event (default ${item.workflow.defaultEvent})`,
+            });
+      if (!event) return;
+      const inputs: Record<string, string> = {};
+      if (event === 'workflow_dispatch') {
+        for (const input of item.workflow.inputs) {
+          const value = input.options?.length
+            ? await vscode.window.showQuickPick(input.options, {
+                placeHolder: `${input.name}${input.description ? ` — ${input.description}` : ''}`,
+              })
+            : await vscode.window.showInputBox({
+                prompt: `Input ${input.name}${input.description ? ` — ${input.description}` : ''}`,
+                value: input.default ?? '',
+              });
+          if (value === undefined) return;
+          if (value !== '') inputs[input.name] = value;
+        }
+      }
+      await launchAndShow(item.id, { ...(pick.id ? { job: pick.id } : {}), event, inputs });
+    }),
+    command('gridstator.buildImage', async () => {
+      if (launcher.items.length === 0) await launcher.refresh();
+      const candidates = launcher.items.filter(
+        (i) => i.kind === 'build' || i.kind === 'dockerfile',
+      );
+      if (candidates.length === 0)
+        throw new GridstatorError('NOT_FOUND', 'No Dockerfiles or builds found in this workspace');
+      const picked = await vscode.window.showQuickPick(
+        candidates.map((i) => ({ label: i.label, description: i.description, item: i })),
+        { placeHolder: 'What to build' },
+      );
+      if (!picked) return;
+      const item = picked.item;
+      let stage: string | undefined;
+      if (item.dockerfile && item.dockerfile.stages.length > 0) {
+        const s = await vscode.window.showQuickPick(['(final stage)', ...item.dockerfile.stages], {
+          placeHolder: 'Build target stage',
+        });
+        if (s === undefined) return;
+        if (s !== '(final stage)') stage = s;
+      }
+      const tag =
+        item.kind === 'dockerfile'
+          ? await vscode.window.showInputBox({
+              prompt: 'Image tag (optional)',
+              placeHolder: 'my-app:dev',
+            })
+          : undefined;
+      if (tag === undefined && item.kind === 'dockerfile') return;
+      await launchAndShow(item.id, {
+        ...(stage ? { stage } : {}),
+        ...(tag ? { tags: [tag] } : {}),
+      });
+    }),
+    command('gridstator.rerunLast', async () => {
+      const last = lastJob ?? [...state.myJobs].pop();
+      if (!last)
+        throw new GridstatorError('NOT_FOUND', 'Nothing has been run from this window yet');
+      const job = await launcher.rerun(last);
+      lastJob = job.id;
+      dashboard.show('job', { jobId: job.id });
+    }),
+    command('gridstator.selectTarget', async () => {
+      const nodes = state.nodeList();
+      const current = config<string>('defaultNode', '');
+      const pick = await vscode.window.showQuickPick(
+        [
+          {
+            label: '$(sparkle) Automatic',
+            description: 'Let the scheduler choose the best available worker',
+            value: '',
+            picked: current === '',
+          },
+          ...nodes.map((n) => ({
+            label: `${n.status === 'online' ? '$(vm-running)' : '$(debug-disconnect)'} ${n.name}`,
+            description: `${n.status}${n.info ? ` · ${n.info.cpus} CPU` : ''} · ${n.activeJobs.length}/${n.settings.maxConcurrency} jobs`,
+            value: n.name,
+            picked: current === n.name,
+          })),
+        ],
+        { placeHolder: `Run jobs on… (currently ${current || 'automatic'})` },
+      );
+      if (!pick) return;
+      await vscode.workspace
+        .getConfiguration('gridstator')
+        .update('defaultNode', pick.value, vscode.ConfigurationTarget.Workspace);
+      renderStatus();
+    }),
+    command('gridstator.clearProblems', () => results.clear()),
+    command('gridstator.launch', async (element?: LauncherElement) => {
+      if (!element || 'section' in element) return;
+      const item = element.item;
+      if (item.kind === 'workflow') {
+        await launchAndShow(item.id, element.job ? { job: element.job.id } : {});
+      } else {
+        await launchAndShow(item.id);
+      }
+    }),
+    command('gridstator.job.open', (job?: Job) =>
+      dashboard.show('job', job ? { jobId: job.id } : {}),
+    ),
+    command('gridstator.job.cancel', async (job?: Job) => {
+      if (!job) return;
+      state.upsertJob(await state.requireClient().cancelJob(job.id));
+    }),
+    command('gridstator.job.retry', async (job?: Job) => {
+      if (!job || !isTerminal(job.state)) return;
+      const next = await state.requireClient().retryJob(job.id);
+      state.myJobs.add(next.id);
+      const origin = launcher.origins.get(job.id);
+      if (origin) launcher.origins.set(next.id, origin);
+      state.upsertJob(next);
+      dashboard.show('job', { jobId: next.id });
+    }),
+    command('gridstator.node.open', (n?: Node) =>
+      dashboard.show('nodes', n ? { nodeId: n.id } : {}),
+    ),
+    command('gridstator.node.enable', (n?: Node) =>
+      updateNode(nodeArg(n), { schedulingMode: 'enabled' }),
+    ),
+    command('gridstator.node.drain', (n?: Node) =>
+      updateNode(nodeArg(n), { schedulingMode: 'draining' }),
+    ),
+    command('gridstator.node.disable', (n?: Node) =>
+      updateNode(nodeArg(n), { schedulingMode: 'disabled' }),
+    ),
+    command('gridstator.node.setConcurrency', async (n?: Node) => {
+      const node = nodeArg(n);
+      const v = await vscode.window.showInputBox({
+        prompt: `Maximum concurrent jobs on ${node.name}`,
+        value: String(node.settings.maxConcurrency),
+        validateInput: (s) =>
+          /^\d+$/.test(s) && +s >= 1 && +s <= 256
+            ? undefined
+            : 'Enter a whole number from 1 to 256',
+      });
+      if (v) await updateNode(node, { maxConcurrency: Number(v) });
+    }),
+    command('gridstator.node.setReservation', async (n?: Node) => {
+      const node = nodeArg(n);
+      const cpus = await vscode.window.showInputBox({
+        prompt: `CPUs on ${node.name} reserved for the host (never used by jobs)`,
+        value: String(node.settings.reserved.cpus),
+        validateInput: (s) => (/^\d+(\.\d+)?$/.test(s) ? undefined : 'Enter a number'),
+      });
+      if (cpus === undefined) return;
+      const gb = await vscode.window.showInputBox({
+        prompt: `Memory on ${node.name} reserved for the host, in GiB`,
+        value: String(Math.round((node.settings.reserved.memoryMb / 1024) * 10) / 10),
+        validateInput: (s) => (/^\d+(\.\d+)?$/.test(s) ? undefined : 'Enter a number'),
+      });
+      if (gb === undefined) return;
+      await updateNode(node, {
+        reserved: { cpus: Number(cpus), memoryMb: Math.round(Number(gb) * 1024) },
+      });
+    }),
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (
+        e.affectsConfiguration('gridstator.configPath') ||
+        e.affectsConfiguration('gridstator.jobHistory')
+      )
+        void state.connect();
+      if (e.affectsConfiguration('gridstator.defaultNode')) renderStatus();
+    }),
+  );
+
+  void vscode.commands.executeCommand('setContext', 'gridstator.connection', 'connecting');
+  void launcher.refresh();
+  await state.connect();
+  return { state, launcher, results, dashboard };
+}
+
+export function deactivate(): void {
+  // Disposables registered on the context clean everything up.
+}

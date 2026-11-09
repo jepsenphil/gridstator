@@ -66,7 +66,7 @@ export async function runRetention(deps: {
   }
 
   // Mark-and-sweep: keep every blob referenced by a remaining snapshot.
-  const live = new Set<string>();
+  const live = new Set<string>(deps.store.artifactDigests());
   for (const id of deps.store.listSnapshotIds()) {
     live.add(id);
     try {

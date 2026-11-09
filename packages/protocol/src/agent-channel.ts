@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { SnapshotIdSchema, TimestampSchema } from './common.js';
-import { JobSpecSchema, LogEntrySchema } from './job.js';
+import { ArtifactSchema, JobOutputsSchema, JobSpecSchema, LogEntrySchema } from './job.js';
 import {
   NodeInfoSchema,
   NodeMetricsSchema,
@@ -25,6 +25,9 @@ export const AgentJobResultSchema = z.object({
   finishedAt: TimestampSchema,
   /** Last log sequence number written for this job. */
   logSeq: z.number().int().nonnegative(),
+  outputs: JobOutputsSchema.nullable().default(null),
+  /** Artifacts already uploaded to the controller's blob store. */
+  artifacts: z.array(ArtifactSchema).max(1000).default([]),
 });
 export type AgentJobResult = z.infer<typeof AgentJobResultSchema>;
 
@@ -75,6 +78,14 @@ export const AgentJobLogSchema = z.object({
   entries: z.array(LogEntrySchema).min(1).max(10_000),
 });
 
+/** Structured progress (e.g. workflow steps) while the job runs; replaces previous outputs. */
+export const AgentJobOutputsSchema = z.object({
+  type: z.literal('job.outputs'),
+  jobId: z.string(),
+  assignmentId: z.string(),
+  outputs: JobOutputsSchema,
+});
+
 export const AgentJobRejectedSchema = z.object({
   type: z.literal('job.rejected'),
   jobId: z.string(),
@@ -89,6 +100,7 @@ export const AgentMessageSchema = z.discriminatedUnion('type', [
   AgentJobResultMessageSchema,
   AgentJobLogSchema,
   AgentJobRejectedSchema,
+  AgentJobOutputsSchema,
 ]);
 export type AgentMessage = z.infer<typeof AgentMessageSchema>;
 export type AgentHello = z.infer<typeof AgentHelloSchema>;

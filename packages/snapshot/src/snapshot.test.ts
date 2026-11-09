@@ -63,6 +63,7 @@ async function makeRepo(): Promise<string> {
   await w('src/index.ts', 'export const v = 1;\n');
   await w('src/index.test.ts', 'test\n');
   await w('.env', 'SECRET=1\n');
+  await w('.secrets', 'GITHUB_TOKEN=x\n');
   await w('.env.example', 'SECRET=\n');
   await w('certs/server.pem', 'pem\n');
   await w('.npmrc', '//registry.npmjs.org/:_authToken=abc\n');
@@ -131,6 +132,7 @@ describe('captureSnapshot (git)', () => {
     expect(warned).toEqual([
       'secret:.env',
       'secret:.npmrc',
+      'secret:.secrets',
       'secret:certs/server.pem',
       'symlink:link-outside',
     ]);

@@ -6,12 +6,25 @@ import { probeCommandVersion, type DockerCli } from '@gridstator/executors';
 
 const MB = 1024 * 1024;
 
+export function actBinary(): string {
+  return process.env['GRIDSTATOR_ACT'] ?? 'act';
+}
+
 export async function collectNodeInfo(docker: DockerCli): Promise<NodeInfo> {
-  const [dockerStatus, buildx, act] = await Promise.all([
+  const [dockerStatus, buildx, act, git] = await Promise.all([
     docker.probe(),
     docker.probeBuildx(),
-    probeCommandVersion(process.env['GRIDSTATOR_ACT'] ?? 'act', ['--version']),
+    probeCommandVersion(actBinary(), ['--version']),
+    probeCommandVersion('git', ['--version']),
   ]);
+  const executors: NodeInfo['executors'] = [];
+  if (dockerStatus.available) {
+    executors.push('command');
+    if (buildx.available) executors.push('docker-build');
+    if (act.available && git.available) executors.push('actions');
+  }
+  if (act.available && !git.available)
+    act.error = 'git is not installed (required for workflow jobs)';
   return {
     hostname: hostname(),
     platform: process.platform,
@@ -23,7 +36,7 @@ export async function collectNodeInfo(docker: DockerCli): Promise<NodeInfo> {
     docker: dockerStatus,
     buildx,
     act,
-    executors: dockerStatus.available ? ['command'] : [],
+    executors,
   };
 }
 

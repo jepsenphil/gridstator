@@ -73,8 +73,13 @@ labels), `activeJobs[]`, `allocated`, `allocatable`, `lastSeenAt`, `connectedAt`
 | `GET /v1/jobs/:id/logs?after=&limit=` | `{ entries: LogEntry[], complete }` |
 | `POST /v1/jobs/:id/cancel` | idempotent; returns `Job` (terminal, or with `cancelRequestedAt` set) |
 | `POST /v1/jobs/:id/retry` | terminal jobs only; 201 new `Job` with `attempt + 1`, `retryOf` |
+| `GET /v1/jobs/:id/artifacts` | `{ artifacts: [{ name, digest, size }] }` |
+| `GET /v1/jobs/:id/artifacts/<name>` | the artifact's bytes (`application/octet-stream`, `content-disposition: attachment`); `name` may contain `/` |
 
-`JobSpec` (kind `command`):
+`JobSpec` is one of three kinds. All share `name`, `env`, `secretEnv`, `snapshot`, `workdir`,
+`resources`, `target`, `timeoutSeconds`, `retry`, `priority` and `project`.
+
+Kind `command`:
 
 ```jsonc
 {
@@ -91,14 +96,57 @@ labels), `activeJobs[]`, `allocated`, `allocatable`, `lastSeenAt`, `connectedAt`
   "timeoutSeconds": 1800,
   "retry": { "max": 1, "on": ["lost"] },  // "lost" and/or "failed"
   "priority": 0,                           // -100..100, higher first
-  "project": "web-app"                     // cache-affinity key
+  "project": "web-app",                    // cache-affinity key
+  "artifacts": ["coverage", "reports/junit.xml"]  // collected as <path>.tar artifacts
+}
+```
+
+Kind `docker-build` (BuildKit on the worker; `secretEnv` entries become `--secret id=NAME,env=NAME`):
+
+```jsonc
+{
+  "kind": "docker-build",
+  "snapshot": "sha256:…",
+  "context": ".",                          // relative to the snapshot root
+  "dockerfile": "apps/web/Dockerfile",     // default <context>/Dockerfile
+  "stage": "runner",                       // --target
+  "buildArgs": { "APP_VERSION": "1.2.3" },
+  "tags": ["web:dev"],
+  "platforms": [],
+  "noCache": false,
+  "pull": false,
+  "output": "load",                        // load | push | tar (image.tar artifact) | none
+  "cacheFrom": [], "cacheTo": []
+}
+```
+
+Kind `actions` (nektos/act on the worker):
+
+```jsonc
+{
+  "kind": "actions",
+  "snapshot": "sha256:…",
+  "workflow": ".github/workflows/ci.yml",
+  "job": "test",                           // omit for the whole workflow
+  "event": "workflow_dispatch",
+  "inputs": { "greeting": "hi" },
+  "vars": {}, "env": {},
+  "platforms": { "ubuntu-latest": "node:24-bookworm-slim" },  // runs-on label → image
+  "matrix": ["node:22"],
+  "dockerSocket": false,                   // mount the worker's Docker socket into job containers
+  "eventPayload": {},                      // optional github.event
+  "git": { "branch": "main", "remoteUrl": "https://github.com/acme/web.git" }
 }
 ```
 
 `Job` adds: `id`, `name`, `kind`, `state`, `stateReason`, `priority`, `owner`, `spec` (redacted),
 `snapshotId`, `nodeId`, `nodeName`, `assignmentId`, `attempt`, `retryOf`, `exitCode`, `error`,
-`queuePosition` (queued jobs only), `logSeq`, `createdAt`, `queuedAt`, `assignedAt`, `startedAt`,
+`queuePosition` (queued jobs only), `logSeq`, `outputs`, `artifacts`, `createdAt`, `queuedAt`, `assignedAt`, `startedAt`,
 `finishedAt`, `cancelRequestedAt`.
+
+`outputs` is `null` or `{ image?: { id, digest, tags, sizeBytes, output }, steps?: [{ id, group,
+name, status, startedAt, durationMs }] }`; step `status` is `running`, `success`, `failure`,
+`skipped` or `cancelled`. `artifacts` is a list of `{ name, digest, size }`.
 
 States: `created`, `queued`, `assigned`, `starting`, `running`, `succeeded`, `failed`, `cancelled`,
 `lost` (see [ARCHITECTURE.md §4](ARCHITECTURE.md#4-job-model-and-state-machine)).
@@ -109,8 +157,8 @@ States: `created`, `queued`, `assigned`, `starting`, `running`, `succeeded`, `fa
 
 | Method & path | Auth | Notes |
 |---|---|---|
-| `POST /v1/blobs/missing` | client | `{ digests: ["sha256:…"] }` → `{ missing: [...] }` |
-| `POST /v1/blobs/upload` | client | `Content-Type: application/x-tar`; entries named `sha256/<hex>`; each verified → `{ stored, alreadyPresent, bytes }` |
+| `POST /v1/blobs/missing` | client or agent | `{ digests: ["sha256:…"] }` → `{ missing: [...] }` |
+| `POST /v1/blobs/upload` | client or agent | `Content-Type: application/x-tar`; entries named `sha256/<hex>`; each verified → `{ stored, alreadyPresent, bytes }` |
 | `POST /v1/blobs/download` | client or agent | `{ digests }` → tar stream of the same format |
 | `GET /v1/blobs/:digest` | client or agent | raw bytes |
 | `POST /v1/snapshots` | client | `{ manifestDigest }`; validates the manifest and that every blob exists → 201 `{ id, fileCount, totalBytes, createdAt, lastUsedAt, owner }` |

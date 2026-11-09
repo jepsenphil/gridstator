@@ -6,6 +6,13 @@
     "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts"],
-  "references": [{ "path": "../../packages/shared" }, { "path": "../../packages/protocol" }]
+  "exclude": ["src/**/*.test.ts", "src/test-helpers.ts"],
+  "references": [
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/protocol"
+    }
+  ]
 }

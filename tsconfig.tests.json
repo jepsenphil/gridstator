@@ -11,6 +11,8 @@
     "packages/*/src/**/*.test.ts",
     "apps/*/src/**/*.test.ts",
     "tests/**/*.ts",
-    "*.config.ts"
-  ]
+    "*.config.ts",
+    "packages/*/src/test-helpers.ts"
+  ],
+  "exclude": ["apps/vscode/**"]
 }

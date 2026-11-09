@@ -7,6 +7,7 @@ export const alias = {
   '@gridstator/shared': pkg('./packages/shared/src/index.ts'),
   '@gridstator/protocol': pkg('./packages/protocol/src/index.ts'),
   '@gridstator/scheduler': pkg('./packages/scheduler/src/index.ts'),
+  '@gridstator/discovery': pkg('./packages/discovery/src/index.ts'),
   '@gridstator/snapshot': pkg('./packages/snapshot/src/index.ts'),
   '@gridstator/executors': pkg('./packages/executors/src/index.ts'),
   '@gridstator/client': pkg('./packages/client/src/index.ts'),

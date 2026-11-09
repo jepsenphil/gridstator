@@ -30,9 +30,46 @@ const TaskConfigSchema = z
     timeout: z.string().optional(),
     priority: z.number().int().min(-100).max(100).optional(),
     retry: RetryPolicySchema.partial().optional(),
+    /** Files/directories (relative to the project root) collected as artifacts. */
+    artifacts: z.array(z.string()).optional(),
+    /** JUnit XML report written by the task (relative to the project root); shown in VS Code's Testing view. */
+    junit: z.string().optional(),
   })
   .strict();
 export type TaskConfig = z.infer<typeof TaskConfigSchema>;
+
+const BuildConfigSchema = z
+  .object({
+    description: z.string().optional(),
+    /** Dockerfile path relative to the project root (default: <context>/Dockerfile). */
+    file: z.string().optional(),
+    /** Build context relative to the project root (default "."). */
+    context: z.string().optional(),
+    /** Dockerfile stage (`--target`). */
+    stage: z.string().optional(),
+    buildArgs: z.record(z.string(), z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+    platforms: z.array(z.string()).optional(),
+    output: z.enum(['load', 'push', 'tar', 'none']).optional(),
+    secretEnv: z.array(z.string()).optional(),
+    labels: z.array(LabelSchema).optional(),
+    node: z.string().optional(),
+  })
+  .strict();
+export type BuildConfig = z.infer<typeof BuildConfigSchema>;
+
+const ActionsConfigSchema = z
+  .object({
+    /** runs-on label → image, e.g. { "ubuntu-latest": "catthehacker/ubuntu:act-latest" }. */
+    platforms: z.record(z.string(), z.string()).optional(),
+    /** Mount the worker's Docker socket into workflow containers. */
+    dockerSocket: z.boolean().optional(),
+    /** Client environment variables forwarded as workflow secrets (e.g. GITHUB_TOKEN). */
+    secretEnv: z.array(z.string()).optional(),
+    vars: z.record(z.string(), z.string()).optional(),
+  })
+  .strict();
+export type ActionsConfig = z.infer<typeof ActionsConfigSchema>;
 
 export const ProjectConfigSchema = z
   .object({
@@ -64,6 +101,10 @@ export const ProjectConfigSchema = z
     tasks: z
       .record(z.string().regex(/^[A-Za-z0-9][A-Za-z0-9:._-]*$/), TaskConfigSchema)
       .default({}),
+    builds: z
+      .record(z.string().regex(/^[A-Za-z0-9][A-Za-z0-9:._-]*$/), BuildConfigSchema)
+      .default({}),
+    actions: ActionsConfigSchema.default({}),
   })
   .strict();
 export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;

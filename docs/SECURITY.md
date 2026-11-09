@@ -50,7 +50,7 @@ multi-tenant CI service and must not be exposed to the internet.
 - **Snapshot excludes:** `.git/`, `node_modules/`, everything git ignores, and secret patterns even
   when tracked: `.env`, `.env.*` (except `.env.example`, `.env.sample`, `.env.template`,
   `.env.defaults`), `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.jks`, `*.keystore`, `id_rsa*`,
-  `id_ecdsa*`, `id_ed25519*`, `.netrc`, `.pypirc`, `.ssh/`, `.aws/`, `.docker/config.json`, and
+  `id_ecdsa*`, `id_ed25519*`, `.netrc`, `.secrets`, `.pypirc`, `.ssh/`, `.aws/`, `.docker/config.json`, and
   `.npmrc` files that contain auth tokens. Each exclusion is reported as a warning. A project can
   re-admit specific files with `snapshot.allowSecrets` in `gridstator.yml`.
 - **Secrets in jobs:** values passed with `--secret-env NAME` are read from the client environment,
@@ -70,7 +70,7 @@ multi-tenant CI service and must not be exposed to the internet.
 - Every blob is verified against its SHA-256 digest on upload (controller) and on download (agent).
 - The default staging path never writes snapshot content to the worker's host filesystem: the agent
   builds a tar from validated entries and streams it into a per-job Docker volume. The host-directory
-  extractor (used by future executors) creates a fresh directory, refuses to follow or overwrite
+  extractor (used to stage builds and workflows) creates a fresh directory, refuses to follow or overwrite
   existing entries, and writes with `O_EXCL`.
 
 ### 2.5 Interference with the worker host
@@ -84,6 +84,46 @@ multi-tenant CI service and must not be exposed to the internet.
   the Docker socket are **not** mountable through the job API.
 - Per-node CPU/RAM reservations and live available-memory checks keep jobs from starving interactive
   work on development machines.
+
+### 2.6 Docker builds
+
+- Build secrets (`--secret-env`) reach BuildKit as `--secret id=NAME,env=NAME`: the value is only in
+  the buildx process environment and is available to `RUN --mount=type=secret` steps, never written
+  to an image layer, the command line or the log (it is masked like any secret).
+- Build arguments are **not** secret: they can end up in image history. Use secrets for credentials.
+- Dockerfile and context paths must resolve inside the staged snapshot (symlinks are followed and
+  checked); builds labelled with the job ID; the staging directory is removed after the build.
+- Builds run inside the worker's Docker daemon, so per-job CPU/memory limits are a scheduling
+  reservation, not an enforced cgroup limit.
+
+### 2.7 GitHub Actions workflows (act)
+
+Workflows are code that runs on your workers, including third-party actions that act downloads from
+GitHub. Run only workflows you would run on your own machine; Gridstator never triggers workflows
+from external events (pushes, pull requests). Defaults chosen to limit the blast radius:
+
+- The worker's Docker socket is **not** mounted into workflow containers unless the job opts in
+  (`dockerSocket` / `--docker-socket`), and act's container-options policy then restricts
+  workflow-supplied container options and host-path volumes. With the socket mounted, a workflow is
+  root-equivalent on the worker.
+- Secrets, vars and environment are written to private 0600 files for act and deleted afterwards;
+  act never reads `.secrets`, `.vars` or `.env` from the project (and `.secrets` is excluded from
+  snapshots like `.env`). act masks secret values in output and Gridstator masks them again.
+- act's cache server is bound to `127.0.0.1` (act binds it to the LAN address by default) and its
+  artifact server listens on loopback on a per-job port.
+- act's containers are labelled with the job and node and removed by Gridstator if act leaves any
+  behind.
+- `GITHUB_TOKEN` is only available if you forward one explicitly (`--secret-env GITHUB_TOKEN`).
+
+### 2.8 VS Code extension
+
+- The dashboard webview runs with a strict Content Security Policy (scripts only with a per-load
+  nonce, local resources only) and has no network access to the controller: every action is a typed
+  message handled by the extension.
+- The extension uses the same client configuration file as the CLI (mode 0600) and the same CA
+  pinning; sign-in verifies the CA fingerprint before saving anything.
+- Secrets named in `gridstator.yml` are read from the environment of the VS Code (or Remote SSH)
+  server process; they are not stored by the extension.
 
 ## 3. What Gridstator does not protect against
 

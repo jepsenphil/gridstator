@@ -24,7 +24,9 @@ import {
 } from '@gridstator/protocol';
 import { GridstatorClient } from '@gridstator/client';
 import {
+  ActionsExecutor,
   ContainerExecutor,
+  DockerBuildExecutor,
   DockerCli,
   cleanupManagedResources,
   type Executor,
@@ -33,7 +35,7 @@ import { BlobStore } from '@gridstator/snapshot';
 import { readSpool, removeSpool } from './log-pipeline.js';
 import { JobRunner } from './runner.js';
 import type { AgentState } from './state.js';
-import { MetricsSampler, collectNodeInfo } from './system.js';
+import { MetricsSampler, actBinary, collectNodeInfo } from './system.js';
 
 export interface AgentOptions {
   dataDir: string;
@@ -62,7 +64,7 @@ export class Agent {
   private readonly client: GridstatorClient;
   private readonly cache: BlobStore;
   private sampler: MetricsSampler;
-  private readonly dirs: { logs: string; results: string; tmp: string };
+  private readonly dirs: { logs: string; results: string; tmp: string; work: string };
   private readonly runners = new Map<string, JobRunner>();
   private readonly results = new Map<string, AgentJobResult>();
   private executors = new Map<string, Executor>();
@@ -91,6 +93,7 @@ export class Agent {
       logs: join(opts.dataDir, 'logs'),
       results: join(opts.dataDir, 'results'),
       tmp: join(opts.dataDir, 'tmp'),
+      work: join(opts.dataDir, 'work'),
     };
     this.sampler = new MetricsSampler([opts.dataDir]);
   }
@@ -114,7 +117,10 @@ export class Agent {
 
   async start(): Promise<void> {
     for (const d of Object.values(this.dirs)) mkdirSync(d, { recursive: true, mode: 0o700 });
+    // Temporary files and work directories of a previous agent process are never reused.
     rmSync(this.dirs.tmp, { recursive: true, force: true });
+    rmSync(this.dirs.work, { recursive: true, force: true });
+    mkdirSync(this.dirs.work, { recursive: true, mode: 0o700 });
     mkdirSync(this.dirs.tmp, { recursive: true, mode: 0o700 });
     await this.cache.init();
     this.info = await collectNodeInfo(this.docker);
@@ -132,6 +138,20 @@ export class Agent {
           keepFailed: this.opts.keepFailedWorkspaces ?? false,
         }),
       );
+      if (this.info.executors.includes('docker-build')) {
+        this.executors.set('docker-build', new DockerBuildExecutor({ docker: this.docker }));
+      }
+      if (this.info.executors.includes('actions')) {
+        this.executors.set(
+          'actions',
+          new ActionsExecutor({
+            docker: this.docker,
+            actBin: actBinary(),
+            actHome: join(this.opts.dataDir, 'act-home'),
+            tmpDir: this.dirs.tmp,
+          }),
+        );
+      }
       // Anything labelled for this node is left over from a previous agent process.
       const removed = await cleanupManagedResources(this.docker, this.nodeId, new Set());
       if (removed.containers.length + removed.volumes.length > 0) {
@@ -353,11 +373,17 @@ export class Agent {
       nodeId: this.nodeId,
       nodeName: this.opts.state.name,
       logsDir: this.dirs.logs,
+      workRoot: this.dirs.work,
       maxLogBytes: this.opts.maxLogBytesPerJob ?? 64 * 1024 * 1024,
       logger: this.log,
       sendLogs: (r, entries: LogEntry[]) => {
         if (this.welcomed && this.runners.get(r.jobId) === r) {
           this.send({ type: 'job.log', jobId: r.jobId, assignmentId: r.assignmentId, entries });
+        }
+      },
+      sendOutputs: (r, outputs) => {
+        if (this.welcomed && this.runners.get(r.jobId) === r) {
+          this.send({ type: 'job.outputs', jobId: r.jobId, assignmentId: r.assignmentId, outputs });
         }
       },
       sendPhase: (r, phase) => {

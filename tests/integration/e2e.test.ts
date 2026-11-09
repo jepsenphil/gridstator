@@ -7,7 +7,7 @@
  * Run with: pnpm test:e2e   (requires Docker; pulls alpine:3.20)
  */
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -16,6 +16,15 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const CLI = fileURLToPath(new URL('../../apps/cli/dist/main.js', import.meta.url));
 const IMAGE = 'alpine:3.20';
+const EXAMPLES = fileURLToPath(new URL('../../examples/', import.meta.url));
+const actAvailable = (() => {
+  try {
+    execFileSync('act', ['--version'], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+})();
 
 let root: string;
 let port: number;
@@ -422,6 +431,100 @@ describe.skipIf(!enabled)('Gridstator end to end', () => {
     expect(final.attempt).toBe(2);
     expect((await cli(['logs', retried.id])).stdout).toBe('attempt 2\n');
   });
+
+  it('builds a Docker image remotely from the working tree', async () => {
+    const proj = join(root, 'docker-build');
+    await cp(join(EXAMPLES, 'docker-build'), proj, { recursive: true });
+    const res = await cli(
+      [
+        'build',
+        '--node',
+        'beta',
+        '--target',
+        'runner',
+        '-t',
+        'gridstator-e2e:latest',
+        '--build-arg',
+        'APP_VERSION=7.7.7',
+      ],
+      { cwd: proj, timeoutMs: 300_000 },
+    );
+    expect(res.code, res.stderr).toBe(0);
+    expect(res.stderr).toMatch(/Image sha256:[0-9a-f]+ \(gridstator-e2e:latest\)/);
+    const jobs = await cliJson<Array<JobJson & { outputs: { image?: { id: string } } }>>([
+      'jobs',
+      '--limit',
+      '1',
+    ]);
+    const built = jobs[0]!;
+    expect(built.nodeName).toBe('beta');
+    const labels = execFileSync('docker', [
+      'image',
+      'inspect',
+      'gridstator-e2e:latest',
+      '--format',
+      '{{index .Config.Labels "io.gridstator.job"}}',
+    ])
+      .toString()
+      .trim();
+    expect(labels).toBe(built.id);
+    expect(built.outputs.image?.id).toMatch(/^sha256:/);
+    execFileSync('docker', ['image', 'rm', 'gridstator-e2e:latest'], { stdio: 'ignore' });
+  });
+
+  it.skipIf(!actAvailable)(
+    'runs a GitHub Actions workflow against uncommitted changes and returns artifacts',
+    async () => {
+      const proj = join(root, 'gha');
+      await cp(join(EXAMPLES, 'github-actions'), proj, { recursive: true });
+      execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: proj });
+      execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'add', '-A'], {
+        cwd: proj,
+      });
+      execFileSync('git', ['-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'init'], {
+        cwd: proj,
+      });
+      // Uncommitted change that the workflow's test depends on.
+      await writeFile(
+        join(proj, 'src', 'greet.js'),
+        'export function greet(name) {\n  return `Hi, ${name}!`;\n}\n',
+      );
+      await writeFile(
+        join(proj, 'test', 'greet.test.js'),
+        "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { greet } from '../src/greet.js';\ntest('greet', () => assert.equal(greet('x'), 'Hi, x!'));\n",
+      );
+
+      const list = await cliJson<Array<{ file: string; jobs: Array<{ id: string }> }>>(
+        ['actions', 'list'],
+        proj,
+      );
+      expect(list[0]?.jobs.map((j) => j.id)).toEqual(['test', 'lint']);
+
+      const res = await cli(['actions', 'run', 'ci.yml', '--job', 'test', '--node', 'alpha'], {
+        cwd: proj,
+        timeoutMs: 300_000,
+      });
+      expect(res.code, res.stdout + res.stderr).toBe(0);
+      expect(res.stdout).toContain('[CI/test]   | ✔ greet');
+      const jobs = await cliJson<
+        Array<
+          JobJson & {
+            artifacts: Array<{ name: string }>;
+            outputs: { steps?: Array<{ name: string; status: string }> };
+          }
+        >
+      >(['jobs', '--limit', '1']);
+      const ran = jobs[0]!;
+      expect(ran.outputs.steps?.find((s) => s.name === 'Run tests')?.status).toBe('success');
+      expect(ran.artifacts.map((a) => a.name)).toEqual(['test-report/test-report.zip']);
+      const out = join(root, 'report.zip');
+      expect(
+        (await cli(['artifacts', ran.id, '--download', 'test-report/test-report.zip', '-o', out]))
+          .code,
+      ).toBe(0);
+      expect((await readFile(out)).subarray(0, 2).toString()).toBe('PK');
+    },
+  );
 
   it('reports a healthy setup in doctor', async () => {
     const res = await cli(['doctor']);

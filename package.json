@@ -8,9 +8,9 @@
     "node": ">=22.19.0"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && pnpm --filter gridstator-vscode build",
     "clean": "tsc -b --clean && rm -rf apps/cli/release",
-    "typecheck": "tsc -b --pretty && tsc -p tsconfig.tests.json --pretty",
+    "typecheck": "tsc -b --pretty && tsc -p tsconfig.tests.json --pretty && tsc -p apps/vscode/tsconfig.json && tsc -p apps/vscode/webview/tsconfig.json && tsc -p apps/vscode/test/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "pnpm build && GRIDSTATOR_E2E=1 vitest run --config vitest.e2e.config.ts",
@@ -20,7 +20,10 @@
     "bundle": "pnpm build && pnpm --filter gridstator bundle",
     "gridstator": "node apps/cli/dist/main.js",
     "pack:release": "pnpm bundle && cd apps/cli/release && npm pack",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test"
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
+    "test:ui": "pnpm --filter gridstator-vscode build && pnpm --filter gridstator-vscode exec playwright test",
+    "test:vscode": "pnpm build && cd apps/vscode && xvfb-run -a node test/run-integration.mjs",
+    "package:vscode": "pnpm --filter gridstator-vscode package"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

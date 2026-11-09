@@ -1,5 +1,5 @@
 import { writeFile, access } from 'node:fs/promises';
-import { basename, join } from 'node:path';
+import { basename, join, posix, sep } from 'node:path';
 import type { Command } from 'commander';
 import {
   GridstatorError,
@@ -17,6 +17,7 @@ import {
   JOB_STATES,
   isTerminal,
   type Job,
+  type JobSpec,
   type JobSpecInput,
   type JobState,
   type LogEntry,
@@ -59,7 +60,7 @@ import { parseLabels } from '../settings-flags.js';
 /** Set by commands that need a specific process exit code. */
 export const exitState = { code: 0 };
 
-async function withClient<T>(fn: (client: GridstatorClient) => Promise<T>): Promise<T> {
+export async function withClient<T>(fn: (client: GridstatorClient) => Promise<T>): Promise<T> {
   const client = await connect();
   try {
     return await fn(client);
@@ -68,7 +69,7 @@ async function withClient<T>(fn: (client: GridstatorClient) => Promise<T>): Prom
   }
 }
 
-function collect(value: string, previous: string[] = []): string[] {
+export function collect(value: string, previous: string[] = []): string[] {
   return [...previous, value];
 }
 
@@ -118,7 +119,7 @@ export async function captureProject(
   return { captured, config, workdir: loc.workdir, root: loc.root };
 }
 
-async function uploadCaptured(
+export async function uploadCaptured(
   client: GridstatorClient,
   captured: CapturedSnapshot,
   quiet: boolean,
@@ -140,6 +141,7 @@ async function uploadCaptured(
 // ---- job building ------------------------------------------------------------------------------
 
 interface RunFlags {
+  artifact: string[];
   image?: string;
   node?: string;
   label: string[];
@@ -158,7 +160,7 @@ interface RunFlags {
   shell?: boolean;
 }
 
-function parseEnvPairs(pairs: string[]): Record<string, string> {
+export function parseEnvPairs(pairs: string[]): Record<string, string> {
   const env: Record<string, string> = {};
   for (const pair of pairs) {
     const i = pair.indexOf('=');
@@ -176,7 +178,7 @@ function parseEnvPairs(pairs: string[]): Record<string, string> {
   return env;
 }
 
-function secretEnvFrom(names: string[]): Record<string, string> {
+export function secretEnvFrom(names: string[]): Record<string, string> {
   const env: Record<string, string> = {};
   for (const name of names) {
     const value = process.env[name];
@@ -188,6 +190,15 @@ function secretEnvFrom(names: string[]): Record<string, string> {
     env[name] = value;
   }
   return env;
+}
+
+/** Joins `base` and `p` (both relative to the project root) and rejects paths that escape it. */
+export function normalizeRel(base: string, p: string): string {
+  const joined = posix.normalize(posix.join(base, p.split(sep).join('/')));
+  if (joined === '..' || joined.startsWith('../') || posix.isAbsolute(joined)) {
+    throw new GridstatorError('BAD_REQUEST', `Path "${p}" is outside the project`);
+  }
+  return joined === '' ? '.' : joined.replace(/\/$/, '');
 }
 
 function toCommand(cmd: string | string[], forceShell: boolean): string[] {
@@ -229,8 +240,15 @@ export function buildSpec(
   ];
   const node = flags.node ?? task?.node;
   const workdir = task?.workdir ? task.workdir.replace(/^\.\/?/, '') || '.' : extras.workdir;
+  // Task paths are relative to the project root; --artifact paths are relative to the current directory.
+  const artifacts = [
+    ...(task?.artifacts ?? []).map((p) => normalizeRel('.', p)),
+    ...(task?.junit ? [normalizeRel('.', task.junit)] : []),
+    ...flags.artifact.map((p) => normalizeRel(extras.workdir, p)),
+  ];
   return {
     kind: 'command',
+    artifacts: [...new Set(artifacts)],
     ...(flags.name ? { name: flags.name } : flags.task ? { name: `task:${flags.task}` } : {}),
     image: flags.image ?? task?.image ?? config.defaults.image ?? DEFAULT_IMAGE,
     command: toCommand(commandSource, flags.shell ?? false),
@@ -325,7 +343,36 @@ export async function followJob(
   return client.getJob(job.id);
 }
 
-function summarize(job: Job): void {
+function specLines(s: JobSpec): string[] {
+  switch (s.kind) {
+    case 'command':
+      return [
+        `  image       ${s.image}`,
+        `  command     ${JSON.stringify(s.command)}`,
+        `  workdir     ${s.workdir}`,
+      ];
+    case 'docker-build':
+      return [
+        `  dockerfile  ${s.dockerfile ?? (s.context === '.' ? 'Dockerfile' : `${s.context}/Dockerfile`)}${s.stage ? ` (target ${s.stage})` : ''}`,
+        `  context     ${s.context}`,
+        `  output      ${s.output}${s.tags.length ? ` → ${s.tags.join(', ')}` : ''}`,
+      ];
+    case 'actions':
+      return [
+        `  workflow    ${s.workflow}${s.job ? ` (job ${s.job})` : ''}`,
+        `  event       ${s.event}`,
+        ...(Object.keys(s.inputs).length
+          ? [
+              `  inputs      ${Object.entries(s.inputs)
+                .map(([k, v]) => `${k}=${v}`)
+                .join(', ')}`,
+            ]
+          : []),
+      ];
+  }
+}
+
+export function summarize(job: Job): void {
   const parts = [`Job ${job.id} ${stateColor(job.state, process.stderr)}`];
   if (job.nodeName) parts.push(`on ${job.nodeName}`);
   if (job.startedAt) parts.push(`in ${jobDuration(job)}`);
@@ -593,11 +640,10 @@ export function registerClientCommands(program: Command): void {
         const lines = [
           `${c.bold(job.id)}  ${stateColor(job.state)}${job.stateReason ? ` (${job.stateReason})` : ''}`,
           `  name        ${job.name}`,
+          `  kind        ${job.kind}`,
           `  owner       ${job.owner}`,
           `  node        ${job.nodeName ?? '-'}`,
-          `  image       ${s.image}`,
-          `  command     ${JSON.stringify(s.command)}`,
-          `  workdir     ${s.workdir}`,
+          ...specLines(s),
           `  snapshot    ${job.snapshotId ?? '-'}`,
           `  resources   ${s.resources.cpus} CPU, ${formatBytes(s.resources.memoryMb * 1024 * 1024)}`,
           `  attempt     ${job.attempt}${job.retryOf ? ` (retry of ${job.retryOf})` : ''}`,
@@ -605,6 +651,40 @@ export function registerClientCommands(program: Command): void {
           `  duration    ${jobDuration(job)}`,
         ];
         if (job.error) lines.push(`  error       ${c.red(job.error)}`);
+        const image = job.outputs?.image;
+        if (image) {
+          lines.push(
+            `  image id    ${image.id ?? '-'}${image.sizeBytes !== null ? ` (${formatBytes(image.sizeBytes)})` : ''}`,
+          );
+          if (image.digest) lines.push(`  digest      ${image.digest}`);
+        }
+        for (const a of job.artifacts) {
+          lines.push(
+            `  artifact    ${a.name} (${formatBytes(a.size)})  →  gridstator artifacts ${job.id} --download ${a.name}`,
+          );
+        }
+        const steps = job.outputs?.steps ?? [];
+        if (steps.length > 0) {
+          lines.push('', c.bold('  Steps'));
+          let group: string | null = null;
+          for (const st of steps) {
+            if (st.group !== group) {
+              group = st.group;
+              if (group) lines.push(`  ${group}`);
+            }
+            const icon =
+              st.status === 'success'
+                ? c.green('✓')
+                : st.status === 'failure'
+                  ? c.red('✗')
+                  : st.status === 'running'
+                    ? c.cyan('…')
+                    : c.gray('-');
+            lines.push(
+              `    ${icon} ${st.name}${st.durationMs !== null ? c.dim(` ${formatDuration(st.durationMs)}`) : ''}`,
+            );
+          }
+        }
         if (Object.keys(s.env).length > 0)
           lines.push(`  env         ${Object.keys(s.env).join(', ')}`);
         if (Object.keys(s.secretEnv).length > 0)
@@ -647,6 +727,12 @@ export function registerClientCommands(program: Command): void {
     .option('--retries <n>', 'automatic retries if the node is lost')
     .option('--name <name>', 'display name for the job')
     .option('--shell', 'run the arguments as one shell command (sh -c)')
+    .option(
+      '-a, --artifact <path>',
+      'collect a file or directory as an artifact after the run (repeatable)',
+      collect,
+      [],
+    )
     .option('--no-snapshot', 'do not send the project; run in an empty /workspace')
     .option('-d, --detach', 'print the job id and exit instead of streaming logs')
     .option('--json', 'print the submitted job as JSON (implies --detach)')

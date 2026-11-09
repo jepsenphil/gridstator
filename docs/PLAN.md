@@ -1,8 +1,8 @@
 # Gridstator: Plan and Progress
 
-Last updated: 2026-11-09. **Current state: Milestones 1 and 2 are implemented and validated, including
+Last updated: 2026-11-09. **Current state: Milestones 1–5 are implemented and validated, including
 across two physical machines on the LAN (Linux laptop controller + WSL2 worker on a Windows PC).
-Next: owner review, then Milestone 3.**
+Next: owner review (including trying the VS Code extension over Remote SSH), then Milestone 6.**
 
 ## Milestones
 
@@ -10,10 +10,10 @@ Next: owner review, then Milestone 3.**
 |---|---|---|
 | 1 | Distributed execution core: controller, agents, CLI, protocol, container executor | ✅ Implemented; validated locally and across two machines |
 | 2 | Workspace snapshots: capture, content-addressed transfer, staging, cleanup | ✅ Implemented; validated locally and across two machines |
-| 3 | Docker image builds with BuildKit/buildx | ⏳ Next after review |
-| 4 | Local GitHub Actions via `act` | Planned |
-| 5 | VS Code extension and dashboard | Planned |
-| 6 | Advanced scheduling, test sharding, artifacts, retry policies | Partially started (see below) |
+| 3 | Docker image builds with BuildKit/buildx | ✅ Implemented; validated locally and across two machines |
+| 4 | Local GitHub Actions via `act` | ✅ Implemented; validated locally and across two machines |
+| 5 | VS Code extension and dashboard | ✅ Implemented; validated in headless VS Code (local and against the LAN cluster); Remote SSH UI walkthrough by the owner pending |
+| 6 | Advanced scheduling, test sharding, artifacts, retry policies | Partially done: capability/resource scheduling, priorities, drain, retry policies and artifacts exist; job groups and sharding remain |
 | 7 | Open-source release readiness | Partially started (see below) |
 
 ## Milestone 1: distributed execution core ✅
@@ -55,6 +55,42 @@ Acceptance criterion: *change a test locally without committing; execute remotel
 the changed version.* Validated across two machines and in the automated e2e test
 `runs the exact uncommitted working tree`.
 
+## Milestone 3: Docker builds ✅
+
+- [x] `docker-build` job kind and executor: snapshot staged with the hardened materializer, Dockerfile/context resolved inside it, `--target`, build args, build secrets (`--secret env=`), tags, platforms, `--no-cache`, `--pull`, external cache import/export
+- [x] Outputs `load`, `push`, `tar` (via `docker save`, uploaded as `image.tar`), `none`; image ID, digest, tags and size reported as job outputs; images labelled with the job
+- [x] Live BuildKit progress; cancellation (SIGINT, then SIGKILL); timeout; staging cleanup
+- [x] Artifact infrastructure: agents upload to the controller's CAS; `artifacts` table; list/download API and `gridstator artifacts`
+- [x] `gridstator build` (and named `builds:` in gridstator.yml); `examples/docker-build`
+
+Acceptance: *build a Next.js image on a different machine while development continues on the laptop;
+logs and result visible through the controller.* **Met** — see the M3–M5 two-machine log below.
+
+## Milestone 4: GitHub Actions via act ✅
+
+- [x] Workflow discovery with jobs, events, `workflow_dispatch` inputs and caveat detection (`gridstator actions list`)
+- [x] `actions` job kind and executor: staged snapshot with a git context mirroring the developer's branch and remote; whole workflow or one job; event, inputs, vars, env, secrets, runner image mapping, matrix filter, optional event payload
+- [x] Hardened act defaults (ADR-15): no Docker socket unless requested, private secret/var/env files, loopback cache server, per-job artifact port, labelled containers and crash cleanup
+- [x] act JSON logs rendered in act's console format; structured steps published live; workflow artifacts captured
+- [x] `gridstator actions run`; `examples/github-actions`
+
+Acceptance: *run an existing workflow on a remote worker using uncommitted local changes, without
+pushing.* **Met** — see below.
+
+## Milestone 5: VS Code extension ✅
+
+- [x] Activity Bar container with Cluster, Jobs and Run views (welcome content when signed out or empty)
+- [x] React dashboard webview: overview, jobs (filters, search, row actions), job details (live virtualized logs with search, stream filters, follow, wrap, clickable file paths; steps; image; artifacts with download; history; cancel, retry, rerun with current files), run launcher (tasks, builds, workflows with job/event/inputs, scripts, Dockerfiles with stage/tags/output, custom command, worker and resources), node management (scheduling mode, concurrency, reservations, labels)
+- [x] Commands (run command/task/script/workflow/build, rerun last, select target worker, sign in, refresh, clear problems), status bar item, finish notifications with actions
+- [x] Unsaved-editor check before snapshots (`gridstator.unsavedFiles`)
+- [x] Problems panel from job logs (tsc, file:line:col tools, ESLint stylish, test stack traces) and Testing view from JUnit artifacts, plus a *Run on Gridstator* test profile
+- [x] Works on the workspace host (Remote SSH) and shares the CLI's connection; VSIX packaging
+
+Acceptance: *open a project through Remote SSH, run tests on the 64 GB worker, see the job in the
+dashboard, stream logs, cancel or retry from VS Code.* Everything except the Remote SSH UI walkthrough
+was validated automatically in a real (headless) VS Code against the LAN cluster with big-box as the
+target; the extension runs on the workspace host exactly as it does under Remote SSH.
+
 ## Validation log (2026-11-09, Linux laptop, Node 24.15, Docker 29.0.2)
 
 | Check | Result |
@@ -93,6 +129,31 @@ its first line in the CLI (fixed). A user newly added to the `docker` group must
 before an agent started from that session can use Docker; the agent reports this clearly as
 "Docker unavailable" and the node shows as degraded.
 
+## Validation log: Milestones 3–5 (2026-11-09)
+
+| Check | Result |
+|---|---|
+| `pnpm typecheck`, `pnpm lint`, `pnpm format:check` (all packages, extension, webview, tests) | pass |
+| `pnpm test`: 76 tests incl. real BuildKit builds (stages, secrets, export, cancel) and real act runs (checkout skip, git context, inputs, secrets masked, steps, artifacts, failure, cancel + cleanup) | pass |
+| `pnpm test:e2e`: 11 tests incl. remote Docker build and act workflow with artifact download via the CLI | pass |
+| `pnpm test:ui`: 7 Playwright tests of the dashboard (all views and actions) | pass |
+| `pnpm test:vscode`: extension in real VS Code 1.145.2 (headless) against a local cluster | pass |
+| VSIX packaged (385 KB) | pass |
+
+**Two machines (laptop controller + big-box WSL2 worker, act 0.2.97 and the new build installed on big-box):**
+
+| Step | Result |
+|---|---|
+| M3: `create-next-app` project (Next.js 16.4, standalone output, multi-stage Dockerfile) with an uncommitted page edit, `gridstator build --node big-box --target runner` | built in 30 s with live BuildKit logs; image labelled with the job; running it on big-box serves the uncommitted text; rebuild 1.1 s (warm cache on big-box) |
+| M4: `examples/github-actions` with uncommitted source and test edits, `gridstator actions run ci.yml --node big-box -e workflow_dispatch -i greeting=LAN` | test → lint in `needs` order, passing with the uncommitted code; report artifact shows `Hello LAN from example-org/demo-app@feature/demo` |
+| M5: VS Code integration test with `GRIDSTATOR_IT_CONFIG` = LAN cluster, target `big-box` | task ran on big-box (16 CPU); 3 JUnit results in the Testing view; failing assertion in the Problems panel at the right line; cancel, retry, drain/enable from VS Code commands |
+
+Findings fixed during M3–M5: buildx cannot export a tar with the default `docker` driver (now
+`docker save`); act binds its cache server to the LAN address and uses a fixed artifact port (now
+loopback and per-job); act timestamps have 1 s resolution (steps now use receive time); Node's JUnit
+reporter emits test cases directly under `<testsuites>`; two accessibility defects in the dashboard
+(buttons named by tooltip instead of text; select names polluted by option text).
+
 ## Decisions
 
 Settled with the project owner (2026-11-09):
@@ -125,6 +186,9 @@ Made during implementation (see ADRs in [ARCHITECTURE.md](ARCHITECTURE.md#11-arc
 - **Agent shutdown reports jobs as `lost`** (not `failed`), so retry policies treat it as an
   infrastructure failure.
 - **`controller init --force` moves the old cluster aside** (`<dir>.bak-<timestamp>`) rather than deleting it.
+- **act hardening (ADR-15)**, **tar export via `docker save` (ADR-16)**, **extension on the workspace
+  host with a message-only webview (ADR-17)**, **IDE feedback from logs and JUnit (ADR-18)**.
+- The Dockerfile build-stage field is `stage` (`target` already means node placement).
 
 ## Known limitations (current)
 
@@ -135,6 +199,14 @@ Made during implementation (see ADRs in [ARCHITECTURE.md](ARCHITECTURE.md#11-arc
 - One controller (no HA); acceptable for a personal LAN.
 - Head-of-line: a large high-priority job does not block smaller ones (backfill), but can wait
   indefinitely on a busy cluster.
+- Docker builds are not cgroup-limited per job (they run in the worker's Docker daemon); their
+  resources are a scheduling reservation only.
+- GitHub Actions compatibility is act's: Linux runners only, no OIDC or deployment environments,
+  remote reusable workflows and third-party actions are fetched from GitHub, `github.sha` is a
+  synthetic commit of the snapshot. Workflows using the `container:` key cannot reach act's
+  loopback-bound cache server.
+- The extension reads `secretEnv` values from the VS Code server's environment; secrets only set in
+  an interactive shell are not visible to it (use the CLI for those).
 
 ## Blockers
 
@@ -142,15 +214,7 @@ None.
 
 ## Next actions
 
-1. Owner review of M1/M2.
+1. Owner review of M3–M5, including installing the VSIX in the Remote SSH window and running tests on big-box from the Run view.
 2. Decide the permanent layout (where the controller lives; run controller/agents as services).
-3. Milestone 3: `docker-build` executor using `docker buildx build` (context = snapshot volume,
-   `--target`, build args, `--cache-from/--cache-to` local cache per worker, image metadata,
-   optional `--output` export as artifact, cancellation, labelled cleanup).
-4. Milestone 4: `actions` executor via `act` on a materialized snapshot (`--bind` off, explicit
-   event payload, inputs/env, unsupported-feature detection, guard against `actions/checkout`
-   replacing the snapshot).
-5. Milestone 5: VS Code extension (workspace-side extension host, React webview dashboard, Testing
-   API and Problems integration).
-6. Milestone 6: job groups and Playwright/Vitest sharding, artifacts via `docker cp` into the CAS.
-7. Milestone 7: systemd/WSL service helpers, release automation, npm publishing, troubleshooting guide.
+3. Milestone 6: job groups; test sharding (Playwright `--shard`, Vitest `--shard`, Node `--test-shard`) across workers with combined results in one group; aggregated JUnit in the Testing view.
+4. Milestone 7: systemd/WSL service helpers (`install-service`), release automation (npm + VSIX on tags), troubleshooting guide, Windows/WSL guide.

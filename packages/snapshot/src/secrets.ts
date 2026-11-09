@@ -17,6 +17,8 @@ export const SECRET_PATTERNS: readonly string[] = [
   '**/id_ed25519',
   '**/id_ed25519.*',
   '**/.netrc',
+  // act's conventional secrets file.
+  '**/.secrets',
   '**/.pypirc',
   '**/.ssh/**',
   '**/.aws/**',

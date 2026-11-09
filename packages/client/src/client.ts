@@ -5,6 +5,7 @@ import { WebSocket } from 'ws';
 import { z } from 'zod';
 import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData } from '@gridstator/shared';
 import {
+  ArtifactSchema,
   BlobsMissingResponseSchema,
   BlobsUploadResponseSchema,
   ClusterViewSchema,
@@ -21,6 +22,7 @@ import {
   SnapshotViewSchema,
   TokenViewSchema,
   isTerminal,
+  type Artifact,
   type BlobsUploadResponse,
   type ClientEventMessage,
   type ClusterView,
@@ -243,6 +245,19 @@ export class GridstatorClient {
       schema: z.object({ events: z.array(JobEventSchema) }),
     });
     return res.events;
+  }
+
+  async listArtifacts(id: string): Promise<Artifact[]> {
+    const res = await this.request('GET', `/v1/jobs/${encodeURIComponent(id)}/artifacts`, {
+      schema: z.object({ artifacts: z.array(ArtifactSchema) }),
+    });
+    return res.artifacts;
+  }
+
+  /** Streams one artifact's content. */
+  downloadArtifact(id: string, name: string): Promise<IncomingMessage> {
+    const encoded = name.split('/').map(encodeURIComponent).join('/');
+    return this.send('GET', `/v1/jobs/${encodeURIComponent(id)}/artifacts/${encoded}`, {});
   }
 
   // ---- blobs & snapshots -------------------------------------------------------------------

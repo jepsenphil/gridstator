@@ -70,6 +70,21 @@ const BaseJobSpecShape = {
   project: z.string().min(1).max(200).optional(),
 };
 
+/** A normalized path relative to the snapshot root ("." for the root). */
+export const RelPathSchema = z
+  .string()
+  .min(1)
+  .max(1024)
+  .refine(
+    (p) =>
+      p === '.' ||
+      (!p.startsWith('/') &&
+        !p.includes('\\') &&
+        !/^[A-Za-z]:/.test(p) &&
+        p.split('/').every((s) => s !== '' && s !== '.' && s !== '..')),
+    'expected "." or a normalized relative path without ".."',
+  );
+
 export const CommandJobSpecSchema = z.object({
   kind: z.literal('command'),
   image: z.string().min(1).max(512).default(DEFAULT_IMAGE),
@@ -78,13 +93,140 @@ export const CommandJobSpecSchema = z.object({
     .array(z.string().max(256 * 1024))
     .min(1)
     .max(4096),
+  /** Files or directories (relative to the snapshot root) collected as artifacts after the run. */
+  artifacts: z.array(RelPathSchema).max(32).default([]),
   ...BaseJobSpecShape,
 });
 
-export const JobSpecSchema = z.discriminatedUnion('kind', [CommandJobSpecSchema]);
+export const BuildOutputSchema = z.enum(['load', 'push', 'tar', 'none']);
+export type BuildOutput = z.infer<typeof BuildOutputSchema>;
+
+export const DockerBuildJobSpecSchema = z.object({
+  kind: z.literal('docker-build'),
+  /** Build context directory, relative to the snapshot root. */
+  context: RelPathSchema.default('.'),
+  /** Dockerfile path relative to the snapshot root. Default: `<context>/Dockerfile`. */
+  dockerfile: RelPathSchema.optional(),
+  /** Dockerfile stage to build (`--target`). */
+  stage: z.string().min(1).max(128).optional(),
+  buildArgs: z
+    .record(z.string().regex(/^[A-Za-z_][A-Za-z0-9_.-]*$/), z.string().max(64 * 1024))
+    .default({}),
+  tags: z.array(z.string().min(1).max(512)).max(32).default([]),
+  platforms: z.array(z.string().min(1).max(64)).max(8).default([]),
+  noCache: z.boolean().default(false),
+  /** Always pull newer base images. */
+  pull: z.boolean().default(false),
+  /**
+   * load: into the worker's image store (default); push: to the registry named by the tags;
+   * tar: export as an artifact (image.tar); none: build only (validates the Dockerfile, warms cache).
+   */
+  output: BuildOutputSchema.default('load'),
+  cacheFrom: z.array(z.string().min(1).max(512)).max(8).default([]),
+  cacheTo: z.array(z.string().min(1).max(512)).max(8).default([]),
+  ...BaseJobSpecShape,
+});
+
+export const ActionsJobSpecSchema = z.object({
+  kind: z.literal('actions'),
+  /** Workflow file relative to the snapshot root, e.g. ".github/workflows/ci.yml". */
+  workflow: RelPathSchema,
+  /** Run only this job id (act -j). Default: the whole workflow for the event. */
+  job: z.string().min(1).max(200).optional(),
+  event: z
+    .string()
+    .regex(/^[a-z_]+$/)
+    .default('push'),
+  /** Event payload (github.event); act generates a minimal one when omitted. */
+  eventPayload: z.record(z.string(), z.unknown()).optional(),
+  /** workflow_dispatch / workflow_call inputs. */
+  inputs: z.record(z.string().min(1).max(200), z.string().max(64 * 1024)).default({}),
+  /** Values for the `vars` context. */
+  vars: EnvMapSchema.default({}),
+  /** runs-on label → container image overrides. */
+  platforms: z.record(z.string().min(1).max(100), z.string().min(1).max(512)).default({}),
+  /** Restrict matrix combinations, e.g. ["node:20"]. */
+  matrix: z
+    .array(
+      z
+        .string()
+        .max(200)
+        .regex(/^[^:]+:.+$/),
+    )
+    .max(32)
+    .default([]),
+  /** Mount the worker's Docker socket into job containers (needed by workflows that run docker). */
+  dockerSocket: z.boolean().default(false),
+  /** Git context captured on the client, so github.ref / github.repository match the developer's checkout. */
+  git: z
+    .object({
+      branch: z.string().max(255).optional(),
+      remoteUrl: z.string().max(1024).optional(),
+      headSha: z.string().max(64).optional(),
+    })
+    .optional(),
+  ...BaseJobSpecShape,
+});
+
+export const JobSpecSchema = z.discriminatedUnion('kind', [
+  CommandJobSpecSchema,
+  DockerBuildJobSpecSchema,
+  ActionsJobSpecSchema,
+]);
 export type JobSpec = z.infer<typeof JobSpecSchema>;
 export type JobSpecInput = z.input<typeof JobSpecSchema>;
 export type JobKind = JobSpec['kind'];
+export type CommandJobSpec = z.infer<typeof CommandJobSpecSchema>;
+export type DockerBuildJobSpec = z.infer<typeof DockerBuildJobSpecSchema>;
+export type ActionsJobSpec = z.infer<typeof ActionsJobSpecSchema>;
+export const JOB_KINDS: readonly JobKind[] = ['command', 'docker-build', 'actions'];
+
+export const JobStepStatusSchema = z.enum([
+  'running',
+  'success',
+  'failure',
+  'skipped',
+  'cancelled',
+]);
+export type JobStepStatus = z.infer<typeof JobStepStatusSchema>;
+
+/** One execution step (e.g. a GitHub Actions step), for progress display. */
+export const JobStepSchema = z.object({
+  id: z.string().max(300),
+  /** Grouping, e.g. the workflow job ("CI/test"). */
+  group: z.string().max(300).nullable(),
+  name: z.string().max(1000),
+  status: JobStepStatusSchema,
+  startedAt: TimestampSchema.nullable(),
+  durationMs: z.number().nonnegative().nullable(),
+});
+export type JobStep = z.infer<typeof JobStepSchema>;
+
+export const ImageOutputSchema = z.object({
+  /** Image config digest (the local image ID). */
+  id: z.string().nullable(),
+  /** Manifest digest (registry), when known. */
+  digest: z.string().nullable(),
+  tags: z.array(z.string()),
+  sizeBytes: z.number().int().nonnegative().nullable(),
+  output: BuildOutputSchema,
+});
+export type ImageOutput = z.infer<typeof ImageOutputSchema>;
+
+/** Structured results beyond the exit code; filled in by executors as the job runs. */
+export const JobOutputsSchema = z.object({
+  image: ImageOutputSchema.optional(),
+  steps: z.array(JobStepSchema).max(5000).optional(),
+});
+export type JobOutputs = z.infer<typeof JobOutputsSchema>;
+
+export const ArtifactSchema = z.object({
+  /** Relative, path-like name, e.g. "image.tar" or "report/report.zip". */
+  name: z.string().min(1).max(1024),
+  digest: SnapshotIdSchema,
+  size: z.number().int().nonnegative(),
+});
+export type Artifact = z.infer<typeof ArtifactSchema>;
 
 export const JobSchema = z.object({
   id: IdSchema,
@@ -106,6 +248,8 @@ export const JobSchema = z.object({
   error: z.string().nullable(),
   queuePosition: z.number().int().positive().nullable(),
   logSeq: z.number().int().nonnegative(),
+  outputs: JobOutputsSchema.nullable(),
+  artifacts: z.array(ArtifactSchema),
   createdAt: TimestampSchema,
   queuedAt: TimestampSchema.nullable(),
   assignedAt: TimestampSchema.nullable(),
@@ -152,7 +296,21 @@ export function redactSpec(spec: JobSpec): JobSpec {
 
 export function jobDisplayName(spec: JobSpec): string {
   if (spec.name) return spec.name;
-  const cmd = spec.command;
-  const shown = cmd.length >= 3 && cmd[0] === 'sh' && cmd[1] === '-c' ? cmd[2] : cmd.join(' ');
-  return (shown ?? '').length > 80 ? `${(shown ?? '').slice(0, 77)}...` : (shown ?? '');
+  const clip = (t: string) => (t.length > 80 ? `${t.slice(0, 77)}...` : t);
+  switch (spec.kind) {
+    case 'command': {
+      const cmd = spec.command;
+      const shown = cmd.length >= 3 && cmd[0] === 'sh' && cmd[1] === '-c' ? cmd[2] : cmd.join(' ');
+      return clip(shown ?? '');
+    }
+    case 'docker-build': {
+      const file =
+        spec.dockerfile ?? (spec.context === '.' ? 'Dockerfile' : `${spec.context}/Dockerfile`);
+      return clip(`build ${file}${spec.stage ? ` --target ${spec.stage}` : ''}`);
+    }
+    case 'actions': {
+      const base = spec.workflow.split('/').pop() ?? spec.workflow;
+      return clip(`actions ${base}${spec.job ? ` (${spec.job})` : ''} on ${spec.event}`);
+    }
+  }
 }

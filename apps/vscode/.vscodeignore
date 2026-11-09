@@ -1,0 +1,13 @@
+src/**
+webview/**
+test/**
+scripts/**
+node_modules/**
+tsconfig.json
+**/*.map
+**/*.test.ts
+dist/*.vsix
+.vscode-test/**
+playwright.config.ts
+test-results/**
+.gitignore

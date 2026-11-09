@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { rm, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { JobSpec } from '@gridstator/protocol';
 import {
@@ -10,7 +10,12 @@ import {
   LABEL_MANAGED,
   LABEL_NODE,
 } from './docker.js';
-import type { ExecutionContext, ExecutionResult, Executor } from './executor.js';
+import {
+  cancelled,
+  type ExecutionContext,
+  type ExecutionResult,
+  type Executor,
+} from './executor.js';
 
 export const WORKSPACE_DIR = '/workspace';
 export const CACHE_DIR = '/gridstator/cache';
@@ -196,6 +201,9 @@ export class ContainerExecutor implements Executor {
       if (ctx.signal.aborted) return (result = cancelled());
 
       result = await this.attachAndWait(ctx, name, spec.timeoutSeconds);
+      if (spec.artifacts.length > 0 && result.outcome !== 'cancelled') {
+        result = { ...result, artifacts: await this.collectArtifacts(ctx, name, spec.artifacts) };
+      }
       return result;
     } catch (err) {
       return (result = {
@@ -213,6 +221,37 @@ export class ContainerExecutor implements Executor {
         ctx.system(`Keeping container ${name} and volume ${volume} for inspection`);
       }
     }
+  }
+
+  /** Copies each artifact path out of the stopped container as a tar and uploads it. */
+  private async collectArtifacts(
+    ctx: ExecutionContext,
+    container: string,
+    paths: readonly string[],
+  ) {
+    const collected = [];
+    const dir = join(ctx.workDir, 'artifacts');
+    await mkdir(dir, { recursive: true, mode: 0o700 });
+    for (const [i, path] of paths.entries()) {
+      const file = join(dir, `${i}.tar`);
+      const res = await this.docker.copyOut(
+        container,
+        path === '.' ? WORKSPACE_DIR : `${WORKSPACE_DIR}/${path}`,
+        file,
+      );
+      if (!res.ok) {
+        ctx.system(`Artifact ${path}: not found in the workspace (${res.error})`);
+        continue;
+      }
+      try {
+        const artifact = await ctx.uploadArtifact(`${path === '.' ? 'workspace' : path}.tar`, file);
+        ctx.system(`Artifact ${artifact.name} uploaded (${artifact.size} bytes)`);
+        collected.push(artifact);
+      } catch (err) {
+        ctx.system(`Artifact ${path}: upload failed: ${(err as Error).message}`);
+      }
+    }
+    return collected;
   }
 
   private attachAndWait(
@@ -305,10 +344,6 @@ export class ContainerExecutor implements Executor {
   }
 }
 
-function cancelled(): ExecutionResult {
-  return { outcome: 'cancelled', exitCode: null, error: null, oomKilled: false };
-}
-
 /**
  * Removes this node's Gridstator-managed job containers and workspace volumes, except those for
  * `keepJobIds`. Never touches anything without both the managed label and this node's id, and never
@@ -335,4 +370,25 @@ export async function cleanupManagedResources(
     removedVolumes.push(v.name);
   }
   return { containers: removedContainers, volumes: removedVolumes };
+}
+
+/** Removes containers and volumes labelled for one job on this node (crash/cancel safety net). */
+export async function cleanupJobResources(
+  docker: DockerCli,
+  nodeId: string,
+  jobId: string,
+): Promise<{ containers: string[]; volumes: string[] }> {
+  const filters = [`${LABEL_MANAGED}=true`, `${LABEL_NODE}=${nodeId}`, `${LABEL_JOB}=${jobId}`];
+  const containers: string[] = [];
+  const volumes: string[] = [];
+  for (const c of await docker.listContainers(filters)) {
+    await docker.removeContainer(c.id);
+    containers.push(c.name);
+  }
+  for (const v of await docker.listVolumes(filters)) {
+    if (v.labels[LABEL_CACHE]) continue;
+    await docker.removeVolume(v.name);
+    volumes.push(v.name);
+  }
+  return { containers, volumes };
 }

@@ -14,6 +14,7 @@ import {
   type ControllerMessage,
   type Job,
   type JobSpec,
+  type JobOutputs,
   type JobState,
   type LogEntry,
   type Node,
@@ -176,6 +177,8 @@ export class Cluster {
       startedAt: row.started_at,
       finishedAt: row.finished_at,
       cancelRequestedAt: row.cancel_requested_at,
+      outputs: row.outputs,
+      artifacts: this.store.artifactsForJob(row.id),
     };
   }
 
@@ -334,6 +337,7 @@ export class Cluster {
       finished_at: null,
       cancel_requested_at: null,
       updated_at: now,
+      outputs: null,
     };
     let queued!: JobRow;
     this.store.tx(() => {
@@ -695,6 +699,8 @@ export class Cluster {
         return this.onJobResult(nodeId, conn, msg.result);
       case 'job.rejected':
         return this.onJobRejected(nodeId, msg.jobId, msg.assignmentId, msg.reason);
+      case 'job.outputs':
+        return this.onJobOutputs(nodeId, msg.jobId, msg.assignmentId, msg.outputs);
     }
   }
 
@@ -867,6 +873,11 @@ export class Cluster {
           : result.outcome === 'lost'
             ? 'lost'
             : 'failed';
+    this.store.tx(() => {
+      if (result.outputs) this.store.setJobOutputs(job.id, result.outputs);
+      if (result.artifacts.length > 0)
+        this.store.insertArtifacts(job.id, result.artifacts, Date.now());
+    });
     this.finish(job, to, {
       actor: `node:${job.node_name}`,
       message: result.error,
@@ -877,6 +888,18 @@ export class Cluster {
       },
     });
     conn.send({ type: 'job.ack', jobId: job.id });
+  }
+
+  private onJobOutputs(
+    nodeId: string,
+    jobId: string,
+    assignmentId: string,
+    outputs: JobOutputs,
+  ): void {
+    const job = this.currentAssignment(nodeId, jobId, assignmentId);
+    if (!job || isTerminal(job.state)) return;
+    this.store.setJobOutputs(jobId, outputs);
+    this.emitJob({ ...job, outputs });
   }
 
   private onJobRejected(nodeId: string, jobId: string, assignmentId: string, reason: string): void {

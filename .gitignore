@@ -9,3 +9,11 @@ coverage/
 .env.*
 !.env.example
 apps/cli/release/
+
+# VS Code extension build and test output
+apps/vscode/media/dashboard.*
+apps/vscode/media/codicons/
+apps/vscode/.vscode-test/
+apps/vscode/test-results/
+apps/vscode/test/ui/screenshots/
+apps/vscode/test/ui/.fixture.html

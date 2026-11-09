@@ -1,0 +1,8 @@
+version: 1
+project: example-github-actions
+
+actions:
+  # The default runner images (catthehacker/ubuntu:act-*) are large but very compatible. This
+  # example only needs Node.js and git, so a small image keeps it fast.
+  platforms:
+    ubuntu-latest: node:24-bookworm-slim

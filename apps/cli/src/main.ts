@@ -4,6 +4,7 @@ import { GRIDSTATOR_VERSION, GridstatorError } from '@gridstator/shared';
 import { registerClientCommands, exitState } from './commands/client.js';
 import { registerDoctorCommand } from './commands/doctor.js';
 import { registerServerCommands } from './commands/server.js';
+import { registerWorkloadCommands } from './commands/workloads.js';
 import { c } from './output.js';
 
 // node:sqlite still prints an ExperimentalWarning on some Node versions; it is expected here.
@@ -25,6 +26,7 @@ program
   .exitOverride();
 
 registerClientCommands(program);
+registerWorkloadCommands(program);
 registerDoctorCommand(program);
 registerServerCommands(program);
 

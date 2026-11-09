@@ -18,9 +18,10 @@ Job 01M6YRS9QKK0X6GDE3YDMNB8NB submitted (snapshot a7966da95eff); waiting for sc
 Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
 ```
 
-> **Status: early development (v0.1).** The distributed execution core and workspace snapshots
-> (milestones 1 and 2) work and are tested. Docker image builds, GitHub Actions via `act`, the
-> VS Code extension and test sharding are next. See [docs/PLAN.md](docs/PLAN.md).
+> **Status: early development (v0.1).** Remote commands, working-tree snapshots, Docker builds,
+> GitHub Actions via `act` and the VS Code extension (milestones 1–5) work and are tested,
+> including across two physical machines. Test sharding, job groups and release packaging are
+> next. See [docs/PLAN.md](docs/PLAN.md).
 
 ## What works today
 
@@ -36,14 +37,28 @@ Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
   enable/disable/drain; pinning a job to a node.
 - **Reliable lifecycle.** Cancel, retry, automatic retry of lost jobs, and persistent history with
   an audit trail. Jobs survive controller restarts and agent reconnects without losing log lines.
+- **Docker builds on another machine.** `gridstator build` runs BuildKit on a worker: target
+  stages, build args, build secrets, tags, push, or export the image as a downloadable artifact. The
+  build cache stays on the worker, and repeat builds go back to it.
+- **GitHub Actions without pushing.** `gridstator actions run ci.yml` runs your existing workflows
+  (or one job) with [act](https://github.com/nektos/act) on a worker, against your uncommitted
+  files, with inputs, secrets, step-by-step progress and artifacts. `gridstator actions list` shows
+  what can run locally and what cannot.
+- **VS Code extension.** A Gridstator Activity Bar with your nodes, jobs and everything runnable in
+  the workspace; a dashboard with live logs, steps, artifacts, cancel/retry/rerun and node
+  management; errors in the Problems panel and JUnit results in the Testing view. Works over
+  Remote SSH, running where your code lives.
 - **Secure by default.** TLS everywhere with a self-generated cluster CA pinned by fingerprint,
   named and revocable tokens, and no inbound ports on workers. See [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Requirements
 
 - Node.js 22.19 or newer on every machine.
-- Docker on every machine that runs jobs, usable by the user running the agent.
+- Docker on every machine that runs jobs, usable by the user running the agent (buildx for image
+  builds).
+- [act](https://github.com/nektos/act) and git on workers that should run GitHub Actions workflows.
 - git on the machine where your source code lives (recommended).
+- VS Code 1.105 or newer for the extension.
 
 ## Quick start
 
@@ -100,6 +115,29 @@ gridstator retry <job-id>
 Press Ctrl-C once during `gridstator run` to cancel the remote job; press it again to detach and
 leave the job running.
 
+**5. Build images and run workflows:**
+
+```bash
+gridstator build --target runner -t web:dev            # BuildKit on a worker
+gridstator build --output tar && gridstator artifacts <job-id> --download image.tar
+gridstator actions list
+gridstator actions run ci.yml --job test
+gridstator actions run deploy.yml -e workflow_dispatch -i environment=staging
+```
+
+## VS Code
+
+Install the extension from `gridstator.vsix` (**Extensions: Install from VSIX…**, or
+`code --install-extension gridstator.vsix`; build it with `pnpm package:vscode`). In a Remote SSH
+window, install it on the remote side, where your code is. Then run **Gridstator: Sign In to
+Controller** (or `gridstator login` in that machine's terminal; both share the same configuration).
+
+Open the Gridstator Activity Bar view and press ▶ next to a task, workflow job, package script or
+Dockerfile, or open the dashboard (**Gridstator: Open Dashboard**) for logs, steps, artifacts and node
+management. **Gridstator: Select Target Worker** chooses a worker for this workspace (default:
+automatic). Jobs run the files saved on disk; the extension asks first if editors have unsaved
+changes.
+
 ## Keeping your laptop usable
 
 Every node reserves CPU and memory for its host. Jobs are only placed where their requested
@@ -127,10 +165,16 @@ snapshot:
   allowSecrets: []   # secret-looking files that are safe to send (e.g. .env.test)
 tasks:
   test:
-    command: corepack enable && pnpm install --frozen-lockfile && pnpm test
+    command: corepack enable && pnpm install --frozen-lockfile && pnpm vitest run --reporter=junit --outputFile=junit.xml
+    junit: junit.xml           # results appear in VS Code's Testing view
+builds:
+  web: { file: Dockerfile, stage: runner, tags: [web:dev] }
+actions:
+  platforms: { ubuntu-latest: catthehacker/ubuntu:act-latest }
+  secretEnv: [GITHUB_TOKEN]    # forwarded from your environment when set
 ```
 
-Run a task with `gridstator run --task test`. Package-manager caches (npm, pnpm, yarn, pip, Go)
+Run a task with `gridstator run --task test` and a build with `gridstator build -b web`. Package-manager caches (npm, pnpm, yarn, pip, Go)
 persist on each worker in a shared Docker volume, so repeat installs are fast.
 
 ## Command reference
@@ -143,6 +187,9 @@ persist on each worker in a shared Docker volume, so repeat installs are fast.
 | `status`, `doctor` | cluster overview; diagnose setup problems |
 | `nodes`, `nodes show/set/enable/disable/drain/remove` | inspect and manage workers |
 | `run`, `jobs`, `job`, `logs`, `cancel`, `retry` | submit and manage jobs |
+| `build [context]` | build a Docker image on a worker |
+| `actions list` / `actions run <workflow>` | discover and run GitHub Actions workflows with act |
+| `artifacts <job> [--download <name>]` | list or download a job's artifacts |
 | `snapshot [--dry-run] [--json]` | see exactly which files would be sent |
 | `token create/list/revoke` | manage client and join tokens |
 | `init` | create `gridstator.yml` |

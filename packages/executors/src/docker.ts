@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from 'node:child_process';
+import { createWriteStream } from 'node:fs';
 import type { Readable } from 'node:stream';
 import type { ToolStatus } from '@gridstator/protocol';
 
@@ -151,6 +152,30 @@ export class DockerCli {
 
   async copyInto(container: string, destDir: string, tar: Readable): Promise<void> {
     await this.check(['cp', '-', `${container}:${destDir}`], { input: tar });
+  }
+
+  /** Writes `docker cp <container>:<path> -` (a tar stream) to `destFile`. */
+  copyOut(
+    container: string,
+    path: string,
+    destFile: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }> {
+    return new Promise((resolve) => {
+      const child = this.spawn(['cp', `${container}:${path}`, '-']);
+      child.stdin?.end();
+      const out = createWriteStream(destFile, { mode: 0o600 });
+      let stderr = '';
+      child.stderr?.on('data', (c: Buffer) => (stderr += c.toString()));
+      child.stdout?.pipe(out);
+      child.on('error', (err) => resolve({ ok: false, error: err.message }));
+      child.on('close', (code) => {
+        out.end(() =>
+          resolve(
+            code === 0 ? { ok: true } : { ok: false, error: stderr.trim() || `exit code ${code}` },
+          ),
+        );
+      });
+    });
   }
 
   async inspectState(

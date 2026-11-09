@@ -1,0 +1,440 @@
+{
+  "name": "gridstator-vscode",
+  "displayName": "Gridstator",
+  "description": "Multiple machines. One workflow. Run builds, tests and GitHub Actions workflows on the computers on your LAN, from VS Code.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "gridstator",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jepsenphil/gridstator.git"
+  },
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other",
+    "Testing"
+  ],
+  "keywords": [
+    "docker",
+    "buildkit",
+    "github actions",
+    "act",
+    "distributed",
+    "remote build",
+    "cluster"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "workspaceContains:gridstator.yml",
+    "workspaceContains:.github/workflows/*.yml"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gridstator",
+          "title": "Gridstator",
+          "icon": "media/gridstator.svg"
+        }
+      ]
+    },
+    "views": {
+      "gridstator": [
+        {
+          "id": "gridstator.cluster",
+          "name": "Cluster",
+          "icon": "media/gridstator.svg"
+        },
+        {
+          "id": "gridstator.jobs",
+          "name": "Jobs"
+        },
+        {
+          "id": "gridstator.launcher",
+          "name": "Run"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "gridstator.cluster",
+        "contents": "Connect VS Code to your Gridstator controller to run builds and tests on the machines in your network.\n[Sign In](command:gridstator.signIn)\nThe extension uses the same connection as the `gridstator` CLI, so `gridstator login` on this machine also works.\n[Learn more](https://github.com/jepsenphil/gridstator#quick-start)",
+        "when": "gridstator.connection == 'signedOut'"
+      },
+      {
+        "view": "gridstator.cluster",
+        "contents": "Cannot reach the Gridstator controller.\n[Retry](command:gridstator.refresh)\n[Sign In Again](command:gridstator.signIn)",
+        "when": "gridstator.connection == 'error'"
+      },
+      {
+        "view": "gridstator.cluster",
+        "contents": "No worker nodes yet. Create a join token with `gridstator token create --join` and run `gridstator agent join` on a worker.",
+        "when": "gridstator.connection == 'connected' && gridstator.nodeCount == 0"
+      },
+      {
+        "view": "gridstator.jobs",
+        "contents": "No jobs yet.\n[Run Something](command:gridstator.openRun)",
+        "when": "gridstator.connection == 'connected'"
+      },
+      {
+        "view": "gridstator.launcher",
+        "contents": "Open a folder to see its workflows, tasks, scripts and Dockerfiles.",
+        "when": "workbenchState == empty"
+      }
+    ],
+    "commands": [
+      {
+        "command": "gridstator.openDashboard",
+        "title": "Open Dashboard",
+        "category": "Gridstator",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "gridstator.openRun",
+        "title": "Open Run Launcher",
+        "category": "Gridstator",
+        "icon": "$(play)"
+      },
+      {
+        "command": "gridstator.signIn",
+        "title": "Sign In to Controller",
+        "category": "Gridstator",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "gridstator.refresh",
+        "title": "Refresh",
+        "category": "Gridstator",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gridstator.runCommand",
+        "title": "Run Command on Cluster…",
+        "category": "Gridstator",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "gridstator.runTask",
+        "title": "Run Task on Cluster…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.runScript",
+        "title": "Run Package Script on Cluster…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.runWorkflow",
+        "title": "Run GitHub Actions Workflow on Cluster…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.buildImage",
+        "title": "Build Docker Image on Cluster…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.rerunLast",
+        "title": "Rerun Last Job with Current Files",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.selectTarget",
+        "title": "Select Target Worker…",
+        "category": "Gridstator",
+        "icon": "$(target)"
+      },
+      {
+        "command": "gridstator.clearProblems",
+        "title": "Clear Problems from Remote Runs",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.launch",
+        "title": "Run",
+        "category": "Gridstator",
+        "icon": "$(play)"
+      },
+      {
+        "command": "gridstator.job.open",
+        "title": "Show Job Details",
+        "category": "Gridstator",
+        "icon": "$(output)"
+      },
+      {
+        "command": "gridstator.job.cancel",
+        "title": "Cancel Job",
+        "category": "Gridstator",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "gridstator.job.retry",
+        "title": "Retry Job",
+        "category": "Gridstator",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "gridstator.node.enable",
+        "title": "Enable Scheduling",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.node.drain",
+        "title": "Drain Node",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.node.disable",
+        "title": "Disable Scheduling",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.node.setConcurrency",
+        "title": "Set Maximum Concurrent Jobs…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.node.setReservation",
+        "title": "Set Reserved Resources…",
+        "category": "Gridstator"
+      },
+      {
+        "command": "gridstator.node.open",
+        "title": "Manage Node",
+        "category": "Gridstator",
+        "icon": "$(gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gridstator.openDashboard",
+          "when": "view == gridstator.cluster",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gridstator.selectTarget",
+          "when": "view == gridstator.cluster && gridstator.connection == 'connected'",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gridstator.refresh",
+          "when": "view == gridstator.cluster",
+          "group": "navigation@3"
+        },
+        {
+          "command": "gridstator.signIn",
+          "when": "view == gridstator.cluster",
+          "group": "overflow"
+        },
+        {
+          "command": "gridstator.runCommand",
+          "when": "view == gridstator.launcher && gridstator.connection == 'connected'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gridstator.openRun",
+          "when": "view == gridstator.launcher",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gridstator.refresh",
+          "when": "view == gridstator.launcher",
+          "group": "navigation@3"
+        },
+        {
+          "command": "gridstator.openDashboard",
+          "when": "view == gridstator.jobs",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gridstator.launch",
+          "when": "view == gridstator.launcher && viewItem =~ /^launch/",
+          "group": "inline"
+        },
+        {
+          "command": "gridstator.job.cancel",
+          "when": "view == gridstator.jobs && viewItem == job.active",
+          "group": "inline@1"
+        },
+        {
+          "command": "gridstator.job.retry",
+          "when": "view == gridstator.jobs && viewItem == job.done",
+          "group": "inline@1"
+        },
+        {
+          "command": "gridstator.job.open",
+          "when": "view == gridstator.jobs && viewItem =~ /^job/",
+          "group": "inline@2"
+        },
+        {
+          "command": "gridstator.node.open",
+          "when": "view == gridstator.cluster && viewItem =~ /^node/",
+          "group": "inline"
+        },
+        {
+          "command": "gridstator.node.enable",
+          "when": "view == gridstator.cluster && viewItem =~ /^node\\.(disabled|draining)/",
+          "group": "1_scheduling@1"
+        },
+        {
+          "command": "gridstator.node.drain",
+          "when": "view == gridstator.cluster && viewItem =~ /^node\\.enabled/",
+          "group": "1_scheduling@2"
+        },
+        {
+          "command": "gridstator.node.disable",
+          "when": "view == gridstator.cluster && viewItem =~ /^node\\.(enabled|draining)/",
+          "group": "1_scheduling@3"
+        },
+        {
+          "command": "gridstator.node.setConcurrency",
+          "when": "view == gridstator.cluster && viewItem =~ /^node/",
+          "group": "2_capacity@1"
+        },
+        {
+          "command": "gridstator.node.setReservation",
+          "when": "view == gridstator.cluster && viewItem =~ /^node/",
+          "group": "2_capacity@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "gridstator.launch",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.job.open",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.job.cancel",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.job.retry",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.enable",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.drain",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.disable",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.setConcurrency",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.setReservation",
+          "when": "false"
+        },
+        {
+          "command": "gridstator.node.open",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Gridstator",
+      "properties": {
+        "gridstator.configPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Path to the client configuration written by `gridstator login`. Empty uses the CLI default (`~/.config/gridstator/client.json` on Linux).",
+          "scope": "machine"
+        },
+        "gridstator.defaultNode": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Worker to run jobs on. Empty lets the scheduler choose automatically. Change it with **Gridstator: Select Target Worker**."
+        },
+        "gridstator.unsavedFiles": {
+          "type": "string",
+          "enum": [
+            "prompt",
+            "saveAll",
+            "ignore"
+          ],
+          "enumDescriptions": [
+            "Ask before running when files have unsaved changes",
+            "Save all files automatically before running",
+            "Run the saved versions without asking"
+          ],
+          "default": "prompt",
+          "description": "Jobs run the files saved on disk. What to do when editors have unsaved changes."
+        },
+        "gridstator.notifications": {
+          "type": "string",
+          "enum": [
+            "all",
+            "failures",
+            "none"
+          ],
+          "default": "failures",
+          "description": "Which finished jobs (started from this window) show a notification."
+        },
+        "gridstator.problemMatching": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show compiler, linter and test errors from remote job logs in the **Problems** panel."
+        },
+        "gridstator.testResults": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show JUnit results from job artifacts in the **Testing** view."
+        },
+        "gridstator.jobHistory": {
+          "type": "number",
+          "default": 100,
+          "minimum": 10,
+          "maximum": 500,
+          "description": "Number of recent jobs to load."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "package": "node scripts/build.mjs --production && vsce package --no-dependencies --out dist/gridstator.vsix",
+    "test:integration": "node test/run-integration.mjs"
+  },
+  "dependencies": {
+    "@gridstator/client": "workspace:*",
+    "@gridstator/discovery": "workspace:*",
+    "@gridstator/protocol": "workspace:*",
+    "@gridstator/shared": "workspace:*",
+    "@gridstator/snapshot": "workspace:*",
+    "fast-xml-parser": "^5.12.0",
+    "fflate": "~0.8.3",
+    "tar-stream": "^3.2.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/tar-stream": "^3.1.5",
+    "@types/vscode": "1.105.0",
+    "@vscode/codicons": "0.0.46-24",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  }
+}

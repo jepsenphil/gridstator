@@ -26,7 +26,7 @@ code.
  │ Client (on source host)    │        │ Controller                               │
  │  • gridstator CLI          │ HTTPS  │  • REST API (Fastify)        /v1/...     │
  │  • VS Code extension       ├───────►│  • Client event stream (WS)  /v1/events  │
- │    (planned, M5)           │  WSS   │  • Agent channel (WS)        /v1/agent/ws│
+ │    (workspace host)        │  WSS   │  • Agent channel (WS)        /v1/agent/ws│
  │  • snapshot capture        │◄───────┤  • Scheduler (pure, packages/scheduler)  │
  └────────────────────────────┘        │  • SQLite (node:sqlite): jobs, nodes,    │
                                        │    tokens, snapshots, events             │
@@ -40,11 +40,11 @@ code.
                           │ Agent        │    │ Agent        │     │ Agent        │
                           │ • metrics    │    │ (64GB box)   │     │ (WSL2 on     │
                           │ • blob cache │    │              │     │  Windows,    │
-                          │ • executors  │    │              │     │  planned)    │
+                          │ • executors  │    │              │     │  validated)  │
                           │ • docker CLI │    │              │     │              │
                           └──────┬───────┘    └──────────────┘     └──────────────┘
                                  ▼
-                          Docker Engine / BuildKit (local to each worker)
+                          Docker Engine / BuildKit / act (local to each worker)
 ```
 
 There are exactly two long-running process types: **controller** and **agent**. Both ship in the
@@ -63,8 +63,10 @@ packages/
   protocol/     zod schemas: JobSpec, job states + transitions, REST bodies, WS messages
   scheduler/    pure scheduling function (no I/O)
   snapshot/     working-tree capture, manifests, CAS store, safe materialization
-  executors/    Executor interface, docker CLI wrapper, container command executor
+  executors/    Executor interface; docker CLI wrapper; command, docker-build and actions executors
+  discovery/    finds workflows (with act caveats), package scripts and Dockerfiles in a project
   client/       typed HTTPS/WSS API client with CA pinning (used by CLI, agent, VS Code)
+apps/vscode/    VS Code extension: extension host (src/) and React dashboard webview (webview/)
 examples/       sample projects used for manual and automated validation
 ```
 
@@ -91,7 +93,8 @@ WSL2, behind host firewalls, and on laptops whose address changes.
 
 ### 2.4 Clients
 
-The CLI and (planned) VS Code extension share `packages/client` and `packages/snapshot`. Snapshot
+The CLI and the VS Code extension share `packages/client`, `packages/snapshot` and
+`packages/discovery`. Snapshot
 capture runs **on the machine that hosts the source** — with VS Code Remote SSH that is the
 workspace extension host on the Linux laptop, never the Windows UI machine.
 
@@ -145,7 +148,7 @@ client                      controller                         agent            
    single tar stream. Agents keep their own blob cache and fetch only what they lack the same way.
 7. **Staging.** The agent streams a tar built from the manifest and its cache directly into the job's
    Docker volume (`docker cp -`), so no per-job host directory is needed (ADR-9). For executors that
-   need a host directory (`act`, planned), a hardened extractor writes into a fresh per-job directory
+   need a host directory (`docker-build`, `actions`), the hardened extractor writes into a fresh per-job directory
    (no `..`, no absolute paths, no symlink traversal, no overwrite of existing entries).
 8. **Unsaved buffers.** The VS Code extension (M5) will block or prompt when dirty editors exist,
    because snapshots capture what is on disk.
@@ -175,6 +178,93 @@ carrying `io.gridstator.managed=true` **and** its own node ID.
 environment variables point common package managers at it (`npm_config_cache`,
 `npm_config_store_dir` for pnpm, `YARN_CACHE_FOLDER`, `COREPACK_HOME`, `PIP_CACHE_DIR`,
 `GOMODCACHE`, `GOCACHE`). The job's command performs the install; with a warm cache this is fast.
+
+### 3.3 Docker build executor (M3)
+
+`docker-build` jobs stage the snapshot into the job's private work directory (hardened
+materializer) and run `docker buildx build --progress=plain` with:
+
+- the Dockerfile and context resolved **inside** the staged snapshot (paths that resolve outside it,
+  including through symlinks, are rejected);
+- `--target`, `--build-arg`, `--tag`, `--platform`, `--no-cache`, `--pull`, `--cache-from/--cache-to`
+  passed through; **build secrets** as `--secret id=NAME,env=NAME` with the value only in the buildx
+  process environment;
+- image labels `io.gridstator.managed=true`, `io.gridstator.job`, `io.gridstator.node`;
+- `--metadata-file`, from which the image ID and digest are reported as job `outputs.image`.
+
+Outputs: `load` (into the worker's image store, the default), `push` (to the registry named by the
+tags), `tar` (the image is loaded, `docker save`d and uploaded as the `image.tar` artifact — ADR-16),
+or `none` (build only: validates the Dockerfile and warms the cache). The BuildKit cache stays in
+the worker's daemon; the scheduler's project affinity sends repeat builds to the same worker.
+Cancellation sends SIGINT to buildx (which cancels the BuildKit session), then SIGKILL after a grace
+period.
+
+### 3.4 GitHub Actions executor (M4)
+
+`actions` jobs run [nektos/act](https://github.com/nektos/act) against the snapshot:
+
+1. The snapshot is staged into the job work directory and turned into a git repository with one
+   commit, on the developer's branch name and with their `origin` URL (captured by the client), so
+   `github.ref`, `github.ref_name` and `github.repository` match their checkout. `github.sha` is the
+   synthetic commit's.
+2. act runs `act <event> -C <src> -W <workflow> [-j <job>] --json --rm --pull=false` with a private
+   `HOME` (action clones and caches persist per worker) and these defaults (ADR-15):
+   - `--container-daemon-socket -`: the worker's Docker socket is **not** mounted into job
+     containers unless the job opts in (`dockerSocket`), and workflow-supplied container options and
+     host-path volumes are restricted;
+   - `--secret-file/--var-file/--env-file` point at private 0600 files written from the job spec, so
+     act never reads `.secrets`, `.vars` or `.env` from the project;
+   - `--cache-server-addr 127.0.0.1` (act binds it to the LAN address by default) and a per-job
+     `--artifact-server-port`, so concurrent workflow jobs do not collide;
+   - `--container-options "--label io.gridstator.…"`, so act's containers carry the job labels and
+     can be cleaned up after a crash;
+   - runner images per `runs-on` label (`-P`), defaulting to `catthehacker/ubuntu:act-*`.
+3. `actions/checkout` of the current repository is skipped by act, which copies the staged files
+   instead — the workflow sees exactly the submitted snapshot. Checkout of *other* repositories
+   clones from GitHub.
+4. act's JSON log stream is rendered in act's familiar console format and parsed into structured
+   **steps** (`outputs.steps`), published live with `job.outputs` messages.
+5. Files uploaded with `actions/upload-artifact` (act's artifact server) become job artifacts.
+
+The whole workflow runs in one act invocation on one worker, so `needs:` ordering follows act's
+behaviour; `--job` runs a single job without its dependencies. Client-side discovery
+(`packages/discovery`) lists workflows, jobs, events and `workflow_dispatch` inputs and flags
+features act cannot reproduce (Windows/macOS runners, OIDC, deployment environments, remote
+reusable workflows, Docker usage without the socket, `GITHUB_TOKEN`).
+
+### 3.5 Artifacts and structured outputs
+
+Executors attach **artifacts** by uploading files to the controller's content-addressed store (agents
+may upload and query blobs) and listing `{name, digest, size}` in the job result; the controller
+records them in the `artifacts` table and serves them at `/v1/jobs/:id/artifacts/<name>`.
+Command jobs collect `artifacts` paths from the workspace volume (`docker cp container:path -`, one
+tar per path); build jobs export `image.tar`; workflow jobs return act's uploads. Artifact blobs are
+kept by the retention mark-and-sweep for as long as their job exists.
+
+**Outputs** (`jobs.outputs`) hold structured results beyond the exit code: `image` (ID, digest,
+tags, size, output mode) and `steps` (name, group, status, start, duration). Agents publish them
+while the job runs (`job.outputs`) and with the final result.
+
+### 3.6 VS Code extension (M5)
+
+The extension declares `extensionKind: workspace`, so under Remote SSH it runs on the machine that
+hosts the source. It reuses the CLI's client configuration (and `gridstator login`), and talks to
+the controller with the same pinned-TLS client.
+
+| Part | Responsibility |
+|---|---|
+| `ClusterState` | connection, nodes and recent jobs kept live from `/v1/events`; reconnects with backoff |
+| `Launcher` | discovers tasks, builds, workflows, package scripts and Dockerfiles; checks unsaved editors; captures, uploads and submits |
+| Tree views | Activity Bar: Cluster (nodes and node actions), Jobs (running, queued, recent; cancel/retry), Run (everything runnable) |
+| `Dashboard` | one React webview: overview, jobs, job details with live logs, run launcher, node management |
+| `ResultsIntegration` | Problems panel from job logs; Testing view from JUnit artifacts; a *Run on Gridstator* test profile |
+| Status bar | nodes online, running and queued jobs; sign-in/offline states |
+
+The webview has a strict Content Security Policy (nonce-locked script, local resources only) and
+**never** contacts the controller: it sends typed messages (`src/messages.ts`) to the extension,
+which owns the client, the user's files and dialogs. Remote paths in logs and JUnit reports
+(`/workspace/…` in containers, act's staging directory) are mapped back to workspace files for
+Problems, Testing locations and clickable log links.
 
 ## 4. Job model and state machine
 
@@ -209,7 +299,7 @@ API values are lowercase (`queued`, `running`, …). The allowed-transition tabl
 | Field | Meaning |
 |---|---|
 | `id` | ULID-style, time-sortable (`01J…`) |
-| `name`, `kind` | display name; `command` (M1), `docker-build`, `actions` (planned) |
+| `name`, `kind` | display name; `command`, `docker-build` or `actions` |
 | `spec` | validated `JobSpec` (image, command, env, resources, target, timeout, retry, snapshot, workdir) |
 | `state`, `stateReason` | current state and human-readable reason (e.g. "waiting for capacity") |
 | `priority` | higher runs first; FIFO within a priority |
@@ -220,6 +310,8 @@ API values are lowercase (`queued`, `running`, …). The allowed-transition tabl
 | `exitCode`, `error` | result details |
 | `createdAt`, `queuedAt`, `assignedAt`, `startedAt`, `finishedAt`, `cancelRequestedAt` | timestamps |
 | `logSeq` | highest persisted log sequence number |
+| `outputs` | structured results: `image`, `steps` (§3.5) |
+| `artifacts` | `{name, digest, size}` files produced by the job (§3.5) |
 
 Every transition is also appended to `job_events` (who/what caused it, when), which forms the audit
 trail.
@@ -262,7 +354,7 @@ All endpoints are under `/v1`, served over TLS, JSON unless noted, and require
 | Snapshots | `POST /snapshots`, `GET /snapshots/:id` |
 | Tokens | `POST /tokens`, `GET /tokens`, `DELETE /tokens/:id` (admin) |
 | Events | `GET /events` (WebSocket: job/node updates, log subscriptions) |
-| Artifacts | **(planned, M6)** |
+| Artifacts | `GET /jobs/:id/artifacts`, `GET /jobs/:id/artifacts/<name>` |
 
 ### 6.1 Agent channel protocol
 
@@ -277,6 +369,7 @@ One WebSocket per agent, JSON messages with a `type` discriminator, validated wi
 | A→C | `job.state` | `starting` / `running` |
 | A→C | `job.result` | terminal outcome `succeeded` / `failed` / `cancelled` / `lost` (agent shut down), exit code, OOM flag, error, final log sequence |
 | A→C | `job.log` | batched log entries with per-job sequence numbers |
+| A→C | `job.outputs` | structured progress (e.g. workflow steps) while the job runs |
 | A→C | `job.rejected` | the agent cannot run the job (e.g. Docker unavailable) |
 | C→A | `job.cancel` | stop the job |
 | C→A | `job.ack` | the controller persisted a terminal result; the agent may forget it |
@@ -290,7 +383,8 @@ Controller data directory (default `$XDG_DATA_HOME/gridstator/controller`, mode 
 
 ```text
 controller.json        listen host and port
-controller.db          SQLite (WAL): meta, tokens, nodes, jobs, job_events, snapshots
+controller.db          SQLite (WAL, schema v2): meta, tokens, nodes, jobs (+outputs), job_events,
+                       snapshots, artifacts
 pki/ca.pem, ca.key     cluster CA (key mode 0600)
 pki/server.pem, .key   controller TLS certificate, signed by the CA
 cas/sha256/ab/cdef…    content-addressed blobs (file contents and manifests)
@@ -304,7 +398,9 @@ agent.json             controller URL, CA, node ID, agent credential (mode 0600)
 cas/…                  blob cache (size-capped, least-recently-used eviction)
 results/<jobId>.json   terminal results not yet acknowledged by the controller
 logs/<jobId>.ndjson    local log spool used for replay after reconnect
-tmp/                   short-lived 0600 env files (deleted right after `docker create`)
+tmp/                   short-lived 0600 env/secret files (deleted right after use)
+work/<jobId>/          per-job staging for builds and workflows (removed when the job ends)
+act-home/              private HOME for act: action clones, tool and cache-server data
 ```
 
 **Retention.** Hourly sweeps delete logs of terminal jobs older than `logRetentionDays`, job rows
@@ -384,12 +480,15 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 | ADR-12 | Secret-pattern files excluded even when tracked, with warnings; explicit allow-list | trust git; block the job | prevents leaking committed secrets without blocking work |
 | ADR-13 | Drive Docker through the `docker` CLI | dockerode / raw Engine API | respects Docker contexts and `DOCKER_HOST`, identical behaviour to what users debug by hand, buildx is CLI-only anyway, no native dependencies |
 | ADR-14 | Node's built-in `https`, `ws` for WebSockets | undici, axios | fewer dependencies; works unchanged inside the VS Code extension host |
+| ADR-15 | act runs with the Docker socket off, private secret/var/env files, loopback cache server, labelled containers | act defaults | act's defaults mount the host Docker socket, read secrets from the project and expose its cache server on the LAN |
+| ADR-16 | `tar` image output via `--load` + `docker save` | buildx `--output type=docker,dest=…` | the default `docker` build driver cannot export to a file |
+| ADR-17 | Extension runs on the workspace host; the webview only messages the extension | webview calling the API directly | snapshots must be captured where the files are; keeps credentials and pinned TLS out of the webview |
+| ADR-18 | IDE feedback from logs (problem matchers) and JUnit artifacts | custom test protocol | works with any language or test runner that can print errors or write JUnit |
 
-## 12. Extension points (planned)
+## 12. Extension points
 
-- **Executors** implement `Executor { kind; run(ctx, spec) }`; `docker-build` (M3) and `actions`
-  (M4) plug in beside `command`.
-- **Job groups** (M6) add `groupId` so shards and matrix jobs are tracked together.
-- **Artifacts** (M6) are copied out of the workspace volume (`docker cp container:path -`) into the
-  CAS, then listed and downloaded through `/v1/jobs/:id/artifacts`.
+- **Executors** implement `Executor { kind; run(ctx) }` with a context that provides snapshot
+  staging, artifact upload and progress reporting; new job kinds plug in beside `command`,
+  `docker-build` and `actions`.
+- **Job groups** (planned, M6) add `groupId` so shards and matrix jobs are tracked together.
 - **Scheduler adapters**: the pure `schedule()` boundary allows an optional external scheduler later.

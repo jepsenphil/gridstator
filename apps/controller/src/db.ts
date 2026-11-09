@@ -1,7 +1,15 @@
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
-import type { JobSpec, JobState, NodeInfo, NodeSettings, TokenRole } from '@gridstator/protocol';
+import type {
+  Artifact,
+  JobOutputs,
+  JobSpec,
+  JobState,
+  NodeInfo,
+  NodeSettings,
+  TokenRole,
+} from '@gridstator/protocol';
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 const MIGRATIONS: Record<number, string> = {
   1: `
@@ -78,6 +86,18 @@ const MIGRATIONS: Record<number, string> = {
       last_used_at INTEGER NOT NULL
     );
   `,
+  2: `
+    ALTER TABLE jobs ADD COLUMN outputs TEXT;
+    CREATE TABLE artifacts (
+      job_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      digest TEXT NOT NULL,
+      size INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      PRIMARY KEY (job_id, name)
+    );
+    CREATE INDEX artifacts_digest ON artifacts(digest);
+  `,
 };
 
 export interface TokenRow {
@@ -130,6 +150,7 @@ export interface JobRow {
   finished_at: number | null;
   cancel_requested_at: number | null;
   updated_at: number;
+  outputs: JobOutputs | null;
 }
 
 export interface JobEventRow {
@@ -155,7 +176,11 @@ export interface SnapshotRow {
 type Row = Record<string, SQLInputValue>;
 
 function parseJob(row: Row): JobRow {
-  return { ...(row as unknown as JobRow), spec: JSON.parse(row['spec'] as string) as JobSpec };
+  return {
+    ...(row as unknown as JobRow),
+    spec: JSON.parse(row['spec'] as string) as JobSpec,
+    outputs: row['outputs'] ? (JSON.parse(row['outputs'] as string) as JobOutputs) : null,
+  };
 }
 
 function parseNode(row: Row): NodeRow {
@@ -394,7 +419,7 @@ export class Store {
   }
 
   /** Updates the given columns of a job. */
-  updateJob(id: string, patch: Partial<Omit<JobRow, 'id' | 'spec'>>): void {
+  updateJob(id: string, patch: Partial<Omit<JobRow, 'id' | 'spec' | 'outputs'>>): void {
     const keys = Object.keys(patch) as Array<keyof typeof patch>;
     if (keys.length === 0) return;
     const sets = keys.map((k) => `${k} = ?`).join(', ');
@@ -490,7 +515,36 @@ export class Store {
       .all(ts, limit) as Array<{ id: string }>;
   }
 
+  setJobOutputs(id: string, outputs: JobOutputs | null): void {
+    this.db
+      .prepare('UPDATE jobs SET outputs = ? WHERE id = ?')
+      .run(outputs ? JSON.stringify(outputs) : null, id);
+  }
+
+  // ---- artifacts -----------------------------------------------------------------------------
+
+  insertArtifacts(jobId: string, artifacts: readonly Artifact[], now: number): void {
+    const stmt = this.db.prepare(
+      `INSERT INTO artifacts (job_id, name, digest, size, created_at) VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(job_id, name) DO UPDATE SET digest = excluded.digest, size = excluded.size`,
+    );
+    for (const a of artifacts) stmt.run(jobId, a.name, a.digest, a.size, now);
+  }
+
+  artifactsForJob(jobId: string): Artifact[] {
+    return this.db
+      .prepare('SELECT name, digest, size FROM artifacts WHERE job_id = ? ORDER BY name')
+      .all(jobId) as unknown as Artifact[];
+  }
+
+  artifactDigests(): string[] {
+    return (
+      this.db.prepare('SELECT DISTINCT digest FROM artifacts').all() as Array<{ digest: string }>
+    ).map((r) => r.digest);
+  }
+
   deleteJob(id: string): void {
+    this.db.prepare('DELETE FROM artifacts WHERE job_id = ?').run(id);
     this.db.prepare('DELETE FROM job_events WHERE job_id = ?').run(id);
     this.db.prepare('DELETE FROM jobs WHERE id = ?').run(id);
   }

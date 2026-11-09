@@ -28,6 +28,9 @@
     },
     {
       "path": "../../packages/executors"
+    },
+    {
+      "path": "../../packages/discovery"
     }
   ]
 }

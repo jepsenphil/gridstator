@@ -305,22 +305,54 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
     return cluster.retry(req.params.id, principal(req));
   });
 
+  app.get<{ Params: { id: string } }>('/v1/jobs/:id/artifacts', async (req) => {
+    cluster.getJob(req.params.id);
+    return { artifacts: store.artifactsForJob(req.params.id) };
+  });
+
+  app.get<{ Params: { id: string; '*': string } }>(
+    '/v1/jobs/:id/artifacts/*',
+    async (req, reply) => {
+      cluster.getJob(req.params.id);
+      const name = req.params['*'];
+      const artifact = store.artifactsForJob(req.params.id).find((a) => a.name === name);
+      if (!artifact)
+        throw new GridstatorError('NOT_FOUND', `Job ${req.params.id} has no artifact "${name}"`);
+      if (!(await blobs.has(artifact.digest))) {
+        throw new GridstatorError(
+          'NOT_FOUND',
+          `Artifact "${name}" is no longer stored on the controller`,
+        );
+      }
+      const file = name.split('/').pop() ?? 'artifact';
+      return reply
+        .type('application/octet-stream')
+        .header('content-length', artifact.size)
+        .header('content-disposition', `attachment; filename="${file.replace(/["\\\r\n]/g, '_')}"`)
+        .send(blobs.read(artifact.digest));
+    },
+  );
+
   // ---- blobs & snapshots -------------------------------------------------------------------
 
-  app.post('/v1/blobs/missing', async (req) => {
+  app.post('/v1/blobs/missing', { config: { auth: 'client-or-agent' } }, async (req) => {
     const body = parse(BlobDigestsRequestSchema, req.body, 'digests');
     return { missing: await blobs.missing(body.digests) };
   });
 
-  app.post('/v1/blobs/upload', { bodyLimit: MAX_UPLOAD_BYTES }, async (req) => {
-    if (!req.headers['content-type']?.startsWith('application/x-tar')) {
-      throw new GridstatorError('BAD_REQUEST', 'Expected an application/x-tar body');
-    }
-    return unpackBlobsInto(req.body as AsyncIterable<Uint8Array>, blobs, {
-      maxBytes: MAX_UPLOAD_BYTES,
-      maxEntries: 1_000_000,
-    });
-  });
+  app.post(
+    '/v1/blobs/upload',
+    { bodyLimit: MAX_UPLOAD_BYTES, config: { auth: 'client-or-agent' } },
+    async (req) => {
+      if (!req.headers['content-type']?.startsWith('application/x-tar')) {
+        throw new GridstatorError('BAD_REQUEST', 'Expected an application/x-tar body');
+      }
+      return unpackBlobsInto(req.body as AsyncIterable<Uint8Array>, blobs, {
+        maxBytes: MAX_UPLOAD_BYTES,
+        maxEntries: 1_000_000,
+      });
+    },
+  );
 
   app.post('/v1/blobs/download', { config: { auth: 'client-or-agent' } }, async (req, reply) => {
     const body = parse(BlobDigestsRequestSchema, req.body, 'digests');
