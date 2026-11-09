@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { JobGroupSchema } from './group.js';
 import { JobSchema, LogEntrySchema } from './job.js';
 import { NodeSchema } from './node.js';
 import { JobStateSchema } from './states.js';
@@ -32,6 +33,10 @@ export type ClientEventMessage = z.input<typeof ClientEventMessageSchema>;
 // ---- controller → client ------------------------------------------------------------------
 
 export const ServerJobUpdatedSchema = z.object({ type: z.literal('job.updated'), job: JobSchema });
+export const ServerGroupUpdatedSchema = z.object({
+  type: z.literal('group.updated'),
+  group: JobGroupSchema,
+});
 export const ServerNodeUpdatedSchema = z.object({
   type: z.literal('node.updated'),
   node: NodeSchema,
@@ -55,6 +60,7 @@ export const ServerErrorSchema = z.object({ type: z.literal('error'), message: z
 
 export const ServerEventMessageSchema = z.discriminatedUnion('type', [
   ServerJobUpdatedSchema,
+  ServerGroupUpdatedSchema,
   ServerNodeUpdatedSchema,
   ServerNodeRemovedSchema,
   ServerLogsSchema,

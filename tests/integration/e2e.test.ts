@@ -526,6 +526,27 @@ describe.skipIf(!enabled)('Gridstator end to end', () => {
     },
   );
 
+  it('runs test shards in parallel on different workers and combines their results in one group', async () => {
+    const proj = join(root, 'sharded');
+    await cp(join(EXAMPLES, 'sharded-tests'), proj, { recursive: true });
+    const res = await cli(['run', '--task', 'test'], { cwd: proj, timeoutMs: 300_000 });
+    expect(res.code, res.stdout + res.stderr).toBe(0);
+    expect(res.stdout).toContain('[1/2]');
+    expect(res.stdout).toContain('[2/2]');
+    const groups = await cliJson<Array<{ id: string }>>(['groups', '--limit', '1']);
+    const shown = await cliJson<{
+      group: { state: string; nodes: string[]; jobs: JobJson[] };
+      tests: { total: number; passed: number; failed: number } | null;
+    }>(['group', 'show', groups[0]!.id]);
+    expect(shown.group.state).toBe('succeeded');
+    expect(shown.group.nodes).toEqual(['alpha', 'beta']);
+    const [s1, s2] = shown.group.jobs;
+    expect(Math.max(s1!.startedAt!, s2!.startedAt!)).toBeLessThan(
+      Math.min(s1!.finishedAt!, s2!.finishedAt!),
+    );
+    expect(shown.tests).toMatchObject({ total: 8, passed: 8, failed: 0 });
+  });
+
   it('reports a healthy setup in doctor', async () => {
     const res = await cli(['doctor']);
     expect(res.stdout).toMatch(/✓ controller/);

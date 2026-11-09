@@ -26,6 +26,7 @@
     "@gridstator/shared": "workspace:*",
     "@gridstator/snapshot": "workspace:*",
     "commander": "^15.1.0",
-    "@gridstator/discovery": "workspace:*"
+    "@gridstator/discovery": "workspace:*",
+    "@gridstator/reports": "workspace:*"
   }
 }

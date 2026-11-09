@@ -95,6 +95,20 @@ exports.run = async function run() {
   assert.equal(diags.length, 1, 'the failing test is in the Problems panel');
   assert.equal(diags[0][1][0].range.start.line, 5, 'problem points at the failing assertion');
 
+  // A sharded run: the same JUnit task split into 2 shards, results combined into one test run.
+  const group = await api.launcher.launch({
+    itemId: `task:${folder}:junit`,
+    options: { shards: 2 },
+  });
+  assert.equal(group.shardTotal, 2, 'launch returned a job group');
+  const finishedGroup = await api.results.waitForGroup(group.id);
+  assert.equal(finishedGroup.jobs.length, 2);
+  const combined = await api.results.processGroup(
+    await api.state.requireClient().getGroup(group.id),
+  );
+  log(`group ${group.id}: ${finishedGroup.state}, ${combined.tests} combined test results`);
+  assert.ok(combined.tests >= 3, 'test results from both shards were combined');
+
   // Cancel a running job via the command used by the Jobs view.
   const long = await api.launcher.launch({
     itemId: `command:${folder}`,

@@ -49,6 +49,8 @@ export async function runRetention(deps: {
     }
   }
 
+  deps.store.deleteEmptyGroups();
+
   const logCutoff = now - deps.settings.logRetentionDays * DAY;
   for (const file of await readdir(deps.logsDir).catch(() => [] as string[])) {
     const match = /^([0-9A-Z]{26})\.ndjson$/.exec(file);

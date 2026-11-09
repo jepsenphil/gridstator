@@ -1,6 +1,7 @@
 export * from './states.js';
 export * from './common.js';
 export * from './job.js';
+export * from './group.js';
 export * from './node.js';
 export * from './manifest.js';
 export * from './api.js';

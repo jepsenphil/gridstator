@@ -26,6 +26,7 @@ function jobIcon(job: Job): vscode.ThemeIcon {
 
 export function jobDescription(job: Job, now = Date.now()): string {
   const parts: string[] = [job.state];
+  if (job.shardIndex !== null) parts.unshift(`shard ${job.shardIndex}/${job.shardTotal}`);
   if (job.state === 'queued') parts.push(job.stateReason ?? `#${job.queuePosition ?? '?'}`);
   else if (job.nodeName) parts.push(job.nodeName);
   if (job.startedAt) parts.push(formatDuration((job.finishedAt ?? now) - job.startedAt));

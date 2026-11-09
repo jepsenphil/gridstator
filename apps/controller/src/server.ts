@@ -14,6 +14,7 @@ import {
   LogsQuerySchema,
   PatchNodeRequestSchema,
   RegisterAgentRequestSchema,
+  SubmitGroupRequestSchema,
   SubmitJobRequestSchema,
   isTerminal,
   parseManifest,
@@ -303,6 +304,32 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
   app.post<{ Params: { id: string } }>('/v1/jobs/:id/retry', async (req, reply) => {
     reply.status(201);
     return cluster.retry(req.params.id, principal(req));
+  });
+
+  // ---- job groups (sharding) ----------------------------------------------------------------
+
+  app.post('/v1/groups', async (req, reply) => {
+    const body = parse(SubmitGroupRequestSchema, req.body, 'group');
+    reply.status(201);
+    return cluster.submitGroup(body.spec, body.shards, body.name, principal(req));
+  });
+
+  app.get<{ Querystring: { limit?: string; before?: string } }>('/v1/groups', async (req) => {
+    const limit = Math.min(200, Math.max(1, Number(req.query.limit ?? 30) || 30));
+    return { groups: store.listGroups(limit, req.query.before).map((g) => cluster.groupView(g)) };
+  });
+
+  app.get<{ Params: { id: string } }>('/v1/groups/:id', async (req) =>
+    cluster.getGroup(req.params.id),
+  );
+
+  app.post<{ Params: { id: string } }>('/v1/groups/:id/cancel', async (req) =>
+    cluster.cancelGroup(req.params.id, principal(req).name),
+  );
+
+  app.post<{ Params: { id: string } }>('/v1/groups/:id/retry', async (req, reply) => {
+    reply.status(201);
+    return cluster.retryGroup(req.params.id, principal(req));
   });
 
   app.get<{ Params: { id: string } }>('/v1/jobs/:id/artifacts', async (req) => {

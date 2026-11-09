@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import type { FromWebview, ToWebview } from '../../src/messages';
-import { FAILED, RUNNING, state } from './fixtures';
+import { FAILED, GROUP, RUNNING, state } from './fixtures';
 
 const media = join(__dirname, '../../media') + '/';
 const shots = join(__dirname, 'screenshots') + '/';
@@ -60,10 +60,10 @@ test('jobs list filters and its row actions post cancel and retry', async ({ pag
   await open(page);
   await page.getByRole('tab', { name: /Jobs/ }).click();
   await page.getByRole('tab', { name: /Failed/ }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(page.locator('.jobs-table tbody tr')).toHaveCount(1);
   await page.getByTitle('Retry (same snapshot)').click();
   await page.getByRole('tab', { name: /^All/ }).click();
-  await expect(page.locator('tbody tr')).toHaveCount(4);
+  await expect(page.locator('.jobs-table tbody tr')).toHaveCount(4);
   await page.locator('tr', { hasText: 'actions ci.yml' }).getByTitle('Cancel').click();
   const msgs = await sent(page);
   expect(msgs).toContainEqual({ type: 'retry', jobId: FAILED });
@@ -214,6 +214,58 @@ test('node management posts scheduling and capacity changes', async ({ page }) =
     },
   ]);
   await page.screenshot({ path: `${shots}nodes.png`, fullPage: true });
+});
+
+test('sharded runs show shards, a timeline and combined test results', async ({ page }) => {
+  await open(page);
+  await page.getByRole('tab', { name: /Jobs/ }).click();
+  await expect(page.getByText('Sharded runs')).toBeVisible();
+  await page.locator('tr', { hasText: '1/2 shards passed' }).click();
+  await expect.poll(() => sent(page)).toContainEqual({ type: 'requestGroupTests', groupId: GROUP });
+  await push(page, {
+    type: 'groupTests',
+    groupId: GROUP,
+    summary: {
+      total: 8,
+      passed: 7,
+      failed: 1,
+      skipped: 0,
+      timeMs: 12_000,
+      failures: [
+        {
+          suite: 'suite3.test.js',
+          name: 'checksum differs',
+          message: 'Expected values to differ',
+          shard: 2,
+        },
+      ],
+    },
+  });
+  await expect(page.locator('.test-totals')).toContainText('7 passed');
+  await expect(page.locator('.timeline-bar')).toHaveCount(2);
+  await expect(page.getByText('checksum differs')).toBeVisible();
+  await page.screenshot({ path: `${shots}group.png`, fullPage: true });
+  await page.getByRole('button', { name: 'Retry 1 failed shard' }).click();
+  expect(await sent(page)).toContainEqual({ type: 'retryGroup', groupId: GROUP });
+  await page.locator('tr', { hasText: '2/2' }).click();
+  await expect(page.getByText('Shard 2 of 2 in a sharded run.')).toBeVisible();
+});
+
+test('launcher can shard a task and prefer a worker', async ({ page }) => {
+  await open(page);
+  await page.getByRole('tab', { name: /Run/ }).click();
+  await page.locator('.run-item', { hasText: 'test' }).first().click();
+  await page.getByLabel('Shards').fill('4');
+  await page.getByLabel('Worker').selectOption('big-box');
+  await page.getByText('Prefer this worker, but allow others when it is busy').click();
+  await page.getByRole('button', { name: 'Run', exact: true }).click();
+  const launches = (await sent(page)).filter((m) => m.type === 'launch');
+  expect(launches).toEqual([
+    {
+      type: 'launch',
+      request: { itemId: 'task:ws:test', options: { node: '', prefer: ['big-box'], shards: 4 } },
+    },
+  ]);
 });
 
 test('shows a connection banner with working actions when offline', async ({ page }) => {

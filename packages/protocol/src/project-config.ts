@@ -34,6 +34,10 @@ const TaskConfigSchema = z
     artifacts: z.array(z.string()).optional(),
     /** JUnit XML report written by the task (relative to the project root); shown in VS Code's Testing view. */
     junit: z.string().optional(),
+    /** Split the task into this many shards (use {shard} and {total} in the command). */
+    shards: z.number().int().min(1).max(64).optional(),
+    /** Preferred workers (soft): used when eligible, otherwise any node. */
+    prefer: z.array(z.string()).optional(),
   })
   .strict();
 export type TaskConfig = z.infer<typeof TaskConfigSchema>;
@@ -81,6 +85,8 @@ export const ProjectConfigSchema = z
         image: z.string().optional(),
         resources: ResourcesConfigSchema.optional(),
         labels: z.array(LabelSchema).optional(),
+        /** Preferred workers (soft) for every job from this project. */
+        prefer: z.array(z.string()).optional(),
         timeout: z.string().optional(),
       })
       .strict()

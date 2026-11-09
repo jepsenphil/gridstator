@@ -3,8 +3,10 @@
  * to the controller directly; every action goes through the extension, which owns the pinned-TLS
  * client and the user's workspace.
  */
+import type { TestSummary } from '@gridstator/reports';
 import type {
   Job,
+  JobGroup,
   JobEvent,
   JobState,
   LogEntry,
@@ -65,13 +67,17 @@ export interface LaunchItem {
     command: string;
     packageManager: string;
   };
-  task?: { name: string; command: string; junit?: string };
+  task?: { name: string; command: string; junit?: string; shards?: number };
   build?: { name: string; stage?: string; tags: string[]; output: string };
 }
 
 export interface LaunchOptions {
   /** Node id or name; empty for automatic placement. */
   node?: string;
+  /** Preferred nodes (soft): used when eligible. */
+  prefer?: string[];
+  /** Split into this many parallel shards (command-like items only). */
+  shards?: number;
   cpus?: number;
   memoryGb?: number;
   env?: Record<string, string>;
@@ -98,16 +104,25 @@ export interface DashboardState {
   connection: ConnectionInfo;
   nodes: Node[];
   jobs: Job[];
+  groups: JobGroup[];
   launcher: { items: LaunchItem[]; defaultNode: string; loading: boolean };
   /** Jobs submitted from this VS Code window (rerun and problem matching apply to these). */
   myJobIds: string[];
 }
 
-export type View = 'overview' | 'jobs' | 'run' | 'nodes' | 'job';
+export type View = 'overview' | 'jobs' | 'run' | 'nodes' | 'job' | 'group';
 
 export type ToWebview =
   | { type: 'state'; state: DashboardState }
-  | { type: 'navigate'; view: View; jobId?: string; nodeId?: string; itemId?: string }
+  | {
+      type: 'navigate';
+      view: View;
+      jobId?: string;
+      nodeId?: string;
+      itemId?: string;
+      groupId?: string;
+    }
+  | { type: 'groupTests'; groupId: string; summary: TestSummary | null }
   | { type: 'logs'; jobId: string; entries: LogEntry[]; reset: boolean }
   | { type: 'logs.end'; jobId: string; state: JobState }
   | { type: 'events'; jobId: string; events: JobEvent[] }
@@ -120,6 +135,9 @@ export type FromWebview =
   | { type: 'cancel'; jobId: string }
   | { type: 'retry'; jobId: string }
   | { type: 'rerun'; jobId: string }
+  | { type: 'cancelGroup'; groupId: string }
+  | { type: 'retryGroup'; groupId: string }
+  | { type: 'requestGroupTests'; groupId: string }
   | { type: 'downloadArtifact'; jobId: string; name: string }
   | { type: 'updateNode'; nodeId: string; patch: NodeSettingsPatch }
   | { type: 'launch'; request: LaunchRequest }

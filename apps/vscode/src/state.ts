@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { GridstatorError, errorMessage } from '@gridstator/shared';
-import { isTerminal, type Job, type Node } from '@gridstator/protocol';
+import { GRIDSTATOR_VERSION, GridstatorError, errorMessage } from '@gridstator/shared';
+import { isTerminal, type Job, type JobGroup, type Node } from '@gridstator/protocol';
 import { GridstatorClient, resolveConnection, type EventStream } from '@gridstator/client';
 import type { ConnectionInfo } from './messages';
 
@@ -25,12 +25,18 @@ export class ClusterState implements vscode.Disposable {
   readonly jobs = new Map<string, Job>();
   /** Jobs started from this window. */
   readonly myJobs = new Set<string>();
+  readonly groups = new Map<string, JobGroup>();
+  /** Groups started from this window. */
+  readonly myGroups = new Set<string>();
 
   private readonly changed = new vscode.EventEmitter<void>();
   readonly onDidChange = this.changed.event;
   private readonly finished = new vscode.EventEmitter<Job>();
   /** Fires once when a job reaches a terminal state while we are watching. */
   readonly onJobFinished = this.finished.event;
+  private readonly groupFinished = new vscode.EventEmitter<JobGroup>();
+  /** Fires once when a job group reaches a terminal state while we are watching. */
+  readonly onGroupFinished = this.groupFinished.event;
 
   private events: EventStream | undefined;
   private retryTimer: NodeJS.Timeout | undefined;
@@ -95,12 +101,16 @@ export class ClusterState implements vscode.Disposable {
       return;
     }
     this.setConnection({ status: 'connecting', url: conn.url, error: null });
-    const client = new GridstatorClient({ ...conn, userAgent: 'gridstator-vscode/0.1.0' });
+    const client = new GridstatorClient({
+      ...conn,
+      userAgent: `gridstator-vscode/${GRIDSTATOR_VERSION}`,
+    });
     try {
-      const [cluster, nodes, jobs] = await Promise.all([
+      const [cluster, nodes, jobs, groups] = await Promise.all([
         client.cluster(),
         client.listNodes(),
         client.listJobs({ limit: this.historyLimit() }),
+        client.listGroups(30),
       ]);
       if (gen !== this.generation || this.disposed) {
         client.close();
@@ -111,6 +121,7 @@ export class ClusterState implements vscode.Disposable {
       for (const n of nodes) this.nodes.set(n.id, n);
       const previous = new Map(this.jobs);
       this.jobs.clear();
+      for (const g of groups) this.upsertGroup(g, false);
       for (const j of jobs) {
         this.jobs.set(j.id, j);
         const before = previous.get(j.id);
@@ -177,6 +188,9 @@ export class ClusterState implements vscode.Disposable {
             this.nodes.size,
           );
           break;
+        case 'group.updated':
+          this.upsertGroup(msg.group);
+          break;
         case 'node.removed':
           this.nodes.delete(msg.nodeId);
           this.changed.fire();
@@ -207,6 +221,23 @@ export class ClusterState implements vscode.Disposable {
     this.changed.fire();
   }
 
+  groupList(): JobGroup[] {
+    return [...this.groups.values()].sort((a, b) => (a.id < b.id ? 1 : -1));
+  }
+
+  upsertGroup(group: JobGroup, notify = true): void {
+    const before = this.groups.get(group.id);
+    this.groups.set(group.id, group);
+    const done = (g: JobGroup | undefined) =>
+      g !== undefined && g.state !== 'queued' && g.state !== 'running';
+    if (notify && !done(before) && done(group)) this.groupFinished.fire(group);
+    if (this.groups.size > 60) {
+      for (const g of this.groupList().slice(50))
+        if (!this.myGroups.has(g.id)) this.groups.delete(g.id);
+    }
+    if (notify) this.changed.fire();
+  }
+
   upsertNode(node: Node): void {
     this.nodes.set(node.id, node);
     this.changed.fire();
@@ -227,5 +258,6 @@ export class ClusterState implements vscode.Disposable {
     this.client?.close();
     this.changed.dispose();
     this.finished.dispose();
+    this.groupFinished.dispose();
   }
 }

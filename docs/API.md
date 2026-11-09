@@ -92,7 +92,7 @@ Kind `command`:
   "snapshot": "sha256:…",                 // optional source snapshot
   "workdir": "packages/web",              // relative to the snapshot root, default "."
   "resources": { "cpus": 2, "memoryMb": 4096 },
-  "target": { "node": "big-box", "labels": ["fast"] },
+  "target": { "node": "big-box", "labels": ["fast"], "prefer": [] },  // prefer: soft node preference
   "timeoutSeconds": 1800,
   "retry": { "max": 1, "on": ["lost"] },  // "lost" and/or "failed"
   "priority": 0,                           // -100..100, higher first
@@ -141,7 +141,8 @@ Kind `actions` (nektos/act on the worker):
 
 `Job` adds: `id`, `name`, `kind`, `state`, `stateReason`, `priority`, `owner`, `spec` (redacted),
 `snapshotId`, `nodeId`, `nodeName`, `assignmentId`, `attempt`, `retryOf`, `exitCode`, `error`,
-`queuePosition` (queued jobs only), `logSeq`, `outputs`, `artifacts`, `createdAt`, `queuedAt`, `assignedAt`, `startedAt`,
+`queuePosition` (queued jobs only), `logSeq`, `outputs`, `artifacts`, `groupId`, `shardIndex`,
+`shardTotal`, `createdAt`, `queuedAt`, `assignedAt`, `startedAt`,
 `finishedAt`, `cancelRequestedAt`.
 
 `outputs` is `null` or `{ image?: { id, digest, tags, sizeBytes, output }, steps?: [{ id, group,
@@ -152,6 +153,20 @@ States: `created`, `queued`, `assigned`, `starting`, `running`, `succeeded`, `fa
 `lost` (see [ARCHITECTURE.md §4](ARCHITECTURE.md#4-job-model-and-state-machine)).
 
 `LogEntry`: `{ s: seq, t: epochMs, o: "stdout"|"stderr"|"system", d: text }`.
+
+### Job groups (client)
+
+| Method & path | Notes |
+|---|---|
+| `POST /v1/groups` | `{ spec: JobSpec (kind command), shards: 1–64, name? }` → 201 `JobGroup`. Shard *i* gets `{shard}`/`{total}` replaced in its command and `GRIDSTATOR_SHARD_INDEX`/`GRIDSTATOR_SHARD_TOTAL` in its environment. |
+| `GET /v1/groups?limit=&before=` | `{ groups: JobGroup[] }`, newest first |
+| `GET /v1/groups/:id` | `JobGroup` |
+| `POST /v1/groups/:id/cancel` | cancels every unfinished shard |
+| `POST /v1/groups/:id/retry` | 201; re-runs the shards that failed, were lost or were cancelled |
+
+`JobGroup`: `id`, `name`, `owner`, `shardTotal`, `state` (`queued`, `running`, `succeeded`, `failed`,
+`cancelled`), `jobs` (latest attempt of each shard, by shard index), `counts` (by job state), `nodes`,
+`createdAt`, `startedAt`, `finishedAt`.
 
 ### Blobs and snapshots
 
@@ -188,7 +203,8 @@ Client → controller:
 { "type": "logs.unsubscribe", "jobId": "01M6…" }
 ```
 
-Controller → client: `job.updated {job}`, `node.updated {node}`, `node.removed {nodeId}`,
+Controller → client: `job.updated {job}`, `group.updated {group}`, `node.updated {node}`,
+`node.removed {nodeId}`,
 `logs {jobId, entries}`, `logs.end {jobId, state}`, `error {message}`.
 
 `logs.subscribe` first delivers every stored entry after `afterSeq`, then live entries. It ends with

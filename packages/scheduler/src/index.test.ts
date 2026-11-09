@@ -195,6 +195,40 @@ describe('schedule', () => {
     expect(r.assignments[0]?.nodeId).toBe('b');
   });
 
+  it('prefers preferred nodes but still runs elsewhere when they cannot take the job', () => {
+    const a = node('a');
+    const b = node('b', { allocated: { cpus: 8, memoryMb: 30_000, jobs: 2 } });
+    const j = job({ target: { labels: [], prefer: ['b'] } });
+    expect(schedule([j], [a, b]).assignments[0]?.nodeId).toBe('b');
+    const full = node('b', {
+      settings: {
+        maxConcurrency: 1,
+        reserved: { cpus: 0, memoryMb: 0 },
+        labels: [],
+        schedulingMode: 'enabled',
+      },
+      allocated: { cpus: 1, memoryMb: 1, jobs: 1 },
+    });
+    const k = job({ target: { labels: [], prefer: ['b'] } });
+    expect(schedule([k], [a, full]).assignments[0]?.nodeId).toBe('a');
+  });
+
+  it('spreads shards of one group across nodes', () => {
+    const shards = [1, 2, 3, 4].map(() =>
+      job({ group: 'g1', resources: { cpus: 1, memoryMb: 1024 } }),
+    );
+    const r = schedule(shards, [node('a'), node('b')]);
+    const per = r.assignments.reduce<Record<string, number>>(
+      (m, x) => ({ ...m, [x.nodeId]: (m[x.nodeId] ?? 0) + 1 }),
+      {},
+    );
+    expect(per).toEqual({ a: 2, b: 2 });
+    // Already-running siblings count too.
+    const busyWithSibling = node('a', { groups: new Map([['g2', 1]]) });
+    const next = job({ group: 'g2' });
+    expect(schedule([next], [busyWithSibling, node('b')]).assignments[0]?.nodeId).toBe('b');
+  });
+
   it('skips nodes that rejected the job', () => {
     const j = job({ excludedNodes: new Set(['a']) });
     const r = schedule([j], [node('a'), node('b')]);

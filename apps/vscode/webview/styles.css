@@ -977,3 +977,54 @@ select {
     transition: none;
   }
 }
+
+/* groups */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 90px;
+  gap: 8px;
+  align-items: center;
+}
+.timeline-track {
+  position: relative;
+  height: 12px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--vscode-foreground) 8%, transparent);
+}
+.timeline-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 3px;
+  background: var(--accent);
+}
+.bar-succeeded {
+  background: var(--ok);
+}
+.bar-failed,
+.bar-lost {
+  background: var(--bad);
+}
+.bar-cancelled {
+  background: var(--muted);
+}
+.timeline-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 44px;
+  margin-right: 98px;
+}
+.test-totals {
+  font-size: 1.05em;
+}
+.test-totals .tile-value {
+  font-size: 1.4em;
+}
+.ok-text {
+  color: var(--ok);
+}

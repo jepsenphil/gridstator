@@ -26,6 +26,8 @@ export const JobTargetSchema = z.object({
   node: z.string().min(1).max(128).optional(),
   /** Every label must be present on the node. */
   labels: z.array(LabelSchema).max(32).default([]),
+  /** Preferred node ids or names: chosen when eligible, but the job may run elsewhere. */
+  prefer: z.array(z.string().min(1).max(128)).max(16).default([]),
 });
 export type JobTarget = z.infer<typeof JobTargetSchema>;
 
@@ -57,7 +59,7 @@ const BaseJobSpecShape = {
   snapshot: SnapshotIdSchema.optional(),
   workdir: WorkdirSchema.default('.'),
   resources: ResourceRequestSchema.default({ ...DEFAULT_RESOURCES }),
-  target: JobTargetSchema.default({ labels: [] }),
+  target: JobTargetSchema.default({ labels: [], prefer: [] }),
   timeoutSeconds: z
     .number()
     .int()
@@ -250,6 +252,10 @@ export const JobSchema = z.object({
   logSeq: z.number().int().nonnegative(),
   outputs: JobOutputsSchema.nullable(),
   artifacts: z.array(ArtifactSchema),
+  /** Set for jobs that are shards of a job group. */
+  groupId: z.string().nullable(),
+  shardIndex: z.number().int().positive().nullable(),
+  shardTotal: z.number().int().positive().nullable(),
   createdAt: TimestampSchema,
   queuedAt: TimestampSchema.nullable(),
   assignedAt: TimestampSchema.nullable(),

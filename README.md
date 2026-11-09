@@ -18,10 +18,9 @@ Job 01M6YRS9QKK0X6GDE3YDMNB8NB submitted (snapshot a7966da95eff); waiting for sc
 Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
 ```
 
-> **Status: early development (v0.1).** Remote commands, working-tree snapshots, Docker builds,
-> GitHub Actions via `act` and the VS Code extension (milestones 1–5) work and are tested,
-> including across two physical machines. Test sharding, job groups and release packaging are
-> next. See [docs/PLAN.md](docs/PLAN.md).
+> **Status: v0.1, early but complete.** Remote commands, working-tree snapshots, Docker builds,
+> GitHub Actions via `act`, test sharding and the VS Code extension work and are tested, including
+> across two physical machines (Linux and a Windows PC through WSL2). See [docs/PLAN.md](docs/PLAN.md).
 
 ## What works today
 
@@ -44,6 +43,9 @@ Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
   (or one job) with [act](https://github.com/nektos/act) on a worker, against your uncommitted
   files, with inputs, secrets, step-by-step progress and artifacts. `gridstator actions list` shows
   what can run locally and what cannot.
+- **Parallel test shards.** `gridstator run --shards 4 -- npx vitest run --shard={shard}/{total}`
+  spreads shards across workers, streams them side by side, and combines their JUnit results into
+  one group; `gridstator group retry` re-runs only the failed shards.
 - **VS Code extension.** A Gridstator Activity Bar with your nodes, jobs and everything runnable in
   the workspace; a dashboard with live logs, steps, artifacts, cancel/retry/rerun and node
   management; errors in the Problems panel and JUnit results in the Testing view. Works over
@@ -62,17 +64,18 @@ Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
 
 ## Quick start
 
-Install on each machine (from a release tarball until the package is published to npm):
+Install on each machine (from a [release](https://github.com/jepsenphil/gridstator/releases); the
+full walkthrough, including services that start at boot, is in [docs/INSTALL.md](docs/INSTALL.md)):
 
 ```bash
-npm install -g ./gridstator-0.1.0.tgz
+npm install -g https://github.com/jepsenphil/gridstator/releases/download/v0.1.0/gridstator-0.1.0.tgz
 ```
 
 **1. Create the cluster** on the machine that will run the controller (it can also be a worker):
 
 ```bash
 gridstator controller init
-gridstator controller start --with-agent      # controller + a worker on this machine
+gridstator controller install-service --with-agent   # controller + a worker here, started at boot
 ```
 
 `init` prints the CA fingerprint and an admin token, and saves them as this machine's client
@@ -88,8 +91,10 @@ Run the printed command on the worker, then start the agent:
 
 ```bash
 gridstator agent join https://192.168.1.20:7300 --token gsj_... --fingerprint sha256:...
-gridstator agent start
+sudo gridstator agent install-service --system       # or: gridstator agent start
 ```
+
+Windows PCs join through WSL2; see [docs/WINDOWS.md](docs/WINDOWS.md).
 
 **3. Connect your development machine** (if it is not the controller):
 
@@ -190,6 +195,8 @@ persist on each worker in a shared Docker volume, so repeat installs are fast.
 | `build [context]` | build a Docker image on a worker |
 | `actions list` / `actions run <workflow>` | discover and run GitHub Actions workflows with act |
 | `artifacts <job> [--download <name>]` | list or download a job's artifacts |
+| `run --shards N`, `groups`, `group show/cancel/retry` | sharded runs and their combined results |
+| `controller install-service`, `agent install-service` | run as systemd services that start at boot |
 | `snapshot [--dry-run] [--json]` | see exactly which files would be sent |
 | `token create/list/revoke` | manage client and join tokens |
 | `init` | create `gridstator.yml` |
@@ -199,11 +206,13 @@ Most commands accept `--json`. Exit codes: the job's exit code for `run`, `130` 
 
 ## Documentation
 
+- [Installation](docs/INSTALL.md), [Windows / WSL2](docs/WINDOWS.md), [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Architecture](docs/ARCHITECTURE.md): components, flows, data model, decisions
 - [Security](docs/SECURITY.md): threat model and controls
 - [API](docs/API.md): controller REST and WebSocket API
 - [Development](docs/DEVELOPMENT.md): building, testing, multi-machine validation
 - [Plan](docs/PLAN.md): milestones and progress
+- [Changelog](CHANGELOG.md), [Contributing](CONTRIBUTING.md), [Code of conduct](CODE_OF_CONDUCT.md), [Security policy](SECURITY.md)
 
 ## License
 

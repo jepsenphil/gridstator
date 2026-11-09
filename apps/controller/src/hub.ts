@@ -1,5 +1,5 @@
 import type { WebSocket } from 'ws';
-import type { Job, LogEntry, Node, ServerEventMessage } from '@gridstator/protocol';
+import type { Job, JobGroup, LogEntry, Node, ServerEventMessage } from '@gridstator/protocol';
 
 interface Subscriber {
   socket: WebSocket;
@@ -26,6 +26,13 @@ export class EventHub {
     const msg = JSON.stringify({ type: 'job.updated', job } satisfies ServerEventMessage);
     for (const s of this.subscribers)
       if (s.topics.has('jobs') && s.socket.readyState === 1) s.socket.send(msg);
+  }
+
+  groupUpdated(group: JobGroup): void {
+    const msg = JSON.stringify({ type: 'group.updated', group } satisfies ServerEventMessage);
+    for (const s of this.subscribers) {
+      if (s.topics.has('jobs') && s.socket.readyState === 1) s.socket.send(msg);
+    }
   }
 
   nodeUpdated(node: Node): void {

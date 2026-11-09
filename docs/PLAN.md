@@ -1,8 +1,9 @@
 # Gridstator: Plan and Progress
 
-Last updated: 2026-11-09. **Current state: Milestones 1–5 are implemented and validated, including
-across two physical machines on the LAN (Linux laptop controller + WSL2 worker on a Windows PC).
-Next: owner review (including trying the VS Code extension over Remote SSH), then Milestone 6.**
+Last updated: 2026-11-09. **Current state: all seven milestones are implemented and validated,
+including across two physical machines on the LAN (Linux laptop controller + WSL2 worker on a
+Windows PC), and installed there as services. Next: tag the first release (v0.1.0) when the owner
+is ready, then iterate on feedback.**
 
 ## Milestones
 
@@ -13,8 +14,8 @@ Next: owner review (including trying the VS Code extension over Remote SSH), the
 | 3 | Docker image builds with BuildKit/buildx | ✅ Implemented; validated locally and across two machines |
 | 4 | Local GitHub Actions via `act` | ✅ Implemented; validated locally and across two machines |
 | 5 | VS Code extension and dashboard | ✅ Implemented; validated in headless VS Code (local and against the LAN cluster); Remote SSH UI walkthrough by the owner pending |
-| 6 | Advanced scheduling, test sharding, artifacts, retry policies | Partially done: capability/resource scheduling, priorities, drain, retry policies and artifacts exist; job groups and sharding remain |
-| 7 | Open-source release readiness | Partially started (see below) |
+| 6 | Advanced scheduling, test sharding, artifacts, retry policies | ✅ Implemented; validated locally and across two machines |
+| 7 | Open-source release readiness | ✅ Implemented; install path validated on both machines; release workflow ready (no tag pushed yet) |
 
 ## Milestone 1: distributed execution core ✅
 
@@ -91,6 +92,29 @@ dashboard, stream logs, cancel or retry from VS Code.* Everything except the Rem
 was validated automatically in a real (headless) VS Code against the LAN cluster with big-box as the
 target; the extension runs on the workspace host exactly as it does under Remote SSH.
 
+## Milestone 6: scheduling and parallel testing ✅
+
+- [x] Capability-aware scheduling, resource reservations, priorities, concurrency limits, drain, retry policies, artifact collection, worker failure recovery (from M1–M5)
+- [x] **Preferred workers**: `target.prefer` (soft) — `--prefer`, `defaults.prefer`/task `prefer` in gridstator.yml, and "prefer, don't require" in VS Code
+- [x] **Job groups and test sharding**: `POST /v1/groups`, `{shard}`/`{total}` substitution and `GRIDSTATOR_SHARD_*`, aggregate group state, cancel, retry of failed shards only, `group.updated` events, schema v3
+- [x] Scheduler spreads shards of a group across nodes (score term, ADR-20)
+- [x] Combined JUnit results across shards (`packages/reports`): `gridstator group show`, the dashboard's group view (timeline, shards, combined tests) and one combined Testing-view run in VS Code
+- [x] CLI: `run --shards`, `groups`, `group show|cancel|retry`, shard-prefixed live logs; `examples/sharded-tests`
+
+Acceptance: *two independent test shards execute simultaneously on different workers and their
+combined results are visible in a single job group.* **Met** — automated e2e (`alpha`/`beta`) and on
+the real cluster (below).
+
+## Milestone 7: open-source release readiness ✅
+
+- [x] Linux installation and bootstrap guide ([INSTALL.md](INSTALL.md)); `controller install-service` / `agent install-service [--system]` / `uninstall-service`
+- [x] Windows/WSL2 guide ([WINDOWS.md](WINDOWS.md)), validated with the big-box worker
+- [x] Packaging: single-file npm package (no runtime dependencies) and VSIX; version stamping (`scripts/set-version.mjs`)
+- [x] Release automation (`.github/workflows/release.yml`): checks, GitHub release with tarball, VSIX and `SHA256SUMS`, notes from CHANGELOG; npm (with provenance) and Marketplace publishing when `NPM_TOKEN` / `VSCE_PAT` are set
+- [x] Troubleshooting guide ([TROUBLESHOOTING.md](TROUBLESHOOTING.md)), CHANGELOG, Code of Conduct (Contributor Covenant 2.1), security policy, issue and PR templates, Dependabot
+- [x] Example projects: node-project, docker-build, github-actions, sharded-tests
+- [x] Architecture, security, API and development docs updated; integration tests in CI (Docker, BuildKit, act, VS Code)
+
 ## Validation log (2026-11-09, Linux laptop, Node 24.15, Docker 29.0.2)
 
 | Check | Result |
@@ -154,6 +178,28 @@ loopback and per-job); act timestamps have 1 s resolution (steps now use receive
 reporter emits test cases directly under `<testsuites>`; two accessibility defects in the dashboard
 (buttons named by tooltip instead of text; select names polluted by option text).
 
+## Validation log: Milestones 6–7 (2026-11-09)
+
+| Check | Result |
+|---|---|
+| Static checks (typecheck, lint, format) | pass |
+| `pnpm test`: 84 tests (adds group/prefer scheduler tests, group controller tests, reports, systemd units) | pass |
+| `pnpm test:e2e`: 12 tests incl. 2 shards on `alpha` and `beta` in parallel with 8/8 combined JUnit results | pass |
+| `pnpm test:ui`: 9 tests incl. group view and sharded launch | pass |
+| `pnpm test:vscode`: adds a 2-shard launch whose results are combined into one Testing run | pass |
+| GitHub Actions CI on `main` (Node 22/24, e2e with act, VS Code jobs, packaging) | pass |
+
+**Real cluster (installed services):**
+
+| Step | Result |
+|---|---|
+| Upgrade the laptop: `npm i -g` new tarball, `gridstator controller install-service --with-agent --agent-name laptop` | user service running; database migrated to v3 with node settings intact; lingering enabled |
+| Upgrade big-box: `sudo gridstator agent install-service --system --force` | system unit `User=pj`, `SupplementaryGroups=docker`, explicit data dir; agent reconnected |
+| `gridstator run --task test` in `examples/sharded-tests` | shard 1 on big-box, shard 2 on the laptop, overlapping 6.5 s; group succeeded in 6.8 s (12 s serially); 8/8 tests combined |
+
+Finding fixed: `install-service --force` did not restart an already running unit, so the old
+process kept running; it now restarts the service.
+
 ## Decisions
 
 Settled with the project owner (2026-11-09):
@@ -214,7 +260,6 @@ None.
 
 ## Next actions
 
-1. Owner review of M3–M5, including installing the VSIX in the Remote SSH window and running tests on big-box from the Run view.
-2. Decide the permanent layout (where the controller lives; run controller/agents as services).
-3. Milestone 6: job groups; test sharding (Playwright `--shard`, Vitest `--shard`, Node `--test-shard`) across workers with combined results in one group; aggregated JUnit in the Testing view.
-4. Milestone 7: systemd/WSL service helpers (`install-service`), release automation (npm + VSIX on tags), troubleshooting guide, Windows/WSL guide.
+1. Owner: try the VS Code extension in the Remote SSH window (Run view → ▶ on a task; the dashboard's group view for sharded tasks).
+2. Tag `v0.1.0` to publish the first GitHub release (add `NPM_TOKEN` / `VSCE_PAT` secrets first to also publish to npm and the Marketplace).
+3. Possible next features: re-attaching to running containers after an agent restart, per-project authorization, a browser dashboard served by the controller, GitHub self-hosted runner integration, Nomad scheduler adapter.

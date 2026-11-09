@@ -3,6 +3,8 @@ import {
   AGENT_PROTOCOL_VERSION,
   NodeSettingsSchema,
   automaticLabels,
+  groupState,
+  shardSpec,
   canTransition,
   defaultNodeSettings,
   isTerminal,
@@ -15,6 +17,7 @@ import {
   type Job,
   type JobSpec,
   type JobOutputs,
+  type JobGroup,
   type JobState,
   type LogEntry,
   type Node,
@@ -30,7 +33,7 @@ import {
   type SchedulerNode,
 } from '@gridstator/scheduler';
 import type { Auth, Principal } from './auth.js';
-import type { JobRow, NodeRow, Store } from './db.js';
+import type { GroupRow, JobRow, NodeRow, Store } from './db.js';
 import type { EventHub } from './hub.js';
 import type { LogStore } from './logs.js';
 
@@ -178,6 +181,9 @@ export class Cluster {
       finishedAt: row.finished_at,
       cancelRequestedAt: row.cancel_requested_at,
       outputs: row.outputs,
+      groupId: row.group_id,
+      shardIndex: row.shard_index,
+      shardTotal: row.shard_total,
       artifacts: this.store.artifactsForJob(row.id),
     };
   }
@@ -247,6 +253,7 @@ export class Cluster {
 
   private emitJob(row: JobRow): void {
     this.hub.jobUpdated(this.jobView(row));
+    if (row.group_id) this.scheduleGroupEmit(row.group_id);
   }
 
   private emitNode(nodeId: string): void {
@@ -295,6 +302,7 @@ export class Cluster {
     spec: JobSpec,
     principal: Principal,
     lineage?: { attempt: number; retryOf: string; retriesLeft: number },
+    shard?: { groupId: string; index: number; total: number },
   ): Job {
     if (spec.snapshot) {
       if (!this.store.snapshotById(spec.snapshot)) {
@@ -338,6 +346,9 @@ export class Cluster {
       cancel_requested_at: null,
       updated_at: now,
       outputs: null,
+      group_id: shard?.groupId ?? null,
+      shard_index: shard?.index ?? null,
+      shard_total: shard?.total ?? null,
     };
     let queued!: JobRow;
     this.store.tx(() => {
@@ -406,11 +417,12 @@ export class Cluster {
         `The snapshot for job ${jobId} has been garbage-collected; run the command again`,
       );
     }
-    const created = this.submit(job.spec, principal, {
-      attempt: job.attempt + 1,
-      retryOf: job.id,
-      retriesLeft: job.spec.retry.max,
-    });
+    const created = this.submit(
+      job.spec,
+      principal,
+      { attempt: job.attempt + 1, retryOf: job.id, retriesLeft: job.spec.retry.max },
+      shardOf(job),
+    );
     this.note(job, 'retried', principal.name, `retried as ${created.id}`);
     return created;
   }
@@ -442,11 +454,12 @@ export class Cluster {
         nodeId: null,
       };
       try {
-        const next = this.submit(done.spec, principal, {
-          attempt: done.attempt + 1,
-          retryOf: done.id,
-          retriesLeft: done.retries_left - 1,
-        });
+        const next = this.submit(
+          done.spec,
+          principal,
+          { attempt: done.attempt + 1, retryOf: done.id, retriesLeft: done.retries_left - 1 },
+          shardOf(done),
+        );
         this.note(done, 'retried', 'controller', `automatic retry (${to}) as ${next.id}`);
       } catch (err) {
         this.note(done, 'retry-failed', 'controller', (err as Error).message);
@@ -471,6 +484,127 @@ export class Cluster {
     });
   }
 
+  // ---- job groups (sharding) ----------------------------------------------------------------
+
+  private groupEmitQueued = new Set<string>();
+
+  private scheduleGroupEmit(groupId: string): void {
+    if (this.groupEmitQueued.has(groupId) || this.stopped) return;
+    this.groupEmitQueued.add(groupId);
+    setImmediate(() => {
+      this.groupEmitQueued.delete(groupId);
+      if (this.stopped) return;
+      const view = this.groupViewById(groupId);
+      if (view) this.hub.groupUpdated(view);
+    });
+  }
+
+  /** Latest attempt of each shard. */
+  private latestShards(groupId: string): JobRow[] {
+    const latest = new Map<number, JobRow>();
+    for (const j of this.store.jobsInGroup(groupId)) {
+      const idx = j.shard_index ?? 0;
+      const prev = latest.get(idx);
+      if (!prev || j.id > prev.id) latest.set(idx, j);
+    }
+    return [...latest.values()].sort((a, b) => (a.shard_index ?? 0) - (b.shard_index ?? 0));
+  }
+
+  groupView(row: GroupRow): JobGroup {
+    const jobs = this.latestShards(row.id);
+    const counts: Partial<Record<JobState, number>> = {};
+    for (const j of jobs) counts[j.state] = (counts[j.state] ?? 0) + 1;
+    const started = jobs.map((j) => j.started_at).filter((t): t is number => t !== null);
+    const state = groupState(jobs.map((j) => j.state));
+    const finished = jobs.map((j) => j.finished_at).filter((t): t is number => t !== null);
+    return {
+      id: row.id,
+      name: row.name,
+      owner: row.owner,
+      shardTotal: row.shard_total,
+      state,
+      jobs: jobs.map((j) => this.jobView(j)),
+      counts,
+      nodes: [
+        ...new Set(jobs.map((j) => j.node_name).filter((n): n is string => n !== null)),
+      ].sort(),
+      createdAt: row.created_at,
+      startedAt: started.length ? Math.min(...started) : null,
+      finishedAt:
+        state === 'queued' || state === 'running' || finished.length === 0
+          ? null
+          : Math.max(...finished),
+    };
+  }
+
+  groupViewById(id: string): JobGroup | undefined {
+    const row = this.store.groupById(id);
+    return row ? this.groupView(row) : undefined;
+  }
+
+  getGroup(id: string): JobGroup {
+    const view = this.groupViewById(id);
+    if (!view) throw new GridstatorError('NOT_FOUND', `Job group ${id} not found`);
+    return view;
+  }
+
+  /** Splits a command job into `shards` jobs that run in parallel, spread across nodes. */
+  submitGroup(
+    spec: JobSpec,
+    shards: number,
+    name: string | undefined,
+    principal: Principal,
+  ): JobGroup {
+    if (spec.kind !== 'command') {
+      throw new GridstatorError('BAD_REQUEST', 'Only command jobs can be sharded', {
+        hint: 'Run the test command with --shards; builds and workflows run as single jobs.',
+      });
+    }
+    const now = Date.now();
+    const group: GroupRow = {
+      id: newId(now),
+      name: name ?? jobDisplayName(spec),
+      owner: principal.name,
+      shard_total: shards,
+      created_at: now,
+    };
+    this.store.tx(() => {
+      this.store.insertGroup(group);
+      for (let i = 1; i <= shards; i++)
+        this.submit(shardSpec(spec, i, shards), principal, undefined, {
+          groupId: group.id,
+          index: i,
+          total: shards,
+        });
+    });
+    this.log.info({ groupId: group.id, shards, owner: principal.name }, 'job group submitted');
+    const view = this.groupView(group);
+    this.hub.groupUpdated(view);
+    return view;
+  }
+
+  cancelGroup(id: string, actor: string): JobGroup {
+    const group = this.getGroup(id);
+    for (const j of group.jobs) if (!isTerminal(j.state)) this.cancel(j.id, actor);
+    return this.getGroup(id);
+  }
+
+  /** Retries the shards that did not succeed (failed, lost or cancelled). */
+  retryGroup(id: string, principal: Principal): JobGroup {
+    const group = this.getGroup(id);
+    if (group.jobs.some((j) => !isTerminal(j.state))) {
+      throw new GridstatorError(
+        'CONFLICT',
+        `Group ${id} still has running shards; cancel it first`,
+      );
+    }
+    const failed = group.jobs.filter((j) => j.state !== 'succeeded');
+    if (failed.length === 0)
+      throw new GridstatorError('CONFLICT', `Every shard of group ${id} succeeded`);
+    for (const j of failed) this.retry(j.id, principal);
+    return this.getGroup(id);
+  }
+
   // ---- scheduling ----------------------------------------------------------------------------
 
   requestSchedule(): void {
@@ -491,6 +625,7 @@ export class Cluster {
     if (queued.length === 0) return;
     const allocs = this.allocations();
     const now = Date.now();
+    const groupsByNode = this.store.activeGroupsByNode();
     const nodes: SchedulerNode[] = this.store.listNodes().map((n) => {
       const rt = this.runtime(n.id);
       const a = allocs.get(n.id);
@@ -503,6 +638,7 @@ export class Cluster {
         settings: n.settings,
         effectiveLabels: [...automaticLabels(n.info), ...n.settings.labels],
         allocated: { cpus: a?.cpus ?? 0, memoryMb: a?.memoryMb ?? 0, jobs: a?.jobs.length ?? 0 },
+        groups: groupsByNode.get(n.id) ?? new Map<string, number>(),
       };
     });
     const warmCache = new Map<string, Set<string>>();
@@ -520,6 +656,7 @@ export class Cluster {
         target: j.spec.target,
         project: j.project ?? undefined,
         excludedNodes: excluded,
+        group: j.group_id ?? undefined,
       };
     });
     const result = schedule(jobs, nodes, {
@@ -1016,4 +1153,10 @@ export function mergeSettings(
     schedulingMode: patch.schedulingMode ?? base.schedulingMode,
   };
   return NodeSettingsSchema.parse(merged);
+}
+
+function shardOf(job: JobRow): { groupId: string; index: number; total: number } | undefined {
+  return job.group_id && job.shard_index && job.shard_total
+    ? { groupId: job.group_id, index: job.shard_index, total: job.shard_total }
+    : undefined;
 }

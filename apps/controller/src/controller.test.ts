@@ -754,3 +754,120 @@ describe('outputs and artifacts', () => {
     expect((await admin.getJob(job.id)).outputs?.steps).toHaveLength(1);
   });
 });
+
+describe('job groups (sharding)', () => {
+  const finish = (
+    a: FakeAgent,
+    m: { jobId: string; assignmentId: string },
+    outcome: 'succeeded' | 'failed',
+  ) =>
+    a.send({
+      type: 'job.result',
+      result: {
+        ...m,
+        outcome,
+        exitCode: outcome === 'succeeded' ? 0 : 1,
+        error: outcome === 'succeeded' ? null : 'boom',
+        oomKilled: false,
+        finishedAt: Date.now(),
+        logSeq: 0,
+      },
+    });
+
+  it('spreads shards across nodes, substitutes placeholders and aggregates state', async () => {
+    const a = await addAgent('a');
+    const b = await addAgent('b');
+    await a.connect();
+    await b.connect();
+    const group = await admin.submitGroup({
+      spec: { ...SPEC, command: ['sh', '-c', 'run --shard={shard}/{total}'] },
+      shards: 2,
+    });
+    expect(group).toMatchObject({ shardTotal: 2, state: 'queued' });
+    expect(group.jobs.map((j) => [j.shardIndex, j.shardTotal, j.groupId])).toEqual([
+      [1, 2, group.id],
+      [2, 2, group.id],
+    ]);
+    const onA = await a.next('job.assign');
+    const onB = await b.next('job.assign');
+    const assigned = [onA, onB]
+      .map((m) => (m.spec.kind === 'command' ? m.spec.command[2] : ''))
+      .sort();
+    expect(assigned).toEqual(['run --shard=1/2', 'run --shard=2/2']);
+    expect(onA.spec.env['GRIDSTATOR_SHARD_TOTAL']).toBe('2');
+
+    for (const [agent, m] of [
+      [a, onA],
+      [b, onB],
+    ] as const) {
+      agent.send({
+        type: 'job.state',
+        jobId: m.jobId,
+        assignmentId: m.assignmentId,
+        phase: 'running',
+        ts: Date.now(),
+      });
+    }
+    await waitFor(
+      async () => (await admin.getGroup(group.id)).state === 'running' || undefined,
+      'group running',
+    );
+    finish(a, onA, 'succeeded');
+    finish(b, onB, 'failed');
+    const done = await waitFor(async () => {
+      const g = await admin.getGroup(group.id);
+      return g.state === 'failed' ? g : undefined;
+    }, 'group failed');
+    expect(done.counts).toEqual({ succeeded: 1, failed: 1 });
+    expect(done.nodes).toEqual(['a', 'b']);
+    expect(done.finishedAt).not.toBeNull();
+
+    // Retrying the group re-runs only the failed shard, as a new attempt in the same group.
+    const retried = await admin.retryGroup(group.id);
+    expect(retried.state).toBe('running');
+    const again = await waitFor<Extract<ControllerMessage, { type: 'job.assign' }>>(
+      () =>
+        a.received
+          .concat(b.received)
+          .find(
+            (m): m is Extract<ControllerMessage, { type: 'job.assign' }> => m.type === 'job.assign',
+          ),
+      'retry assignment',
+    );
+    const failedShard = done.jobs.find((j) => j.state === 'failed')!;
+    expect(again.spec.kind === 'command' && again.spec.command[2]).toBe(
+      `run --shard=${failedShard.shardIndex}/2`,
+    );
+    const g2 = await admin.getGroup(group.id);
+    expect(g2.jobs.find((j) => j.shardIndex === failedShard.shardIndex)).toMatchObject({
+      attempt: 2,
+      retryOf: failedShard.id,
+    });
+    expect((await admin.listGroups()).map((g) => g.id)).toContain(group.id);
+  });
+
+  it('cancels every shard and rejects non-command jobs', async () => {
+    const group = await admin.submitGroup({
+      spec: { ...SPEC, target: { labels: ['nowhere'] } },
+      shards: 3,
+    });
+    const cancelled = await admin.cancelGroup(group.id);
+    expect(cancelled.state).toBe('cancelled');
+    expect(cancelled.counts).toEqual({ cancelled: 3 });
+    await expect(
+      admin.submitGroup({
+        spec: { kind: 'docker-build', resources: { cpus: 1, memoryMb: 512 } },
+        shards: 2,
+      }),
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+  });
+
+  it('honours preferred nodes', async () => {
+    const a = await addAgent('a');
+    const b = await addAgent('b');
+    await a.connect();
+    await b.connect();
+    const job = await admin.submitJob({ ...SPEC, target: { labels: [], prefer: ['b'] } });
+    expect((await b.next('job.assign')).jobId).toBe(job.id);
+  });
+});

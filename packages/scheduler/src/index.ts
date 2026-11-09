@@ -17,6 +17,8 @@ export interface SchedulerNode {
   effectiveLabels: readonly string[];
   /** Resources and slots currently held by dispatched jobs on this node. */
   allocated: { cpus: number; memoryMb: number; jobs: number };
+  /** Number of dispatched jobs per job group on this node (spreads shards across nodes). */
+  groups?: ReadonlyMap<string, number>;
 }
 
 export interface SchedulerJob {
@@ -25,10 +27,12 @@ export interface SchedulerJob {
   priority: number;
   queuedAt: number;
   resources: ResourceRequest;
-  target: JobTarget;
+  target: Pick<JobTarget, 'node' | 'labels'> & { prefer?: readonly string[] };
   project?: string | undefined;
   /** Nodes that rejected this job recently; they are skipped. */
   excludedNodes?: ReadonlySet<string> | undefined;
+  /** Job group (shards); shards of one group prefer different nodes. */
+  group?: string | undefined;
 }
 
 export interface ScheduleContext {
@@ -141,7 +145,11 @@ function checkNode(job: SchedulerJob, node: SchedulerNode): Rejection | undefine
   return undefined;
 }
 
-function score(job: SchedulerJob, node: SchedulerNode, warm: boolean): number {
+function score(
+  job: SchedulerJob,
+  node: SchedulerNode & { groupCounts: Map<string, number> },
+  warm: boolean,
+): number {
   const cap = allocatable(node);
   const freeCpu =
     cap.cpus > 0 ? (cap.cpus - node.allocated.cpus - job.resources.cpus) / cap.cpus : 0;
@@ -150,7 +158,18 @@ function score(job: SchedulerJob, node: SchedulerNode, warm: boolean): number {
       ? (cap.memoryMb - node.allocated.memoryMb - job.resources.memoryMb) / cap.memoryMb
       : 0;
   const cpuUtil = (node.metrics?.cpuPercent ?? 50) / 100;
-  return freeCpu + freeMem - 0.5 * cpuUtil - 0.1 * node.allocated.jobs + (warm ? 0.5 : 0);
+  const preferred = job.target.prefer?.some((p) => p === node.id || p === node.name) ?? false;
+  const siblings = job.group ? (node.groupCounts.get(job.group) ?? 0) : 0;
+  return (
+    freeCpu +
+    freeMem -
+    0.5 * cpuUtil -
+    0.1 * node.allocated.jobs +
+    (warm ? 0.5 : 0) +
+    (preferred ? 2 : 0) -
+    // Shards run in parallel to finish sooner: strongly prefer nodes without a sibling shard.
+    1.5 * siblings
+  );
 }
 
 function summarize(
@@ -192,7 +211,11 @@ export function schedule(
   nodes: readonly SchedulerNode[],
   context: ScheduleContext = {},
 ): ScheduleResult {
-  const working = nodes.map((n) => ({ ...n, allocated: { ...n.allocated } }));
+  const working = nodes.map((n) => ({
+    ...n,
+    allocated: { ...n.allocated },
+    groupCounts: new Map(n.groups ?? []),
+  }));
   const ordered = [...queue].sort(
     (a, b) => b.priority - a.priority || a.queuedAt - b.queuedAt || a.id.localeCompare(b.id),
   );
@@ -221,6 +244,8 @@ export function schedule(
     best.node.allocated.cpus += job.resources.cpus;
     best.node.allocated.memoryMb += job.resources.memoryMb;
     best.node.allocated.jobs += 1;
+    if (job.group)
+      best.node.groupCounts.set(job.group, (best.node.groupCounts.get(job.group) ?? 0) + 1);
     assignments.push({ jobId: job.id, nodeId: best.node.id, score: best.score });
   }
   return { assignments, pending };

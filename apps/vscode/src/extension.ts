@@ -13,7 +13,7 @@ import {
   writeClientConfig,
 } from '@gridstator/client';
 import { Dashboard } from './dashboard';
-import { CancelledByUser, Launcher } from './launcher';
+import { CancelledByUser, Launcher, isGroup } from './launcher';
 import type { LaunchItem, LaunchOptions } from './messages';
 import { ResultsIntegration } from './results';
 import { ClusterState } from './state';
@@ -59,6 +59,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   const launcher = new Launcher(state, log);
   const results = new ResultsIntegration(state, launcher, log);
   const dashboard = new Dashboard(context, state, launcher, log);
+  dashboard.results = results;
   const jobsTree = new JobsTreeProvider(state);
   context.subscriptions.push(
     log,
@@ -117,7 +118,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   // ---- notifications ---------------------------------------------------------------------------
   context.subscriptions.push(
     state.onJobFinished((job) => {
-      if (!state.myJobs.has(job.id)) return;
+      // Shards are reported once, when their group finishes.
+      if (!state.myJobs.has(job.id) || job.groupId) return;
       const mode = config<string>('notifications', 'failures');
       const ok = job.state === 'succeeded';
       if (mode === 'none' || (mode === 'failures' && ok)) return;
@@ -148,15 +150,56 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
         }
       });
     }),
+    state.onGroupFinished((group) => {
+      if (!state.myGroups.has(group.id)) return;
+      const mode = config<string>('notifications', 'failures');
+      const ok = group.state === 'succeeded';
+      if (mode === 'none' || (mode === 'failures' && ok)) return;
+      const took =
+        group.startedAt && group.finishedAt
+          ? ` in ${formatDuration(group.finishedAt - group.startedAt)}`
+          : '';
+      const failed = group.jobs.filter((j) => j.state === 'failed' || j.state === 'lost').length;
+      const text = `${group.name}: ${group.shardTotal} shards ${group.state} on ${group.nodes.join(', ')}${took}${failed ? ` (${failed} failed)` : ''}`;
+      const actions =
+        ok || group.state === 'cancelled'
+          ? ['Show Details']
+          : ['Show Details', 'Retry Failed Shards'];
+      const show =
+        ok || group.state === 'cancelled'
+          ? vscode.window.showInformationMessage
+          : vscode.window.showErrorMessage;
+      void show(`Gridstator: ${text}`, ...actions).then(async (choice) => {
+        if (choice === 'Show Details') dashboard.show('group', { groupId: group.id });
+        if (choice === 'Retry Failed Shards') {
+          try {
+            const next = await state.requireClient().retryGroup(group.id);
+            const origin = launcher.groupOrigins.get(group.id);
+            for (const j of next.jobs) {
+              state.myJobs.add(j.id);
+              if (origin) launcher.origins.set(j.id, origin);
+              state.upsertJob(j);
+            }
+            state.upsertGroup(next);
+            dashboard.show('group', { groupId: group.id });
+          } catch (err) {
+            showError(err);
+          }
+        }
+      });
+    }),
   );
 
   // ---- helpers ---------------------------------------------------------------------------------
   let lastJob: string | undefined;
   const launchAndShow = async (itemId: string, options: LaunchOptions = {}) => {
-    const job = await launcher.launch({ itemId, options });
-    lastJob = job.id;
-    dashboard.show('job', { jobId: job.id });
-    return job;
+    const launched = await launcher.launch({ itemId, options });
+    lastJob = isGroup(launched) ? launched.jobs[0]?.id : launched.id;
+    dashboard.show(
+      isGroup(launched) ? 'group' : 'job',
+      isGroup(launched) ? { groupId: launched.id } : { jobId: launched.id },
+    );
+    return launched;
   };
   const pickItem = async (
     kind: LaunchItem['kind'],
@@ -361,9 +404,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       const last = lastJob ?? [...state.myJobs].pop();
       if (!last)
         throw new GridstatorError('NOT_FOUND', 'Nothing has been run from this window yet');
-      const job = await launcher.rerun(last);
-      lastJob = job.id;
-      dashboard.show('job', { jobId: job.id });
+      const launched = await launcher.rerun(last);
+      lastJob = isGroup(launched) ? launched.jobs[0]?.id : launched.id;
+      dashboard.show(
+        isGroup(launched) ? 'group' : 'job',
+        isGroup(launched) ? { groupId: launched.id } : { jobId: launched.id },
+      );
     }),
     command('gridstator.selectTarget', async () => {
       const nodes = state.nodeList();

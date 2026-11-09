@@ -144,7 +144,9 @@ export function JobDetail({
   busy: Record<string, boolean>;
   dispatch: Dispatch<Action>;
 }) {
-  const job = data.jobs.find((j) => j.id === jobId);
+  const job =
+    data.jobs.find((j) => j.id === jobId) ??
+    data.groups.flatMap((g) => g.jobs).find((j) => j.id === jobId);
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     send({ type: 'selectJob', jobId });
@@ -224,6 +226,17 @@ export function JobDetail({
         />
       </div>
 
+      {job.groupId ? (
+        <div className="banner banner-info">
+          <Icon name="layers" /> Shard {job.shardIndex} of {job.shardTotal} in a sharded run.
+          <button
+            className="link"
+            onClick={() => dispatch({ type: 'go', view: 'group', groupId: job.groupId })}
+          >
+            Open the group
+          </button>
+        </div>
+      ) : null}
       {job.error && job.state !== 'succeeded' ? (
         <div className="banner banner-error">
           <Icon name="error" /> {job.error}

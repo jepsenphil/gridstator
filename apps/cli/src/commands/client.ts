@@ -17,6 +17,7 @@ import {
   JOB_STATES,
   isTerminal,
   type Job,
+  type JobGroup,
   type JobSpec,
   type JobSpecInput,
   type JobState,
@@ -56,6 +57,7 @@ import {
   table,
 } from '../output.js';
 import { parseLabels } from '../settings-flags.js';
+import { collectJUnit, summarize as summarizeTests, type TestSummary } from '@gridstator/reports';
 
 /** Set by commands that need a specific process exit code. */
 export const exitState = { code: 0 };
@@ -142,6 +144,8 @@ export async function uploadCaptured(
 
 interface RunFlags {
   artifact: string[];
+  shards?: string;
+  prefer: string[];
   image?: string;
   node?: string;
   label: string[];
@@ -266,7 +270,13 @@ export function buildSpec(
             ? memory
             : parseMegabytes(memory),
     },
-    target: { labels: [...new Set(labels)], ...(node ? { node } : {}) },
+    target: {
+      labels: [...new Set(labels)],
+      ...(node ? { node } : {}),
+      prefer: [
+        ...new Set([...(config.defaults.prefer ?? []), ...(task?.prefer ?? []), ...flags.prefer]),
+      ],
+    },
     ...(timeout ? { timeoutSeconds: Math.ceil(parseDuration(timeout) / 1000) } : {}),
     retry: {
       max: flags.retries !== undefined ? Number(flags.retries) : (task?.retry?.max ?? 0),
@@ -341,6 +351,131 @@ export async function followJob(
     process.off('SIGINT', onSigint);
   }
   return client.getJob(job.id);
+}
+
+function writePrefixed(prefix: string, entries: LogEntry[]): void {
+  for (const e of entries) {
+    const lines = e.d.replace(/\n$/, '').split('\n');
+    for (const line of lines) {
+      if (e.o === 'stdout') process.stdout.write(`${c.cyan(prefix)} ${line}\n`);
+      else if (e.o === 'stderr')
+        process.stderr.write(`${c.cyan(prefix, process.stderr)} ${line}\n`);
+      else process.stderr.write(c.dim(`${prefix} [gridstator] ${line}`, process.stderr) + '\n');
+    }
+  }
+}
+
+/** Downloads JUnit reports from every shard and summarises them. */
+export async function groupTestSummary(
+  client: GridstatorClient,
+  group: JobGroup,
+): Promise<TestSummary | undefined> {
+  const sets = [];
+  for (const j of group.jobs) {
+    const cases = await collectJUnit(j.artifacts, (a) =>
+      client.downloadArtifact(j.id, a.name),
+    ).catch(() => []);
+    if (cases.length)
+      sets.push({ ...(j.shardIndex !== null ? { shard: j.shardIndex } : {}), cases });
+  }
+  return sets.length ? summarizeTests(sets) : undefined;
+}
+
+export function printGroup(group: JobGroup, tests: TestSummary | undefined): void {
+  const now = Date.now();
+  const lines = [
+    `${c.bold(group.id)}  ${groupStateColor(group.state)}  ${group.name}`,
+    `  shards      ${group.shardTotal} on ${group.nodes.join(', ') || '–'}`,
+    `  duration    ${group.startedAt ? formatDuration((group.finishedAt ?? now) - group.startedAt) : '–'}`,
+  ];
+  process.stdout.write(lines.join('\n') + '\n\n');
+  process.stdout.write(
+    table(
+      ['SHARD', 'JOB', 'STATE', 'NODE', 'DURATION'],
+      group.jobs.map((j) => [
+        `${j.shardIndex}/${j.shardTotal}`,
+        j.id,
+        stateColor(j.state),
+        j.nodeName ?? '–',
+        jobDuration(j, now),
+      ]),
+    ) + '\n',
+  );
+  if (tests) {
+    process.stdout.write(
+      `\n${c.bold('Tests')} ${tests.total} total: ${c.green(`${tests.passed} passed`)}, ${tests.failed ? c.red(`${tests.failed} failed`) : '0 failed'}, ${tests.skipped} skipped (combined from all shards)\n`,
+    );
+    for (const f of tests.failures.slice(0, 20)) {
+      process.stdout.write(
+        `  ${c.red('✗')} ${f.suite} › ${f.name}${f.shard ? c.dim(` [shard ${f.shard}]`) : ''}${f.message ? c.dim(` — ${f.message}`) : ''}\n`,
+      );
+    }
+  }
+}
+
+function groupStateColor(state: JobGroup['state']): string {
+  return state === 'succeeded'
+    ? c.green(state)
+    : state === 'failed'
+      ? c.red(state)
+      : state === 'cancelled'
+        ? c.yellow(state)
+        : c.cyan(state);
+}
+
+export function exitCodeForGroup(group: JobGroup): number {
+  if (group.state === 'succeeded') return 0;
+  if (group.state === 'cancelled') return 130;
+  const failed = group.jobs.find((j) => j.state === 'failed' || j.state === 'lost');
+  return failed ? exitCodeForJob(failed) : 1;
+}
+
+/** Streams all shards' logs with a [shard/total] prefix; Ctrl-C cancels the group, twice detaches. */
+export async function followGroup(client: GridstatorClient, groupId: string): Promise<void> {
+  const group = await client.getGroup(groupId);
+  const abort = new AbortController();
+  let interrupts = 0;
+  const onSigint = () => {
+    interrupts++;
+    if (interrupts === 1) {
+      info(
+        c.yellow(`\nCancelling group ${groupId}... (press Ctrl-C again to detach)`, process.stderr),
+      );
+      client
+        .cancelGroup(groupId)
+        .catch((err: unknown) =>
+          info(c.red(`Cancel failed: ${(err as Error).message}`, process.stderr)),
+        );
+    } else {
+      info(
+        c.yellow(`\nDetached. Follow again with: gridstator group show ${groupId}`, process.stderr),
+      );
+      abort.abort();
+    }
+  };
+  process.on('SIGINT', onSigint);
+  try {
+    await Promise.all(
+      group.jobs.map((j) =>
+        client
+          .followLogs(
+            j.id,
+            (entries) => writePrefixed(`[${j.shardIndex}/${j.shardTotal}]`, entries),
+            { signal: abort.signal },
+          )
+          .catch((err: unknown) => {
+            if (!abort.signal.aborted) throw err;
+          }),
+      ),
+    );
+  } finally {
+    process.off('SIGINT', onSigint);
+  }
+  if (abort.signal.aborted) return;
+  const final = await client.getGroup(groupId);
+  process.stdout.write('\n');
+  printGroup(final, await groupTestSummary(client, final));
+  exitState.code = exitCodeForGroup(final);
 }
 
 function specLines(s: JobSpec): string[] {
@@ -647,6 +782,11 @@ export function registerClientCommands(program: Command): void {
           `  snapshot    ${job.snapshotId ?? '-'}`,
           `  resources   ${s.resources.cpus} CPU, ${formatBytes(s.resources.memoryMb * 1024 * 1024)}`,
           `  attempt     ${job.attempt}${job.retryOf ? ` (retry of ${job.retryOf})` : ''}`,
+          ...(job.groupId
+            ? [
+                `  group       ${job.groupId} (shard ${job.shardIndex}/${job.shardTotal}; gridstator group show ${job.groupId})`,
+              ]
+            : []),
           `  exit code   ${job.exitCode ?? '-'}`,
           `  duration    ${jobDuration(job)}`,
         ];
@@ -733,6 +873,16 @@ export function registerClientCommands(program: Command): void {
       collect,
       [],
     )
+    .option(
+      '--shards <n>',
+      'split into N parallel shards across workers; use {shard} and {total} in the command',
+    )
+    .option(
+      '--prefer <node>',
+      'prefer this worker when it can take the job (repeatable)',
+      collect,
+      [],
+    )
     .option('--no-snapshot', 'do not send the project; run in an empty /workspace')
     .option('-d, --detach', 'print the job id and exit instead of streaming logs')
     .option('--json', 'print the submitted job as JSON (implies --detach)')
@@ -760,6 +910,27 @@ export function registerClientCommands(program: Command): void {
           workdir,
           project,
         });
+        const task = flags.task ? config.tasks[flags.task] : undefined;
+        const shards = flags.shards !== undefined ? Number(flags.shards) : (task?.shards ?? 1);
+        if (!Number.isInteger(shards) || shards < 1 || shards > 64) {
+          throw new GridstatorError('BAD_REQUEST', '--shards must be a whole number from 1 to 64');
+        }
+        if (shards > 1) {
+          const group = await client.submitGroup({ spec, shards });
+          if (flags.json) return printJson(group);
+          if (flags.detach) {
+            process.stdout.write(group.id + '\n');
+            return;
+          }
+          info(
+            c.dim(
+              `Group ${group.id} submitted: ${shards} shards${snapshotId ? ` (snapshot ${snapshotId.slice(7, 19)})` : ''}`,
+              process.stderr,
+            ),
+          );
+          await followGroup(client, group.id);
+          return;
+        }
         const job = await client.submitJob(spec);
         if (flags.json) return printJson(job);
         if (flags.detach) {
@@ -968,6 +1139,73 @@ export function registerClientCommands(program: Command): void {
       withClient(async (client) => {
         await client.revokeToken(id);
         info(`Revoked token ${id}.`);
+      }),
+    );
+
+  program
+    .command('groups')
+    .description('List job groups (sharded runs), most recent first')
+    .option('--limit <n>', 'maximum number of groups', '20')
+    .option('--json', 'machine-readable output')
+    .action(async (opts: { limit: string; json?: boolean }) =>
+      withClient(async (client) => {
+        const groups = await client.listGroups(Number(opts.limit));
+        if (opts.json) return printJson(groups);
+        if (groups.length === 0)
+          return info('No job groups yet. Run with --shards N to create one.');
+        const now = Date.now();
+        process.stdout.write(
+          table(
+            ['ID', 'STATE', 'NAME', 'SHARDS', 'NODES', 'DURATION'],
+            groups.map((g) => [
+              g.id,
+              groupStateColor(g.state),
+              g.name.length > 40 ? `${g.name.slice(0, 37)}...` : g.name,
+              `${g.counts.succeeded ?? 0}/${g.shardTotal} ok`,
+              g.nodes.join(',') || '–',
+              g.startedAt ? formatDuration((g.finishedAt ?? now) - g.startedAt) : '–',
+            ]),
+          ) + '\n',
+        );
+      }),
+    );
+
+  const group = program
+    .command('group')
+    .description('Inspect and control a job group (sharded run)');
+  group
+    .command('show')
+    .argument('<id>', 'group id')
+    .option('--json', 'machine-readable output (includes combined test results)')
+    .action(async (id: string, opts: { json?: boolean }) =>
+      withClient(async (client) => {
+        const g = await client.getGroup(id);
+        const tests = await groupTestSummary(client, g);
+        if (opts.json) return printJson({ group: g, tests: tests ?? null });
+        printGroup(g, tests);
+      }),
+    );
+  group
+    .command('cancel')
+    .argument('<id>', 'group id')
+    .action(async (id: string) =>
+      withClient(async (client) => {
+        const g = await client.cancelGroup(id);
+        info(
+          `Cancelling ${g.jobs.filter((j) => !isTerminal(j.state)).length} running shard(s) of ${id}.`,
+        );
+      }),
+    );
+  group
+    .command('retry')
+    .description('Run the shards that failed, were lost or were cancelled again')
+    .argument('<id>', 'group id')
+    .option('-d, --detach', 'do not stream logs')
+    .action(async (id: string, opts: { detach?: boolean }) =>
+      withClient(async (client) => {
+        await client.retryGroup(id);
+        if (opts.detach) return info(`Retrying failed shards of ${id}.`);
+        await followGroup(client, id);
       }),
     );
 

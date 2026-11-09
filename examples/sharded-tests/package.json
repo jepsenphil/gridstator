@@ -1,0 +1,10 @@
+{
+  "name": "gridstator-example-sharded-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Slow-ish tests split across workers with Node's built-in test sharding.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

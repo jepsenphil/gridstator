@@ -1,0 +1,55 @@
+name: Release
+
+# Push a tag like v0.2.0 to publish. The version in the tag is stamped into every package.
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write # create the GitHub release
+  id-token: write # npm provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: Stamp the version from the tag
+        run: node scripts/set-version.mjs "${GITHUB_REF_NAME#v}"
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm pack:release
+      - run: pnpm package:vscode
+      - name: Collect release assets
+        run: |
+          mkdir -p release
+          cp apps/cli/release/gridstator-*.tgz release/
+          cp apps/vscode/dist/gridstator.vsix "release/gridstator-${GITHUB_REF_NAME#v}.vsix"
+          cd release && sha256sum * > SHA256SUMS && cat SHA256SUMS
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/changelog-section.mjs "$GITHUB_REF_NAME" > notes.md
+          gh release create "$GITHUB_REF_NAME" release/* --title "Gridstator ${GITHUB_REF_NAME}" --notes-file notes.md \
+            $([[ "$GITHUB_REF_NAME" == *-* ]] && echo --prerelease)
+      - name: Publish the CLI to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish release/gridstator-*.tgz --access public --provenance
+      - name: Publish the extension to the VS Code Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
+        run: pnpm --filter gridstator-vscode exec vsce publish --packagePath "../../release/gridstator-${GITHUB_REF_NAME#v}.vsix" --pat "$VSCE_PAT"

@@ -65,6 +65,7 @@ packages/
   snapshot/     working-tree capture, manifests, CAS store, safe materialization
   executors/    Executor interface; docker CLI wrapper; command, docker-build and actions executors
   discovery/    finds workflows (with act caveats), package scripts and Dockerfiles in a project
+  reports/      JUnit parsing, report extraction from artifacts, combined shard summaries
   client/       typed HTTPS/WSS API client with CA pinning (used by CLI, agent, VS Code)
 apps/vscode/    VS Code extension: extension host (src/) and React dashboard webview (webview/)
 examples/       sample projects used for manual and automated validation
@@ -266,6 +267,22 @@ which owns the client, the user's files and dialogs. Remote paths in logs and JU
 (`/workspace/…` in containers, act's staging directory) are mapped back to workspace files for
 Problems, Testing locations and clickable log links.
 
+### 3.7 Job groups and test sharding (M6)
+
+A **job group** is one logical run split into N shards. `POST /v1/groups` takes a command job spec
+and a shard count; the controller creates the group record and N jobs. For shard *i* of *N* it
+replaces `{shard}` and `{total}` in the command and adds `GRIDSTATOR_SHARD_INDEX` and
+`GRIDSTATOR_SHARD_TOTAL` to the environment, so frameworks with built-in sharding (Playwright,
+Vitest, Jest, Node's test runner) split the suite. Shards are ordinary jobs (cancel, logs,
+artifacts, retry policies all apply) with `groupId`, `shardIndex` and `shardTotal`.
+
+The group's state is derived from the latest attempt of each shard: `queued` until a shard starts,
+`running` until all are terminal, then `failed` (any failed or lost), `cancelled`, or `succeeded`.
+Retrying a group re-runs only the shards that did not succeed, as new attempts in the same group.
+Clients combine the shards' JUnit artifacts into one result (`packages/reports`), shown by
+`gridstator group show` and in VS Code's dashboard and Testing view. Group changes are pushed to
+clients as `group.updated` events.
+
 ## 4. Job model and state machine
 
 ```text
@@ -312,6 +329,7 @@ API values are lowercase (`queued`, `running`, …). The allowed-transition tabl
 | `logSeq` | highest persisted log sequence number |
 | `outputs` | structured results: `image`, `steps` (§3.5) |
 | `artifacts` | `{name, digest, size}` files produced by the job (§3.5) |
+| `groupId`, `shardIndex`, `shardTotal` | job group membership for shards (§3.7) |
 
 Every transition is also appended to `job_events` (who/what caused it, when), which forms the audit
 trail.
@@ -330,7 +348,9 @@ trail.
    This is what keeps the development laptop usable (ADR-6).
 3. Among eligible nodes, the highest score wins: free CPU and memory fraction, minus a penalty for
    current CPU utilization, plus a bonus if the node recently ran a job from the same project (warm
-   blob and dependency caches).
+   blob and dependency caches), a large bonus for nodes in the job's `target.prefer` list
+   (preferred, not required), and a penalty per shard of the same job group already on the node, so
+   shards spread across workers and run in parallel.
 4. Lower-priority jobs may backfill when a higher-priority job cannot currently fit. Each pending job
    gets a reason (`no node has label "gpu"`, `waiting for capacity`) shown to the user.
 
@@ -355,6 +375,7 @@ All endpoints are under `/v1`, served over TLS, JSON unless noted, and require
 | Tokens | `POST /tokens`, `GET /tokens`, `DELETE /tokens/:id` (admin) |
 | Events | `GET /events` (WebSocket: job/node updates, log subscriptions) |
 | Artifacts | `GET /jobs/:id/artifacts`, `GET /jobs/:id/artifacts/<name>` |
+| Job groups | `POST /groups`, `GET /groups`, `GET /groups/:id`, `POST /groups/:id/cancel`, `POST /groups/:id/retry` |
 
 ### 6.1 Agent channel protocol
 
@@ -383,8 +404,8 @@ Controller data directory (default `$XDG_DATA_HOME/gridstator/controller`, mode 
 
 ```text
 controller.json        listen host and port
-controller.db          SQLite (WAL, schema v2): meta, tokens, nodes, jobs (+outputs), job_events,
-                       snapshots, artifacts
+controller.db          SQLite (WAL, schema v3, mode 0600): meta, tokens, nodes, jobs (+outputs,
+                       group membership), job_groups, job_events, snapshots, artifacts
 pki/ca.pem, ca.key     cluster CA (key mode 0600)
 pki/server.pem, .key   controller TLS certificate, signed by the CA
 cas/sha256/ab/cdef…    content-addressed blobs (file contents and manifests)
@@ -452,11 +473,17 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 
 ## 10. Deployment model
 
-- **Install:** `npm install -g gridstator` (Node ≥ 22.19) on each machine. Workers also need Docker
+- **Install:** `npm install -g gridstator` (or the release tarball; Node ≥ 22.19) on each machine.
+  Step-by-step: [INSTALL.md](INSTALL.md); Windows workers: [WINDOWS.md](WINDOWS.md). Workers also need Docker
   (BuildKit/buildx for builds, `act` for workflows) accessible to the agent's user.
 - **Controller:** `gridstator controller init` then `gridstator controller start [--with-agent]`.
-  Service installation helpers (systemd units, Windows/WSL guidance) are planned for M7.
-- **Workers:** `gridstator agent join …` then `gridstator agent start` (or as a systemd unit).
+  `gridstator controller install-service [--with-agent]` writes and enables a systemd user unit
+  (with lingering, so it survives logout and starts at boot).
+- **Workers:** `gridstator agent join …` then `sudo gridstator agent install-service --system`
+  (a system unit running as the user, with the `docker` group) or `gridstator agent start`.
+- **Releases:** pushing a `v*.*.*` tag runs `.github/workflows/release.yml`: version stamping, checks,
+  the single-file npm package and the VSIX with SHA-256 checksums on a GitHub release, and (when
+  tokens are configured) npm and VS Code Marketplace publishing.
 - **Clients:** `gridstator login <url> --fingerprint … --token …`, or the VS Code extension's
   sign-in command (M5).
 - Ports: controller listens on `0.0.0.0:7300` by default (configurable). Agents and clients only
@@ -484,11 +511,12 @@ See [SECURITY.md](SECURITY.md) for the threat model.
 | ADR-16 | `tar` image output via `--load` + `docker save` | buildx `--output type=docker,dest=…` | the default `docker` build driver cannot export to a file |
 | ADR-17 | Extension runs on the workspace host; the webview only messages the extension | webview calling the API directly | snapshots must be captured where the files are; keeps credentials and pinned TLS out of the webview |
 | ADR-18 | IDE feedback from logs (problem matchers) and JUnit artifacts | custom test protocol | works with any language or test runner that can print errors or write JUnit |
+| ADR-19 | Sharding as job groups of ordinary jobs with `{shard}/{total}` substitution | per-framework test splitting by the controller | reuses scheduling, cancel, logs and retry; works with any framework that supports sharding |
+| ADR-20 | Preferences and shard spreading as score terms, not constraints | hard anti-affinity | never leaves work waiting when capacity exists; a one-node cluster still runs every shard |
 
 ## 12. Extension points
 
 - **Executors** implement `Executor { kind; run(ctx) }` with a context that provides snapshot
   staging, artifact upload and progress reporting; new job kinds plug in beside `command`,
   `docker-build` and `actions`.
-- **Job groups** (planned, M6) add `groupId` so shards and matrix jobs are tracked together.
 - **Scheduler adapters**: the pure `schedule()` boundary allows an optional external scheduler later.

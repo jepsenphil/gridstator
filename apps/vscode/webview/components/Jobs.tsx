@@ -3,7 +3,18 @@ import type { Job } from '@gridstator/protocol';
 import type { DashboardState } from '../../src/messages';
 import type { Action } from '../store';
 import { ago, cx, formatDuration, send } from '../util';
-import { Button, Empty, KindIcon, StateIcon, isActive, isTerminalState, kindLabel } from './common';
+import {
+  Button,
+  Card,
+  Empty,
+  Icon,
+  KindIcon,
+  StateIcon,
+  isActive,
+  isTerminalState,
+  kindLabel,
+} from './common';
+import { GroupStateIcon } from './GroupDetail';
 
 type Filter = 'all' | 'active' | 'queued' | 'succeeded' | 'failed' | 'stopped';
 const FILTERS: Array<{ id: Filter; label: string; match: (j: Job) => boolean }> = [
@@ -41,8 +52,45 @@ export function Jobs({
     }
     return true;
   });
+  const groups = data.groups.slice(0, 8);
   return (
     <div className="stack">
+      {groups.length ? (
+        <Card
+          title={
+            <>
+              <Icon name="layers" /> Sharded runs
+            </>
+          }
+        >
+          <table className="table">
+            <tbody>
+              {groups.map((g) => (
+                <tr
+                  key={g.id}
+                  className="clickable"
+                  onClick={() => dispatch({ type: 'go', view: 'group', groupId: g.id })}
+                >
+                  <td style={{ width: 28 }}>
+                    <GroupStateIcon state={g.state} />
+                  </td>
+                  <td className="ellipsis">{g.name}</td>
+                  <td style={{ width: 150 }}>
+                    {g.counts.succeeded ?? 0}/{g.shardTotal} shards passed
+                  </td>
+                  <td style={{ width: 160 }} className="muted ellipsis">
+                    {g.nodes.join(', ') || '–'}
+                  </td>
+                  <td style={{ width: 90 }}>
+                    {g.startedAt ? formatDuration((g.finishedAt ?? now) - g.startedAt) : '–'}
+                  </td>
+                  <td style={{ width: 90 }}>{ago(g.createdAt, now)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+      ) : null}
       <div className="toolbar">
         <div className="chips" role="tablist">
           {FILTERS.map((f) => {
@@ -109,6 +157,11 @@ export function Jobs({
                 <td className="ellipsis name-cell" title={j.name}>
                   {j.name}
                   {j.attempt > 1 ? <span className="pill">attempt {j.attempt}</span> : null}
+                  {j.shardIndex !== null ? (
+                    <span className="pill">
+                      shard {j.shardIndex}/{j.shardTotal}
+                    </span>
+                  ) : null}
                   {j.state === 'queued' && j.stateReason ? (
                     <div className="muted small ellipsis">
                       #{j.queuePosition} · {j.stateReason}

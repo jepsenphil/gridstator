@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import type { ToWebview, View } from '../src/messages';
 import { Button, Icon, isActive } from './components/common';
+import { GroupDetail } from './components/GroupDetail';
 import { JobDetail } from './components/JobDetail';
 import { Jobs } from './components/Jobs';
 import { Nodes } from './components/Nodes';
@@ -69,10 +70,15 @@ export function App() {
             <button
               key={t.view}
               role="tab"
-              aria-selected={state.view === t.view || (t.view === 'jobs' && state.view === 'job')}
+              aria-selected={
+                state.view === t.view ||
+                (t.view === 'jobs' && (state.view === 'job' || state.view === 'group'))
+              }
               className={cx(
                 'tab',
-                (state.view === t.view || (t.view === 'jobs' && state.view === 'job')) && 'tab-on',
+                (state.view === t.view ||
+                  (t.view === 'jobs' && (state.view === 'job' || state.view === 'group'))) &&
+                  'tab-on',
               )}
               onClick={() => dispatch({ type: 'go', view: t.view })}
             >
@@ -146,6 +152,15 @@ export function App() {
             jobId={state.jobId}
             logs={state.jobId ? state.logs[state.jobId] : undefined}
             events={state.jobId ? state.events[state.jobId] : undefined}
+            busy={state.busy}
+            dispatch={dispatch}
+          />
+        ) : null}
+        {state.view === 'group' ? (
+          <GroupDetail
+            data={data}
+            groupId={state.groupId}
+            tests={state.groupId ? state.groupTests[state.groupId] : undefined}
             busy={state.busy}
             dispatch={dispatch}
           />

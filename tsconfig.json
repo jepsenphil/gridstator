@@ -11,6 +11,9 @@
       "path": "packages/discovery"
     },
     {
+      "path": "packages/reports"
+    },
+    {
       "path": "packages/scheduler"
     },
     {

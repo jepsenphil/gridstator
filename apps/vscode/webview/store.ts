@@ -1,4 +1,5 @@
 import type { JobEvent, LogEntry } from '@gridstator/protocol';
+import type { TestSummary } from '@gridstator/reports';
 import type { DashboardState, ToWebview, View } from '../src/messages';
 
 export interface LogLine {
@@ -26,6 +27,9 @@ export interface UiState {
   jobId: string | null;
   nodeId: string | null;
   itemId: string | null;
+  groupId: string | null;
+  /** Combined test results per group: undefined = not loaded, null = no reports. */
+  groupTests: Record<string, TestSummary | null>;
   logs: Record<string, JobLogs>;
   events: Record<string, JobEvent[]>;
   busy: Record<string, boolean>;
@@ -38,6 +42,8 @@ export const initialState: UiState = {
   jobId: null,
   nodeId: null,
   itemId: null,
+  groupId: null,
+  groupTests: {},
   logs: {},
   events: {},
   busy: {},
@@ -52,6 +58,7 @@ export type Action =
       jobId?: string | null;
       nodeId?: string | null;
       itemId?: string | null;
+      groupId?: string | null;
     }
   | { type: 'dismissToast'; id: number };
 
@@ -102,6 +109,7 @@ export function reducer(state: UiState, action: Action): UiState {
         jobId: action.jobId ?? (action.view === 'job' ? state.jobId : state.jobId),
         nodeId: action.nodeId ?? null,
         itemId: action.itemId ?? (action.view === 'run' ? state.itemId : null),
+        groupId: action.groupId ?? (action.view === 'group' ? state.groupId : null),
       };
     case 'logs':
       return {
@@ -126,6 +134,8 @@ export function reducer(state: UiState, action: Action): UiState {
     }
     case 'events':
       return { ...state, events: { ...state.events, [action.jobId]: action.events } };
+    case 'groupTests':
+      return { ...state, groupTests: { ...state.groupTests, [action.groupId]: action.summary } };
     case 'busy':
       return { ...state, busy: { ...state.busy, [action.key]: action.busy } };
     case 'toast':

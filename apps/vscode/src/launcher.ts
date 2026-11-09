@@ -14,6 +14,7 @@ import {
   DEFAULT_IMAGE,
   DEFAULT_RESOURCES,
   type Job,
+  type JobGroup,
   type JobSpec,
   type JobSpecInput,
   type ProjectConfig,
@@ -51,6 +52,13 @@ export interface JobOrigin {
   request: LaunchRequest;
 }
 
+/** A single job, or a job group when the launch was sharded. */
+export type LaunchResult = Job | JobGroup;
+
+export function isGroup(r: LaunchResult): r is JobGroup {
+  return 'shardTotal' in r && 'jobs' in r;
+}
+
 export class CancelledByUser extends Error {
   constructor() {
     super('Cancelled');
@@ -62,6 +70,7 @@ export class Launcher implements vscode.Disposable {
   loading = false;
   private projects = new Map<string, Project>();
   readonly origins = new Map<string, JobOrigin>();
+  readonly groupOrigins = new Map<string, JobOrigin>();
   private readonly changed = new vscode.EventEmitter<void>();
   readonly onDidChange = this.changed.event;
   private readonly watchers: vscode.Disposable[] = [];
@@ -134,7 +143,7 @@ export class Launcher implements vscode.Disposable {
   }
 
   /** Builds, snapshots and submits a job for a launch request. */
-  async launch(request: LaunchRequest): Promise<Job> {
+  async launch(request: LaunchRequest): Promise<LaunchResult> {
     const client = this.state.requireClient();
     let item = this.item(request.itemId);
     if (!item && request.itemId.startsWith('command:')) {
@@ -178,14 +187,34 @@ export class Launcher implements vscode.Disposable {
         await uploadSnapshot(captured, client);
         const spec = buildSpec(item, request.options, project, captured.id, git);
         progress.report({ message: 'submitting…' });
-        const job = await client.submitJob(spec);
-        this.state.myJobs.add(job.id);
-        this.origins.set(job.id, {
+        const origin: JobOrigin = {
           root: project.root,
           workdir: project.workdir,
           folder: project.folder.name,
           request,
-        });
+        };
+        const taskShards =
+          item.kind === 'task' ? project.config.tasks[item.task!.name]?.shards : undefined;
+        const shards = request.options.shards ?? taskShards ?? 1;
+        if (shards > 1 && spec.kind === 'command') {
+          const group = await client.submitGroup({
+            spec,
+            shards,
+            ...(spec.name ? { name: spec.name } : {}),
+          });
+          this.state.myGroups.add(group.id);
+          this.groupOrigins.set(group.id, origin);
+          for (const j of group.jobs) {
+            this.state.myJobs.add(j.id);
+            this.origins.set(j.id, origin);
+            this.state.upsertJob(j);
+          }
+          this.state.upsertGroup(group);
+          return group;
+        }
+        const job = await client.submitJob(spec);
+        this.state.myJobs.add(job.id);
+        this.origins.set(job.id, origin);
         this.state.upsertJob(job);
         return job;
       },
@@ -193,7 +222,7 @@ export class Launcher implements vscode.Disposable {
   }
 
   /** Runs a finished job's launch again against the current files (new snapshot). */
-  async rerun(jobId: string): Promise<Job> {
+  async rerun(jobId: string): Promise<LaunchResult> {
     const origin = this.origins.get(jobId);
     if (origin) return this.launch(origin.request);
     // Jobs started elsewhere (CLI, another window): resubmit the same spec with a fresh snapshot.
@@ -265,7 +294,12 @@ async function discoverItems(
       ...(task.description ? { description: task.description } : {}),
       folder,
       warnings: [],
-      task: { name, command, ...(task.junit ? { junit: task.junit } : {}) },
+      task: {
+        name,
+        command,
+        ...(task.junit ? { junit: task.junit } : {}),
+        ...(task.shards ? { shards: task.shards } : {}),
+      },
     });
   }
   for (const [name, b] of Object.entries(config.builds)) {
@@ -408,7 +442,11 @@ export function buildSpec(
   const common = {
     snapshot,
     resources: { cpus: options.cpus ?? defaults.cpus ?? DEFAULT_RESOURCES.cpus, memoryMb },
-    target: { labels: config.defaults.labels ?? [], ...(node ? { node } : {}) },
+    target: {
+      labels: config.defaults.labels ?? [],
+      ...(node ? { node } : {}),
+      prefer: [...(config.defaults.prefer ?? []), ...(options.prefer ?? [])],
+    },
     ...(config.defaults.timeout
       ? { timeoutSeconds: Math.ceil(parseDuration(config.defaults.timeout) / 1000) }
       : {}),

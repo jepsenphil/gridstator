@@ -44,6 +44,26 @@ const node = (over: Record<string, unknown>) => ({
   ...over,
 });
 
+export const GROUP = '01M6YZGROUP000000000000000';
+const shardJob = (i: number, state: string, node: string, extra: Record<string, unknown> = {}) => ({
+  ...base,
+  id: `01M6YZSHARD${i}00000000000000`.slice(0, 26),
+  name: `node --test --test-shard=${i}/2 [${i}/2]`,
+  kind: 'command',
+  state,
+  stateReason: null,
+  spec: commandSpec,
+  nodeId: node,
+  nodeName: node,
+  createdAt: now - 120_000,
+  startedAt: now - 100_000 + i * 400,
+  finishedAt: now - 92_000 + i * 300,
+  groupId: GROUP,
+  shardIndex: i,
+  shardTotal: 2,
+  ...extra,
+});
+
 const base = {
   priority: 0,
   owner: 'admin',
@@ -56,6 +76,9 @@ const base = {
   logSeq: 0,
   outputs: null,
   artifacts: [],
+  groupId: null,
+  shardIndex: null,
+  shardTotal: null,
   queuedAt: now - 60_000,
   assignedAt: now - 59_000,
   cancelRequestedAt: null,
@@ -333,6 +356,24 @@ export function state(over: Partial<DashboardState> = {}): DashboardState {
         },
       ],
     },
+    groups: [
+      {
+        id: GROUP,
+        name: 'task:test',
+        owner: 'admin',
+        shardTotal: 2,
+        state: 'failed',
+        jobs: [
+          shardJob(1, 'succeeded', 'big-box', { exitCode: 0 }),
+          shardJob(2, 'failed', 'laptop', { exitCode: 1, error: 'Process exited with code 1' }),
+        ],
+        counts: { succeeded: 1, failed: 1 },
+        nodes: ['big-box', 'laptop'],
+        createdAt: now - 120_000,
+        startedAt: now - 99_600,
+        finishedAt: now - 91_400,
+      },
+    ] as unknown as DashboardState['groups'],
     myJobIds: [FAILED],
     ...over,
   };

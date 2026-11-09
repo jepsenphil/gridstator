@@ -4,7 +4,8 @@ import { pipeline } from 'node:stream/promises';
 import * as vscode from 'vscode';
 import { GridstatorError, errorMessage } from '@gridstator/shared';
 import type { LogEntry } from '@gridstator/protocol';
-import { CancelledByUser, type Launcher } from './launcher';
+import { CancelledByUser, isGroup, type LaunchResult, type Launcher } from './launcher';
+import type { ResultsIntegration } from './results';
 import type { DashboardState, FromWebview, ToWebview, View } from './messages';
 import { mapRemotePath } from './problems';
 import type { ClusterState } from './state';
@@ -36,7 +37,7 @@ export class Dashboard implements vscode.Disposable {
   /** Opens (or reveals) the dashboard and optionally navigates to a view. */
   show(
     view: View = 'overview',
-    target: { jobId?: string; nodeId?: string; itemId?: string } = {},
+    target: { jobId?: string; nodeId?: string; itemId?: string; groupId?: string } = {},
   ): void {
     if (!this.panel) this.create();
     else this.panel.reveal(vscode.ViewColumn.Active);
@@ -90,6 +91,14 @@ export class Dashboard implements vscode.Disposable {
     });
   }
 
+  /** Set after construction (results and dashboard reference each other). */
+  results: ResultsIntegration | undefined;
+
+  navigateTo(r: LaunchResult): void {
+    if (isGroup(r)) this.post({ type: 'navigate', view: 'group', groupId: r.id });
+    else this.post({ type: 'navigate', view: 'job', jobId: r.id });
+  }
+
   private post(msg: ToWebview): void {
     if (!this.panel) return;
     if (!this.ready) {
@@ -104,6 +113,7 @@ export class Dashboard implements vscode.Disposable {
       connection: this.state.connection,
       nodes: this.state.nodeList(),
       jobs: this.state.jobList(),
+      groups: this.state.groupList(),
       launcher: {
         items: this.launcher.items,
         defaultNode: this.launcher.defaultNode(),
@@ -175,8 +185,7 @@ export class Dashboard implements vscode.Disposable {
         });
       case 'rerun':
         return this.guarded(`rerun:${m.jobId}`, async () => {
-          const job = await this.launcher.rerun(m.jobId);
-          this.post({ type: 'navigate', view: 'job', jobId: job.id });
+          this.navigateTo(await this.launcher.rerun(m.jobId));
         });
       case 'downloadArtifact':
         return this.guarded(`artifact:${m.jobId}:${m.name}`, async () => {
@@ -200,8 +209,7 @@ export class Dashboard implements vscode.Disposable {
         });
       case 'launch':
         return this.guarded(`launch:${m.request.itemId}`, async () => {
-          const job = await this.launcher.launch(m.request);
-          this.post({ type: 'navigate', view: 'job', jobId: job.id });
+          this.navigateTo(await this.launcher.launch(m.request));
         });
       case 'setDefaultNode':
         await vscode.workspace
@@ -237,6 +245,33 @@ export class Dashboard implements vscode.Disposable {
         });
         return;
       }
+      case 'cancelGroup':
+        return this.guarded(`cancelGroup:${m.groupId}`, async () => {
+          this.state.upsertGroup(await this.state.requireClient().cancelGroup(m.groupId));
+        });
+      case 'retryGroup':
+        return this.guarded(`retryGroup:${m.groupId}`, async () => {
+          const group = await this.state.requireClient().retryGroup(m.groupId);
+          this.state.myGroups.add(group.id);
+          const origin = this.launcher.groupOrigins.get(group.id);
+          for (const j of group.jobs) {
+            this.state.myJobs.add(j.id);
+            if (origin) this.launcher.origins.set(j.id, origin);
+            this.state.upsertJob(j);
+          }
+          this.state.upsertGroup(group);
+        });
+      case 'requestGroupTests':
+        return this.guarded(`groupTests:${m.groupId}`, async () => {
+          const group =
+            this.state.groups.get(m.groupId) ??
+            (await this.state.requireClient().getGroup(m.groupId));
+          this.post({
+            type: 'groupTests',
+            groupId: m.groupId,
+            summary: (await this.results?.groupSummary(group)) ?? null,
+          });
+        });
       case 'copy':
         await vscode.env.clipboard.writeText(m.text);
         this.toast('info', 'Copied');

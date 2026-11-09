@@ -1,0 +1,38 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. gridstator run -- ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `gridstator doctor`
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Controller/agent logs (`journalctl --user -u gridstator-controller`) or `gridstator logs <job>`. Remove tokens and secrets.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      placeholder: gridstator 0.1.0, Node 24.15, Docker 29.0, Ubuntu 24.04 / WSL2
+    validations:
+      required: true

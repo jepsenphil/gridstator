@@ -23,6 +23,9 @@ function commandItem(folder: string): LaunchItem {
 
 function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; busy: boolean }) {
   const [node, setNode] = useState(data.launcher.defaultNode);
+  const [preferOnly, setPreferOnly] = useState(false);
+  const [shards, setShards] = useState(String(item.task?.shards ?? 1));
+  const shardable = item.kind === 'task' || item.kind === 'script' || item.kind === 'command';
   const [cpus, setCpus] = useState('');
   const [memory, setMemory] = useState('');
   const [env, setEnv] = useState('');
@@ -54,7 +57,14 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
 
   const launch = () => {
     const options: LaunchOptions = {
-      ...(node !== data.launcher.defaultNode || node ? { node } : {}),
+      ...(preferOnly && node
+        ? { node: '', prefer: [node] }
+        : node !== data.launcher.defaultNode || node
+          ? { node }
+          : {}),
+      ...(shardable && Number(shards) !== (item.task?.shards ?? 1)
+        ? { shards: Math.max(1, Math.min(64, Number(shards) || 1)) }
+        : {}),
       ...(cpus ? { cpus: Number(cpus) } : {}),
       ...(memory ? { memoryGb: Number(memory) } : {}),
       ...(env.trim() ? { env: parseKeyValues(env) } : {}),
@@ -316,6 +326,33 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
             />
           </label>
         </div>
+        {node ? (
+          <label className="check small">
+            <input
+              type="checkbox"
+              checked={preferOnly}
+              onChange={(e) => setPreferOnly(e.target.checked)}
+            />{' '}
+            Prefer this worker, but allow others when it is busy
+          </label>
+        ) : null}
+        {shardable ? (
+          <label className="field small-field">
+            <span className="label">Shards</span>
+            <input
+              aria-label="Shards"
+              type="number"
+              min="1"
+              max="64"
+              value={shards}
+              onChange={(e) => setShards(e.target.value)}
+            />
+            <span className="hint">
+              Parallel copies on different workers; the command gets {'{shard}'}/{'{total}'} and
+              GRIDSTATOR_SHARD_*
+            </span>
+          </label>
+        ) : null}
         {node !== data.launcher.defaultNode ? (
           <button
             type="button"

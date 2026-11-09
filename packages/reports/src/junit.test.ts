@@ -1,11 +1,9 @@
 import { Readable } from 'node:stream';
 import tar from 'tar-stream';
 import { zipSync } from 'fflate';
-import { describe, expect, it, vi } from 'vitest';
-import { looksLikeJUnit, parseJUnit } from './junit';
-
-vi.mock('vscode', () => ({}));
-const { xmlDocuments } = await import('./results');
+import { describe, expect, it } from 'vitest';
+import { summarize, xmlDocuments } from './artifacts.js';
+import { looksLikeJUnit, parseJUnit } from './junit.js';
 
 const NODE_JUNIT = `<?xml version="1.0" encoding="utf-8"?>
 <testsuites>
@@ -75,5 +73,28 @@ describe('xmlDocuments', () => {
     expect(await xmlDocuments('reports/junit.xml.tar', Buffer.concat(chunks))).toEqual([
       '<testsuites name="t"/>',
     ]);
+  });
+});
+
+describe('summarize', () => {
+  it('combines shards and attributes failures to their shard', () => {
+    const s = summarize([
+      { shard: 1, cases: [{ suite: 'a', name: 'x', status: 'passed', timeMs: 5 }] },
+      {
+        shard: 2,
+        cases: [
+          { suite: 'b', name: 'y', status: 'failed', message: 'boom', timeMs: 7 },
+          { suite: 'b', name: 'z', status: 'skipped' },
+        ],
+      },
+    ]);
+    expect(s).toEqual({
+      total: 3,
+      passed: 1,
+      failed: 1,
+      skipped: 1,
+      timeMs: 12,
+      failures: [{ suite: 'b', name: 'y', message: 'boom', shard: 2 }],
+    });
   });
 });

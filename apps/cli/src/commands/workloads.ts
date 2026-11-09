@@ -34,6 +34,7 @@ const execFileAsync = promisify(execFile);
 
 interface PlacementFlags {
   node?: string;
+  prefer: string[];
   label: string[];
   cpus?: string;
   memory?: string;
@@ -48,6 +49,12 @@ interface PlacementFlags {
 function addPlacementOptions(cmd: Command): Command {
   return cmd
     .option('--node <node>', 'run on this node (name or id)')
+    .option(
+      '--prefer <node>',
+      'prefer this worker when it can take the job (repeatable)',
+      collect,
+      [],
+    )
     .option('-l, --label <label>', 'require a node label (repeatable)', collect, [])
     .option('--cpus <n>', 'CPUs to reserve')
     .option('--memory <size>', 'memory to reserve, e.g. 8g')
@@ -91,7 +98,11 @@ function placement(
             ? memory
             : parseMegabytes(memory),
     },
-    target: { labels: [...new Set(labels)], ...(target ? { node: target } : {}) },
+    target: {
+      labels: [...new Set(labels)],
+      ...(target ? { node: target } : {}),
+      prefer: [...new Set([...(config.defaults.prefer ?? []), ...flags.prefer])],
+    },
     ...(timeout ? { timeoutSeconds: Math.ceil(parseDuration(timeout) / 1000) } : {}),
     priority: flags.priority !== undefined ? Number(flags.priority) : 0,
   };

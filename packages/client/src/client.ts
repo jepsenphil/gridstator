@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { GridstatorError, GRIDSTATOR_VERSION, decodeWsData } from '@gridstator/shared';
 import {
   ArtifactSchema,
+  JobGroupSchema,
+  ListGroupsResponseSchema,
   BlobsMissingResponseSchema,
   BlobsUploadResponseSchema,
   ClusterViewSchema,
@@ -23,6 +25,8 @@ import {
   TokenViewSchema,
   isTerminal,
   type Artifact,
+  type JobGroup,
+  type SubmitGroupRequest,
   type BlobsUploadResponse,
   type ClientEventMessage,
   type ClusterView,
@@ -245,6 +249,39 @@ export class GridstatorClient {
       schema: z.object({ events: z.array(JobEventSchema) }),
     });
     return res.events;
+  }
+
+  // ---- job groups ------------------------------------------------------------------------
+
+  /** Submits a command job split into `shards` jobs (see protocol `shardSpec`). */
+  submitGroup(req: SubmitGroupRequest): Promise<JobGroup> {
+    return this.request('POST', '/v1/groups', { json: req, schema: JobGroupSchema });
+  }
+
+  async listGroups(limit = 30): Promise<JobGroup[]> {
+    return (
+      await this.request('GET', '/v1/groups', {
+        query: { limit },
+        schema: ListGroupsResponseSchema,
+      })
+    ).groups;
+  }
+
+  getGroup(id: string): Promise<JobGroup> {
+    return this.request('GET', `/v1/groups/${encodeURIComponent(id)}`, { schema: JobGroupSchema });
+  }
+
+  cancelGroup(id: string): Promise<JobGroup> {
+    return this.request('POST', `/v1/groups/${encodeURIComponent(id)}/cancel`, {
+      schema: JobGroupSchema,
+    });
+  }
+
+  /** Retries the shards that did not succeed. */
+  retryGroup(id: string): Promise<JobGroup> {
+    return this.request('POST', `/v1/groups/${encodeURIComponent(id)}/retry`, {
+      schema: JobGroupSchema,
+    });
   }
 
   async listArtifacts(id: string): Promise<Artifact[]> {

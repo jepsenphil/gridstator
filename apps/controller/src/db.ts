@@ -10,7 +10,7 @@ import type {
   TokenRole,
 } from '@gridstator/protocol';
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 const MIGRATIONS: Record<number, string> = {
   1: `
@@ -99,6 +99,19 @@ const MIGRATIONS: Record<number, string> = {
     );
     CREATE INDEX artifacts_digest ON artifacts(digest);
   `,
+  3: `
+    ALTER TABLE jobs ADD COLUMN group_id TEXT;
+    ALTER TABLE jobs ADD COLUMN shard_index INTEGER;
+    ALTER TABLE jobs ADD COLUMN shard_total INTEGER;
+    CREATE INDEX jobs_group ON jobs(group_id);
+    CREATE TABLE job_groups (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      owner TEXT NOT NULL,
+      shard_total INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+  `,
 };
 
 export interface TokenRow {
@@ -152,6 +165,9 @@ export interface JobRow {
   cancel_requested_at: number | null;
   updated_at: number;
   outputs: JobOutputs | null;
+  group_id: string | null;
+  shard_index: number | null;
+  shard_total: number | null;
 }
 
 export interface JobEventRow {
@@ -163,6 +179,14 @@ export interface JobEventRow {
   to_state: JobState | null;
   actor: string;
   message: string | null;
+}
+
+export interface GroupRow {
+  id: string;
+  name: string;
+  owner: string;
+  shard_total: number;
+  created_at: number;
 }
 
 export interface SnapshotRow {
@@ -219,6 +243,9 @@ const JOB_COLUMNS = [
   'finished_at',
   'cancel_requested_at',
   'updated_at',
+  'group_id',
+  'shard_index',
+  'shard_total',
 ] as const;
 
 /**
@@ -535,6 +562,66 @@ export class Store {
     this.db
       .prepare('UPDATE jobs SET outputs = ? WHERE id = ?')
       .run(outputs ? JSON.stringify(outputs) : null, id);
+  }
+
+  // ---- job groups ---------------------------------------------------------------------------
+
+  insertGroup(g: GroupRow): void {
+    this.db
+      .prepare(
+        'INSERT INTO job_groups (id, name, owner, shard_total, created_at) VALUES (?, ?, ?, ?, ?)',
+      )
+      .run(g.id, g.name, g.owner, g.shard_total, g.created_at);
+  }
+
+  groupById(id: string): GroupRow | undefined {
+    return this.db.prepare('SELECT * FROM job_groups WHERE id = ?').get(id) as GroupRow | undefined;
+  }
+
+  listGroups(limit: number, before?: string): GroupRow[] {
+    return (before
+      ? this.db
+          .prepare('SELECT * FROM job_groups WHERE id < ? ORDER BY id DESC LIMIT ?')
+          .all(before, limit)
+      : this.db
+          .prepare('SELECT * FROM job_groups ORDER BY id DESC LIMIT ?')
+          .all(limit)) as unknown as GroupRow[];
+  }
+
+  jobsInGroup(groupId: string): JobRow[] {
+    return (
+      this.db
+        .prepare('SELECT * FROM jobs WHERE group_id = ? ORDER BY shard_index, id')
+        .all(groupId) as Row[]
+    ).map(parseJob);
+  }
+
+  /** Group ids with dispatched jobs, per node (for spreading shards). */
+  activeGroupsByNode(): Map<string, Map<string, number>> {
+    const rows = this.db
+      .prepare(
+        `SELECT node_id, group_id, COUNT(*) AS n FROM jobs
+         WHERE group_id IS NOT NULL AND node_id IS NOT NULL AND state IN ('assigned','starting','running')
+         GROUP BY node_id, group_id`,
+      )
+      .all() as Array<{ node_id: string; group_id: string; n: number }>;
+    const map = new Map<string, Map<string, number>>();
+    for (const r of rows) {
+      const m = map.get(r.node_id) ?? new Map<string, number>();
+      m.set(r.group_id, r.n);
+      map.set(r.node_id, m);
+    }
+    return map;
+  }
+
+  deleteEmptyGroups(): number {
+    return Number(
+      this.db
+        .prepare(
+          'DELETE FROM job_groups WHERE NOT EXISTS (SELECT 1 FROM jobs WHERE jobs.group_id = job_groups.id)',
+        )
+        .run().changes,
+    );
   }
 
   // ---- artifacts -----------------------------------------------------------------------------

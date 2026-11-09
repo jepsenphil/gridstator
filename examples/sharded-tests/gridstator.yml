@@ -1,0 +1,19 @@
+version: 1
+project: example-sharded-tests
+
+defaults:
+  image: node:24-bookworm-slim
+  resources:
+    cpus: 1
+    memory: 1g
+
+tasks:
+  test:
+    description: The suite split into 2 shards that run in parallel on different workers
+    command: >-
+      mkdir -p reports &&
+      node --test --test-shard={shard}/{total}
+      --test-reporter=spec --test-reporter-destination=stdout
+      --test-reporter=junit --test-reporter-destination=reports/junit.xml
+    shards: 2
+    junit: reports/junit.xml
