@@ -5,6 +5,9 @@ including across two physical machines on the LAN (Linux laptop controller + WSL
 Windows PC), and installed there as services. Next: tag the first release (v0.1.0) when the owner
 is ready, then iterate on feedback.**
 
+The native Rust generation is planned separately in [V2_UPGRADE_PLAN.md](V2_UPGRADE_PLAN.md). The
+milestones and validation history below describe the current Node-based implementation.
+
 ## Milestones
 
 | # | Milestone | Status |

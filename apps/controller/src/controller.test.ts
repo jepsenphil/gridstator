@@ -681,7 +681,7 @@ describe('snapshots and blobs', () => {
 });
 
 describe('outputs and artifacts', () => {
-  it('publishes live outputs and stores artifacts uploaded by the agent', async () => {
+  it.each([1200, -1])('records steps and artifacts (%i ms)', async (durationMs) => {
     const agent = await addAgent('n1');
     await agent.connect();
     const job = await admin.submitJob(SPEC);
@@ -701,6 +701,17 @@ describe('outputs and artifacts', () => {
       async () =>
         (await admin.getJob(job.id)).outputs?.steps?.[0]?.name === 'Run tests' || undefined,
       'live outputs',
+    );
+    agent.send({
+      type: 'job.outputs',
+      ...ids,
+      outputs: { steps: [{ ...step, status: 'success', durationMs }] },
+    });
+    await waitFor(
+      async () =>
+        (await admin.getJob(job.id)).outputs?.steps?.[0]?.durationMs === Math.max(0, durationMs) ||
+        undefined,
+      'completed step timing',
     );
 
     const content = Buffer.from('<testsuites/>');
@@ -728,12 +739,15 @@ describe('outputs and artifacts', () => {
         oomKilled: false,
         finishedAt: Date.now(),
         logSeq: 0,
-        outputs: { steps: [{ ...step, status: 'success', durationMs: 1200 }] },
+        outputs: { steps: [{ ...step, status: 'success', durationMs }] },
         artifacts: [{ name: 'reports/junit.xml', digest, size: content.length }],
       },
     });
     const done = await waitForState(job.id, 'succeeded');
-    expect(done.outputs?.steps?.[0]).toMatchObject({ status: 'success', durationMs: 1200 });
+    expect(done.outputs?.steps?.[0]).toMatchObject({
+      status: 'success',
+      durationMs: Math.max(0, durationMs),
+    });
     expect(done.artifacts).toEqual([{ name: 'reports/junit.xml', digest, size: content.length }]);
     expect(await admin.listArtifacts(job.id)).toHaveLength(1);
     const res = await admin.downloadArtifact(job.id, 'reports/junit.xml');

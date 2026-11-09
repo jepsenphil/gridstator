@@ -82,6 +82,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   const dashboard = new Dashboard(context, state, launcher, log, local);
   dashboard.results = results;
   const jobsTree = new JobsTreeProvider(state);
+  const clusterTree = new ClusterTreeProvider(state);
   context.subscriptions.push(
     log,
     state,
@@ -89,7 +90,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
     results,
     dashboard,
     jobsTree,
-    vscode.window.registerTreeDataProvider('gridstator.cluster', new ClusterTreeProvider(state)),
+    clusterTree,
+    vscode.window.registerTreeDataProvider('gridstator.cluster', clusterTree),
     vscode.window.registerTreeDataProvider('gridstator.jobs', jobsTree),
     vscode.window.registerTreeDataProvider(
       'gridstator.launcher',
@@ -247,7 +249,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   };
   const nodeArg = (n: Node | undefined): Node => {
     if (!n) throw new GridstatorError('BAD_REQUEST', 'Select a node in the Cluster view');
-    return n;
+    return state.nodes.get(n.id) ?? n;
   };
   const updateNode = async (n: Node, patch: NodeSettingsPatch) => {
     state.upsertNode(await state.requireClient().updateNode(n.id, patch));
@@ -506,7 +508,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       state.upsertJob(await state.requireClient().cancelJob(job.id));
     }),
     command('gridstator.job.retry', async (job?: Job) => {
-      if (!job || !isTerminal(job.state)) return;
+      if (!job) return;
+      job = state.jobs.get(job.id) ?? job;
+      if (!isTerminal(job.state)) return;
       const next = await state.requireClient().retryJob(job.id);
       state.myJobs.add(next.id);
       const origin = launcher.origins.get(job.id);

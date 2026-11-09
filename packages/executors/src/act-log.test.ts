@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActLogParser, LineSplitter } from './act-log.js';
 
 const line = (o: Record<string, unknown>) =>
@@ -11,6 +11,11 @@ const line = (o: Record<string, unknown>) =>
   });
 
 describe('ActLogParser', () => {
+  beforeEach(() => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_794_195_690_000);
+  });
+  afterEach(() => vi.restoreAllMocks());
+
   it('renders act JSON logs in act console format and tracks steps', () => {
     const p = new ActLogParser();
     const lines = [

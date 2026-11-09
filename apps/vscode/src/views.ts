@@ -4,6 +4,7 @@ import { isTerminal, type Job, type Node } from '@gridstator/protocol';
 import type { LaunchItem } from './messages';
 import type { Launcher } from './launcher';
 import type { ClusterState } from './state';
+import { TreeCache, type TreeRow } from './tree-cache';
 
 function jobIcon(job: Job): vscode.ThemeIcon {
   switch (job.state) {
@@ -37,15 +38,33 @@ export function jobDescription(job: Job, now = Date.now()): string {
 
 type ClusterElement = Node | { kind: 'controller' };
 
-export class ClusterTreeProvider implements vscode.TreeDataProvider<ClusterElement> {
-  private readonly emitter = new vscode.EventEmitter<void>();
-  readonly onDidChangeTreeData = this.emitter.event;
+export class ClusterTreeProvider
+  implements vscode.TreeDataProvider<ClusterElement>, vscode.Disposable
+{
+  private readonly tree = new TreeCache<ClusterElement>();
+  readonly onDidChangeTreeData = this.tree.onDidChangeTreeData;
+  private readonly subscription: vscode.Disposable;
 
   constructor(private readonly state: ClusterState) {
-    state.onDidChange(() => this.emitter.fire());
+    this.refresh();
+    this.subscription = state.onDidChange(() => this.refresh());
   }
 
-  getChildren(): ClusterElement[] {
+  getChildren(element?: ClusterElement): ClusterElement[] {
+    return this.tree.getChildren(element);
+  }
+
+  getTreeItem(element: ClusterElement): vscode.TreeItem {
+    return this.tree.getTreeItem(element);
+  }
+
+  private refresh(): void {
+    this.tree.update(
+      this.elements().map((element) => ({ element, item: this.renderItem(element) })),
+    );
+  }
+
+  private elements(): ClusterElement[] {
     if (!this.state.connected) return [];
     const nodes = this.state.nodeList();
     const controller = this.state.connection.controller;
@@ -57,7 +76,7 @@ export class ClusterTreeProvider implements vscode.TreeDataProvider<ClusterEleme
     return controller && !colocated ? [{ kind: 'controller' }, ...nodes] : nodes;
   }
 
-  getTreeItem(n: ClusterElement): vscode.TreeItem {
+  private renderItem(n: ClusterElement): vscode.TreeItem {
     if ('kind' in n) {
       const item = new vscode.TreeItem(
         this.state.connection.controller?.hostname ?? 'Controller',
@@ -136,6 +155,11 @@ export class ClusterTreeProvider implements vscode.TreeDataProvider<ClusterEleme
     item.id = `node:${n.id}`;
     return item;
   }
+
+  dispose(): void {
+    this.subscription.dispose();
+    this.tree.dispose();
+  }
 }
 
 // ---- jobs ------------------------------------------------------------------------------------
@@ -145,41 +169,50 @@ const isGroup = (e: JobsElement): e is { group: 'active' | 'queued' | 'recent'; 
   'group' in e;
 
 export class JobsTreeProvider implements vscode.TreeDataProvider<JobsElement> {
-  private readonly emitter = new vscode.EventEmitter<void>();
-  readonly onDidChangeTreeData = this.emitter.event;
+  private readonly tree = new TreeCache<JobsElement>();
+  readonly onDidChangeTreeData = this.tree.onDidChangeTreeData;
+  private readonly subscription: vscode.Disposable;
   private timer: NodeJS.Timeout | undefined;
 
   constructor(private readonly state: ClusterState) {
-    state.onDidChange(() => this.emitter.fire());
+    this.refresh();
+    this.subscription = state.onDidChange(() => this.refresh());
     // Durations of running jobs tick while visible.
     this.timer = setInterval(() => {
-      if (this.state.jobList().some((j) => j.state === 'running')) this.emitter.fire();
+      if (this.state.jobList().some((j) => j.state === 'running')) this.refresh();
     }, 2000);
   }
 
   getChildren(element?: JobsElement): JobsElement[] {
-    if (!this.state.connected) return [];
-    const jobs = this.state.jobList();
-    if (!element) {
-      const active = jobs.filter((j) =>
-        ['assigned', 'starting', 'running'].includes(j.state),
-      ).length;
-      const queued = jobs.filter((j) => j.state === 'queued' || j.state === 'created').length;
-      const groups: JobsElement[] = [];
-      if (active) groups.push({ group: 'active', label: `Running (${active})` });
-      if (queued) groups.push({ group: 'queued', label: `Queued (${queued})` });
-      if (jobs.some((j) => isTerminal(j.state))) groups.push({ group: 'recent', label: 'Recent' });
-      return groups;
-    }
-    if (!isGroup(element)) return [];
-    if (element.group === 'active')
-      return jobs.filter((j) => ['assigned', 'starting', 'running'].includes(j.state));
-    if (element.group === 'queued')
-      return jobs.filter((j) => j.state === 'queued' || j.state === 'created');
-    return jobs.filter((j) => isTerminal(j.state)).slice(0, 30);
+    return this.tree.getChildren(element);
   }
 
   getTreeItem(e: JobsElement): vscode.TreeItem {
+    return this.tree.getTreeItem(e);
+  }
+
+  private refresh(): void {
+    const jobs = this.state.connected ? this.state.jobList() : [];
+    const active = jobs.filter((job) => ['assigned', 'starting', 'running'].includes(job.state));
+    const queued = jobs.filter((job) => job.state === 'queued' || job.state === 'created');
+    const recent = jobs.filter((job) => isTerminal(job.state)).slice(0, 30);
+    const groups: Array<{ element: Extract<JobsElement, { group: string }>; jobs: Job[] }> = [
+      { element: { group: 'active', label: `Running (${active.length})` }, jobs: active },
+      { element: { group: 'queued', label: `Queued (${queued.length})` }, jobs: queued },
+      { element: { group: 'recent', label: 'Recent' }, jobs: recent },
+    ];
+    const rows: TreeRow<JobsElement>[] = [];
+    for (const group of groups) {
+      if (!group.jobs.length) continue;
+      const item = this.renderItem(group.element);
+      rows.push({ element: group.element, item });
+      for (const job of group.jobs)
+        rows.push({ element: job, item: this.renderItem(job), parent: item.id });
+    }
+    this.tree.update(rows);
+  }
+
+  private renderItem(e: JobsElement): vscode.TreeItem {
     if (isGroup(e)) {
       const item = new vscode.TreeItem(e.label, vscode.TreeItemCollapsibleState.Expanded);
       item.id = `group:${e.group}`;
@@ -199,6 +232,8 @@ export class JobsTreeProvider implements vscode.TreeDataProvider<JobsElement> {
 
   dispose(): void {
     if (this.timer) clearInterval(this.timer);
+    this.subscription.dispose();
+    this.tree.dispose();
   }
 }
 

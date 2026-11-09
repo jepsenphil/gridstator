@@ -200,7 +200,12 @@ export const JobStepSchema = z.object({
   name: z.string().max(1000),
   status: JobStepStatusSchema,
   startedAt: TimestampSchema.nullable(),
-  durationMs: z.number().nonnegative().nullable(),
+  // A clock correction can make act's elapsed time negative. Normalize timing
+  // telemetry so it cannot prevent an otherwise valid job result being recorded.
+  durationMs: z
+    .number()
+    .transform((duration) => Math.max(0, duration))
+    .nullable(),
 });
 export type JobStep = z.infer<typeof JobStepSchema>;
 
