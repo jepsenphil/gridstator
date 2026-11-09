@@ -151,7 +151,7 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
             <input
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              placeholder="default from gridstator.yml (node:24-bookworm-slim)"
+              placeholder="default from gridstator.yml (node:24-bookworm)"
             />
           </label>
         </>

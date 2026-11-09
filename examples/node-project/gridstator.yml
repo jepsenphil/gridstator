@@ -3,7 +3,7 @@ version: 1
 project: example-node-project
 
 defaults:
-  image: node:24-bookworm-slim
+  image: node:24-bookworm
   resources:
     cpus: 1
     memory: 1g

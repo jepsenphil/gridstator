@@ -100,7 +100,7 @@ export const DEFAULT_PROJECT_CONFIG_YAML = `# Gridstator project configuration. 
 version: 1
 
 defaults:
-  image: node:24-bookworm-slim
+  image: node:24-bookworm
   resources:
     cpus: 2
     memory: 4g

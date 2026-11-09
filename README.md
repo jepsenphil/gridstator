@@ -162,7 +162,7 @@ gridstator nodes enable laptop
 ```yaml
 version: 1
 defaults:
-  image: node:24-bookworm-slim
+  image: node:24-bookworm
   resources: { cpus: 2, memory: 4g }
 snapshot:
   include: []        # paths git ignores that should still be sent

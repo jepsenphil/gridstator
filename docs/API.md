@@ -85,7 +85,7 @@ Kind `command`:
 {
   "kind": "command",
   "name": "unit tests",                  // optional display name
-  "image": "node:24-bookworm-slim",       // default
+  "image": "node:24-bookworm",            // default
   "command": ["sh", "-c", "npm test"],    // argv
   "env": { "NODE_ENV": "test" },
   "secretEnv": { "NPM_TOKEN": "…" },      // masked in logs, redacted in responses

@@ -8,7 +8,7 @@ import {
 } from './common.js';
 import { JobStateSchema } from './states.js';
 
-export const DEFAULT_IMAGE = 'node:24-bookworm-slim';
+export const DEFAULT_IMAGE = 'node:24-bookworm';
 export const DEFAULT_RESOURCES = { cpus: 2, memoryMb: 4096 } as const;
 
 export const ResourceRequestSchema = z.object({
