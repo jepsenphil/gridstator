@@ -1,0 +1,39 @@
+{
+  "result": "passed",
+  "ownedFixture": {
+    "windowsPid": 38012,
+    "name": "vscode-wsl-gridstator-validation-v00jpyv0-guard-sock"
+  },
+  "rejectedBeforeCodeLaunch": "refuse any preexisting WSL resolver pipe",
+  "cleanPostFixturePreflight": {
+    "user": "Phil",
+    "pipes": [],
+    "privateCode": [],
+    "stockCodeIds": [
+      2052,
+      3032,
+      5648,
+      10044,
+      10868,
+      13096,
+      14256,
+      14832,
+      18124,
+      19804,
+      20128,
+      20816,
+      27840,
+      28560,
+      28784,
+      30884,
+      31536,
+      31928,
+      34912,
+      41776,
+      42048,
+      44936,
+      47516
+    ],
+    "effectivePipe": "\\\\.\\pipe\\vscode-wsl-13783b072557a8fe440fa977dbd6a7162909726dc1e627efe218aac2f21b2145-sock"
+  }
+}

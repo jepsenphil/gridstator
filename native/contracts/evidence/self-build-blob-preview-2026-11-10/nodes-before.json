@@ -1,0 +1,101 @@
+[
+  {
+    "id": "01M71VM3ZNESW0GJ0FPBHN94YX",
+    "name": "self-build-embedded",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.0.2"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794284825062554824",
+        "version": "2.0.0-dev.1",
+        "sha256": "e50e5e4e1cdf91ae08b784f22996d00dc596216649c4277ac3519a5b5ea613ee",
+        "target": "linux/amd64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:40637",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 17264
+      },
+      "executionCapacity": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794285113948,
+    "connectedAt": 1794285113934,
+    "createdAt": 1794285113333,
+    "update": {
+      "state": "unknown",
+      "build": "dev-4b8f13ccf1b2-1794284825062554824",
+      "detail": "offline; last reported dev-4b8f13ccf1b2-1794284825062554824",
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  }
+]

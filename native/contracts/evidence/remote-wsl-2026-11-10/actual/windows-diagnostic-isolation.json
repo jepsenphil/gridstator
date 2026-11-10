@@ -1,0 +1,83 @@
+{
+  "private": [],
+  "stock": [
+    2052,
+    3032,
+    5648,
+    10044,
+    10868,
+    13096,
+    14256,
+    14832,
+    18124,
+    19804,
+    20128,
+    20816,
+    27840,
+    28560,
+    28784,
+    30884,
+    31536,
+    31928,
+    34912,
+    41776,
+    42048,
+    44936,
+    47516
+  ],
+  "pipes": [],
+  "beforeStockIds": [
+    2052,
+    3032,
+    5648,
+    10044,
+    10868,
+    13096,
+    14256,
+    14832,
+    18124,
+    19804,
+    20128,
+    20816,
+    27840,
+    28560,
+    28784,
+    30884,
+    31536,
+    31928,
+    34912,
+    41776,
+    42048,
+    44936,
+    47516
+  ],
+  "stockIdsUnchanged": true,
+  "scope": "Windows GUI harness isolation diagnostic, before any WSL server/native backend/Gridstator activation",
+  "sharedDbWasOpened": true,
+  "sharedDbWasCreated": false,
+  "zeroStorageWritesNotGuaranteed": true,
+  "globalStorageWasNotReset": true,
+  "noWindowsGridstatorExtensionInstalled": true,
+  "defaultWslServerAbsent": true,
+  "privateBackendNotStarted": true,
+  "observedSharedStorage": [
+    {
+      "file": "version-profile/logs/20261109T212905/main.log",
+      "sharedStorageLines": [
+        "2026-11-09 22:29:06.090 [info] [shared storage] Creating shared storage database at 'c:\\Users\\User\\.vscode-shared\\sharedStorage\\state.vscdb' (wasCreated: false)",
+        "2026-11-09 22:29:06.091 [info] [shared storage] Initializing fallback application storage (path: c:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\version-profile\\User\\globalStorage\\state.vscdb)",
+        "2026-11-09 22:29:06.100 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    },
+    {
+      "file": "user-data/logs/20261109T213211/main.log",
+      "sharedStorageLines": [
+        "2026-11-09 22:32:11.410 [info] [shared storage] Creating shared storage database at 'c:\\Users\\User\\.vscode-shared\\sharedStorage\\state.vscdb' (wasCreated: false)",
+        "2026-11-09 22:32:11.411 [info] [shared storage] Initializing fallback application storage (path: c:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\user-data\\User\\globalStorage\\state.vscdb)",
+        "2026-11-09 22:32:11.419 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    }
+  ],
+  "legacyAgentStatus": "MainPID=618566\nActiveState=active\nSubState=running\n",
+  "legacyAgentUnitSha256": "c2450846820fd06a0e4199995fe1ea9735b7c3ffe2ff2a34e44dadd0dcf1658c"
+}

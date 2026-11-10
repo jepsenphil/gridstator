@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-11-10T06:14:51Z",
+  "result": "passed",
+  "classification": "Bounded actual WSL2 native lifecycle proof at historical cd6 bytes; not latest release-byte or boot/autostart proof",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+  "sourceCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "environment": {
+    "windows": "10.0.26200",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2 x64",
+    "glibc": "2.39",
+    "networking": "mirrored",
+    "systemd": "PID1 systemd, active user manager, linger=no",
+    "docker": "29.9.3",
+    "act": "0.2.97"
+  },
+  "foregroundChecks": {
+    "nativeSnapshotBytesAndEnvExclusion": true,
+    "secretMaskingAndPublicSpecRedaction": true,
+    "artifactBinaryBytesExact": true,
+    "runExit7": true,
+    "runningCancellation": true,
+    "buildImageIdMatchesDockerInspect": true,
+    "buildImageSizePositive": true,
+    "workerRestartReusesNodeIdentity": true,
+    "controllerRestartReconnectsWorker": true,
+    "windowsNativeLoopbackTlsBeforeAndAfterRestarts": true
+  },
+  "windowsNativeTlsHealthStages": 5,
+  "actualUserUnit": [
+    "gridstator-native-proof-01m7212j5y02bs1mnkfv31yzj3.service"
+  ],
+  "unitAdaptations": [
+    {
+      "unit": "gridstator-native-proof-01m7212j5y02bs1mnkfv31yzj3.service",
+      "scope": "Owned test unit only; stale user manager lacks the account's already granted Docker group.",
+      "before": "ExecStart=\"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store/supervisor\" \"supervise\" \"--install-root\" \"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store\" \"--\" \"controller\" \"start\" \"--data-dir\" \"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/controller\" \"--with-agent\" \"--agent-name\" \"systemd-proof-worker\"",
+      "after": "ExecStart=/usr/bin/sg docker -c \"exec '/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store/supervisor' supervise --install-root '/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store' -- controller start --data-dir /home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/controller --with-agent --agent-name systemd-proof-worker\"",
+      "killMode": {
+        "before": "mixed",
+        "after": "control-group",
+        "reason": "Extra sg launcher remains main process; signal all native actors for graceful stop."
+      },
+      "mechanism": "Noninteractive OS sg helper refreshes existing docker membership; no group files, sudo, Docker socket permissions or user-manager credentials changed."
+    }
+  ],
+  "cleanup": {
+    "remainingOwnedNativeActors": [],
+    "privateRuntimeAndCredentialsAbsent": true,
+    "serviceFixtureAbsent": true,
+    "uniqueBuildTagAbsent": true,
+    "remainingOwnedUserUnits": "",
+    "legacySystemAgent": "MainPID=618566\nActiveState=active\nSubState=running\nFragmentPath=/etc/systemd/system/gridstator-agent.service",
+    "legacyUnitSha256": "c2450846820fd06a0e4199995fe1ea9735b7c3ffe2ff2a34e44dadd0dcf1658c",
+    "userManagerCredentials": [
+      "Uid:\t1000\t1000\t1000\t1000",
+      "Gid:\t1000\t1000\t1000\t1000",
+      "Groups:\t4 24 27 30 46 100 1000 "
+    ],
+    "defaultPaths": {
+      "/home/pj/.config/gridstator-v2": false,
+      "/home/pj/.local/share/gridstator-v2": false,
+      "/home/pj/.vscode-server": false,
+      "/home/pj/.config/systemd/user": false
+    },
+    "windows": {
+      "windowsKernel": "Microsoft Windows NT 10.0.26200.0",
+      "windowsVersion": "10.0.26200.0",
+      "windowsUser": "Phil"
+    },
+    "wslNetworkingMode": "mirrored",
+    "globalGroupSocketOrManagerChanges": false,
+    "sudoUsed": false,
+    "wslTerminatedOrRebooted": false,
+    "ownedNativeTaskPrefixRemoved": true
+  },
+  "limits": [
+    "Existing library service test uses its documented single-host managed-install fixture; four-target archive production is separate.",
+    "Stale user-manager group epoch required owned-unit sg and control-group stop settings. This does not establish that the unadapted default user unit works in that stale session.",
+    "Windows curl used per-invocation exact private --cacert and --ssl-no-revoke for the ephemeral CA; global trust unchanged.",
+    "No WSL termination/reboot, stopped-distro autostart, linger enabling, sudo password, group/socket or user-manager changes.",
+    "This source checkpoint predates the subsequent narrow Buildx fallback correction; all receipts remain bounded to the recorded bytes."
+  ]
+}

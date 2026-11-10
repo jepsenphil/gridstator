@@ -1,0 +1,129 @@
+{
+  "recordedAtUTC": "2026-11-10T05:12:03.213682+00:00",
+  "result": "passed",
+  "scope": "Historical BuildKit-correction preview: actual Gridstator two-target Linux self-build and x64 clean Alpine runtime; later Darwin memory-sampler correction remains outside this snapshot.",
+  "buildId": "native-preview-20261110-1fd6e3d425b3",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview; sourceRevision is the parent reference commit, and this checkpoint identifies actual native production/build inputs. Not a stable release or clean-commit provenance claim.",
+  "productionCheckpointSha256": "1fd6e3d425b3af82e194eb3168de55d4fe90ffadc4feb7c86d8def60a8b4ed9c",
+  "checkpointDocumentSha256": "4c9a51d61ed109af3b389f840eef6de01fbdec54e9c35b4318201cf9fa06d07f",
+  "jobId": "01M71WTMJG104TA719VT67QRY3",
+  "snapshotId": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+  "snapshotEntryCount": 967,
+  "snapshotSourceBytes": 8090189,
+  "runSeconds": 440.779,
+  "submissionThroughFinishSeconds": 479.429,
+  "submittedCommand": [
+    "gridstator",
+    "run",
+    "--task",
+    "native-linux",
+    "--env",
+    "GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "--env",
+    "GRIDSTATOR_BUILD_ID=native-preview-20261110-1fd6e3d425b3",
+    "--detach",
+    "--json"
+  ],
+  "sourceVerification": {
+    "productionCheckpointEntries": 40,
+    "allProductionCheckpointEntriesMatchSubmittedSnapshot": true,
+    "snapshotManifestDigest": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+    "artifactSourceManifestEntries": 649,
+    "allSourceManifestEntriesMatchSubmittedSnapshot": true
+  },
+  "supplementalBuildInputs": {
+    "recordedAtUTC": "2026-11-10T05:03:36.982582+00:00",
+    "snapshotId": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+    "coreCheckpointEntries": 40,
+    "coreCheckpointUnchanged": true,
+    "supplementalBuildInputs": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "snapshotEntry": {
+          "path": "LICENSE",
+          "type": "file",
+          "size": 11358,
+          "digest": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "scripts/install-native.sh",
+        "sha256": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+        "snapshotEntry": {
+          "path": "scripts/install-native.sh",
+          "type": "file",
+          "size": 9606,
+          "digest": "sha256:9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+          "executable": true
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "gridstator.yml",
+        "sha256": "87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+        "snapshotEntry": {
+          "path": "gridstator.yml",
+          "type": "file",
+          "size": 776,
+          "digest": "sha256:87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      }
+    ]
+  },
+  "archive": {
+    "name": "native/self-build.tar",
+    "sha256": "7e254b6c488e9f3d9ceb8321b0e8db29db3c7eaaedea2385d879e674be607033",
+    "size": 54274560,
+    "retainedIgnoredPath": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/self-build.tar"
+  },
+  "artifacts": {
+    "linux-arm64": {
+      "binary": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-arm64/gridstator",
+      "metadata": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-arm64/build-info.json",
+      "sha256": "18e2c8464d912ede9021b88d203fae4b69da584321517875500569b008748314",
+      "size": 26568520,
+      "runtime": "not executed"
+    },
+    "linux-amd64": {
+      "binary": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-amd64/gridstator",
+      "metadata": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-amd64/build-info.json",
+      "sha256": "85564631a2c3ca785401da53ab13cc27fcf47da84796f91b7aa785392e9e9577",
+      "size": 27608144,
+      "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig"
+    }
+  },
+  "actualEnvironment": {
+    "hostOS": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "hostArchitecture": "x86_64",
+    "buildContainer": "build-container.json",
+    "toolVersions": "build-toolchain.json",
+    "runtimeImage": "runtime-image.json"
+  },
+  "nativeCodeChangesDuringProof": false,
+  "cleanup": "cleanup.json",
+  "limits": [
+    "Git sourceRevision is the parent commit of an uncommitted preview. Exact source is the canonical immutable snapshot and recorded source manifest, not a clean/reproducible stable release.",
+    "linux/amd64 passed version/build-info/cluster-init and live TLS controller status with graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig. This does not repeat the full executor/CLI/service acceptance suite against this static binary.",
+    "linux/arm64 is cross-compilation, correct ELF machine/static-linkage evidence only; not executed or labeled runtime-ready.",
+    "Both Linux binaries share the preallocated preview ID with the separately compiled Mac outputs; Mac compilation/runtime and four-target packaging are separate evidence.",
+    "No signing/notarization, WSL2, physical IntelMac/ARM Linux runtime, service/reboot, external publication or live cluster deployment is implied."
+  ],
+  "predecessor": {
+    "buildId": "native-preview-20261110-e3e5fae51c8e",
+    "evidence": "native/contracts/evidence/self-build-blob-preview-2026-11-10",
+    "state": "Frozen historical bytes/evidence preserved unchanged.",
+    "changedProductionInputs": [
+      "native/src/executor/build.rs"
+    ],
+    "correction": "For load/tar build outputs only, use containerimage.digest when BuildKit omits containerimage.config.digest; actual M4containerd image ID matches this fallback."
+  },
+  "status": "frozen historical preview",
+  "historicalLimit": "A later actual M4workflow found Darwin available-memory underreporting. This successful Linux proof does not include that pending Darwin fix and is not the final delivery candidate."
+}

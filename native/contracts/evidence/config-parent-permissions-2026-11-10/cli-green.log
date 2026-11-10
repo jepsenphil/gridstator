@@ -1,0 +1,18 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.04s
+     Running tests/cli_contract.rs (target/debug/deps/cli_contract-283459ea04c477c9)
+
+running 10 tests
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test local_operator_promotion_preserves_the_saved_public_cluster_url ... ok
+test custom_absolute_and_relative_config_paths_preserve_parent_permissions ... ok
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test local_bootstrap_preserves_an_explicit_foreign_cluster_connection ... ok
+test frozen_local_service_inspection_ownership_and_invalid_configuration_are_read_only ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.62s
+

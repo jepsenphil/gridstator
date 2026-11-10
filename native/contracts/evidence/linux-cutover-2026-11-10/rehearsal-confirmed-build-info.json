@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-rehearsal.2",
+  "buildId": "rehearsal-confirmed",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "linux/amd64",
+  "size": 54828688,
+  "sha256": "9e4efef29fa5fb86aa052a3e1b41b20c23cf12656e2bc4a7ba9c1a52caa883da"
+}

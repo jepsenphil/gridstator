@@ -1,0 +1,82 @@
+{
+  "result": "passed",
+  "nativeVersion": "2.0.0-dev.2",
+  "nativeBuildId": "native-rename-20261110-f0b1636fbd91",
+  "nativeSourceSha256": "f0b1636fbd91780ea4f3df779d88d1e069875b16c6a91ed3a23acebac1d7e772",
+  "bundleSha256": "29e5419841616800d6e365eb8803db8ced94ac75360d0fa90dd432a7b9957050",
+  "vsixSha256": "0beab9d4adcf6a24cac71f8c3aefb93c9532693059fd9309a60b89e50ddd9371",
+  "vsixInstalledFilesVerified": true,
+  "controller": {
+    "id": "native-rename-20261110-f0b1636fbd91",
+    "version": "2.0.0-dev.2",
+    "runtime": "rust",
+    "target": "linux/amd64",
+    "sha256": "9df2b14e6a1ae030e09f80d2cdf28ff2e9b4d95992943df929e06217fc5f8011",
+    "updatable": true,
+    "reason": null,
+    "lastRollback": null,
+    "selfUpdate": {
+      "available": true,
+      "reason": null
+    }
+  },
+  "workers": [
+    {
+      "id": "01M73EVT67PZ1H071YK30EXYGJ",
+      "name": "laptop-v2",
+      "status": "online",
+      "lastSeenAt": 1794343618569,
+      "state": "current",
+      "build": "native-rename-20261110-f0b1636fbd91",
+      "detail": null,
+      "autoUpdate": "follow",
+      "canUpdate": true
+    },
+    {
+      "id": "01M73H8CW57VX01DZXK5KCAZFP",
+      "name": "big-box",
+      "status": "online",
+      "lastSeenAt": 1794343617862,
+      "state": "current",
+      "build": "native-rename-20261110-f0b1636fbd91",
+      "detail": null,
+      "autoUpdate": "follow",
+      "canUpdate": true
+    }
+  ],
+  "previousBuildRetained": "native-desktop-20261110-d99c20f05013",
+  "pendingConfirmation": null,
+  "rename": {
+    "result": "passed",
+    "nodeId": "01M73H8CW57VX01DZXK5KCAZFP",
+    "oldName": "DESKTOP-JEL",
+    "newName": "big-box",
+    "machineIdUnchanged": true,
+    "settingsUnchanged": true,
+    "connectionUninterrupted": true,
+    "jobHistoryPreserved": true,
+    "historicalJobsChecked": 0
+  },
+  "smoke": {
+    "result": "passed",
+    "jobId": "01M73K91S7PA49GZ3C9N2W88XE",
+    "workerId": "01M73H8CW57VX01DZXK5KCAZFP",
+    "workerName": "big-box",
+    "state": "succeeded",
+    "stdout": "big-box\n",
+    "snapshotRequired": false
+  },
+  "checks": {
+    "typescriptPassed": 313,
+    "typescriptSkipped": 10,
+    "nativeContractPassed": 26,
+    "nativeWorkerRenameUnitPassed": 2,
+    "browserPassed": 29,
+    "nativeClippyAllTargets": "passed",
+    "typescriptChecking": "passed",
+    "changedFileESLint": "passed",
+    "visualReview": "dark/light at 1280px and 520px; captures opened",
+    "designDetector": []
+  },
+  "scope": "native v2 managed controller/worker rollout, account CLI update, requested worker rename, VS Code extension update; no public release or sibling project publish"
+}

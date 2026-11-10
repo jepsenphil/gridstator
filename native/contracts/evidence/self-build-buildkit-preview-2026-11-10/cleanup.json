@@ -1,0 +1,26 @@
+{
+  "controllerExited": 0,
+  "ownedRoleStopped": true,
+  "jobResourceObservationsBeforeFallbackCleanup": [
+    {
+      "kind": "container",
+      "remainingIds": []
+    },
+    {
+      "kind": "volume",
+      "remainingIds": []
+    }
+  ],
+  "sharedBuildCacheRetained": true,
+  "existingServicesTouched": false,
+  "independentlyAuditedAtUTC": "2026-11-10T05:12:03.268261+00:00",
+  "remainingOwnedRolePids": [],
+  "ownedNodeResourceAudit": [
+    {
+      "nodeId": "01M71WS33NXTPHQ7CSEGK3ZM9Y",
+      "remainingContainers": [],
+      "remainingWorkspaceVolumes": []
+    }
+  ],
+  "privateCredentialsRemovedAfterEvidence": true
+}

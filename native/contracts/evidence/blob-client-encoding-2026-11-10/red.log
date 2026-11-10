@@ -1,0 +1,25 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.25s
+     Running tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)
+
+running 1 test
+test retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes ... FAILED
+
+failures:
+
+---- retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes stdout ----
+Controller listening on https://127.0.0.1:42273
+
+thread 'retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes' (1602291) panicked at tests/controller_contract.rs:101:9:
+assertion `left == right` failed: retained SDK path sha256%3A0ef9543f03cafcdc72afb10187708a9be05905e9741e6b9762c0caecbbfa9067
+  left: 404
+ right: 200
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.25s
+
+error: test failed, to rerun pass `--test controller_contract`

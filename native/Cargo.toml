@@ -1,0 +1,59 @@
+[package]
+name = "gridstator"
+version = "2.0.0-dev.2"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+description = "Native Gridstator CLI, controller, and worker"
+
+[dependencies]
+gridstator-local-control-protocol = { path = "local-control-protocol" }
+anyhow = "1"
+axum = { version = "0.8", features = ["ws"] }
+axum-server = { version = "0.7", default-features = false, features = ["tls-rustls-no-provider"] }
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive", "env"] }
+dirs = "6"
+flate2 = "1"
+fs2 = "0.4"
+futures-util = "0.3"
+globset = "0.4"
+hex = "0.4"
+ignore = "0.4"
+libc = "0.2"
+quick-xml = { version = "0.38", features = ["serialize"] }
+rand = "0.9"
+rcgen = { version = "0.14", features = ["x509-parser", "pem"] }
+regex = "1"
+# Pin the upstream execution-budget API needed for bounded ECMAScript pattern matching.
+regress = { git = "https://github.com/ridiculousfish/regress", rev = "95c04041cd9b30249961eb80d950102c29c9586c", default-features = false, features = ["std", "utf16"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+rusqlite = { version = "0.37", features = ["bundled", "backup"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+rustls-pemfile = "2"
+semver = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml_ng = "0.10"
+sha2 = "0.10"
+sysinfo = "0.37"
+tar = "0.4"
+tempfile = "3"
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.28", features = ["rustls-tls-webpki-roots"] }
+tokio-util = { version = "0.7", features = ["rt", "io-util"] }
+ulid = "1"
+url = "2"
+zip = { version = "4", default-features = false, features = ["deflate"] }
+
+[profile.release]
+lto = "thin"
+strip = "debuginfo"
+
+# Artifact installation tests hash real debug executables repeatedly.
+[profile.dev.package.sha2]
+opt-level = 3
+
+[lints.clippy]
+await_holding_lock = "deny"

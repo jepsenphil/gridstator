@@ -1,0 +1,77 @@
+{
+  "recordedAtUTC": "2026-11-10T03:11:17.602911+00:00",
+  "os": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+  "architecture": "x86_64",
+  "cpus": 8,
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "dockerServer": {
+    "Platform": {
+      "Name": "Docker Engine - Community"
+    },
+    "Version": "29.0.2",
+    "ApiVersion": "1.52",
+    "MinAPIVersion": "1.44",
+    "Os": "linux",
+    "Arch": "amd64",
+    "Components": [
+      {
+        "Name": "Engine",
+        "Version": "29.0.2",
+        "Details": {
+          "ApiVersion": "1.52",
+          "Arch": "amd64",
+          "BuildTime": "Mon Nov 17 12:33:26 2025",
+          "Experimental": "false",
+          "GitCommit": "e9ff10b",
+          "GoVersion": "go1.25.4",
+          "KernelVersion": "6.8.0-147-generic",
+          "MinAPIVersion": "1.44",
+          "Os": "linux"
+        }
+      },
+      {
+        "Name": "containerd",
+        "Version": "v2.1.5",
+        "Details": {
+          "GitCommit": "fcd43222d6b07379a4be9786bda52438f0dd16a1"
+        }
+      },
+      {
+        "Name": "runc",
+        "Version": "1.3.3",
+        "Details": {
+          "GitCommit": "v1.3.3-0-gd842d771"
+        }
+      },
+      {
+        "Name": "docker-init",
+        "Version": "0.19.0",
+        "Details": {
+          "GitCommit": "de40ad0"
+        }
+      }
+    ],
+    "GitCommit": "e9ff10b",
+    "GoVersion": "go1.25.4",
+    "KernelVersion": "6.8.0-147-generic",
+    "BuildTime": "Mon Nov 17 12:33:26 2025"
+  },
+  "buildx": "github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e",
+  "git": "git version 2.43.0",
+  "act": "act version 0.2.97",
+  "images": {
+    "alpine:3.20": {
+      "id": "sha256:bf8527eb54c3680e728d5b4b383a8ba730d72dae7236fbc8dff97ed6b224a731",
+      "repoDigests": [
+        "alpine@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+      ]
+    },
+    "node:24-bookworm-slim": {
+      "id": "sha256:280af3207172947339cc2e8c9d2efac585716fd906af49f57d6fdf0dbb829a73",
+      "repoDigests": [
+        "node@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9"
+      ]
+    }
+  },
+  "topology": "One Ubuntu x86_64 host, private loopback TLS controller and two separate real native Docker worker processes; no existing service or cluster touched."
+}

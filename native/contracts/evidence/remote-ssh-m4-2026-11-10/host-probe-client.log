@@ -1,0 +1,261 @@
+[1431258:1110/160905.657700:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1431258:1110/160905.757610:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1431258:1110/160905.757731:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1431258:1110/160905.815415:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[90m[main 2026-11-10T03:09:05.990Z][0m [node-compile-cache] main: packaged cache enabled (status: enabled, configured: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main, active: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main/v24.22.1-x64-60e4fe36)
+[90m[main 2026-11-10T03:09:06.367Z][0m StorageMainService: creating application shared storage
+[1431258:1110/160906.735828:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[90m[main 2026-11-10T03:09:06.735Z][0m [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)
+[90m[main 2026-11-10T03:09:06.736Z][0m [shared storage] Initializing fallback application storage (path: in-memory)
+[90m[main 2026-11-10T03:09:06.826Z][0m [shared storage] Fallback application storage initialized with 3 items
+[90m[main 2026-11-10T03:09:06.827Z][0m update#setState disabled
+[90m[main 2026-11-10T03:09:06.827Z][0m update#ctor - updates are disabled by the environment
+[1431258:1110/160906.859979:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+Via 'product.json#extensionEnabledApiProposals' extension 'ms-vscode.remote-repositories' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.vscode-pull-request-github' wants API proposal 'agentsWindowActivation' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.remotehub' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Creation of workbench contribution 'workbench.contributions.defaultAccountProvider' took 22ms.
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+Creation of workbench contribution 'workbench.contrib.chatSetup' took 24ms.
+[AgentHost:remote] Initializing (remoteAuthority=ssh-remote+gst-m4-proof-zq7g9l76)
+[AgentHost:remote] Connecting to remote agent host...
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Started local extension host with pid 1432608.
+[AccountPolicyGate] apply: state=inactive, reason=undefined, isRestricted=false
+Invoking resolveAuthority(ssh-remote)...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][0ms] obtaining proxy...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][74ms] invoking...
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Authentication provider github was not declared in the Extension Manifest.
+Authentication provider github-enterprise was not declared in the Extension Manifest.
+[CloudSandboxApi] No 'github' session with scopes [read:user, user:email, repo, workflow]
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[LocalProcess0][resolveAuthority(ssh-remote,1)][1129ms] waiting...
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[LocalProcess0][resolveAuthority(ssh-remote,1)][2074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][3074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][4074ms] waiting...
+[AccountPolicyGate] apply: state=inactive, reason=undefined, isRestricted=false
+[LocalProcess0][resolveAuthority(ssh-remote,1)][5074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][6074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][7074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][8074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][9074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][10074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][11074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][12074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][13074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][14074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][15074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][16074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][17074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][18074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][19074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][20074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][21074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][22074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][23074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][24074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][25074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][26175ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][27074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][28074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][29074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][30074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][31074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][32074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][33075ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][34075ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][35074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][36074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][37074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][38074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][39074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][40074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][41074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][42074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][43074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][44074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][45074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][46074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][47074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][48074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][49074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][50074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][51074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][52074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][53074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][54074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][55074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][56074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][57074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][58074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][59074ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][59599ms] returned WebSocket(127.0.0.1:45165)
+resolveAuthority(ssh-remote) returned 'WebSocket(127.0.0.1:45165)' after 59600 ms
+Creating a socket (renderer-Management-6f309d11-391b-4c71-aa27-99634669d0b4)...
+Creating a socket (renderer-ExtensionHost-f25f0d16-64fc-4cc7-97ed-55cdf43cbf58)...
+Creating a socket (renderer-Management-6f309d11-391b-4c71-aa27-99634669d0b4) was successful after 211 ms.
+Creating a socket (renderer-ExtensionHost-f25f0d16-64fc-4cc7-97ed-55cdf43cbf58) was successful after 232 ms.
+[reconnection-grace-time] Client received grace time from server: 10800000ms (10800s)
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/MWRmOTg5YzctNjM0Ni00OGY0LTkxNzItZTYxNTM2MDU3OWNm" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Settings Sync: Account status changed from uninitialized to unavailable
+[RemoteAgentHostProtocol] Sending initialize: address=vscode-remote://ssh-remote+gst-m4-proof-zq7g9l76 clientId=97f5ffe4-dd5f-4184-9b99-52b87b403529 requestId=1
+[RemoteAgentHostProtocol] Initialized: address=vscode-remote://ssh-remote+gst-m4-proof-zq7g9l76 clientId=97f5ffe4-dd5f-4184-9b99-52b87b403529 durationMs=1413
+[AgentHost:remote] Connected; clientId=97f5ffe4-dd5f-4184-9b99-52b87b403529
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[gridstator-remote] actual SSH extension host darwin/arm64 m4-final-99e85b47269b
+[90m[main 2026-11-10T03:10:15.080Z][0m Extension host with pid 1432608 exited with code: 0, signal: unknown.
+Exit code:   0

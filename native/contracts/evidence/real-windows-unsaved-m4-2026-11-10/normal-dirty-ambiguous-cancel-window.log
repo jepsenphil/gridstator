@@ -1,0 +1,26 @@
+[1605117:1110/172807.681377:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+
+DevTools listening on ws://127.0.0.1:45755/devtools/browser/f9be0ada-1000-44d3-a195-7eb1fd0f17d0
+[1605117:1110/172807.693976:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1605117:1110/172807.694107:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172807.696560:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+Warning: 'remote-debugging-address' is not in the list of known options, but still passed to Electron/Chromium.
+Warning: 'remote-debugging-port' is not in the list of known options, but still passed to Electron/Chromium.
+[90m[main 2026-11-10T04:28:07.745Z][0m [node-compile-cache] main: packaged cache enabled (status: enabled, configured: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main, active: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main/v24.22.1-x64-60e4fe36)
+[90m[main 2026-11-10T04:28:07.755Z][0m StorageMainService: creating application shared storage
+[1605117:1110/172807.842126:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[90m[main 2026-11-10T04:28:07.856Z][0m [shared storage] Creating shared storage database at '/tmp/gst-real-windows-1mr4ts9n/home/.vscode-shared/sharedStorage/state.vscdb' (wasCreated: true)
+[90m[main 2026-11-10T04:28:07.857Z][0m [shared storage] Initializing fallback application storage (path: /tmp/gst-real-windows-1mr4ts9n/profile-4/User/globalStorage/state.vscdb)
+[90m[main 2026-11-10T04:28:08.029Z][0m [shared storage] Fallback application storage initialized with 3 items
+[90m[main 2026-11-10T04:28:08.030Z][0m update#setState disabled
+[90m[main 2026-11-10T04:28:08.030Z][0m update#ctor - updates are disabled by the environment
+[1605117:1110/172808.041932:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172816.990174:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172816.990239:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1605117:1110/172816.990289:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172816.990312:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1605117:1110/172817.987166:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172817.987271:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1605117:1110/172817.988886:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1605117:1110/172817.988954:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[90m[main 2026-11-10T04:28:19.376Z][0m Extension host with pid 1605289 exited with code: 0, signal: unknown.

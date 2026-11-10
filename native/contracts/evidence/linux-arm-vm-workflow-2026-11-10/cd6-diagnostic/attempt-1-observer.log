@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 331, in <module>
+    main()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 318, in main
+    proof.run()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 181, in run
+    assert n["info"]["act"]["version"] == "0.2.96"
+AssertionError

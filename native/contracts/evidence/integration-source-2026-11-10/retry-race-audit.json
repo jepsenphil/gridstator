@@ -1,0 +1,267 @@
+{
+  "scope": "Actual two-Docker-worker source008 failure; final job snapshots and ordered durable audit events, not a wire packet capture.",
+  "finalJobs": [
+    {
+      "id": "01M71P5GVZGWT5BX6MCBZT0613",
+      "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+      "kind": "command",
+      "state": "lost",
+      "stateReason": null,
+      "priority": 0,
+      "owner": "local-admin",
+      "snapshotId": null,
+      "spec": {
+        "kind": "command",
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": [],
+          "node": "beta"
+        },
+        "retry": {
+          "max": 1,
+          "on": [
+            "lost"
+          ]
+        },
+        "priority": 0,
+        "project": "gridstator-integration-source-XWIJRy",
+        "image": "alpine:3.20",
+        "command": [
+          "sh",
+          "-c",
+          "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3"
+        ],
+        "artifacts": []
+      },
+      "nodeId": "01M71P48D1JNVX0EFKQCDZ1CBH",
+      "nodeName": "beta",
+      "assignmentId": "01M71P5GWGSQJHAMHR93NS5C6V",
+      "attempt": 1,
+      "retryOf": null,
+      "retriesLeft": 1,
+      "exitCode": null,
+      "error": "agent restarted or lost track of the job",
+      "queuePosition": null,
+      "logSeq": 2,
+      "outputs": null,
+      "artifacts": [],
+      "groupId": null,
+      "shardIndex": null,
+      "shardTotal": null,
+      "createdAt": 1794279392127,
+      "queuedAt": 1794279392127,
+      "assignedAt": 1794279392136,
+      "startedAt": 1794279392425,
+      "finishedAt": 1794279392644,
+      "cancelRequestedAt": null,
+      "oomKilled": false
+    },
+    {
+      "id": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+      "kind": "command",
+      "state": "queued",
+      "stateReason": "node beta rejected this job",
+      "priority": 0,
+      "owner": "local-admin",
+      "snapshotId": null,
+      "spec": {
+        "kind": "command",
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": [],
+          "node": "beta"
+        },
+        "retry": {
+          "max": 1,
+          "on": [
+            "lost"
+          ]
+        },
+        "priority": 0,
+        "project": "gridstator-integration-source-XWIJRy",
+        "image": "alpine:3.20",
+        "command": [
+          "sh",
+          "-c",
+          "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3"
+        ],
+        "artifacts": []
+      },
+      "nodeId": null,
+      "nodeName": null,
+      "assignmentId": null,
+      "attempt": 2,
+      "retryOf": "01M71P5GVZGWT5BX6MCBZT0613",
+      "retriesLeft": 0,
+      "exitCode": null,
+      "error": null,
+      "queuePosition": 1,
+      "logSeq": 0,
+      "outputs": null,
+      "artifacts": [],
+      "groupId": null,
+      "shardIndex": null,
+      "shardTotal": null,
+      "createdAt": 1794279396141,
+      "queuedAt": 1794279396141,
+      "assignedAt": null,
+      "startedAt": null,
+      "finishedAt": null,
+      "cancelRequestedAt": null
+    }
+  ],
+  "orderedAuditEvents": [
+    {
+      "id": 61,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279392127,
+      "type": "state",
+      "fromState": null,
+      "toState": "created",
+      "actor": "local-admin",
+      "message": null
+    },
+    {
+      "id": 62,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279392127,
+      "type": "state",
+      "fromState": "created",
+      "toState": "queued",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 63,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279392145,
+      "type": "state",
+      "fromState": "queued",
+      "toState": "assigned",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 64,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279392162,
+      "type": "state",
+      "fromState": "assigned",
+      "toState": "starting",
+      "actor": "node:beta",
+      "message": null
+    },
+    {
+      "id": 65,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279392426,
+      "type": "state",
+      "fromState": "starting",
+      "toState": "running",
+      "actor": "node:beta",
+      "message": null
+    },
+    {
+      "id": 66,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279396140,
+      "type": "state",
+      "fromState": "running",
+      "toState": "lost",
+      "actor": "node:beta",
+      "message": "agent restarted or lost track of the job"
+    },
+    {
+      "id": 67,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396141,
+      "type": "state",
+      "fromState": null,
+      "toState": "created",
+      "actor": "local-admin",
+      "message": "retry of 01M71P5GVZGWT5BX6MCBZT0613"
+    },
+    {
+      "id": 68,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396141,
+      "type": "state",
+      "fromState": "created",
+      "toState": "queued",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 69,
+      "jobId": "01M71P5GVZGWT5BX6MCBZT0613",
+      "ts": 1794279396141,
+      "type": "retried",
+      "fromState": null,
+      "toState": null,
+      "actor": "controller",
+      "message": "automatic retry (lost) as 01M71P5MSDF1DQMGHJHF7KD55G"
+    },
+    {
+      "id": 70,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396189,
+      "type": "state",
+      "fromState": "queued",
+      "toState": "assigned",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 71,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396208,
+      "type": "state",
+      "fromState": "assigned",
+      "toState": "queued",
+      "actor": "controller",
+      "message": "assignment absent on reconnect"
+    },
+    {
+      "id": 72,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396276,
+      "type": "state",
+      "fromState": "queued",
+      "toState": "assigned",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 73,
+      "jobId": "01M71P5MSDF1DQMGHJHF7KD55G",
+      "ts": 1794279396464,
+      "type": "state",
+      "fromState": "assigned",
+      "toState": "queued",
+      "actor": "node:beta",
+      "message": "job already has another active assignment"
+    }
+  ],
+  "inferredHelloPlacement": {
+    "afterAssignedEvent": 70,
+    "beforeRequeueEvent": 71,
+    "reason": "assignment absent on reconnect is emitted exclusively by the controller hello-reconciliation branch; hello frame timestamp was not instrumented.",
+    "wireCapture": false
+  },
+  "observedFailure": "The first retry assignment was requeued during a same-socket refresh, a second assignment was rejected because the first remained active, and the pinned-node retry stayed queued until the test deadline."
+}

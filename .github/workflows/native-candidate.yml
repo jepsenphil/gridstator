@@ -1,0 +1,216 @@
+name: Native release candidate
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      notarize-preview:
+        required: false
+        default: false
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Candidate version, for example 2.0.0-rc.1'
+        required: true
+        type: string
+      notarize-preview:
+        description: 'Sign/notarize preview Mac artifacts (stable versions always require this)'
+        required: false
+        default: false
+        type: boolean
+
+# Produces reviewable artifacts only. Stable publication requires the recorded M0–M9 evidence.
+permissions:
+  contents: read
+
+jobs:
+  identity:
+    runs-on: ubuntu-24.04
+    outputs:
+      build-id: ${{ steps.identity.outputs.build-id }}
+      notarize: ${{ steps.identity.outputs.notarize }}
+    steps:
+      - id: identity
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          NOTARIZE_PREVIEW: ${{ inputs.notarize-preview }}
+        run: |
+          [[ "$RELEASE_VERSION" =~ ^2\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
+          echo "build-id=native-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+          if [[ "$RELEASE_VERSION" != *-* || "$NOTARIZE_PREVIEW" == true ]]; then
+            echo 'notarize=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'notarize=false' >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: identity
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-musl
+            key: linux-amd64
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+            key: linux-arm64
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+            key: darwin-amd64
+          - runner: macos-15
+            target: aarch64-apple-darwin
+            key: darwin-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+      GRIDSTATOR_BUILD_ID: ${{ needs.identity.outputs.build-id }}
+      GRIDSTATOR_SOURCE_REVISION: ${{ github.sha }}
+      RELEASE_TARGET: ${{ matrix.target }}
+      RELEASE_KEY: ${{ matrix.key }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Stamp native version and install pinned build tools
+        run: |
+          node native/scripts/set-version.mjs "$RELEASE_VERSION"
+          cd native
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' rust-toolchain.toml)
+          rustup toolchain install "$toolchain" --profile minimal --component rustfmt --component clippy
+          rustup target add --toolchain "$toolchain" "$RELEASE_TARGET"
+      - name: Install Linux build-host C compiler
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Check native sources and build on the actual target host
+        working-directory: native
+        env:
+          CC: ${{ runner.os == 'Linux' && 'musl-gcc' || 'cc' }}
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets --target "$RELEASE_TARGET" -- -D warnings
+          cargo test --locked --all-targets --target "$RELEASE_TARGET"
+          cargo build --locked --release --target "$RELEASE_TARGET"
+          mkdir -p "candidate/$RELEASE_KEY"
+          cp "target/$RELEASE_TARGET/release/gridstator" "candidate/$RELEASE_KEY/gridstator"
+      - name: Sign and notarize the final Mac executable
+        if: runner.os == 'macOS' && needs.identity.outputs.notarize == 'true'
+        env:
+          APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${APPLE_CERTIFICATE_P12:?Missing Developer ID certificate}"
+          : "${APPLE_SIGNING_IDENTITY:?Missing Developer ID identity}"
+          : "${APPLE_ID:?Missing notary Apple ID}"
+          : "${APPLE_TEAM_ID:?Missing Apple team ID}"
+          : "${APPLE_APP_PASSWORD:?Missing notary app password}"
+          keychain="$RUNNER_TEMP/gridstator-signing.keychain-db"
+          keychain_password=$(openssl rand -hex 32)
+          cleanup() { security delete-keychain "$keychain" || true; rm -f "$RUNNER_TEMP/gridstator.p12"; }
+          trap cleanup EXIT
+          printf '%s' "$APPLE_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/gridstator.p12"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$RUNNER_TEMP/gridstator.p12" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$keychain"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain"
+          binary="native/candidate/$RELEASE_KEY/gridstator"
+          codesign --keychain "$keychain" --sign "$APPLE_SIGNING_IDENTITY" --options runtime --timestamp "$binary"
+          codesign --verify --strict --verbose=2 "$binary"
+          ditto -c -k "$binary" "$RUNNER_TEMP/gridstator-notarization.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/gridstator-notarization.zip" --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --wait --output-format json > "native/candidate/$RELEASE_KEY/notarization.json"
+          python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["status"] == "Accepted"' "native/candidate/$RELEASE_KEY/notarization.json"
+      - name: Record final executable identity and linkage
+        run: |
+          binary="native/candidate/$RELEASE_KEY/gridstator"
+          "$binary" build-info --json > "native/candidate/$RELEASE_KEY/build-info.json"
+          "$binary" --version
+          file "$binary"
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            readelf -l -d "$binary" > "native/candidate/$RELEASE_KEY/linkage.txt"
+            if grep -Eq 'INTERP|NEEDED' "native/candidate/$RELEASE_KEY/linkage.txt"; then echo 'Linux release must be static' >&2; exit 1; fi
+          else
+            otool -L "$binary" > "native/candidate/$RELEASE_KEY/linkage.txt"
+            if grep -Eiq 'lib(sqlite3|ssl|crypto|node)[.-]' "native/candidate/$RELEASE_KEY/linkage.txt"; then exit 1; fi
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: candidate-${{ matrix.key }}
+          path: native/candidate/${{ matrix.key }}/
+          if-no-files-found: error
+
+  vscode:
+    runs-on: ubuntu-24.04
+    env:
+      RELEASE_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Package the thin Node-based extension requiring the Rust helper
+        run: |
+          node scripts/set-version.mjs "${RELEASE_VERSION%%-*}"
+          pnpm typecheck
+          pnpm lint
+          pnpm exec vitest run --no-file-parallelism
+          pnpm --filter gridstator-vscode package:native
+          mv apps/vscode/dist/gridstator-native.vsix "apps/vscode/dist/gridstator-native-$RELEASE_VERSION.vsix"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-vscode-candidate
+          path: apps/vscode/dist/*.vsix
+          if-no-files-found: error
+
+  assemble:
+    needs: [identity, build, vscode]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: candidate-*
+          path: native/candidate-input
+      - name: Normalize artifact directories
+        run: |
+          for directory in native/candidate-input/candidate-*; do
+            name=${directory##*/}
+            mv "$directory" "native/candidate-input/${name#candidate-}"
+          done
+      - name: Assemble verified final-byte archives, manifest, checksums and native bundle
+        working-directory: native
+        env:
+          REQUIRE_NOTARIZATION: ${{ needs.identity.outputs.notarize }}
+        run: |
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' rust-toolchain.toml)
+          rustup toolchain install "$toolchain" --profile minimal
+          assembly_args=(candidate-input release)
+          if [[ "$REQUIRE_NOTARIZATION" == true ]]; then assembly_args+=(--require-notarization); fi
+          cargo run --locked --example assemble_release -- "${assembly_args[@]}"
+          cd release
+          sha256sum --check SHA256SUMS
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-vscode-candidate
+          path: native/release/
+      - name: Include extension checksum
+        working-directory: native/release
+        run: sha256sum ./*.vsix >> SHA256SUMS
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-release-candidate
+          path: native/release/
+          if-no-files-found: error

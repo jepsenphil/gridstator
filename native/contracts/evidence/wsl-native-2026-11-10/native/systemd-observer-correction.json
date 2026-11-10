@@ -1,0 +1,9 @@
+{
+  "confirmedCause": "Systemd user manager PID555 has no Docker group988, though the SSH account is already a Docker-group member; unique transient user-unit docker info reproduces permission denied.",
+  "supersededInitialHypothesis": "Observer initially treated missing runtime during failure cleanup as a planned restart.",
+  "correction": "Owned unit only uses noninteractive sg docker to refresh already granted membership. Observer only waits through first restart until two Windows TLS health observations.",
+  "productChange": false,
+  "managerRestarted": false,
+  "sudoOrGroupFileChange": false,
+  "remainingActorsBeforeRetry": []
+}

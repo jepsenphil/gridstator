@@ -1,0 +1,22 @@
+{
+  "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+  "stoppedSupervisorPid": 97787,
+  "supervisorExited": true,
+  "ownedProcessesRemaining": [],
+  "ownedDockerResources": [
+    {
+      "kind": "containers",
+      "remainingIds": []
+    },
+    {
+      "kind": "volumes",
+      "remainingIds": []
+    }
+  ],
+  "globalDockerConfigChanged": false,
+  "desktopRestarted": false,
+  "launchdServicesChanged": false,
+  "directNativeLANWithHeldSSH": true,
+  "tunnelUsed": false,
+  "privateCredentialFilesRemoved": true
+}

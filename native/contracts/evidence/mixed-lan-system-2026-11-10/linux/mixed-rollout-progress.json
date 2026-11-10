@@ -1,0 +1,1892 @@
+[
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": null
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "pending",
+          "detail": null,
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "running",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": null,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "updating",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": null
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  {
+    "controller": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": true,
+        "reason": null
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71ZH6SWH9S3F40ZEHYJB54H",
+      "target": {
+        "id": "native-preview-20261110-cd6b769ebe6e",
+        "version": "2.0.0-dev.1",
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "state": "finished",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794289212220,
+      "finishedAt": 1794289215220,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+          "name": "mixed-cd6-31df-linux",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289212220,
+          "finishedAt": 1794289213221
+        },
+        {
+          "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+          "name": "mixed-cd6-31df-mac",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794289213221,
+          "finishedAt": 1794289215220
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  }
+]

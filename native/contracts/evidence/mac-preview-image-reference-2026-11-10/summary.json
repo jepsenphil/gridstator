@@ -1,0 +1,68 @@
+{
+  "result": "passed",
+  "buildId": "native-preview-20261110-7c41b2f3c79d",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "productionCheckpointSha256": "7c41b2f3c79d68d0bfebbea691d34f0ff355a6db5cd559cbf484fbe5e5ea1b61",
+  "sourceDeltaFromCd6": "Only native/src/executor/build.rs production changes; tests/raw fixture supplemental",
+  "targets": [
+    {
+      "target": "darwin/arm64",
+      "runtime": "native M4",
+      "buildInfo": {
+        "version": "2.0.0-dev.1",
+        "buildId": "native-preview-20261110-7c41b2f3c79d",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "darwin/arm64",
+        "size": 23188704,
+        "sha256": "6e70a39fa7e3e5dc29374c1b82cad58d39745fb6b309f6b70a8ed56bca295662"
+      },
+      "samplerTests": 2,
+      "resolverTests": 5,
+      "strictAllTargetsClippy": "passed",
+      "actualFinalByteForegroundAndUserRoleTests": 2
+    },
+    {
+      "target": "darwin/amd64",
+      "runtime": "Rosetta on M4",
+      "buildInfo": {
+        "version": "2.0.0-dev.1",
+        "buildId": "native-preview-20261110-7c41b2f3c79d",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "darwin/amd64",
+        "size": 23816416,
+        "sha256": "9a0f8f04c97f730e92c602c76a2df9ed5b11e2d721fe0e4cd5e3559ec4cedb10"
+      },
+      "samplerTests": 2,
+      "resolverTests": 5,
+      "strictAllTargetsClippy": "passed",
+      "actualFinalByteForegroundAndUserRoleTests": 2
+    }
+  ],
+  "finalArmDockerProof": "docker/proof.json",
+  "cleanup": "cleanup.json",
+  "scope": "actual final common release Mac bytes; M4 native ARM and Rosetta amd64, no physical Intel or stable signing claim",
+  "finalArmAccepted": {
+    "snapshotPathWithSpaces": true,
+    "commandAndExactArtifactBytes": true,
+    "runningJobCancellation": true,
+    "buildReportedReferenceAddressable": true,
+    "reportedReferenceResolvesSameTaggedImage": true,
+    "reportedSizeEqualsDockerInspect": true,
+    "encodedBlobGetExact": true
+  }
+}

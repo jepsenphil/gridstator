@@ -1,5 +1,5 @@
 import { GridstatorClient, normalizeControllerUrl } from '@gridstator/client';
-import { writeAgentState, type AgentState } from './state.js';
+import { updateAgentState, type AgentState } from './state.js';
 
 /** Retarget the existing client so active runners and the updater retain their credentials. */
 export async function relocateController(
@@ -16,18 +16,16 @@ export async function relocateController(
   } finally {
     probe.close();
   }
-  const next: AgentState = {
-    ...state,
+  // Construct the update inside the state queue so a concurrent worker rename is retained.
+  await updateAgentState(dataDir, state, (current) => ({
+    ...current,
     controllerUrl: url,
     controllerFallbackUrls: [
-      ...new Set([state.controllerUrl, ...(state.controllerFallbackUrls ?? [])]),
+      ...new Set([current.controllerUrl, ...(current.controllerFallbackUrls ?? [])]),
     ]
       .filter((previous) => previous !== url)
       .slice(0, 8),
-  };
-  // Commit to disk first: a process restart must use the address that was verified.
-  await writeAgentState(dataDir, next);
-  Object.assign(state, next);
+  }));
   client.setControllerUrl(url);
   return true;
 }

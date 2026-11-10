@@ -1,0 +1,276 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-11-10T01:34:14.303454+00:00",
+  "scope": "Locally executed workspace acceptance and frozen picomatch syntax parity; no Mac host/runtime or stable-release claim.",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "sourceSnapshot": [
+    {
+      "path": "native/src/workspace.rs",
+      "sha256": "sha256:4e0b4c78a56b5ca130a955a553feb1df845f853c0c46b15b96c1f3df23452f0b"
+    },
+    {
+      "path": "native/src/workspace/capture.rs",
+      "sha256": "sha256:ea53c3b9c32b7d6ecf656bff2b9a041c9149f8d21f5861764eb102441619dae4"
+    },
+    {
+      "path": "native/src/workspace/store.rs",
+      "sha256": "sha256:897ff2766e08a90b03b08446771a879f21abeb145babed46555281f6d6ea62d1"
+    },
+    {
+      "path": "native/src/workspace/pattern.rs",
+      "sha256": "sha256:440902957d591dddb62507036177168033aaf3133a6ddcb1a13e4b77ecd5f674"
+    },
+    {
+      "path": "native/src/workspace/pattern/regex.rs",
+      "sha256": "sha256:19ed4b7d6709fc4ef88f98e036a2b613cf0a8691309546bf6f8bf9a87468b47e"
+    },
+    {
+      "path": "native/tests/workspace_contract.rs",
+      "sha256": "sha256:142c4d96c240f32268b4e56a86b87e46756d6dc9a7b4a377ee2306cec9cadd0c"
+    },
+    {
+      "path": "native/scripts/capture-workspace-globs.mjs",
+      "sha256": "sha256:e7be2c29d8845c530f6551377a12463379da5846ab184a7bab1db5b2dc661554"
+    },
+    {
+      "path": "native/contracts/workspace-globs-v1.json",
+      "sha256": "sha256:1ea19a48b383cf5ac32d58a63626b3f18b7fd7cc9aaa02c24e9a75b635746bd5"
+    },
+    {
+      "path": "native/Cargo.toml",
+      "sha256": "sha256:b723dd9ef4f888364903686714eb5726891595b05adbd5ac2c821a50283bc4bf"
+    },
+    {
+      "path": "native/Cargo.lock",
+      "sha256": "sha256:f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+    },
+    {
+      "path": "native/src/workspace/pattern/UPSTREAM.md",
+      "sha256": "sha256:26c5b3cacdc749b70735d31547223da77ca8d5e474a563284f7462b8d1f85454"
+    }
+  ],
+  "architecture": {
+    "alternatives": [
+      "Extend the end-position VM with ordered capture-state backtracking, variable-width lookbehind, capture resets and backreferences. This duplicates an ECMAScript regex engine.",
+      "Retain the bounded VM for ordinary globs and emit the same capture/assertion structure into a Rust ECMAScript backend for raw syntax."
+    ],
+    "selected": "Ordinary VM plus pinned regress UCS-2 backend, including a regex path for JS line-terminator anchor semantics. No JavaScript runtime dependency.",
+    "dependency": {
+      "name": "regress",
+      "version": "0.12.0",
+      "git": "https://github.com/ridiculousfish/regress",
+      "revision": "95c04041cd9b30249961eb80d950102c29c9586c",
+      "features": [
+        "std",
+        "utf16"
+      ],
+      "defaultFeatures": false,
+      "license": "MIT OR Apache-2.0",
+      "reasonForPinnedRevision": "Published0.12.0 exposes UCS-2 matching but no execution budget. The pinned upstream revision adds find_from_ucs2_budgeted and distinguishes BudgetExhausted from NoMatch.",
+      "apiSource": "https://github.com/ridiculousfish/regress/blob/95c04041cd9b30249961eb80d950102c29c9586c/src/api.rs"
+    }
+  },
+  "differential": {
+    "picomatchVersion": "4.0.7",
+    "ordinaryCases": 58,
+    "ordinaryPaths": 89,
+    "rawCases": 93,
+    "rawPaths": 148,
+    "booleanComparisons": 18926,
+    "actualSourceCaptures": 12,
+    "openCases": [],
+    "covered": [
+      "positive/negative lookahead and variable-width lookbehind",
+      "numbered/named/forward/unmatched backreferences and disjoint duplicate names",
+      "capture numbering through raw groups, braces and @ extglobs",
+      "atomic assertion captures and capture reset after repetitions",
+      "legacy identity/control/hex/Unicode/octal escapes",
+      "BMP/non-BMP and separate surrogate class/capture semantics",
+      "source malformed-regex fallback and exact-pattern-string shortcut",
+      "source glob-versus-regex quantifier rules and line-terminator anchors",
+      "Manifest path limit uses explicit JS UTF16 length; symlink target schema limit uses Zod code points, including astral boundaries"
+    ],
+    "manifestUnicodeBoundaryCases": 6
+  },
+  "resourcePolicy": {
+    "patternMaxUtf16Units": 65536,
+    "maxSyntaxNesting": 128,
+    "maxRegexCaptures": 4096,
+    "maxEmittedRegexUnits": 2000000,
+    "maxEmitterNodeVisits": 200000,
+    "optimizer": "disabled to avoid compile-time rewrite amplification",
+    "matching": "VM work is charged across every pattern for a path. Raw regex calls reserve a fair share of the remaining two-million-unit list budget, then divide that reservation by (emitted program units + 2*capture slots + 1)*(subject UTF16 units + 1) before invoking the upstream backtrack budget. Preparation and the full reservation are charged; exhaustion returns an error, never a false match. This is conservative complexity accounting, not an engine instruction counter, and extreme accepted source expressions can fail the explicit native resource bound.",
+    "compileProof": "Excessive flat capture count and nested assertions fail before regex compilation. Nested-plus matching and capture-heavy nested-plus witnesses report explicit exhaustion; the added100/500-empty-capture regression exceeded a five-second subprocess deadline before complexity weighting and the entire18-test suite now completes in0.60s on the recorded host.",
+    "independentReviewRegression": {
+      "test": "raw_regex_backtracking_budget_accounts_for_capture_and_program_work",
+      "pattern": "(( + () repeated100/500 times + a+)+)+",
+      "input": "a repeated25 times followed by !",
+      "before": {
+        "command": "compiled workspace_contract test subprocess with timeout5s",
+        "exitCode": 124,
+        "log": "\nrunning 1 test\n"
+      },
+      "after": "both inputs explicitly exhaust the weighted native work budget"
+    },
+    "unicodeSchemaRegression": {
+      "test": "manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules",
+      "sourceCases": 6,
+      "red": "native rejected source-valid symlink target with2049 astral codepoints",
+      "redLog": "   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.85s\n     Running tests/workspace_contract.rs (target/debug/deps/workspace_contract-f59aac5f098b4ebe)\n\nrunning 1 test\ntest manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules ... FAILED\n\nfailures:\n\n---- manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules stdout ----\n\nthread 'manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules' (1128554) panicked at tests/workspace_contract.rs:120:9:\nassertion `left == right` failed: frozen source case \"symlink-target-2049-astral\"\n  left: false\n right: true\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.02s\n\nerror: test failed, to rerun pass `--test workspace_contract`\n",
+      "correction": "Count target chars/codepoints; retain UTF16 path guard"
+    }
+  },
+  "acceptance": [
+    {
+      "rowId": "manifest-safety",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "manifest_rejects_traversal_duplicates_leaf_descendants_and_escaping_links",
+        "materialization_rejects_frozen_unsafe_manifests_before_writing",
+        "manifest_structural_rejections_match_v1"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-001",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "git_capture_uses_working_tree_and_applies_secret_and_include_precedence"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-002",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "stat_cache_keeps_ids_stable_and_detects_same_size_rewrite"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-003",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "git_capture_uses_working_tree_and_applies_secret_and_include_precedence",
+        "snapshot_patterns_match_frozen_picomatch_and_source_capture_fixtures"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-004",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "stat_cache_keeps_ids_stable_and_detects_same_size_rewrite"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-005",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "max_size_warnings_and_lru_pinning_are_enforced"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-006",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "no_git_walk_obeys_nested_ignores_and_includes_hidden_files"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-007",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "cas_roundtrip_and_workspace_archive_preserve_source_acceptance",
+        "store_rejects_bad_digests_unsafe_archives_and_upload_limits"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-008",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "cas_roundtrip_and_workspace_archive_preserve_source_acceptance"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-009",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "store_rejects_bad_digests_unsafe_archives_and_upload_limits"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-010",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "actual_snapshot_transport_uploads_only_missing_blobs",
+        "upload_tar_verifies_blobs_deduplicates_and_materializes_exact_tree"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-011",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "materialization_rejects_frozen_unsafe_manifests_before_writing",
+        "upload_tar_verifies_blobs_deduplicates_and_materializes_exact_tree"
+      ]
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-012",
+      "proposedStatus": "verified",
+      "scope": "Originating behavior executed on recorded Linux host; target-host matrix remains separate",
+      "nativeTests": [
+        "cas_roundtrip_and_workspace_archive_preserve_source_acceptance"
+      ]
+    }
+  ],
+  "notClaimed": [
+    "reference-snapshot-snapshot-013 and014 are bridge/project-discovery acceptance owned elsewhere.",
+    "Matching compiler resource limits are explicit native safety bounds, not v1 syntax limitations.",
+    "No live cluster, Docker daemon, Node runtime, production service, deployment or publication was required by these native tests.",
+    "Mac actual-host run required canonicalizing the include-scan safety test expected root; production containment checks remain unchanged. Actual Mac results are recorded separately."
+  ],
+  "validation": [
+    {
+      "command": "cargo test --locked --test workspace_contract",
+      "workingDirectory": "native",
+      "result": "passed",
+      "log": "   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.79s\n     Running tests/workspace_contract.rs (target/debug/deps/workspace_contract-f59aac5f098b4ebe)\n\nrunning 19 tests\ntest manifest_rejects_traversal_duplicates_leaf_descendants_and_escaping_links ... ok\ntest canonical_bytes_preserve_javascript_field_order_and_utf8_path_order ... ok\ntest no_git_walk_obeys_nested_ignores_and_includes_hidden_files ... ok\ntest include_scan_bases_never_follow_symlink_components_outside_the_project ... ok\ntest manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules ... ok\ntest git_capture_uses_working_tree_and_applies_secret_and_include_precedence ... ok\ntest raw_regex_backtracking_budget_accounts_for_capture_and_program_work ... ok\ntest stat_cache_keeps_ids_stable_and_detects_same_size_rewrite ... ok\ntest store_rejects_bad_digests_unsafe_archives_and_upload_limits ... ok\ntest materialization_rejects_frozen_unsafe_manifests_before_writing ... ok\ntest unsafe_source_and_destination_symlinks_do_not_escape_the_root ... ok\ntest max_size_warnings_and_lru_pinning_are_enforced ... ok\ntest actual_snapshot_transport_uploads_only_missing_blobs ... ok\ntest submodules_are_recursed_using_their_uncommitted_content ... ok\ntest snapshot_pattern_depth_and_work_are_bounded_and_capture_reports_exhaustion ... ok\ntest upload_tar_verifies_blobs_deduplicates_and_materializes_exact_tree ... ok\ntest snapshot_patterns_match_frozen_picomatch_and_source_capture_fixtures ... ok\ntest cas_roundtrip_and_workspace_archive_preserve_source_acceptance ... ok\ntest snapshot_raw_regex_compilation_and_backtracking_are_bounded ... ok\n\ntest result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s\n\n",
+      "logSha256": "sha256:908046ca1d93a09a27d174ea47d7cfd7d16096e0eaa5434c8a747f12ec332619"
+    },
+    {
+      "command": "cargo test --locked --test contract_fixtures manifest",
+      "workingDirectory": "native",
+      "result": "passed",
+      "log": "warning: unused import: `json`\n --> src/client.rs:3:25\n  |\n3 | use serde_json::{Value, json};\n  |                         ^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\nwarning: `gridstator` (lib) generated 1 warning (run `cargo fix --lib -p gridstator` to apply 1 suggestion)\n   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.03s\n     Running tests/contract_fixtures.rs (target/debug/deps/contract_fixtures-3127c4ae8af964c8)\n\nrunning 2 tests\ntest manifest_structural_rejections_match_v1 ... ok\ntest manifest_canonical_bytes_and_ids_match_v1 ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s\n\n",
+      "logSha256": "sha256:cddce4f903620f7b78ce92d389f18a8250fed0d11f8dc9d4952b025fe43c54a8"
+    },
+    {
+      "command": "node native/scripts/capture-workspace-globs.mjs",
+      "workingDirectory": ".",
+      "result": "passed",
+      "log": "58 matcher cases, 12 actual source captures verified against 4.0.7\n",
+      "logSha256": "sha256:39f2b6575ac8f095935abd5914f61a1cebbff3155fcbdb0ac4f7c8150d2c412d"
+    },
+    {
+      "command": "cargo test --locked --test workspace_contract manifest_rejects",
+      "workingDirectory": "native",
+      "result": "passed after narrow diagnostic-wrapper fix retaining original traversal reason",
+      "log": "    Blocking waiting for file lock on build directory\n   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.50s\n     Running tests/workspace_contract.rs (target/debug/deps/workspace_contract-f59aac5f098b4ebe)\n\nrunning 1 test\ntest manifest_rejects_traversal_duplicates_leaf_descendants_and_escaping_links ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.00s\n\n",
+      "logSha256": "sha256:538a86dc9972d433c704ba2e2293cad183e06857562bb333584f6fa0407d3511"
+    }
+  ]
+}

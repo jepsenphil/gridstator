@@ -1,0 +1,42 @@
+{
+  "recordedAtUTC": "2026-11-10T06:12:41.796483+00:00",
+  "snapshotId": "sha256:de18c8cb8da1393d6463054e5bce13672c4411c826165bb73fca704baf874b91",
+  "coreCheckpointEntries": 40,
+  "allCoreEntriesMatchSnapshot": true,
+  "supplementalBuildInputs": [
+    {
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "snapshotEntry": {
+        "path": "LICENSE",
+        "type": "file",
+        "size": 11358,
+        "digest": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "executable": false
+      }
+    },
+    {
+      "path": "scripts/install-native.sh",
+      "sha256": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+      "snapshotEntry": {
+        "path": "scripts/install-native.sh",
+        "type": "file",
+        "size": 9606,
+        "digest": "sha256:9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+        "executable": true
+      }
+    },
+    {
+      "path": "gridstator.yml",
+      "sha256": "87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+      "snapshotEntry": {
+        "path": "gridstator.yml",
+        "type": "file",
+        "size": 776,
+        "digest": "sha256:87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+        "executable": false
+      }
+    }
+  ],
+  "temporaryDevelopmentCandidate": true
+}

@@ -1,0 +1,107 @@
+
+> gridstator-monorepo@0.1.0 check /repos/gridstator
+> pnpm typecheck && pnpm lint && pnpm format:check && pnpm test
+
+
+> gridstator-monorepo@0.1.0 typecheck /repos/gridstator
+> tsc -b --pretty && tsc -p tsconfig.tests.json --pretty && tsc -p apps/vscode/tsconfig.json && tsc -p apps/vscode/webview/tsconfig.json && tsc -p apps/vscode/test/tsconfig.json
+
+
+> gridstator-monorepo@0.1.0 lint /repos/gridstator
+> eslint .
+
+
+> gridstator-monorepo@0.1.0 format:check /repos/gridstator
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> gridstator-monorepo@0.1.0 test /repos/gridstator
+> vitest run
+
+
+ RUN  v5.1.0 /repos/gridstator
+
+ ❯ apps/controller/src/controller.test.ts (21 tests | 1 failed) 72848ms
+   ❯ failure handling and reconciliation (3)
+     × reconciles in-flight jobs after a controller restart 7742ms
+ ❯ packages/executors/src/container.test.ts (6 tests | 3 failed) 75611ms
+   ❯ ContainerExecutor (real Docker) (6)
+     × runs a command, streams output, reports exit codes, and cleans up 20017ms
+     × passes env and multi-line secrets without putting them on the command line 20008ms
+     × copies the workspace tar into /workspace and honours workdir 20020ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/controller/src/controller.test.ts > failure handling and reconciliation > reconciles in-flight jobs after a controller restart
+AssertionError: expected [] to deeply equal [ { …(2) } ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "jobId": "01M71D93C970YN7VWEGV67CTPE",
+-     "logSeq": 1,
+-   },
+- ]
++ []
+
+ ❯ apps/controller/src/controller.test.ts:514:28
+    512|       ],
+    513|     });
+    514|     expect(welcome.resume).toEqual([{ jobId: keep.id, logSeq: 1 }]);
+       |                            ^
+    515|     await again.next('job.cancel', (m) => m.jobId === '01ZZZZZZZZZZZZZ…
+    516|     expect((await waitForState(forget.id, 'lost')).error).toMatch(/res…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  packages/executors/src/container.test.ts > ContainerExecutor (real Docker) > runs a command, streams output, reports exit codes, and cleans up
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/executors/src/container.test.ts:77:3
+     75|
+     76| describe.skipIf(!available)('ContainerExecutor (real Docker)', () => {
+     77|   it('runs a command, streams output, reports exit codes, and cleans u…
+       |   ^
+     78|     const exec = new ContainerExecutor({ docker, tmpDir: tmp });
+     79|     const ok = ctx({ command: ['sh', '-c', 'echo out; echo err >&2; ec…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  packages/executors/src/container.test.ts > ContainerExecutor (real Docker) > passes env and multi-line secrets without putting them on the command line
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/executors/src/container.test.ts:95:3
+     93|   });
+     94|
+     95|   it('passes env and multi-line secrets without putting them on the co…
+       |   ^
+     96|     const exec = new ContainerExecutor({ docker, tmpDir: tmp });
+     97|     const c = ctx({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  packages/executors/src/container.test.ts > ContainerExecutor (real Docker) > copies the workspace tar into /workspace and honours workdir
+Error: Test timed out in 20000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ packages/executors/src/container.test.ts:114:3
+    112|   });
+    113|
+    114|   it('copies the workspace tar into /workspace and honours workdir', a…
+       |   ^
+    115|     const exec = new ContainerExecutor({ docker, tmpDir: tmp });
+    116|     const makeTar = () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed | 24 passed | 1 skipped (27)
+      Tests  4 failed | 187 passed | 1 skipped (192)
+   Start at  13:20:24
+   Duration  105.68s (tests 98%, import 2%)
+
+ ELIFECYCLE  Test failed. See above for more details.
+ ELIFECYCLE  Command failed with exit code 1.

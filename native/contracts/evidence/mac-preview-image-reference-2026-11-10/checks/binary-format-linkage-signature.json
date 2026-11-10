@@ -1,0 +1,36 @@
+{
+  "arm64": {
+    "format": {
+      "exitCode": 0,
+      "stdout": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-arm64: Mach-O 64-bit executable arm64\n",
+      "stderr": ""
+    },
+    "linkage": {
+      "exitCode": 0,
+      "stdout": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-arm64:\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+      "stderr": ""
+    },
+    "signature": {
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Executable=/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-arm64\nIdentifier=gridstator-47b7fe121271f770\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=179896 flags=0x20002(adhoc,linker-signed) hashes=5618+0 location=embedded\nVersionPlatform=1\nVersionMin=720896\nVersionSDK=1704448\nHash type=sha256 size=32\nCandidateCDHash sha256=61bcef3a6dece0ee4a438152199848ec12b53eeb\nCandidateCDHashFull sha256=61bcef3a6dece0ee4a438152199848ec12b53eebd87d7d0046b19b858d060cab\nHash choices=sha256\nCMSDigest=61bcef3a6dece0ee4a438152199848ec12b53eebd87d7d0046b19b858d060cab\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=17235968\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=61bcef3a6dece0ee4a438152199848ec12b53eeb\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n"
+    }
+  },
+  "x86_64": {
+    "format": {
+      "exitCode": 0,
+      "stdout": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-x86_64: Mach-O 64-bit executable x86_64\n",
+      "stderr": ""
+    },
+    "linkage": {
+      "exitCode": 0,
+      "stdout": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-x86_64:\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+      "stderr": ""
+    },
+    "signature": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-7c41b2f3c79d-x86_64: code object is not signed at all\n"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+
+PRIVATE_SUPERVISOR_RESTART_SAME_CONFIG
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)
+worker update: error sending request for url (https://192.168.1.162:42751/v2/agent/update?current=native-preview-20261110-e3e5fae51c8e&target=darwin/arm64&mode=normal): client error (Connect): tcp connect error: No route to host (os error 65)

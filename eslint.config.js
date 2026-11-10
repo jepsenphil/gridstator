@@ -6,9 +6,17 @@ export default tseslint.config(
   {
     ignores: [
       '**/dist/**',
+      'distro/**',
       '**/bundle/**',
       '**/release/**',
       '**/node_modules/**',
+      'native/target/**',
+      'native/local-control-protocol/target/**',
+      'apps/desktop/src-tauri/target/**',
+      'apps/desktop/src-tauri/gen/**',
+      'apps/desktop/test-results/**',
+      // Preserve the exact archived proof scripts covered by evidence checksums.
+      'native/contracts/evidence/**',
       'coverage/**',
       'examples/**',
       'apps/vscode/media/**',

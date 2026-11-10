@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 333, in <module>
+    main()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 320, in main
+    proof.run()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 224, in run
+    submitted = self.submit("run", "--node", "arm-embedded", "--image", "alpine:3.21", "--cpus", "1", "--memory", "128m", "--artifact", "results", "--", "sh", "-c", 'test "$(uname -m)" = aarch64; test "$(cat proof.txt)" = arm-snapshot; test ! -e .env; mkdir -p results; printf "aarch64 artifact\\n" > results/proof.txt; cat results/proof.txt; echo embedded-arm')
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 113, in submit
+    result = json.loads(self.cli(*args, "--json").stdout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

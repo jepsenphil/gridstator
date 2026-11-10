@@ -1,0 +1,23 @@
+
+7-Zip 23.01 (x64) : Copyright (c) 1999-2023 Igor Pavlov : 2023-06-20
+ 64-bit locale=C.UTF-8 Threads:8 OPEN_MAX:1048576
+
+Scanning the drive for archives:
+1 file, 31680270 bytes (31 MiB)
+
+Testing archive: distro/2.0.0-dev.1/Gridstator_2.0.0-dev.1_x64-setup.exe
+--
+Path = distro/2.0.0-dev.1/Gridstator_2.0.0-dev.1_x64-setup.exe
+Type = Nsis
+Physical Size = 31680270
+Method = LZMA:23
+Solid = +
+Headers Size = 100324
+Embedded Stub Size = 200704
+SubType = NSIS-3 Unicode
+
+Everything is Ok
+
+Files: 15
+Size:       95603307
+Compressed: 31680270

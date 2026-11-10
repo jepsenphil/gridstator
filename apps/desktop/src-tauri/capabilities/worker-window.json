@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "worker-window",
+  "description": "Local worker window. Filesystem, network and shell plugins are deliberately unavailable.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

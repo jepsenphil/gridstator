@@ -1,0 +1,1 @@
+/tmp/gridstator-final-self-build-2nwg0wvl/artifacts/self-build/linux-arm64/gridstator: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, not stripped

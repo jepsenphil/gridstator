@@ -1,0 +1,10 @@
+{
+  "temporaryBuildId": "buildx-fallback-dev-8e696aa15b2e",
+  "baseCommon": "native-preview-20261110-cd6b769ebe6e",
+  "remoteSource": "/Users/philjepsen/gridstator-validation.I50ONpwm/source-buildx-fallback-dev",
+  "files": {
+    "native/src/executor/build.rs": "8e696aa15b2edc0b21a2c8bcd68370c316c7573cdd07e0d26b186432e5a881df",
+    "native/tests/executor_contract.rs": "d44d56a3a71e258d8a883b67199ae84b5c8033e80f83ede143985c19ff799df4",
+    "native/contracts/buildx-containerd-linux-arm-inspect.json": "e6d3b959cc387d4e7625c499c223bafbb9494666fb607d281abbc32115c677e2"
+  }
+}

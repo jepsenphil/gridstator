@@ -1,0 +1,9 @@
+PASSED embedded-command-snapshot-artifact
+Traceback (most recent call last):
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 335, in <module>
+    main()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 322, in main
+    proof.run()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 245, in run
+    assert built["nodeName"] == "arm-standalone" and built["outputs"]["image"]["id"] == image["Id"]
+AssertionError

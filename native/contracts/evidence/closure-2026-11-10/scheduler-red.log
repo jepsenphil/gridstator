@@ -1,0 +1,25 @@
+   Compiling regress v0.12.0 (https://github.com/ridiculousfish/regress?rev=95c04041cd9b30249961eb80d950102c29c9586c#95c04041)
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.86s
+     Running tests/scheduler_differential.rs (target/debug/deps/scheduler_differential-0613c3759c882dd0)
+
+running 1 test
+test frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons ... FAILED
+
+failures:
+
+---- frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons stdout ----
+
+thread 'frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons' (955901) panicked at tests/scheduler_differential.rs:46:13:
+assertion `left == right` failed: utf16-name-tie: placement
+  left: String("bmp")
+ right: String("astral")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `--test scheduler_differential`

@@ -1,0 +1,23 @@
+{
+  "result": "passed",
+  "scope": "resources extracted from the final Windows NSIS installer; real Linux x64 CLI installation with downloads disabled; installed helper capability and retained service manifest verification; Windows/WSL transport not executed on this Linux host",
+  "installer": "distro/2.0.0-dev.1/Gridstator_2.0.0-dev.1_x64-setup.exe",
+  "installerSha256": "8c35bb72db0c18bf3a2214e48c3d27903c87d538e2d214cdbd84de3bf3a0eafb",
+  "installerSize": 31680270,
+  "nativeBuildId": "native-desktop-20261110-d99c20f05013",
+  "manifestSha256": "d40cf9237cbf27c7fb8d4d2077628e53245ce9dbe056e42156e51d5aa61a33bc",
+  "archiveSha256": {
+    "linux/amd64": "e5b0738920855730db4bd394588644c2df5f9660d72ab75d0e04ad2448606004",
+    "linux/arm64": "32a222808a6a8aaf1aca0a27a34a4d77153f6da352963017869d65e4b782699d"
+  },
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification",
+    "local-setup-v1",
+    "worker-control-v1"
+  ],
+  "downloadDisabled": true
+}

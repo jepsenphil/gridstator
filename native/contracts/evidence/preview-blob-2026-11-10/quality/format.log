@@ -1,0 +1,6 @@
+
+> gridstator-monorepo@0.1.0 format:check /repos/gridstator
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!

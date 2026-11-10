@@ -1,0 +1,79 @@
+{
+  "recordedAt": "2026-11-10T05:42:49Z",
+  "result": "passed",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "version": "2.0.0-dev.1",
+  "parentSourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "productionInputHashesVerified": 40,
+  "supplementalInputHashesVerified": 3,
+  "manifestSha256": "27a1cc6555923b24d19f08580b0a2dafdd7c1e7baf88c9697313878950df6e2e",
+  "fourTargets": [
+    {
+      "target": "darwin/amd64",
+      "archive": {
+        "file": "gridstator-2.0.0-dev.1-darwin-amd64.tar.gz",
+        "size": 9405031,
+        "sha256": "11518a4f182fe851d8d48d99d2e84ebdaf9db950be9a13b446e0f4ea20b36a0a"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 23810344,
+        "sha256": "18f670e3126301f38424ede04cadd65e5fa15a26a21b467e1456c96c6472e7a4"
+      },
+      "headerAndLinkage": "thin Mach-O 64-bit correct CPU",
+      "buildInfoMatches": true,
+      "licenseMatches": true
+    },
+    {
+      "target": "darwin/arm64",
+      "archive": {
+        "file": "gridstator-2.0.0-dev.1-darwin-arm64.tar.gz",
+        "size": 9110770,
+        "sha256": "991e84c83eb352597c9049f5e10dceda762841ccabf9e29b769b1b8556cd05a5"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 23188896,
+        "sha256": "111f031b1b659137d9f36dd549f6234f7d44974f25e28bf8777e1d593a977663"
+      },
+      "headerAndLinkage": "thin Mach-O 64-bit correct CPU",
+      "buildInfoMatches": true,
+      "licenseMatches": true
+    },
+    {
+      "target": "linux/amd64",
+      "archive": {
+        "file": "gridstator-2.0.0-dev.1-linux-amd64.tar.gz",
+        "size": 9960439,
+        "sha256": "db0adfac42b1a493a1e38a15db4e9551da1a1d79fab8091e195876594d15b49f"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 27550072,
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "headerAndLinkage": "ELF64 correct machine; no PT_INTERP or DT_NEEDED",
+      "buildInfoMatches": true,
+      "licenseMatches": true
+    },
+    {
+      "target": "linux/arm64",
+      "archive": {
+        "file": "gridstator-2.0.0-dev.1-linux-arm64.tar.gz",
+        "size": 9763398,
+        "sha256": "3d4232b26f2a25361096de312160aa6c20c3ff2f65a05e2c3c5d945b17ceeb53"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 26556128,
+        "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd"
+      },
+      "headerAndLinkage": "ELF64 correct machine; no PT_INTERP or DT_NEEDED",
+      "buildInfoMatches": true,
+      "licenseMatches": true
+    }
+  ],
+  "nativeBundleMembersMatchAdjacentFiles": true,
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "limits": "Header/linkage/identity verification for all four; runtime evidence is per-target in PREVIEW.json and is not inferred from headers."
+}

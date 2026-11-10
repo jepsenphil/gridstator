@@ -1,0 +1,5 @@
+{
+  "cause": "Test-only sg wrapper remains the systemd main process; mixed kill mode terminates it then SIGKILLs native descendants before graceful cleanup.",
+  "correction": "Owned fixture only uses control-group kill mode so every native actor receives SIGTERM. Production direct-supervisor rendering remains unchanged.",
+  "remainingActorsBeforeRetry": []
+}

@@ -1,0 +1,1 @@
+Initial anonymous DOCKER_CONFIG lacked Buildx plugin discovery: docker: unknown command: docker buildx. The private config then added cli-plugins/docker-buildx symlink to the unmodified bundled Docker.app plugin. User Docker configuration and keychain were unchanged.

@@ -1,0 +1,13 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.58s
+     Running tests/cli_local_coordination.rs (native/target/debug/deps/cli_local_coordination-3b3e673a280702cc)
+
+running 5 tests
+test source_local_012_apply_and_restart_starts_a_previously_stopped_controller ... ok
+test source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling ... ok
+test source_local_011_retains_old_listener_for_offline_or_unadvertised_workers ... ok
+test source_local_014_busy_new_listener_restores_previous_configuration_and_service ... ok
+test source_local_013_requires_fresh_worker_connection_even_at_unchanged_public_endpoint ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 48.98s
+

@@ -1,0 +1,23 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.29s
+     Running tests/controller_source_scenarios.rs (native/target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)
+
+running 1 test
+Controller listening on https://127.0.0.1:39157
+Controller listening on https://127.0.0.1:42903
+
+thread 'source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs' (1171578) panicked at tests/controller_source_scenarios.rs:442:5:
+assertion `left == right` failed
+  left: String("agent restarted without running job")
+ right: "The agent on n1 restarted or lost track of the job"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... FAILED
+
+failures:
+
+failures:
+    source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.53s
+
+error: test failed, to rerun pass `--test controller_source_scenarios`

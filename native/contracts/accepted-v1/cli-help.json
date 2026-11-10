@@ -1,0 +1,1300 @@
+{
+  "normalization": {
+    "hostname": "<HOSTNAME>",
+    "controllerDataDir": "/V1_DATA/controller",
+    "agentDataDir": "/V1_DATA/agent",
+    "clientConfig": "/V1_CONFIG/client.json",
+    "terminal": "non-TTY NO_COLOR"
+  },
+  "cases": [
+    {
+      "path": [],
+      "aliases": [],
+      "description": "Gridstator: multiple machines, one workflow. Run builds and tests on your LAN cluster.",
+      "options": [
+        {
+          "flags": "-v, --version",
+          "description": "output the version number"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator [options] [command]\n\nGridstator: multiple machines, one workflow. Run builds and tests on your LAN\ncluster.\n\nOptions:\n  -v, --version               output the version number\n  -h, --help                  display help for command\n\nCommands:\n  login [options] <url>       Connect this machine to a controller (verifies the\n                              CA fingerprint and token)\n  status [options]            Show cluster, node and job summary\n  nodes [options]             List and manage worker nodes\n  jobs [options]              List jobs (most recent first)\n  job [options] <id>          Show details of one job\n  run [options] [command...]  Run a command in a container on a cluster node,\n                              against a snapshot of this project\n  logs [options] <id>         Print a job's logs\n  cancel <id>                 Cancel a queued or running job\n  retry [options] <id>        Run a finished job again with the same snapshot\n                              and settings\n  snapshot [options]          Capture this project as a snapshot and upload it\n                              (shows what would be sent)\n  token                       Manage client and join tokens (admin)\n  groups [options]            List job groups (sharded runs), most recent first\n  group                       Inspect and control a job group (sharded run)\n  init [options]              Create a gridstator.yml in the current project\n  agents                      Keep worker agents on the controller’s build\n                              (status, updates, auto-update)\n  build [options] [context]   Build a Docker image from this project on a\n                              cluster node (BuildKit)\n  actions                     Run GitHub Actions workflows on the cluster with\n                              act\n  artifacts [options] <id>    List or download the artifacts of a job\n  doctor [options]            Check this machine's setup and the connection to\n                              the controller\n  controller                  Run and manage the cluster controller\n  agent                       Run a worker agent on this machine\n  help [command]              display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["login"],
+      "aliases": [],
+      "description": "Connect this machine to a controller (verifies the CA fingerprint and token)",
+      "options": [
+        {
+          "flags": "--fingerprint <sha256>",
+          "description": "cluster CA fingerprint (printed by `controller init`)"
+        },
+        {
+          "flags": "--token <token>",
+          "description": "client token (from `gridstator token create`)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator login [options] <url>\n\nConnect this machine to a controller (verifies the CA fingerprint and token)\n\nArguments:\n  url                     controller URL, e.g. https://192.168.1.20:7300\n\nOptions:\n  --fingerprint <sha256>  cluster CA fingerprint (printed by `controller init`)\n  --token <token>         client token (from `gridstator token create`)\n  -h, --help              display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["status"],
+      "aliases": [],
+      "description": "Show cluster, node and job summary",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator status [options]\n\nShow cluster, node and job summary\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes"],
+      "aliases": [],
+      "description": "List and manage worker nodes",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes [options] [command]\n\nList and manage worker nodes\n\nOptions:\n  --json                   machine-readable output\n  -h, --help               display help for command\n\nCommands:\n  show [options] <node>\n  set [options] <node>     Change scheduling settings for a node\n  enable <node>            Allow the scheduler to place jobs on a node\n  disable <node>           Stop placing new jobs on a node (running jobs\n                           continue)\n  drain <node>             Stop placing new jobs on a node and let running jobs\n                           finish\n  remove [options] <node>  Remove a node and revoke its credential (admin)\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "show"],
+      "aliases": [],
+      "description": "",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes show [options] <node>\n\nArguments:\n  node        node name or id\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "set"],
+      "aliases": [],
+      "description": "Change scheduling settings for a node",
+      "options": [
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum concurrent jobs"
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host"
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g"
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "replace labels (comma-separated; empty string clears)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes set [options] <node>\n\nChange scheduling settings for a node\n\nArguments:\n  node                     node name or id\n\nOptions:\n  --max-concurrency <n>    maximum concurrent jobs\n  --reserve-cpus <n>       CPUs held back for the host\n  --reserve-memory <size>  memory held back for the host, e.g. 8g\n  --labels <list>          replace labels (comma-separated; empty string clears)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "enable"],
+      "aliases": [],
+      "description": "Allow the scheduler to place jobs on a node",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes enable [options] <node>\n\nAllow the scheduler to place jobs on a node\n\nArguments:\n  node        node name or id\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "disable"],
+      "aliases": [],
+      "description": "Stop placing new jobs on a node (running jobs continue)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes disable [options] <node>\n\nStop placing new jobs on a node (running jobs continue)\n\nArguments:\n  node        node name or id\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "drain"],
+      "aliases": [],
+      "description": "Stop placing new jobs on a node and let running jobs finish",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes drain [options] <node>\n\nStop placing new jobs on a node and let running jobs finish\n\nArguments:\n  node        node name or id\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["nodes", "remove"],
+      "aliases": [],
+      "description": "Remove a node and revoke its credential (admin)",
+      "options": [
+        {
+          "flags": "--force",
+          "description": "cancel jobs still running on the node"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes remove [options] <node>\n\nRemove a node and revoke its credential (admin)\n\nArguments:\n  node        node name or id\n\nOptions:\n  --force     cancel jobs still running on the node\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["jobs"],
+      "aliases": [],
+      "description": "List jobs (most recent first)",
+      "options": [
+        {
+          "flags": "--state <states>",
+          "description": "filter by state (comma-separated: created, queued, assigned, starting, running, succeeded, failed, cancelled, lost)"
+        },
+        {
+          "flags": "--node <node>",
+          "description": "filter by node"
+        },
+        {
+          "flags": "--limit <n>",
+          "description": "maximum number of jobs",
+          "default": "30"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator jobs [options]\n\nList jobs (most recent first)\n\nOptions:\n  --state <states>  filter by state (comma-separated: created, queued, assigned,\n                    starting, running, succeeded, failed, cancelled, lost)\n  --node <node>     filter by node\n  --limit <n>       maximum number of jobs (default: \"30\")\n  --json            machine-readable output\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["job"],
+      "aliases": [],
+      "description": "Show details of one job",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator job [options] <id>\n\nShow details of one job\n\nArguments:\n  id          job id\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["run"],
+      "aliases": [],
+      "description": "Run a command in a container on a cluster node, against a snapshot of this project",
+      "options": [
+        {
+          "flags": "-t, --task <name>",
+          "description": "run a task defined in gridstator.yml"
+        },
+        {
+          "flags": "--image <image>",
+          "description": "container image (default from gridstator.yml, else node:24-bookworm)"
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)"
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve and limit the container to"
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve and limit the container to, e.g. 4g"
+        },
+        {
+          "flags": "-e, --env <NAME=value>",
+          "description": "environment variable (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m"
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)"
+        },
+        {
+          "flags": "--retries <n>",
+          "description": "automatic retries if the node is lost"
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job"
+        },
+        {
+          "flags": "--shell",
+          "description": "run the arguments as one shell command (sh -c)"
+        },
+        {
+          "flags": "-a, --artifact <path>",
+          "description": "collect a file or directory as an artifact after the run (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--shards <n>",
+          "description": "split into N parallel shards across workers; use {shard} and {total} in the command"
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--no-snapshot",
+          "description": "do not send the project; run in an empty /workspace"
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs"
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator run [options] [command...]\n\nRun a command in a container on a cluster node, against a snapshot of this\nproject\n\nArguments:\n  command                  command to run (after --). A single argument is run\n                           with sh -c\n\nOptions:\n  -t, --task <name>        run a task defined in gridstator.yml\n  --image <image>          container image (default from gridstator.yml, else\n                           node:24-bookworm)\n  --node <node>            run on this node (name or id)\n  -l, --label <label>      require a node label (repeatable) (default: [])\n  --cpus <n>               CPUs to reserve and limit the container to\n  --memory <size>          memory to reserve and limit the container to, e.g. 4g\n  -e, --env <NAME=value>   environment variable (repeatable) (default: [])\n  -s, --secret-env <NAME>  forward a secret from this shell; masked in logs\n                           (repeatable) (default: [])\n  --timeout <duration>     stop the job after this long, e.g. 30m\n  --priority <n>           higher runs first (-100..100)\n  --retries <n>            automatic retries if the node is lost\n  --name <name>            display name for the job\n  --shell                  run the arguments as one shell command (sh -c)\n  -a, --artifact <path>    collect a file or directory as an artifact after the\n                           run (repeatable) (default: [])\n  --shards <n>             split into N parallel shards across workers; use\n                           {shard} and {total} in the command\n  --prefer <node>          prefer this worker when it can take the job\n                           (repeatable) (default: [])\n  --no-snapshot            do not send the project; run in an empty /workspace\n  -d, --detach             print the job id and exit instead of streaming logs\n  --json                   print the submitted job as JSON (implies --detach)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["logs"],
+      "aliases": [],
+      "description": "Print a job's logs",
+      "options": [
+        {
+          "flags": "-f, --follow",
+          "description": "keep streaming until the job finishes"
+        },
+        {
+          "flags": "--json",
+          "description": "print log entries as JSON lines"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator logs [options] <id>\n\nPrint a job's logs\n\nArguments:\n  id            job id\n\nOptions:\n  -f, --follow  keep streaming until the job finishes\n  --json        print log entries as JSON lines\n  -h, --help    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["cancel"],
+      "aliases": [],
+      "description": "Cancel a queued or running job",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator cancel [options] <id>\n\nCancel a queued or running job\n\nArguments:\n  id          job id\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["retry"],
+      "aliases": [],
+      "description": "Run a finished job again with the same snapshot and settings",
+      "options": [
+        {
+          "flags": "-d, --detach",
+          "description": "print the new job id and exit"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator retry [options] <id>\n\nRun a finished job again with the same snapshot and settings\n\nArguments:\n  id            job id\n\nOptions:\n  -d, --detach  print the new job id and exit\n  -h, --help    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["snapshot"],
+      "aliases": [],
+      "description": "Capture this project as a snapshot and upload it (shows what would be sent)",
+      "options": [
+        {
+          "flags": "--dry-run",
+          "description": "capture only; do not upload"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output including the full file list"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator snapshot [options]\n\nCapture this project as a snapshot and upload it (shows what would be sent)\n\nOptions:\n  --dry-run   capture only; do not upload\n  --json      machine-readable output including the full file list\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["token"],
+      "aliases": [],
+      "description": "Manage client and join tokens (admin)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator token [options] [command]\n\nManage client and join tokens (admin)\n\nOptions:\n  -h, --help        display help for command\n\nCommands:\n  create [options]  Create a client token, or a join token for adding a worker\n  list [options]\n  revoke <id>\n  help [command]    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["token", "create"],
+      "aliases": [],
+      "description": "Create a client token, or a join token for adding a worker",
+      "options": [
+        {
+          "flags": "--join",
+          "description": "create a join token for `gridstator agent join`"
+        },
+        {
+          "flags": "--name <name>",
+          "description": "token name (shown in job ownership and audit records)"
+        },
+        {
+          "flags": "--role <role>",
+          "description": "client token role: operator or admin",
+          "default": "operator"
+        },
+        {
+          "flags": "--ttl <duration>",
+          "description": "expiry, e.g. 24h (join tokens default to 24h; client tokens never expire)"
+        },
+        {
+          "flags": "--uses <n>",
+          "description": "join token: number of agents that may use it",
+          "default": "1"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator token create [options]\n\nCreate a client token, or a join token for adding a worker\n\nOptions:\n  --join            create a join token for `gridstator agent join`\n  --name <name>     token name (shown in job ownership and audit records)\n  --role <role>     client token role: operator or admin (default: \"operator\")\n  --ttl <duration>  expiry, e.g. 24h (join tokens default to 24h; client tokens\n                    never expire)\n  --uses <n>        join token: number of agents that may use it (default: \"1\")\n  --json            machine-readable output\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["token", "list"],
+      "aliases": [],
+      "description": "",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator token list [options]\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["token", "revoke"],
+      "aliases": [],
+      "description": "",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator token revoke [options] <id>\n\nArguments:\n  id          token id (from `gridstator token list`)\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["groups"],
+      "aliases": [],
+      "description": "List job groups (sharded runs), most recent first",
+      "options": [
+        {
+          "flags": "--limit <n>",
+          "description": "maximum number of groups",
+          "default": "20"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator groups [options]\n\nList job groups (sharded runs), most recent first\n\nOptions:\n  --limit <n>  maximum number of groups (default: \"20\")\n  --json       machine-readable output\n  -h, --help   display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["group"],
+      "aliases": [],
+      "description": "Inspect and control a job group (sharded run)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator group [options] [command]\n\nInspect and control a job group (sharded run)\n\nOptions:\n  -h, --help            display help for command\n\nCommands:\n  show [options] <id>\n  cancel <id>\n  retry [options] <id>  Run the shards that failed, were lost or were cancelled\n                        again\n  help [command]        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["group", "show"],
+      "aliases": [],
+      "description": "",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output (includes combined test results)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator group show [options] <id>\n\nArguments:\n  id          group id\n\nOptions:\n  --json      machine-readable output (includes combined test results)\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["group", "cancel"],
+      "aliases": [],
+      "description": "",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator group cancel [options] <id>\n\nArguments:\n  id          group id\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["group", "retry"],
+      "aliases": [],
+      "description": "Run the shards that failed, were lost or were cancelled again",
+      "options": [
+        {
+          "flags": "-d, --detach",
+          "description": "do not stream logs"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator group retry [options] <id>\n\nRun the shards that failed, were lost or were cancelled again\n\nArguments:\n  id            group id\n\nOptions:\n  -d, --detach  do not stream logs\n  -h, --help    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["init"],
+      "aliases": [],
+      "description": "Create a gridstator.yml in the current project",
+      "options": [
+        {
+          "flags": "--force",
+          "description": "overwrite an existing gridstator.yml"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator init [options]\n\nCreate a gridstator.yml in the current project\n\nOptions:\n  --force     overwrite an existing gridstator.yml\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agents"],
+      "aliases": [],
+      "description": "Keep worker agents on the controller’s build (status, updates, auto-update)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agents [options] [command]\n\nKeep worker agents on the controller’s build (status, updates, auto-update)\n\nOptions:\n  -h, --help                   display help for command\n\nCommands:\n  status [options]             Show which workers run the controller’s build\n  update [options] [nodes...]  Update workers to the controller’s build, one at\n                               a time: drain, update, wait until it is back\n                               (admin)\n  cancel                       Stop the running rollout; the worker being\n                               updated right now finishes (admin)\n  set [options] [node]         Set auto-update and toolchain options: for one\n                               worker, or the cluster default (no node)\n  help [command]               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agents", "status"],
+      "aliases": [],
+      "description": "Show which workers run the controller’s build",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        },
+        {
+          "flags": "--check",
+          "description": "exit with code 3 if a reachable worker is not on the controller’s build (offline workers do not count)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agents status [options]\n\nShow which workers run the controller’s build\n\nOptions:\n  --json      machine-readable output\n  --check     exit with code 3 if a reachable worker is not on the controller’s\n              build (offline workers do not count)\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agents", "update"],
+      "aliases": [],
+      "description": "Update workers to the controller’s build, one at a time: drain, update, wait until it is back (admin)",
+      "options": [
+        {
+          "flags": "--now",
+          "description": "do not wait for running jobs: cancel them and update straight away"
+        },
+        {
+          "flags": "--drain-timeout <duration>",
+          "description": "explicitly cancel jobs still running after this long (default: wait without cancelling)"
+        },
+        {
+          "flags": "--wait",
+          "description": "follow the rollout until it finishes or halts"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agents update [options] [nodes...]\n\nUpdate workers to the controller’s build, one at a time: drain, update, wait\nuntil it is back (admin)\n\nArguments:\n  nodes                       node names or ids (default: every online worker\n                              that is not current)\n\nOptions:\n  --now                       do not wait for running jobs: cancel them and\n                              update straight away\n  --drain-timeout <duration>  explicitly cancel jobs still running after this\n                              long (default: wait without cancelling)\n  --wait                      follow the rollout until it finishes or halts\n  -h, --help                  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agents", "cancel"],
+      "aliases": [],
+      "description": "Stop the running rollout; the worker being updated right now finishes (admin)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agents cancel [options]\n\nStop the running rollout; the worker being updated right now finishes (admin)\n\nOptions:\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agents", "set"],
+      "aliases": [],
+      "description": "Set auto-update and toolchain options: for one worker, or the cluster default (no node)",
+      "options": [
+        {
+          "flags": "--auto-update <mode>",
+          "description": "off | follow | window, or inherit (node only: use the cluster default)"
+        },
+        {
+          "flags": "--window <HH:MM-HH:MM>",
+          "description": "daily update window in the controller’s local time"
+        },
+        {
+          "flags": "--act <version>",
+          "description": "act for self-updating workers: a version, \"pinned\" or \"off\""
+        },
+        {
+          "flags": "--node <version>",
+          "description": "Node.js for self-updating workers: a version, \"pinned\" or \"off\""
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agents set [options] [node]\n\nSet auto-update and toolchain options: for one worker, or the cluster default\n(no node)\n\nArguments:\n  node                    node name or id; omit to change the cluster default\n\nOptions:\n  --auto-update <mode>    off | follow | window, or inherit (node only: use the\n                          cluster default)\n  --window <HH:MM-HH:MM>  daily update window in the controller’s local time\n  --act <version>         act for self-updating workers: a version, \"pinned\" or\n                          \"off\"\n  --node <version>        Node.js for self-updating workers: a version, \"pinned\"\n                          or \"off\"\n  -h, --help              display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["build"],
+      "aliases": [],
+      "description": "Build a Docker image from this project on a cluster node (BuildKit)",
+      "options": [
+        {
+          "flags": "-f, --file <Dockerfile>",
+          "description": "Dockerfile (default: <context>/Dockerfile)"
+        },
+        {
+          "flags": "-b, --build <name>",
+          "description": "use a build defined under `builds:` in gridstator.yml"
+        },
+        {
+          "flags": "--target <stage>",
+          "description": "Dockerfile stage to build"
+        },
+        {
+          "flags": "--build-arg <KEY=value>",
+          "description": "build argument (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-t, --tag <tag>",
+          "description": "image tag (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--platform <platform>",
+          "description": "target platform, e.g. linux/arm64 (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--output <mode>",
+          "description": "load (into the worker), push, tar (download as artifact) or none"
+        },
+        {
+          "flags": "--no-cache",
+          "description": "do not use the build cache"
+        },
+        {
+          "flags": "--pull",
+          "description": "always pull newer base images"
+        },
+        {
+          "flags": "--cache-from <spec>",
+          "description": "external cache source, e.g. type=registry,ref=... (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--cache-to <spec>",
+          "description": "external cache destination (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)"
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve"
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve, e.g. 8g"
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m"
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)"
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job"
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs"
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator build [options] [context]\n\nBuild a Docker image from this project on a cluster node (BuildKit)\n\nArguments:\n  context                  build context directory (default: .)\n\nOptions:\n  -f, --file <Dockerfile>  Dockerfile (default: <context>/Dockerfile)\n  -b, --build <name>       use a build defined under `builds:` in gridstator.yml\n  --target <stage>         Dockerfile stage to build\n  --build-arg <KEY=value>  build argument (repeatable) (default: [])\n  -t, --tag <tag>          image tag (repeatable) (default: [])\n  --platform <platform>    target platform, e.g. linux/arm64 (repeatable)\n                           (default: [])\n  --output <mode>          load (into the worker), push, tar (download as\n                           artifact) or none\n  --no-cache               do not use the build cache\n  --pull                   always pull newer base images\n  --cache-from <spec>      external cache source, e.g. type=registry,ref=...\n                           (repeatable) (default: [])\n  --cache-to <spec>        external cache destination (repeatable) (default: [])\n  --node <node>            run on this node (name or id)\n  --prefer <node>          prefer this worker when it can take the job\n                           (repeatable) (default: [])\n  -l, --label <label>      require a node label (repeatable) (default: [])\n  --cpus <n>               CPUs to reserve\n  --memory <size>          memory to reserve, e.g. 8g\n  --timeout <duration>     stop the job after this long, e.g. 30m\n  --priority <n>           higher runs first (-100..100)\n  --name <name>            display name for the job\n  -s, --secret-env <NAME>  forward a secret from this shell; masked in logs\n                           (repeatable) (default: [])\n  -d, --detach             print the job id and exit instead of streaming logs\n  --json                   print the submitted job as JSON (implies --detach)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["actions"],
+      "aliases": [],
+      "description": "Run GitHub Actions workflows on the cluster with act",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator actions [options] [command]\n\nRun GitHub Actions workflows on the cluster with act\n\nOptions:\n  -h, --help                display help for command\n\nCommands:\n  list [options]            List workflows and jobs in this project, with\n                            local-execution caveats\n  run [options] <workflow>  Run a workflow (or one job) against this working\n                            tree on a cluster node\n  help [command]            display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["actions", "list"],
+      "aliases": [],
+      "description": "List workflows and jobs in this project, with local-execution caveats",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator actions list [options]\n\nList workflows and jobs in this project, with local-execution caveats\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["actions", "run"],
+      "aliases": [],
+      "description": "Run a workflow (or one job) against this working tree on a cluster node",
+      "options": [
+        {
+          "flags": "-j, --job <id>",
+          "description": "run only this job"
+        },
+        {
+          "flags": "-e, --event <name>",
+          "description": "triggering event (default: push, else the first event the workflow declares)"
+        },
+        {
+          "flags": "-i, --input <key=value>",
+          "description": "workflow_dispatch input (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--var <key=value>",
+          "description": "value for the vars context (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--env <KEY=value>",
+          "description": "environment variable for workflow steps (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-P, --platform <label=image>",
+          "description": "runner image for a runs-on label (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--matrix <key:value>",
+          "description": "run only matching matrix combinations (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--event-payload <file>",
+          "description": "JSON file used as github.event"
+        },
+        {
+          "flags": "--docker-socket",
+          "description": "mount the worker's Docker socket into workflow containers"
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)"
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve"
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve, e.g. 8g"
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m"
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)"
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job"
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "default": []
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs"
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator actions run [options] <workflow>\n\nRun a workflow (or one job) against this working tree on a cluster node\n\nArguments:\n  workflow                      workflow file name (ci.yml), path, or name\n\nOptions:\n  -j, --job <id>                run only this job\n  -e, --event <name>            triggering event (default: push, else the first\n                                event the workflow declares)\n  -i, --input <key=value>       workflow_dispatch input (repeatable) (default:\n                                [])\n  --var <key=value>             value for the vars context (repeatable)\n                                (default: [])\n  --env <KEY=value>             environment variable for workflow steps\n                                (repeatable) (default: [])\n  -P, --platform <label=image>  runner image for a runs-on label (repeatable)\n                                (default: [])\n  --matrix <key:value>          run only matching matrix combinations\n                                (repeatable) (default: [])\n  --event-payload <file>        JSON file used as github.event\n  --docker-socket               mount the worker's Docker socket into workflow\n                                containers\n  --node <node>                 run on this node (name or id)\n  --prefer <node>               prefer this worker when it can take the job\n                                (repeatable) (default: [])\n  -l, --label <label>           require a node label (repeatable) (default: [])\n  --cpus <n>                    CPUs to reserve\n  --memory <size>               memory to reserve, e.g. 8g\n  --timeout <duration>          stop the job after this long, e.g. 30m\n  --priority <n>                higher runs first (-100..100)\n  --name <name>                 display name for the job\n  -s, --secret-env <NAME>       forward a secret from this shell; masked in logs\n                                (repeatable) (default: [])\n  -d, --detach                  print the job id and exit instead of streaming\n                                logs\n  --json                        print the submitted job as JSON (implies\n                                --detach)\n  -h, --help                    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["artifacts"],
+      "aliases": [],
+      "description": "List or download the artifacts of a job",
+      "options": [
+        {
+          "flags": "--download <name>",
+          "description": "download this artifact"
+        },
+        {
+          "flags": "-o, --out <path>",
+          "description": "where to write the download (\"-\" for stdout; default: the artifact file name)"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator artifacts [options] <id>\n\nList or download the artifacts of a job\n\nArguments:\n  id                 job id\n\nOptions:\n  --download <name>  download this artifact\n  -o, --out <path>   where to write the download (\"-\" for stdout; default: the\n                     artifact file name)\n  --json             machine-readable output\n  -h, --help         display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["doctor"],
+      "aliases": [],
+      "description": "Check this machine's setup and the connection to the controller",
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator doctor [options]\n\nCheck this machine's setup and the connection to the controller\n\nOptions:\n  --json      machine-readable output\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller"],
+      "aliases": [],
+      "description": "Run and manage the cluster controller",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller [options] [command]\n\nRun and manage the cluster controller\n\nOptions:\n  -h, --help                         display help for command\n\nCommands:\n  local                              Manage the controller owned by this account\n                                     (used by the VS Code extension)\n  init [options]                     Create a new cluster: CA, server\n                                     certificate, database and an admin token\n  start [options]                    Run the controller in the foreground\n  publish-build [options] [tarball]  Switch the controller to another build,\n                                     which workers then follow: this CLI's own\n                                     bundled build, or a gridstator .tgz (admin)\n  token                              Recovery: issue client tokens directly in\n                                     the controller database\n  install-service [options]          Run the controller as a systemd service\n                                     that starts at boot\n  uninstall-service [options]        Stop and remove the controller systemd\n                                     service (keeps data)\n  help [command]                     display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "local"],
+      "aliases": [],
+      "description": "Manage the controller owned by this account (used by the VS Code extension)",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller local [options] [command]\n\nManage the controller owned by this account (used by the VS Code extension)\n\nOptions:\n  -h, --help                  display help for command\n\nCommands:\n  status [options]            Inspect local ownership, endpoint and user-service\n                              state\n  ensure-login [options]      Reuse or create one shared local admin login\n                              without printing credentials\n  service [options] <action>  Control the local controller user service\n  configure [options]         Apply a coordinated endpoint change and restart,\n                              recovering on failure\n  help [command]              display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "local", "status"],
+      "aliases": [],
+      "description": "Inspect local ownership, endpoint and user-service state",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller local status [options]\n\nInspect local ownership, endpoint and user-service state\n\nOptions:\n  --data-dir <dir>  local controller data directory (default:\n                    \"/V1_DATA/controller\")\n  --config <path>   shared client configuration (default:\n                    \"/V1_CONFIG/client.json\")\n  --json            print JSON (local commands always print JSON)\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "local", "ensure-login"],
+      "aliases": [],
+      "description": "Reuse or create one shared local admin login without printing credentials",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)"
+        },
+        {
+          "flags": "--restore",
+          "description": "explicitly replace a revoked or expired local login"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller local ensure-login [options]\n\nReuse or create one shared local admin login without printing credentials\n\nOptions:\n  --data-dir <dir>  local controller data directory (default:\n                    \"/V1_DATA/controller\")\n  --config <path>   shared client configuration (default:\n                    \"/V1_CONFIG/client.json\")\n  --json            print JSON (local commands always print JSON)\n  --restore         explicitly replace a revoked or expired local login\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "local", "service"],
+      "aliases": [],
+      "description": "Control the local controller user service",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller local service [options] <action>\n\nControl the local controller user service\n\nArguments:\n  action            start, stop or restart\n\nOptions:\n  --data-dir <dir>  local controller data directory (default:\n                    \"/V1_DATA/controller\")\n  --config <path>   shared client configuration (default:\n                    \"/V1_CONFIG/client.json\")\n  --json            print JSON (local commands always print JSON)\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "local", "configure"],
+      "aliases": [],
+      "description": "Apply a coordinated endpoint change and restart, recovering on failure",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)"
+        },
+        {
+          "flags": "--host <address>",
+          "description": "address to listen on"
+        },
+        {
+          "flags": "--port <port>",
+          "description": "TCP port"
+        },
+        {
+          "flags": "--url <url>",
+          "description": "HTTPS controller URL reachable by every worker"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller local configure [options]\n\nApply a coordinated endpoint change and restart, recovering on failure\n\nOptions:\n  --data-dir <dir>  local controller data directory (default:\n                    \"/V1_DATA/controller\")\n  --config <path>   shared client configuration (default:\n                    \"/V1_CONFIG/client.json\")\n  --json            print JSON (local commands always print JSON)\n  --host <address>  address to listen on\n  --port <port>     TCP port\n  --url <url>       HTTPS controller URL reachable by every worker\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "init"],
+      "aliases": [],
+      "description": "Create a new cluster: CA, server certificate, database and an admin token",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--host <host>",
+          "description": "address to listen on",
+          "default": "0.0.0.0"
+        },
+        {
+          "flags": "--port <port>",
+          "description": "port to listen on",
+          "default": "7300"
+        },
+        {
+          "flags": "--san <names...>",
+          "description": "extra hostnames/IPs for the server certificate"
+        },
+        {
+          "flags": "--force",
+          "description": "create a new cluster even if one exists (the old data directory is backed up)"
+        },
+        {
+          "flags": "--no-login",
+          "description": "do not save the admin credentials as this machine's client configuration"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller init [options]\n\nCreate a new cluster: CA, server certificate, database and an admin token\n\nOptions:\n  --data-dir <dir>  controller data directory (default: \"/V1_DATA/controller\")\n  --host <host>     address to listen on (default: \"0.0.0.0\")\n  --port <port>     port to listen on (default: \"7300\")\n  --san <names...>  extra hostnames/IPs for the server certificate\n  --force           create a new cluster even if one exists (the old data\n                    directory is backed up)\n  --no-login        do not save the admin credentials as this machine's client\n                    configuration\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "start"],
+      "aliases": [],
+      "description": "Run the controller in the foreground",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--host <host>",
+          "description": "address to listen on (overrides controller.json)"
+        },
+        {
+          "flags": "--port <port>",
+          "description": "port to listen on (overrides controller.json)"
+        },
+        {
+          "flags": "--with-agent",
+          "description": "also run a worker agent in this process (embedded mode)"
+        },
+        {
+          "flags": "--agent-name <name>",
+          "description": "node name for the embedded agent",
+          "default": "<HOSTNAME>"
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once"
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)"
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g"
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller start [options]\n\nRun the controller in the foreground\n\nOptions:\n  --data-dir <dir>         controller data directory (default:\n                           \"/V1_DATA/controller\")\n  --host <host>            address to listen on (overrides controller.json)\n  --port <port>            port to listen on (overrides controller.json)\n  --with-agent             also run a worker agent in this process (embedded\n                           mode)\n  --agent-name <name>      node name for the embedded agent (default:\n                           \"<HOSTNAME>\")\n  --max-concurrency <n>    maximum number of jobs this node runs at once\n  --reserve-cpus <n>       CPUs held back for the host (never given to jobs)\n  --reserve-memory <size>  memory held back for the host, e.g. 8g\n  --labels <list>          comma-separated node labels, e.g. fast,ssd\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "publish-build"],
+      "aliases": [],
+      "description": "Switch the controller to another build, which workers then follow: this CLI's own bundled build, or a gridstator .tgz (admin)",
+      "options": [
+        {
+          "flags": "--no-wait",
+          "description": "do not wait for the controller to come back on the new build"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller publish-build [options] [tarball]\n\nSwitch the controller to another build, which workers then follow: this CLI's\nown bundled build, or a gridstator .tgz (admin)\n\nArguments:\n  tarball     gridstator package (.tgz); default: the build running this command\n\nOptions:\n  --no-wait   do not wait for the controller to come back on the new build\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "token"],
+      "aliases": [],
+      "description": "Recovery: issue client tokens directly in the controller database",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller token [options] [command]\n\nRecovery: issue client tokens directly in the controller database\n\nOptions:\n  -h, --help        display help for command\n\nCommands:\n  create [options]  Issue a client token without an admin token (needs access to\n                    the data directory; works while the controller runs)\n  help [command]    display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "token", "create"],
+      "aliases": [],
+      "description": "Issue a client token without an admin token (needs access to the data directory; works while the controller runs)",
+      "options": [
+        {
+          "flags": "--name <name>",
+          "description": "token name, e.g. \"admin-recovered\""
+        },
+        {
+          "flags": "--role <role>",
+          "description": "admin or operator",
+          "default": "admin"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--login",
+          "description": "save it as this machine's client login (replaces the current one)"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller token create [options]\n\nIssue a client token without an admin token (needs access to the data directory;\nworks while the controller runs)\n\nOptions:\n  --name <name>     token name, e.g. \"admin-recovered\"\n  --role <role>     admin or operator (default: \"admin\")\n  --data-dir <dir>  controller data directory (default: \"/V1_DATA/controller\")\n  --login           save it as this machine's client login (replaces the current\n                    one)\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "install-service"],
+      "aliases": [],
+      "description": "Run the controller as a systemd service that starts at boot",
+      "options": [
+        {
+          "flags": "--system",
+          "description": "install a system service (needs sudo) instead of a user service"
+        },
+        {
+          "flags": "--user <name>",
+          "description": "with --system: the user the service runs as (default: the sudo user)"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory"
+        },
+        {
+          "flags": "--print",
+          "description": "print the unit file instead of installing it"
+        },
+        {
+          "flags": "--force",
+          "description": "replace an existing unit"
+        },
+        {
+          "flags": "--with-agent",
+          "description": "also run a worker agent in the controller process"
+        },
+        {
+          "flags": "--agent-name <name>",
+          "description": "node name for that agent"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller install-service [options]\n\nRun the controller as a systemd service that starts at boot\n\nOptions:\n  --system             install a system service (needs sudo) instead of a user\n                       service\n  --user <name>        with --system: the user the service runs as (default: the\n                       sudo user)\n  --data-dir <dir>     controller data directory\n  --print              print the unit file instead of installing it\n  --force              replace an existing unit\n  --with-agent         also run a worker agent in the controller process\n  --agent-name <name>  node name for that agent\n  -h, --help           display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["controller", "uninstall-service"],
+      "aliases": [],
+      "description": "Stop and remove the controller systemd service (keeps data)",
+      "options": [
+        {
+          "flags": "--system",
+          "description": "remove the system service instead of the user service"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller uninstall-service [options]\n\nStop and remove the controller systemd service (keeps data)\n\nOptions:\n  --system    remove the system service instead of the user service\n  -h, --help  display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agent"],
+      "aliases": [],
+      "description": "Run a worker agent on this machine",
+      "options": [],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agent [options] [command]\n\nRun a worker agent on this machine\n\nOptions:\n  -h, --help                   display help for command\n\nCommands:\n  join [options] <url>         Register this machine with a controller\n  start [options]              Run the agent in the foreground\n  install-service [options]    Run the agent as a systemd service that starts at\n                               boot\n  uninstall-service [options]  Stop and remove the agent systemd service (keeps\n                               data)\n  help [command]               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agent", "join"],
+      "aliases": [],
+      "description": "Register this machine with a controller",
+      "options": [
+        {
+          "flags": "--token <token>",
+          "description": "join token from `gridstator token create --join`"
+        },
+        {
+          "flags": "--fingerprint <sha256>",
+          "description": "cluster CA fingerprint"
+        },
+        {
+          "flags": "--name <name>",
+          "description": "node name",
+          "default": "<HOSTNAME>"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory",
+          "default": "/V1_DATA/agent"
+        },
+        {
+          "flags": "--force",
+          "description": "join again even if this machine already joined a cluster"
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once"
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)"
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g"
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agent join [options] <url>\n\nRegister this machine with a controller\n\nArguments:\n  url                      controller URL, e.g. https://192.168.1.20:7300\n\nOptions:\n  --token <token>          join token from `gridstator token create --join`\n  --fingerprint <sha256>   cluster CA fingerprint\n  --name <name>            node name (default: \"<HOSTNAME>\")\n  --data-dir <dir>         agent data directory (default: \"/V1_DATA/agent\")\n  --force                  join again even if this machine already joined a\n                           cluster\n  --max-concurrency <n>    maximum number of jobs this node runs at once\n  --reserve-cpus <n>       CPUs held back for the host (never given to jobs)\n  --reserve-memory <size>  memory held back for the host, e.g. 8g\n  --labels <list>          comma-separated node labels, e.g. fast,ssd\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agent", "start"],
+      "aliases": [],
+      "description": "Run the agent in the foreground",
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory",
+          "default": "/V1_DATA/agent"
+        },
+        {
+          "flags": "--cache-size <size>",
+          "description": "maximum snapshot cache size",
+          "default": "10g"
+        },
+        {
+          "flags": "--keep-failed",
+          "description": "keep containers and volumes of failed jobs for inspection"
+        },
+        {
+          "flags": "--drain",
+          "description": "on shutdown, wait for running jobs instead of stopping them"
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once"
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)"
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g"
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agent start [options]\n\nRun the agent in the foreground\n\nOptions:\n  --data-dir <dir>         agent data directory (default: \"/V1_DATA/agent\")\n  --cache-size <size>      maximum snapshot cache size (default: \"10g\")\n  --keep-failed            keep containers and volumes of failed jobs for\n                           inspection\n  --drain                  on shutdown, wait for running jobs instead of\n                           stopping them\n  --max-concurrency <n>    maximum number of jobs this node runs at once\n  --reserve-cpus <n>       CPUs held back for the host (never given to jobs)\n  --reserve-memory <size>  memory held back for the host, e.g. 8g\n  --labels <list>          comma-separated node labels, e.g. fast,ssd\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agent", "install-service"],
+      "aliases": [],
+      "description": "Run the agent as a systemd service that starts at boot",
+      "options": [
+        {
+          "flags": "--system",
+          "description": "install a system service (needs sudo) instead of a user service"
+        },
+        {
+          "flags": "--user <name>",
+          "description": "with --system: the user the service runs as (default: the sudo user)"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory"
+        },
+        {
+          "flags": "--print",
+          "description": "print the unit file instead of installing it"
+        },
+        {
+          "flags": "--force",
+          "description": "replace an existing unit"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agent install-service [options]\n\nRun the agent as a systemd service that starts at boot\n\nOptions:\n  --system          install a system service (needs sudo) instead of a user\n                    service\n  --user <name>     with --system: the user the service runs as (default: the\n                    sudo user)\n  --data-dir <dir>  agent data directory\n  --print           print the unit file instead of installing it\n  --force           replace an existing unit\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "path": ["agent", "uninstall-service"],
+      "aliases": [],
+      "description": "Stop and remove the agent systemd service (keeps data)",
+      "options": [
+        {
+          "flags": "--system",
+          "description": "remove the system service instead of the user service"
+        }
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator agent uninstall-service [options]\n\nStop and remove the agent systemd service (keeps data)\n\nOptions:\n  --system    remove the system service instead of the user service\n  -h, --help  display help for command\n",
+      "stderr": ""
+    }
+  ]
+}

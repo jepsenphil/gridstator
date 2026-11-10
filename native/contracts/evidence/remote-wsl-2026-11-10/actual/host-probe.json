@@ -1,0 +1,11 @@
+{
+  "result": "passed",
+  "remoteName": "wsl",
+  "platform": "linux",
+  "arch": "x64",
+  "pid": 812836,
+  "workspace": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/workspace with spaces",
+  "extension": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/probe-extension",
+  "version": "1.145.0",
+  "serverDataFolder": "/home/pj/gridstator-validation-v00jpyv0/server"
+}

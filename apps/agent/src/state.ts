@@ -34,3 +34,27 @@ export async function readAgentState(dataDir: string): Promise<AgentState | unde
 export async function writeAgentState(dataDir: string, state: AgentState): Promise<void> {
   await writeJsonFile(agentStatePath(dataDir), state, 0o600);
 }
+
+const stateUpdates = new WeakMap<AgentState, Promise<void>>();
+
+/** Serialize durable name/address changes so simultaneous controller messages cannot lose fields. */
+export function updateAgentState(
+  dataDir: string,
+  state: AgentState,
+  update: (current: Readonly<AgentState>) => AgentState,
+): Promise<void> {
+  const operation = (stateUpdates.get(state) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(async () => {
+      const next = update(state);
+      if (next.nodeId !== state.nodeId || next.credential !== state.credential)
+        throw new GridstatorError(
+          'FORBIDDEN',
+          'A worker name or address update cannot replace its identity',
+        );
+      await writeAgentState(dataDir, next);
+      Object.assign(state, next);
+    });
+  stateUpdates.set(state, operation);
+  return operation;
+}

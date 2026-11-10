@@ -1,0 +1,12 @@
+Installed /tmp/gridstator-darwin-preview-hqlqmupv/installed prefix with spaces/bin/gridstator
+Verified release metadata: /tmp/gridstator-darwin-preview-hqlqmupv/installed prefix with spaces/share/gridstator/releases/v2.0.0-dev.1
+This is a native development preview; stable parity/platform/signing gates remain separate.
+Next: add the prefix bin directory to PATH, then choose explicit setup commands:
+  gridstator controller init
+  gridstator controller install-service
+  gridstator agent join <controller> --token <join-token> --fingerprint <ca-fingerprint>
+  gridstator agent install-service
+Downloading native Gridstator preview v2.0.0-dev.1 for linux/amd64
+Worker prerequisite missing from PATH: docker
+Worker prerequisite missing from PATH: act
+Worker prerequisite missing from PATH: git

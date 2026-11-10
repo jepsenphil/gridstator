@@ -1,0 +1,72 @@
+[
+  {
+    "id": "01M71PM43YSNQA0KTMPEBZCS1C",
+    "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+    "state": "lost",
+    "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+    "nodeName": "beta",
+    "snapshotId": null,
+    "attempt": 1,
+    "retryOf": null,
+    "createdAt": 1794279870590,
+    "assignedAt": 1794279870598,
+    "startedAt": 1794279870953,
+    "finishedAt": 1794279871440
+  },
+  {
+    "id": "01M71PM72DRVBBD158H1FGGET9",
+    "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+    "state": "succeeded",
+    "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+    "nodeName": "beta",
+    "snapshotId": null,
+    "attempt": 2,
+    "retryOf": "01M71PM43YSNQA0KTMPEBZCS1C",
+    "createdAt": 1794279873613,
+    "assignedAt": 1794279873621,
+    "startedAt": 1794279873835,
+    "finishedAt": 1794279877370
+  },
+  {
+    "id": "01M71PMBAKS1FMQP70G293XP91",
+    "name": "build Dockerfile --target runner",
+    "state": "succeeded",
+    "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+    "nodeName": "beta",
+    "snapshotId": "sha256:72dab04f93399b990e5c9e71c471cf46cd0dc73cb9b25758c8ff9d2448a74e4d",
+    "attempt": 1,
+    "retryOf": null,
+    "createdAt": 1794279877971,
+    "assignedAt": 1794279877977,
+    "startedAt": 1794279878174,
+    "finishedAt": 1794279880397
+  },
+  {
+    "id": "01M71PMEGAADNE1JWFV5TWD8JJ",
+    "name": "task:test [1/2]",
+    "state": "succeeded",
+    "nodeId": "01M71PK8S013YQM6ZG4BSJHX8G",
+    "nodeName": "alpha",
+    "snapshotId": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+    "attempt": 1,
+    "retryOf": null,
+    "createdAt": 1794279881226,
+    "assignedAt": 1794279881240,
+    "startedAt": 1794279881877,
+    "finishedAt": 1794279889120
+  },
+  {
+    "id": "01M71PMEGDG3F63WP867G68DHY",
+    "name": "task:test [2/2]",
+    "state": "succeeded",
+    "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+    "nodeName": "beta",
+    "snapshotId": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+    "attempt": 1,
+    "retryOf": null,
+    "createdAt": 1794279881229,
+    "assignedAt": 1794279881240,
+    "startedAt": 1794279881852,
+    "finishedAt": 1794279889162
+  }
+]

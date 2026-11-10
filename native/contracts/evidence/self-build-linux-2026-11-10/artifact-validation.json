@@ -1,0 +1,51 @@
+{
+  "linux-arm64": {
+    "path": "/tmp/gridstator-self-build-27roilfr/artifacts/self-build/linux-arm64/gridstator",
+    "sha256": "3116b21b94d97ddd5053a3bf1486e0e4a50db370cfce494c595a014eb4167d57",
+    "size": 26196872,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-selfbuild-c7ad6c10-bdc4-4027-9d84-942ce87578d6",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/arm64",
+      "sha256": "3116b21b94d97ddd5053a3bf1486e0e4a50db370cfce494c595a014eb4167d57",
+      "size": 26196872,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "not executed"
+  },
+  "linux-amd64": {
+    "path": "/tmp/gridstator-self-build-27roilfr/artifacts/self-build/linux-amd64/gridstator",
+    "sha256": "aa916aa57ef7a1653588dd224e0e3f1e563450e7ed593d7ed96e1f966e973883",
+    "size": 27182456,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-selfbuild-c7ad6c10-bdc4-4027-9d84-942ce87578d6",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/amd64",
+      "sha256": "aa916aa57ef7a1653588dd224e0e3f1e563450e7ed593d7ed96e1f966e973883",
+      "size": 27182456,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed --version, build-info and private controller init in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-selfbuild-c7ad6c10-bdc4-4027-9d84-942ce87578d6",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/amd64",
+      "size": 27182456,
+      "sha256": "aa916aa57ef7a1653588dd224e0e3f1e563450e7ed593d7ed96e1f966e973883"
+    }
+  }
+}

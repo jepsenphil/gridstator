@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { DigestSchema, TimestampSchema } from './common.js';
 import { JobSpecSchema, JobSchema, LogEntrySchema } from './job.js';
-import { NodeInfoSchema, NodeSettingsPatchSchema, NodeSchema } from './node.js';
+import { NodeInfoSchema, NodeNameSchema, NodeSettingsPatchSchema, NodeSchema } from './node.js';
 import { JobStateSchema } from './states.js';
 import { AutoUpdateModeSchema, ControllerBuildSchema, UpdateWindowSchema } from './update.js';
 import { ToolchainSettingsSchema } from './toolchain.js';
@@ -37,11 +37,7 @@ export const LogsResponseSchema = z.object({
 export type LogsResponse = z.infer<typeof LogsResponseSchema>;
 
 export const RegisterAgentRequestSchema = z.object({
-  name: z
-    .string()
-    .min(1)
-    .max(64)
-    .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, 'node names may contain letters, digits, ".", "_", "-"'),
+  name: NodeNameSchema,
   info: NodeInfoSchema,
   settings: NodeSettingsPatchSchema.optional(),
 });
@@ -54,7 +50,10 @@ export const RegisterAgentResponseSchema = z.object({
 });
 export type RegisterAgentResponse = z.infer<typeof RegisterAgentResponseSchema>;
 
-export const PatchNodeRequestSchema = NodeSettingsPatchSchema;
+export const PatchNodeRequestSchema = NodeSettingsPatchSchema.extend({
+  name: NodeNameSchema.optional(),
+});
+export type PatchNodeRequest = z.infer<typeof PatchNodeRequestSchema>;
 export const ListNodesResponseSchema = z.object({ nodes: z.array(NodeSchema) });
 export type ListNodesResponse = z.infer<typeof ListNodesResponseSchema>;
 

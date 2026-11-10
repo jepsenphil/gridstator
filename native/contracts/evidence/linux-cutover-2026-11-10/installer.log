@@ -1,0 +1,8 @@
+Installed /tmp/gridstator-recovery-arhXMg/installer prefix/bin/gridstator
+Verified release metadata: /tmp/gridstator-recovery-arhXMg/installer prefix/share/gridstator/releases/v2.0.0-rehearsal.1
+This is a native development preview; stable parity/platform/signing gates remain separate.
+Next: add the prefix bin directory to PATH, then choose explicit setup commands:
+  gridstator controller init
+  gridstator controller install-service
+  gridstator agent join <controller> --token <join-token> --fingerprint <ca-fingerprint>
+  gridstator agent install-service

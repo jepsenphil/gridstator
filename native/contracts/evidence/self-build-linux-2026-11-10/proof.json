@@ -1,0 +1,10 @@
+{
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "uncommitted working-tree snapshot; later shared edits not covered",
+  "jobId": "01M71GH6KGBEDGCTWJSP0HDMFE",
+  "snapshotId": "sha256:de20de76d20d4ba69358f3bf03e61b30ec8a21bdb7f6b6a69ac6a25ed7565bd7",
+  "result": "succeeded",
+  "archiveSha256": "384590746fca3a4ccdf64c25852c12e5bcc0999d7d5743af733f17d7c797a270",
+  "orchestratorSha256": "f058db48e70fa9bcf80114fd97c3a3de7a421a21f6d2a327f88da4a89337319d",
+  "controllerScope": "disposable foreground controller with embedded worker; no services"
+}

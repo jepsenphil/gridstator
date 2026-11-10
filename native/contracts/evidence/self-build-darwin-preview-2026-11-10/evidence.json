@@ -1,0 +1,129 @@
+{
+  "recordedAtUTC": "2026-11-10T05:33:57.288976+00:00",
+  "result": "passed",
+  "scope": "Actual final Darwin-memory-correction preview: Gridstator two-target Linux self-build and x64 clean Alpine runtime.",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview. Embedded sourceRevision is the parent reference commit; the native production/build checkpoint and supplemental inputs identify actual sources. No clean-release provenance claim.",
+  "productionCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "checkpointDocumentSha256": "75649df4b87371836c88c735538b597961bae40e2da3b146650f84aa398f713f",
+  "jobId": "01M71Y4MXHK68CVPM8DM1VTXYA",
+  "snapshotId": "sha256:f2fe505a2e561009cc08c7d7126ec3fde200aa248f6a9ae667d5bee3e0d66946",
+  "snapshotEntryCount": 1083,
+  "snapshotSourceBytes": 8660471,
+  "runSeconds": 585.463,
+  "submissionThroughFinishSeconds": 601.195,
+  "submittedCommand": [
+    "gridstator",
+    "run",
+    "--task",
+    "native-linux",
+    "--env",
+    "GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "--env",
+    "GRIDSTATOR_BUILD_ID=native-preview-20261110-cd6b769ebe6e",
+    "--detach",
+    "--json"
+  ],
+  "sourceVerification": {
+    "productionCheckpointEntries": 40,
+    "allProductionCheckpointEntriesMatchSubmittedSnapshot": true,
+    "snapshotManifestDigest": "sha256:f2fe505a2e561009cc08c7d7126ec3fde200aa248f6a9ae667d5bee3e0d66946",
+    "artifactSourceManifestEntries": 763,
+    "allSourceManifestEntriesMatchSubmittedSnapshot": true
+  },
+  "supplementalBuildInputs": {
+    "recordedAtUTC": "2026-11-10T05:16:15.491380+00:00",
+    "snapshotId": "sha256:f2fe505a2e561009cc08c7d7126ec3fde200aa248f6a9ae667d5bee3e0d66946",
+    "coreCheckpointEntries": 40,
+    "coreCheckpointUnchanged": true,
+    "supplementalBuildInputs": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "snapshotEntry": {
+          "path": "LICENSE",
+          "type": "file",
+          "size": 11358,
+          "digest": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "scripts/install-native.sh",
+        "sha256": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+        "snapshotEntry": {
+          "path": "scripts/install-native.sh",
+          "type": "file",
+          "size": 9606,
+          "digest": "sha256:9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+          "executable": true
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "gridstator.yml",
+        "sha256": "87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+        "snapshotEntry": {
+          "path": "gridstator.yml",
+          "type": "file",
+          "size": 776,
+          "digest": "sha256:87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      }
+    ]
+  },
+  "archive": {
+    "name": "native/self-build.tar",
+    "sha256": "afb7b9aad6ab7c2b76f48e7ad7eca71fa2aa1909f35a0c8b6cb3420d0e255963",
+    "size": 54220288,
+    "retainedIgnoredPath": "native/self-build/proof-01M71Y4MXHK68CVPM8DM1VTXYA/self-build.tar"
+  },
+  "artifacts": {
+    "linux-arm64": {
+      "binary": "native/self-build/proof-01M71Y4MXHK68CVPM8DM1VTXYA/linux-arm64/gridstator",
+      "metadata": "native/self-build/proof-01M71Y4MXHK68CVPM8DM1VTXYA/linux-arm64/build-info.json",
+      "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+      "size": 26556128,
+      "runtime": "not executed"
+    },
+    "linux-amd64": {
+      "binary": "native/self-build/proof-01M71Y4MXHK68CVPM8DM1VTXYA/linux-amd64/gridstator",
+      "metadata": "native/self-build/proof-01M71Y4MXHK68CVPM8DM1VTXYA/linux-amd64/build-info.json",
+      "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+      "size": 27550072,
+      "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig"
+    }
+  },
+  "actualEnvironment": {
+    "hostOS": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "hostArchitecture": "x86_64",
+    "buildContainer": "build-container.json",
+    "toolVersions": "build-toolchain.json",
+    "runtimeImage": "runtime-image.json"
+  },
+  "nativeCodeChangesDuringProof": false,
+  "cleanup": [
+    "cleanup.json",
+    "cleanup-audit.json"
+  ],
+  "limits": [
+    "Git sourceRevision is the parent commit of an uncommitted preview. Exact inputs are identified by the canonical snapshot and source manifests; no clean/reproducible stable-release provenance claim.",
+    "linux/amd64 passed build-info/version/init and live TLS controller status plus graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig; this does not repeat the full executor/CLI/service acceptance suite against this static binary.",
+    "linux/arm64 has correct ELF machine/static linkage and build evidence only in this proof; any actual ARM Linux runtime evidence is recorded separately.",
+    "Mac compilation/runtime and four-target packaging are separate evidence. No signing/notarization, WSL2, physical Intel Mac, service/reboot, external publication or live cluster deployment is implied."
+  ],
+  "predecessor": {
+    "buildId": "native-preview-20261110-1fd6e3d425b3",
+    "evidence": "native/contracts/evidence/self-build-buildkit-preview-2026-11-10",
+    "state": "Frozen historical bytes/evidence preserved unchanged.",
+    "changedProductionInputs": [
+      "native/src/worker.rs"
+    ],
+    "correction": "Darwin host available-memory sampler follows libuv-compatible free+inactive page accounting with overflow-safe wide arithmetic; separate actual M4 workflow established runtime behavior."
+  }
+}

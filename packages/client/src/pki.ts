@@ -1,3 +1,4 @@
+import { X509Certificate } from 'node:crypto';
 import { GridstatorError, certificateFingerprint, normalizeFingerprint } from '@gridstator/shared';
 import { networkError, rawRequest, readBody } from './http.js';
 
@@ -33,6 +34,9 @@ export async function fetchPinnedCa(baseUrl: string, fingerprint: string): Promi
   }
   let actual: string;
   try {
+    // The fingerprint covers one certificate. Never pass additional, unpinned roots from the
+    // bootstrap response to later TLS connections (including VS Code's live API client).
+    pem = new X509Certificate(pem).toString();
     actual = certificateFingerprint(pem);
   } catch {
     throw new GridstatorError('TLS_PIN_MISMATCH', `${baseUrl} returned an invalid CA certificate`);

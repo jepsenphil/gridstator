@@ -1,0 +1,11 @@
+{
+  "result": "clean",
+  "controllerPid": 1451855,
+  "reverseTunnelPid": 1453303,
+  "ownedJobStates": {
+    "01M71QXT625ACEHJTZYR379G3F": "cancelled",
+    "01M71QXGC0Q0FRE480B7NQ8J6P": "succeeded"
+  },
+  "ownedRunningContainers": 0,
+  "scope": "Only verified private fixture parent/controller/tunnel stopped; no existing cluster affected."
+}

@@ -1,0 +1,24 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running tests/executor_contract.rs (target/debug/deps/executor_contract-d71a623940f94f5d)
+
+running 17 tests
+test cleanup_respects_owned_node_and_keeps_explicit_active_jobs ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test keep_failed_preserves_command_resources_until_explicit_owned_cleanup ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_cancellation_cleans_labelled_workflow_containers ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_failed_job_and_missing_workflow_preserve_source_errors ... ignored, requires real Docker/act; run the explicit tool suite in TESTING.md
+test real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_socket_opt_in_shares_runner_files_with_nested_container ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_buildx_cancellation_interrupts_running_build ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_cancellation_and_timeout_stop_actual_container ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_success_streams_env_cache_and_missing_image_is_clear ... ignored, requires real Docker; run the explicit tool suite in TESTING.md
+test act_log_parser_tracks_steps_formats_output_and_clamps_negative_duration ... ok
+test checkout_rewrite_changes_only_same_repository_and_preserves_foreign_refs ... ok
+test environment_plan_keeps_multiline_secrets_out_of_argument_values ... ok
+
+test result: ok. 3 passed; 0 failed; 14 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

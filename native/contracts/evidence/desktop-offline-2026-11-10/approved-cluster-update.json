@@ -1,0 +1,50 @@
+{
+  "result": "passed",
+  "authorization": "User explicitly approved upgrading the live controller and laptop worker",
+  "from": "native-preview-20261110-6994d2cc804b",
+  "to": "native-desktop-20261110-d99c20f05013",
+  "controller": {
+    "id": "native-desktop-20261110-d99c20f05013",
+    "version": "2.0.0-dev.1",
+    "runtime": "rust",
+    "target": "linux/amd64",
+    "sha256": "51adc0605ed49a1801b97d1664277e5a2d4a1c41ce87a449534a1aad19f86b06",
+    "updatable": true,
+    "reason": null,
+    "lastRollback": null,
+    "selfUpdate": {
+      "available": true,
+      "reason": null
+    }
+  },
+  "workers": [
+    {
+      "id": "01M73EVT67PZ1H071YK30EXYGJ",
+      "name": "laptop-v2",
+      "status": "online",
+      "lastSeenAt": 1794341947638,
+      "state": "current",
+      "build": "native-desktop-20261110-d99c20f05013",
+      "detail": null,
+      "autoUpdate": "follow",
+      "canUpdate": true
+    },
+    {
+      "id": "01M73H8CW57VX01DZXK5KCAZFP",
+      "name": "DESKTOP-JEL",
+      "status": "online",
+      "lastSeenAt": 1794341950300,
+      "state": "current",
+      "build": "native-desktop-20261110-d99c20f05013",
+      "detail": null,
+      "autoUpdate": "follow",
+      "canUpdate": true
+    }
+  ],
+  "clusterIdentityPreserved": true,
+  "controllerServiceActive": true,
+  "pendingConfirmation": null,
+  "previousBuildRetained": "native-preview-20261110-6994d2cc804b",
+  "databaseSnapshotRetained": true,
+  "lastRollback": null
+}

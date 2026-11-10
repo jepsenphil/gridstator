@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-rehearsal.3",
+  "buildId": "rehearsal-schema-crash",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "linux/amd64",
+  "size": 54872016,
+  "sha256": "215edd112c4ce40723d115218e95ae68ba14421a35d68a99280e2eec5a741c28"
+}

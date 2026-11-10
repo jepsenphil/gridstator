@@ -1,0 +1,143 @@
+/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/Docker.dmg: OK
+Checksumming Protective Master Boot Record (MBR : 0)…
+Protective Master Boot Record (MBR :: verified   CRC32 $3D7253F1
+Checksumming GPT Header (Primary GPT Header : 1)…
+ GPT Header (Primary GPT Header : 1): verified   CRC32 $AABF0091
+Checksumming GPT Partition Data (Primary GPT Table : 2)…
+GPT Partition Data (Primary GPT Tabl: verified   CRC32 $990D5AAE
+Checksumming  (Apple_Free : 3)…
+                    (Apple_Free : 3): verified   CRC32 $00000000
+Checksumming EFI System Partition (C12A7328-F81F-11D2-BA4B-00A0C93EC93B : 4)…
+EFI System Partition (C12A7328-F81F-: verified   CRC32 $B54B659C
+Checksumming disk image (Apple_HFS : 5)…
+          disk image (Apple_HFS : 5): verified   CRC32 $A57951C9
+Checksumming  (Apple_Free : 6)…
+                    (Apple_Free : 6): verified   CRC32 $00000000
+Checksumming GPT Partition Data (Backup GPT Table : 7)…
+GPT Partition Data (Backup GPT Table: verified   CRC32 $990D5AAE
+Checksumming GPT Header (Backup GPT Header : 8)…
+  GPT Header (Backup GPT Header : 8): verified   CRC32 $EC10603F
+verified   CRC32 $774931EF
+/dev/disk6          	GUID_partition_scheme          	
+/dev/disk6s1        	EFI                            	
+/dev/disk6s2        	Apple_HFS                      	/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/Library/LoginItems/DockerHelper.app
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/Library/LoginItems/DockerHelper.app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.build
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.build
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.diagnose
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.diagnose
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.krun
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.krun
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.sailor
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.sailor
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.socket
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.socket
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.virtualization
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.virtualization
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (GPU).app
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (GPU).app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Plugin).app
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Plugin).app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Renderer).app
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Renderer).app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper.app
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper.app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/app_shim_loader
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/app_shim_loader
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Mantle.framework/Versions/Current/.
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Mantle.framework/Versions/Current/.
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/Docker Desktop.app
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/install
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/install
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/qemu-img
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/qemu-img
+--prepared:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/uninstall
+--validated:/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/uninstall
+/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app: valid on disk
+/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app: satisfies its Designated Requirement
+Executable=/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app/Contents/MacOS/com.docker.backend
+Identifier=com.docker.docker
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20500 size=1725085 flags=0x10000(runtime) hashes=53898+7 location=embedded
+VersionPlatform=1
+VersionMin=917504
+VersionSDK=984320
+Hash type=sha256 size=32
+CandidateCDHash sha256=81343da5b5c9c6b5fd9f3c958c86f117351ccadb
+CandidateCDHashFull sha256=81343da5b5c9c6b5fd9f3c958c86f117351ccadb673f3c1b5b59236fa5103af9
+Hash choices=sha256
+CMSDigest=81343da5b5c9c6b5fd9f3c958c86f117351ccadb673f3c1b5b59236fa5103af9
+CMSDigestType=2
+Executable Segment base=0
+Executable Segment limit=140132352
+Executable Segment flags=0x1
+Page size=4096
+CDHash=81343da5b5c9c6b5fd9f3c958c86f117351ccadb
+Signature size=8971
+Authority=Developer ID Application: Docker Inc (9BNSXJN65R)
+Authority=Developer ID Certification Authority
+Authority=Apple Root CA
+Timestamp=Nov 5, 2026 at 10:16:47 AM
+Info.plist entries=29
+TeamIdentifier=9BNSXJN65R
+Runtime Version=15.5.0
+Sealed Resources version=2 rules=13 files=85
+Internal requirements count=1 size=180
+/Users/philjepsen/gridstator-validation.I50ONpwm/docker-desktop/mount/Docker.app: accepted
+source=Notarized Developer ID
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.socket
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.socket
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Renderer).app
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Renderer).app
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/ReactiveObjC.framework/Versions/Current/.
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Squirrel.framework/Versions/Current/.
+--prepared:/Applications/Docker.app/Contents/MacOS/qemu-img
+--validated:/Applications/Docker.app/Contents/MacOS/qemu-img
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper.app
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper.app
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (GPU).app
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (GPU).app
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Mantle.framework/Versions/Current/.
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Mantle.framework/Versions/Current/.
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Plugin).app
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Docker Desktop Helper (Plugin).app
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.sailor
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.sailor
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.krun
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.krun
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.virtualization
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.virtualization
+--prepared:/Applications/Docker.app/Contents/MacOS/install
+--validated:/Applications/Docker.app/Contents/MacOS/install
+--prepared:/Applications/Docker.app/Contents/Library/LoginItems/DockerHelper.app
+--validated:/Applications/Docker.app/Contents/Library/LoginItems/DockerHelper.app
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.build
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.build
+--prepared:/Applications/Docker.app/Contents/MacOS/com.docker.diagnose
+--validated:/Applications/Docker.app/Contents/MacOS/com.docker.diagnose
+--prepared:/Applications/Docker.app/Contents/MacOS/uninstall
+--validated:/Applications/Docker.app/Contents/MacOS/uninstall
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/app_shim_loader
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/app_shim_loader
+--prepared:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/Helpers/chrome_crashpad_handler
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app/Contents/Frameworks/Electron Framework.framework/Versions/Current/.
+--validated:/Applications/Docker.app/Contents/MacOS/Docker Desktop.app
+/Applications/Docker.app: valid on disk
+/Applications/Docker.app: satisfies its Designated Requirement
+4.99.0
+Verified application installed; no first-launch agreement accepted.

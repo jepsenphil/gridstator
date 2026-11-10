@@ -1,0 +1,21 @@
+{
+  "root": "/home/pj/gridstator-validation-v00jpyv0/gui-proof",
+  "workspace": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/workspace with spaces",
+  "config": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/client.json",
+  "cli": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/gridstator",
+  "controllerData": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/local-admin-hints",
+  "agentData": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/agent-unused",
+  "cache": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/cache",
+  "url": "https://127.0.0.1:47299",
+  "remotePort": 47299,
+  "clusterId": "01M71ZS3G2F1CG0K2B6ZNYP7V5",
+  "nodeId": "01M71ZS3XRAB9PAR5H9CDCVER9",
+  "nodeName": "private-actual-wsl-editor",
+  "nativeBuildId": "native-preview-20261110-cd6b769ebe6e",
+  "nativeSha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+  "caFingerprint": "sha256:0b5f5bc5d1a0a672fd38d611267fc1b5b63a1038efb5d17c01b6de8e4a1d84ff",
+  "packageSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "projectYaml": "version: 1\nproject: actual-wsl-native-smoke\ndefaults:\n  image: alpine:3.21\n  resources:\n    cpus: 1\n    memory: 128m\ntasks:\n  proof:\n    command: |\n      set -eu\n      cat 'payload with spaces.txt'\n      mkdir -p reports\n      printf '%s\\n' 'remote-native-artifact' > reports/result.txt\n      printf '%s\\n' '<testsuites><testsuite name=\"remote\" tests=\"1\"><testcase name=\"actual WSL snapshot\" classname=\"remote\" file=\"source.js\" line=\"1\"/></testsuite></testsuites>' > reports/junit.xml\n    artifacts: [reports/result.txt]\n    junit: reports/junit.xml\n  slow:\n    command: echo remote-running; sleep 300\n",
+  "controllerPid": 813249,
+  "workerPid": 813386
+}

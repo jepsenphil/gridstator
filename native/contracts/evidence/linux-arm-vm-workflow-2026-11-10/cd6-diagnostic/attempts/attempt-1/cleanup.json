@@ -1,0 +1,12 @@
+{
+  "ownedOuterContainer": "gridstator-linux-arm-proof-cd6-6c82",
+  "ownedStateVolume": "gridstator-linux-arm-proof-cd6-6c82-state",
+  "nodeIds": [],
+  "existingDesktopRestarted": false,
+  "privilegedContainerUsed": false,
+  "globalDockerConfigurationChanged": false,
+  "ownedJobResources": [],
+  "ownedOuterContainerRemoved": true,
+  "privateStateVolumeAndCredentialsRemoved": true,
+  "ownedImageTagRemoved": true
+}

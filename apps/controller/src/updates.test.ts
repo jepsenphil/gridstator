@@ -673,8 +673,12 @@ describe('managed toolchain', () => {
     await a.connect(agentBuild(target.id, { tools: SYSTEM }));
     const behind = await waitFor(async () => {
       const n = await node('a');
-      return n.update?.detail?.includes('toolchain') ? n : undefined;
-    }, 'the toolchain gap');
+      // The two archives are prepared independently; one gap can appear before both are ready.
+      return n.update?.detail?.includes('act 0.2.80 (system) → 9.9.1') &&
+        n.update.detail.includes('node 24.15.0 (system) → 9.9.2')
+        ? n
+        : undefined;
+    }, 'both toolchain gaps');
     expect(behind.update?.state).toBe('behind');
     expect(behind.update?.detail).toContain('act 0.2.80 (system) → 9.9.1');
     expect(behind.update?.detail).toContain('node 24.15.0 (system) → 9.9.2');

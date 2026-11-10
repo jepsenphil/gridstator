@@ -49,6 +49,14 @@ with `install-service --system` get the group automatically.
 **`act` or `buildx` missing in `gridstator nodes`** — install them on that worker and restart its
 agent; capabilities are detected at agent start.
 
+**Jobs become `lost` immediately and the worker repeatedly reconnects with `replaced by a newer
+connection` (code 4001)** — two agent processes may be using the same agent data directory and
+node credential. Check both `systemctl status gridstator-agent` and
+`systemctl --user status gridstator-agent` on the worker. Keep one service enabled; stop and
+disable the duplicate in the other service manager. For example, when keeping the system
+service, use `systemctl --user disable --now gridstator-agent`. Verify that the worker's
+`connectedAt` stays stable and a validation job completes before retrying the lost job.
+
 **`A node named "x" is already registered`** when joining — pick another `--name`, or remove the old
 node first (`gridstator nodes remove x`).
 

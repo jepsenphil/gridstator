@@ -1,0 +1,4 @@
+{
+  "exitCode": 0,
+  "stderr": "Cluster initialized in /proof/controller\nController: https://127.0.0.1:4242\nCA fingerprint: sha256:492cd2d9fb6829c35646fcce96e6d63ed04b60d7d2919e03a6327650824148d2\nAdmin token: <redacted>\nSaved local credentials to /proof/client.json\n"
+}

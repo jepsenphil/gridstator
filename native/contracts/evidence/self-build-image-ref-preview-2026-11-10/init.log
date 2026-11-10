@@ -1,0 +1,5 @@
+Cluster initialized in /tmp/gridstator-image-ref-self-build-vjtd1r_l/controller
+Controller: https://127.0.0.1:0
+CA fingerprint: sha256:4c7837ab89bd3abc5ad076a5eab7089e65a03844f67135b5f320e6bd1f9dfc20
+Admin token: <redacted-token>
+Saved local credentials to /tmp/gridstator-image-ref-self-build-vjtd1r_l/client.json

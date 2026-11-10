@@ -1,0 +1,15 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.40s
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-1cf98379990e2ab8)
+
+running 6 tests
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "01M71PQQPRHV0285KWEK4XRRQQ",
+    "name": "actions ci.yml (test) on push",
+    "state": "succeeded",
+    "nodeId": "01M71PQJSGV9Z3ENXGAWMA0EKJ",
+    "nodeName": "alpha",
+    "snapshotId": "sha256:f58b5ab59601a192336b8ff3da5f0134240666d2513f8cb86683c529b70b0c99",
+    "attempt": 1,
+    "retryOf": null,
+    "createdAt": 1794279988952,
+    "assignedAt": 1794279988958,
+    "startedAt": 1794279989197,
+    "finishedAt": 1794280025485
+  }
+]

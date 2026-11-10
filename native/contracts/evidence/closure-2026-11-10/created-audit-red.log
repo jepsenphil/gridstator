@@ -1,0 +1,25 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.28s
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 1 test
+test source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries ... FAILED
+
+failures:
+
+---- source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries stdout ----
+Controller listening on https://127.0.0.1:42233
+
+thread 'source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries' (1140294) panicked at tests/controller_lifecycle.rs:1057:5:
+assertion `left == right` failed
+  left: ["queued", "assigned", "starting", "running", "succeeded"]
+ right: ["created", "queued", "assigned", "starting", "running", "succeeded"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.34s
+
+error: test failed, to rerun pass `--test controller_lifecycle`

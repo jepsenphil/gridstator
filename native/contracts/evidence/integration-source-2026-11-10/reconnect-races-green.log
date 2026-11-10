@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.37s
+     Running tests/controller_reconnect_races.rs (native/target/debug/deps/controller_reconnect_races-3dd885cb9ddbab3f)
+
+running 3 tests
+test empty_refresh_keeps_running_work_and_pending_operator_cancellation ... Controller listening on https://127.0.0.1:46337
+ok
+test empty_refresh_keeps_same_generation_running_work ... Controller listening on https://127.0.0.1:33687
+ok
+test refresh_before_reading_assignment_keeps_identity_resources_and_success ... Controller listening on https://127.0.0.1:41703
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.28s
+

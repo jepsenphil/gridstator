@@ -1,0 +1,24 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.04s
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-283459ea04c477c9)
+
+running 1 test
+test local_operator_promotion_preserves_the_saved_public_cluster_url ... FAILED
+
+failures:
+
+---- local_operator_promotion_preserves_the_saved_public_cluster_url stdout ----
+
+thread 'local_operator_promotion_preserves_the_saved_public_cluster_url' (1243280) panicked at tests/cli_contract.rs:340:70:
+assertion `left == right` failed
+  left: String("https://127.0.0.1:7300")
+ right: "https://192.168.1.77:7300"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    local_operator_promotion_preserves_the_saved_public_cluster_url
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.30s
+
+error: test failed, to rerun pass `--test cli_contract`

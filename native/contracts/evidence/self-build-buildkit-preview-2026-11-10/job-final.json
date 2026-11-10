@@ -1,0 +1,138 @@
+{
+  "job": {
+    "id": "01M71WTMJG104TA719VT67QRY3",
+    "name": "task:native-linux",
+    "kind": "command",
+    "state": "succeeded",
+    "stateReason": null,
+    "priority": 0,
+    "owner": "local-admin",
+    "snapshotId": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+    "spec": {
+      "kind": "command",
+      "name": "task:native-linux",
+      "env": {
+        "GRIDSTATOR_SOURCE_REVISION": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "GRIDSTATOR_BUILD_ID": "native-preview-20261110-1fd6e3d425b3"
+      },
+      "secretEnv": {},
+      "snapshot": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+      "workdir": ".",
+      "resources": {
+        "cpus": 2,
+        "memoryMb": 4096
+      },
+      "target": {
+        "labels": [],
+        "prefer": []
+      },
+      "timeoutSeconds": 3600,
+      "retry": {
+        "max": 0,
+        "on": [
+          "lost"
+        ]
+      },
+      "priority": 0,
+      "project": "gridstator-native-v2",
+      "image": "rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c",
+      "command": [
+        "sh",
+        "-c",
+        "bash native/scripts/build-linux.sh both"
+      ],
+      "artifacts": [
+        "native/self-build"
+      ]
+    },
+    "nodeId": "01M71WS33NXTPHQ7CSEGK3ZM9Y",
+    "nodeName": "self-build-embedded",
+    "assignmentId": "01M71WTMJR6XCDQ6VCM7PJN2EH",
+    "attempt": 1,
+    "retryOf": null,
+    "oomKilled": false,
+    "exitCode": 0,
+    "error": null,
+    "queuePosition": null,
+    "logSeq": 58,
+    "outputs": null,
+    "artifacts": [
+      {
+        "name": "native/self-build.tar",
+        "digest": "sha256:7e254b6c488e9f3d9ceb8321b0e8db29db3c7eaaedea2385d879e674be607033",
+        "size": 54274560
+      }
+    ],
+    "groupId": null,
+    "shardIndex": null,
+    "shardTotal": null,
+    "createdAt": 1794286375504,
+    "queuedAt": 1794286375504,
+    "assignedAt": 1794286375510,
+    "startedAt": 1794286414154,
+    "finishedAt": 1794286854933,
+    "cancelRequestedAt": null
+  },
+  "events": [
+    {
+      "id": 1,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286375505,
+      "type": "state",
+      "fromState": null,
+      "toState": "created",
+      "actor": "local-admin",
+      "message": null
+    },
+    {
+      "id": 2,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286375505,
+      "type": "state",
+      "fromState": "created",
+      "toState": "queued",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 3,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286375512,
+      "type": "state",
+      "fromState": "queued",
+      "toState": "assigned",
+      "actor": "controller",
+      "message": null
+    },
+    {
+      "id": 4,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286375520,
+      "type": "state",
+      "fromState": "assigned",
+      "toState": "starting",
+      "actor": "node:self-build-embedded",
+      "message": null
+    },
+    {
+      "id": 5,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286414159,
+      "type": "state",
+      "fromState": "starting",
+      "toState": "running",
+      "actor": "node:self-build-embedded",
+      "message": null
+    },
+    {
+      "id": 6,
+      "jobId": "01M71WTMJG104TA719VT67QRY3",
+      "ts": 1794286854960,
+      "type": "state",
+      "fromState": "running",
+      "toState": "succeeded",
+      "actor": "node:self-build-embedded",
+      "message": null
+    }
+  ]
+}

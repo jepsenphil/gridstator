@@ -1,0 +1,5 @@
+MainPID=4214
+ActiveState=active
+SubState=running
+FragmentPath=/etc/systemd/system/gridstator-agent.service
+InvocationID=07f8df94764b4d55a8f4063997d40380

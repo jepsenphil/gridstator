@@ -1,0 +1,186 @@
+{
+  "processesBefore": [
+    {
+      "Id": 2052,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 3032,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 5648,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 10044,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 10868,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 13096,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 14256,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 14832,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 18124,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 19804,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 20128,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 20816,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 27840,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 28560,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 28784,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 30884,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 31536,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 31928,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 34912,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 41776,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 42048,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 44936,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    },
+    {
+      "Id": 47516,
+      "Path": "C:\\Program Files\\Microsoft VS Code\\Code.exe"
+    }
+  ],
+  "pipesBefore": [],
+  "windowsUser": "Phil",
+  "copyExitCode": 1,
+  "windowsRoot": "/mnt/c/Users/User/AppData/Local/Temp/gridstator-wsl-v00jpyv0",
+  "privateCode": "/mnt/c/Users/User/AppData/Local/Temp/gridstator-wsl-v00jpyv0/CodeApp/Code.exe",
+  "originalCodeExeSha256": "f1e1d79be5f50a238681738f813c4b353aad69f4b05f068899ec98a2d1b74c32",
+  "privateCodeExeSha256": "f1e1d79be5f50a238681738f813c4b353aad69f4b05f068899ec98a2d1b74c32",
+  "originalProductSha256": "3020a521d79f7cca8ab5034416808f89a4e915efb90fc744b4a844e039389b2c",
+  "privateProductSha256": "b8c0b8d810b45d3f6f9f1326d6925eaa015158d1c4d3fa015c3c912d5d9ae700",
+  "productSemanticDelta": {
+    "serverDataFolderName": {
+      "before": ".vscode-server",
+      "after": "gridstator-validation-v00jpyv0/server"
+    }
+  },
+  "remoteWslVersion": "1.104.7",
+  "remoteWslAllFilesByteIdentical": true,
+  "remoteWslFiles": {
+    ".vsixmanifest": "42bdb52a6ba179e27b25542937d926b16dc5f63a12cd469c6cc6160458c9f554",
+    "changelog.md": "a290ee03196ff275370175b69fe36d7d441d3c8d188439e95d891b407f8c1bd1",
+    "LICENSE.txt": "1439e18dae6c9ba9cdd12cfdad8c8180702c2c00b2289dfddb8f6f70ac46d436",
+    "package.json": "635ab74b5ba1962ed5b33d37d646626293e40b38f236473466eee6d805a8cb1c",
+    "package.nls.cs.json": "f597d1e1d62c65532775e605d3cf8be5c4a5a272f8e5ffb8e247c83066f9c4ba",
+    "package.nls.de.json": "789590fb632473df9dc5164f98a9df3246fe51410217b6c3b73b85bd14130edd",
+    "package.nls.es.json": "59cb82ab0f4df1246c40dddf31e1e7bb86c79e00ba00b83b1bb586f7c63b58a8",
+    "package.nls.fr.json": "4675756919f6f83dffa0bb3dad0d71bbf86b6bca3523d2ef5c1356bd6cc10c16",
+    "package.nls.it.json": "72d2b30315e79db079284189099379ae875c1782b72bd48fe0bf94097e5e6617",
+    "package.nls.ja.json": "9f77575fc57aba2a7769eaaa833805a957bd8596e6b4cbce61a9530324db7b0d",
+    "package.nls.json": "d87b20872691c071d7ca85dd16a7fe88e868afa17d62b9d7eb9bb772cb894765",
+    "package.nls.ko.json": "fbb3a1bdb260ecddbea789626f8ecb1849dfd261b541bf01d56afae08ad1306d",
+    "package.nls.pl.json": "c051815af0cb00d72a553bcab2c25af2858ed76c31f66548c716e62f9d0b2cd6",
+    "package.nls.pt-br.json": "d52bcd20de4486e6e9a3a57b7ca4a782a39cdf35e77db54c9a4b773db3282f63",
+    "package.nls.qps-ploc.json": "80a8cda20213adf7cc783822c7149beaed6c4eb562a4bfdd5deba0d97910842b",
+    "package.nls.ru.json": "e7647caa9b32fd26f97b0fe4d88b5fea8e9aa8c3e8cf8bc9545b43db29d6c0ca",
+    "package.nls.tr.json": "c98133f45f230b2b89b73794d614762d67dcb670ca17bc5cafd9d2c103d98639",
+    "package.nls.zh-cn.json": "3b9d6aa954f086c95ed89b462b401cfc389781220b5ab03e297c493abca66e6d",
+    "package.nls.zh-tw.json": "dcd5f1783a7ef59502ec079ba952bf6bc211767eae89747a1cd9296f773a1205",
+    "readme.md": "f8adcbfd937d5d1effe2eebdbbcd5f3c52df4c2e9b6fcd62ae450e7b63480253",
+    "SECURITY.md": "89c4e4b9ba7ec705482e2de05135d0626d33bf8c2c66119c65d7a306dd83459c",
+    "telemetry.json": "f6e429ef95e42257b801d67cee177ea2070d36099e0a85f8d4c1b960318c92e5",
+    "ThirdPartyNotices.txt": "4b46f5fe0be07db46f755947a26f99c18d6b994521f2d99e06b3861abea245e3",
+    "l10n/bundle.l10n.cs.json": "13a742d444c8133130e73924a4cf36181c3e2fec1f9dfc54b5f9b46c1b577c68",
+    "l10n/bundle.l10n.de.json": "79be1938ea22bf6646cc1fcaf5dac0a9303bd48c1e50545cb0a1db91b4c75680",
+    "l10n/bundle.l10n.es.json": "4441bd523b6d55b0d70b76343e6f24a9da01979e842eb7a07778091aad0a375e",
+    "l10n/bundle.l10n.fr.json": "f405197c95bf8553193c348108c0d53d4109e3718df0a3bebd41a27aa28097c8",
+    "l10n/bundle.l10n.it.json": "d09679a152ef343166404c4152568970525fd3ea695b05df7c2d2e142e8ed110",
+    "l10n/bundle.l10n.ja.json": "b8048b18f19dc3939484f50527cd2456f01b850ce0e3d16909741b1b7c11d9fe",
+    "l10n/bundle.l10n.ko.json": "b3ad8de658a978834db49ead48d587d149ff2631eadb1676c8478f9e48df7670",
+    "l10n/bundle.l10n.pl.json": "d73436d02321c4da5b8a770b694cacd73c0708bacdf62522e3629a96a01996b2",
+    "l10n/bundle.l10n.pt-br.json": "e6ba7655dc1f569cabc8e92c9300171b44bd8f7e76c334bfb22bc33f434a2743",
+    "l10n/bundle.l10n.qps-ploc.json": "15d09886987c52ac3897cd41596053210319a9f7f58aa5d844199e0d0313734e",
+    "l10n/bundle.l10n.ru.json": "15bec6ec82b622eeaa1376424bcf9d8a427d1cee5010b1c51034f40e8f37e7d5",
+    "l10n/bundle.l10n.tr.json": "5589b02ad403723ec354b016bc2f10566c6e985abb5c35415ee62cce793de90b",
+    "l10n/bundle.l10n.zh-cn.json": "dad9eca76b4411430cb445430fbb46d23a37c9b437ef1bd99ed832f493064885",
+    "l10n/bundle.l10n.zh-tw.json": "b3fcb43fdd92ce6d2e6f72b677fbe531a2c9f87209614d6127cb7a76580dce6c",
+    "resources/remote-wsl-nightly.png": "5f1604baf6c3d96c19cfd2831d70a9dfdcffc21278d70fcd8ea9a929de468289",
+    "resources/remote-wsl.png": "9240a6c71f610b9052df3c5771fafc2b09bc41574f299ae5383a1df63736a96e",
+    "scripts/wslCode.sh": "e8cdeda91b3b94c0f60f30cc71d0577141225ba950f19a976be718edf537a161",
+    "scripts/wslDownload.sh": "05b1b1a21c6bf10b92735f35e54a8144c46204563fc909130e2482550f60f7e7",
+    "scripts/wslServer.sh": "95580e9fa5e940ec7aa7ae5858a619f3fa4a84f488910434c5185bb3bd6396bf",
+    "dist/browser/extension.js": "c54dc19a1ed93d52c0a88e8b330e7fa39a9a14a709b164a2fd743a2d3b64a5b5",
+    "dist/node/extension.js": "6003576e7bd9fec5d5b7d6e59615da36e924a50615b1f225ec0f66efe7daa324",
+    "dist/node/utils.test.js": "5e9edb42d9966a997fa9eea82d828ed0a43914085e0a230eeb213391200014c7",
+    "dist/node/wslDaemon.js": "78e724d01decb8ebc4abb2e43f2c9c98c3b9f7159d10f7eb755f3da43fce0581",
+    "resources/walkthrough/create-project.md": "af72fe81695ea1be36ec71e35b362e1842f11cfb5e516e84c8122b686b7f11e6",
+    "resources/walkthrough/install-all-extn-wsl.png": "1824d25e2d9488967704a046d94b2772e62c7dfecf4e2f8f858910615c623942",
+    "resources/walkthrough/install-tools.md": "12bbbf475ee369be4b76654d477b92f383aa00f3b23130fd7c2fa591bf44dd57",
+    "resources/walkthrough/open-project.md": "4e83939939891ce5b5b16a90fdc118862f62a97a32b710fa57b95f31440b7802",
+    "resources/walkthrough/wsl-commands-dark.png": "e8d55402ddca37e3f7d416d7926d1be0ffa7692b998f86519288b533adeb5ef2",
+    "resources/walkthrough/wsl-commands-hc.png": "6b5b9eebe0050e2c3e70e31ed85263b13be8aa393418bba93ebc41d1250df9e5",
+    "resources/walkthrough/wsl-commands-light.png": "86edb76863c3efd67e32e9fb27fcf1306ffaa11ec139fffd19e4feed9d2764a5",
+    "resources/walkthrough/wsl-debug-view-dark.png": "0e0fef2182d77ea3d2b4f786652701ba159d28a333187252cb05676e67f3b897",
+    "resources/walkthrough/wsl-debug-view-hc.png": "58fc8dd96995b79b3a29b6f8433a03c0c5e6721810daccab3f556244c77a6a01",
+    "resources/walkthrough/wsl-debug-view-light.png": "fafa23f1ee1516bd3eba95786b186c382ef971839009447d75cd724b2d7cdf2d",
+    "resources/walkthrough/wsl-explorer.png": "6838dea95ca455e079e33aec5b3781f20305234d2df6d5d094f1c597ebddbdd3",
+    "resources/walkthrough/wsl-extensions.png": "593e5159966140c74e5848467d269b3f6dd87010276ccbc2e302aee946f02fb0",
+    "resources/walkthrough/wsl-external.png": "4d5f2921a3a8a0c2577fec97cf839bd6954f56aa42b85049fcd1120e164d1485",
+    "resources/walkthrough/wsl-installed-remote-indicator.png": "dacaee58bdc0665ce143a9ca89bc54429fa2cb0a2310aac7bbc9fe2aa0ea6fb1",
+    "resources/walkthrough/wsl-local-installed-extensions.png": "d61fb120e91b1f5b2aa31339626640d3e817edf3692a5f52a751c6238f27bfb6",
+    "resources/walkthrough/wsl-terminal-dark.png": "70550b2b135f1cfec153ff11fdce83b5cdd33b3229e4c6558cad7918be3e1b42",
+    "resources/walkthrough/wsl-terminal-hc.png": "41baec78a97fa1d8ccbf6184baf5be483d7bd2b315cbeb9a864e095d22dc7ff0",
+    "resources/walkthrough/wsl-terminal-light.png": "478779ee3e8f77cc629233ff0c062f9dde94540448013f75a3cb01d9303c77f6",
+    "resources/walkthrough/wsl-window-dark.png": "b6c77259d5068aee7aab7e2c5483d796a816dffdc7aa9d45bc5a1825cb99b1aa",
+    "resources/walkthrough/wsl-window-hc.png": "6387d34e3866dfb17bae92962be0ecbf98b555585b4b766f6740f46718389eac",
+    "resources/walkthrough/wsl-window-light.png": "eedb928275af189443cbf6a92f1eecbf3d427f91c7105772812f1bf2f4e97b51"
+  },
+  "remoteNamespace": "/home/pj/gridstator-validation-v00jpyv0",
+  "defaultServerAbsent": true,
+  "appVersion": "1.145.0",
+  "commit": "a717861c07586a53d83b80d742cd3f59b20a6273"
+}

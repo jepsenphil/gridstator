@@ -1,0 +1,58 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+warning: unused imports: `io::Write` and `process::Stdio`
+ --> tests/install_source_contract.rs:4:36
+  |
+4 | use std::{collections::BTreeMap,fs,io::Write,path::{Path,PathBuf},process::Stdio,sync::OnceLock,time::Duration};
+  |                                    ^^^^^^^^^                      ^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `gridstator` (test "install_source_contract") generated 1 warning (run `cargo fix --test "install_source_contract" -p gridstator` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.24s
+     Running tests/install_source_contract.rs (native/target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 4 tests
+test source_install_002_and_005_native_executable_and_archive_install_identically_and_idempotently ... ok
+test source_install_010_missing_active_version_has_actionable_identity ... FAILED
+test source_install_006_forwards_exact_arguments_and_verified_launcher_environment ... ok
+test source_install_003_rejects_unverified_launcher_identity_child ... FAILED
+
+failures:
+
+---- source_install_010_missing_active_version_has_actionable_identity stdout ----
+
+thread 'source_install_010_missing_active_version_has_actionable_identity' (1306984) panicked at tests/install_source_contract.rs:74:116:
+No such file or directory (os error 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- source_install_003_rejects_unverified_launcher_identity_child stdout ----
+
+thread 'source_install_003_rejects_unverified_launcher_identity_child' (1306982) panicked at tests/install_source_contract.rs:79:466:
+
+running 1 test
+test source_install_003_rejects_unverified_launcher_identity_child ... FAILED
+
+failures:
+
+failures:
+    source_install_003_rejects_unverified_launcher_identity_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 1.41s
+
+
+
+thread 'source_install_003_rejects_unverified_launcher_identity_child' (1306988) panicked at tests/install_source_contract.rs:82:5:
+assertion `left == right` failed: embedded identity cannot be replaced by unverified launcher environment
+  left: String("forged-build-id")
+ right: "dev-4b8f13ccf1b2-1794276886542797846"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+
+failures:
+    source_install_003_rejects_unverified_launcher_identity_child
+    source_install_010_missing_active_version_has_actionable_identity
+
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+error: test failed, to rerun pass `--test install_source_contract`

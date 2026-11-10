@@ -1,0 +1,94 @@
+{
+  "recordedDate": "2026-11-10",
+  "checkpointSha256": "c36d79523a20ae8ef99ded04d65057c6496fd3a3ee422941be50c9ff32db710c",
+  "buildId": "m4-final-c36d79523a20",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+  "binaries": {
+    "arm64": {
+      "version": "2.0.0-dev.1",
+      "buildId": "m4-final-c36d79523a20",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 67774440,
+      "sha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86"
+    },
+    "x86_64": {
+      "version": "2.0.0-dev.1",
+      "buildId": "m4-final-c36d79523a20",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/amd64",
+      "size": 65418256,
+      "sha256": "61e47efccb4865795c92c4b82a266c730bf0464973aaaccbd946715cc9d69227"
+    }
+  },
+  "tests": {
+    "arm64": {
+      "passed": 234,
+      "failed": 0,
+      "explicitIgnored": 30,
+      "testBinaries": 44,
+      "strictClippyAfterOverlays": "passed"
+    },
+    "x86_64": {
+      "passed": 234,
+      "failed": 0,
+      "explicitIgnored": 30,
+      "testBinaries": 44,
+      "strictClippyAfterOverlays": "passed"
+    }
+  },
+  "roles": {
+    "arm64": {
+      "result": "passed",
+      "caseCount": 2,
+      "log": "roles-arm64-unload-wait.log",
+      "scope": "Actual foreground CLI/controller/worker shutdown and unique user LaunchAgent start/restart/stop/uninstall"
+    },
+    "x86_64": {
+      "result": "passed",
+      "caseCount": 2,
+      "log": "roles-x86_64.log",
+      "scope": "Actual foreground CLI/controller/worker shutdown and unique user LaunchAgent start/restart/stop/uninstall"
+    }
+  },
+  "testOnlyOverlay": {
+    "native/tests/launchd_e2e.rs": "e24d5f476c5a94dfe42f892889849215f5374e0f53e12abcbe2c8f5e3a8cd761",
+    "native/tests/worker_contract.rs": "e03703dfab18bdeca7511902ffd13c3b1b73e5293ddda2fe4d7de0e5d2079dad"
+  },
+  "managedWorkerDelta": {
+    "result": "passed",
+    "elapsedSeconds": 10.29,
+    "baselineBuildId": "m4-final-99e85b47269b",
+    "targetBuildId": "m4-final-c36d79523a20",
+    "payloadPids": {
+      "baseline": 84677,
+      "target": 84683
+    },
+    "supervisorAfter": {
+      "size": 67774440,
+      "sha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86"
+    },
+    "expectedSupervisorSha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86",
+    "scope": "Actual independent managed ARM64 worker update. Baseline is historical99, source provenance ../m4-2026-11-10/final-source-checkpoint.json. New target is coherent c36d. Other manifest target entries are parser fixtures."
+  },
+  "limits": [
+    "x86_64 runs under Rosetta on this M4, not a physical Intel Mac.",
+    "Real Mac worker/controller roles intentionally force Docker/act unavailable. No positive Mac Docker/VM/capacity claim.",
+    "No stable signing/notarization or logout/reboot/system LaunchDaemon claim.",
+    "C36d production source was frozen; launchd/worker integration test overlays are separately hashed and included. Full default tests ran before the ignored-only test overlay strengthening; both-target strict Clippy ran after those overlays."
+  ]
+}

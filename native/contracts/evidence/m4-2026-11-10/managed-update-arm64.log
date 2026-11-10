@@ -1,0 +1,21 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-target/native)
+    Finished `test` profile [unoptimized] target(s) in 1.00s
+     Running tests/worker_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/worker_contract-78e65c1ddb872959)
+
+running 1 test
+Independent worker update evidence: /Users/philjepsen/gridstator-validation.I50ONpwm/gridstator-worker-update-ag2BT8
+test independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put has been running for over 60 seconds
+Error: standalone worker install/restart/rejoin/confirmation
+
+Caused by:
+    deadline has elapsed
+test independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put ... FAILED
+
+failures:
+
+failures:
+    independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 128.36s
+
+error: test failed, to rerun pass `--test worker_contract`

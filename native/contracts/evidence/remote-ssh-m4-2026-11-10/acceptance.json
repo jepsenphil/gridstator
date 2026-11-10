@@ -1,0 +1,72 @@
+{
+  "recordedDate": "2026-11-10",
+  "result": "passed",
+  "package": {
+    "path": "apps/vscode/dist/gridstator-native.vsix",
+    "sha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6"
+  },
+  "code": {
+    "version": "1.145.2",
+    "commit": "c4453f8ea430795f941c1b2ff6c9321135a74a02",
+    "remoteSSHVersion": "0.129.2026100915"
+  },
+  "nativeMac": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-c36d79523a20",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 67774440,
+    "sha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86"
+  },
+  "sourceCheckpoint": "../m4-delta-2026-11-10/checkpoint.json",
+  "linuxNative": {
+    "version": "2.0.0-dev.1",
+    "buildId": "dev-4b8f13ccf1b2-1794280261283825642",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/amd64",
+    "size": 240777072,
+    "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+  },
+  "scope": "actual Linux VS Code Remote SSH client, actual M4 ARM64 extension host and native CLI, private reverse SSH tunnel to Linux native controller/Docker worker; no Mac Docker or actual multiple editor windows claim",
+  "assertions": [
+    "Actual remoteName ssh-remote and darwin/arm64 extension host",
+    "Packaged native-only extension; actual native CLI ID, target and SHA256",
+    "Explicit private config, CA fingerprint and expected cluster ID preflight and guards before launch/cancel",
+    "ExitOnForwardFailure reverse SSH bind to ephemeral Mac loopback port, forwarding to private Linux loopback controller; no LAN listener",
+    "Mac-native discovery/snapshot with workspace and file paths containing spaces",
+    "Actual Docker execution on private Linux native worker with live result delivery",
+    "Snapshot manifest contains spaced source path and excludes sibling private config",
+    "Downloaded tar is nonempty and contains exact requested artifact text",
+    "Actual JUnit report populates VS Code Testing",
+    "Actual running job cancelled via editor command"
+  ],
+  "failuresRetained": [
+    {
+      "log": "full-smoke-client.log",
+      "reason": "Fail-closed preflight rejected ignored workspace overrides for machine-scoped configPath/nativeCli.path before any Gridstator request/action. Private client/remote Machine settings supplied the required values; no production change."
+    }
+  ],
+  "cleanup": [
+    "linux-cleanup.json",
+    "mac-cleanup.json"
+  ],
+  "remainingGates": [
+    "This is one real Remote SSH editor session, not multiple real editor windows.",
+    "WSL and physical Intel hardware remain unproven by this session.",
+    "Mac Docker-positive behavior remains pending setup choice; this proof uses the Linux Docker worker."
+  ]
+}

@@ -1,0 +1,22 @@
+[Unit]
+Description=Gridstator native controller
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pj
+ExecStart="/tmp/gridstator-recovery-arhXMg/managed/supervisor" "supervise" "--install-root" "/tmp/gridstator-recovery-arhXMg/managed" "--" "controller" "start" "--data-dir" "/tmp/gridstator-recovery-arhXMg/fresh-v2" "--with-agent" "--agent-name" "rehearsal-embedded"
+Environment="DOCKER_CONFIG=/home/pj/.docker"
+Environment="GRIDSTATOR_CONFIG=/tmp/gridstator-recovery-arhXMg/v2-client.json"
+Environment="GRIDSTATOR_LOG_FORMAT=json"
+Environment="HOME=/home/pj"
+Environment="PATH=/tmp/gridstator-recovery-arhXMg/target-os-tools-without-node"
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=130 143
+KillMode=mixed
+TimeoutStopSec=90
+
+[Install]
+WantedBy=default.target

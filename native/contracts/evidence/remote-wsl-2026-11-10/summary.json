@@ -1,0 +1,51 @@
+{
+  "result": "passed",
+  "scope": "actual Windows VS Code1.145.0 stock RemoteWSL1.104.7; actual Microsoft WSL2 Linux x64 extension host/final static native CLI/private controller and Docker worker; private client/server metadata and all storage paths explicitly isolated; one real editor window",
+  "windowsCode": {
+    "version": "1.145.0",
+    "commit": "a717861c07586a53d83b80d742cd3f59b20a6273",
+    "stockExeSha256": "f1e1d79be5f50a238681738f813c4b353aad69f4b05f068899ec98a2d1b74c32",
+    "localExtensionHostPid": 23836,
+    "remoteWslVersion": "1.104.7",
+    "pluginFilesByteIdentical": true
+  },
+  "native": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-cd6b769ebe6e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/amd64",
+    "size": 27550072,
+    "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+  },
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "extensionHost": {
+    "platform": "linux",
+    "arch": "x64",
+    "pid": 816447
+  },
+  "remoteName": "wsl",
+  "accepted": {
+    "snapshotWithSpaces": true,
+    "dockerCommandAndLiveLogs": true,
+    "exactArtifactTarAndContent": true,
+    "vscodeTestingCases": 1,
+    "runningJobCancellation": true,
+    "missingAndIncompatibleHelperFailures": 2,
+    "noTypescriptFallbackOrAdditionalJobs": true
+  },
+  "clusterId": "01M71ZS3G2F1CG0K2B6ZNYP7V5",
+  "cleanup": "cleanup.json",
+  "diagnosticIncident": "windows-diagnostic-isolation.json",
+  "limits": [
+    "one real Remote WSL editor workflow window",
+    "private client/server product metadata and storage configuration differ from defaults",
+    "early stock shared-storage diagnostic access occurred; zero writes not guaranteed; store was not reset"
+  ]
+}

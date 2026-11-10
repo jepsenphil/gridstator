@@ -1,0 +1,171 @@
+name: Desktop companion preview
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apps/desktop/**'
+      - 'native/src/**'
+      - 'native/local-control-protocol/**'
+      - 'scripts/desktop-artifacts.mjs'
+      - 'scripts/desktop-artifacts.test.mjs'
+      - 'scripts/build-desktop-installers.mjs'
+      - 'scripts/install-native.sh'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    paths:
+      - 'apps/desktop/**'
+      - 'native/src/**'
+      - 'native/local-control-protocol/**'
+      - 'scripts/desktop-artifacts.mjs'
+      - 'scripts/desktop-artifacts.test.mjs'
+      - 'scripts/build-desktop-installers.mjs'
+      - 'scripts/install-native.sh'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/desktop.yml'
+
+# Build reviewable previews only. Signing and actual desktop/WSL lifecycle qualification are
+# separate release gates; successful hosted compilation does not mark those checks passed.
+permissions:
+  contents: read
+
+jobs:
+  native-release:
+    uses: ./.github/workflows/native-candidate.yml
+    with:
+      version: 2.0.0-dev.2
+
+  build:
+    needs: native-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            key: linux-amd64
+            platform: linux/amd64
+            bundles: deb
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            key: linux-arm64
+            platform: linux/arm64
+            bundles: deb
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+            key: darwin-amd64
+            platform: darwin/amd64
+            bundles: dmg
+          - runner: macos-15
+            target: aarch64-apple-darwin
+            key: darwin-arm64
+            platform: darwin/arm64
+            bundles: dmg
+          - runner: windows-2025
+            target: x86_64-pc-windows-msvc
+            key: windows-amd64
+            platform: windows/amd64
+            bundles: nsis
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            key: windows-arm64
+            platform: windows/arm64
+            bundles: nsis
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    env:
+      CARGO_INCREMENTAL: '0'
+      GRIDSTATOR_DESKTOP_BUILD_ID: desktop-${{ github.run_id }}-${{ github.run_attempt }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install pinned Rust toolchain
+        run: |
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' native/rust-toolchain.toml)
+          rustup toolchain install "$toolchain" --profile minimal --component rustfmt --component clippy
+          rustup default "$toolchain"
+          rustup target add '${{ matrix.target }}'
+      - name: Verify native build architecture
+        run: |
+          host=$(rustc -vV | sed -n 's/^host: //p')
+          test "$host" = '${{ matrix.target }}'
+          case '${{ matrix.target }}' in
+            aarch64-*) test "$RUNNER_ARCH" = ARM64 ;;
+            x86_64-*) test "$RUNNER_ARCH" = X64 ;;
+            *) exit 1 ;;
+          esac
+      - name: Install Linux GUI build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+      - name: Install workspace dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-release-candidate
+          path: desktop-native-release
+      - name: Stage verified native payload for offline setup
+        run: |
+          native_target='${{ matrix.platform }}'
+          native_target=${native_target/windows/linux}
+          manifest_sha=$(awk '$2 == "gridstator-release.json" { print $1 }' desktop-native-release/SHA256SUMS)
+          node scripts/desktop-artifacts.mjs stage \
+            --native-release-dir desktop-native-release \
+            --native-manifest-sha256 "$manifest_sha" \
+            --native-target "$native_target"
+      - name: Check desktop frontend
+        run: |
+          pnpm desktop:typecheck
+          pnpm desktop:test:packaging
+      - name: Test portable local protocol and desktop backend
+        working-directory: apps/desktop/src-tauri
+        run: |
+          cargo fmt --check
+          cargo test --locked --no-default-features
+          cargo clippy --locked --all-targets --no-default-features -- -D warnings
+      - name: Build desktop application and platform package
+        run: pnpm --filter @gridstator/desktop exec tauri build --target '${{ matrix.target }}' --bundles '${{ matrix.bundles }}'
+      - name: Verify Windows desktop does not allocate a console in debug builds
+        if: runner.os == 'Windows'
+        working-directory: apps/desktop/src-tauri
+        run: cargo test --locked --test windows_subsystem --target '${{ matrix.target }}'
+      - name: Require an installer and record its checksum
+        run: |
+          version=$(node -p 'JSON.parse(require("node:fs").readFileSync("apps/desktop/src-tauri/tauri.conf.json")).version')
+          node scripts/desktop-artifacts.mjs installers \
+            --bundle-dir 'apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle' \
+            --target '${{ matrix.platform }}' --version "$version" \
+            --build-id "$GRIDSTATOR_DESKTOP_BUILD_ID" \
+            --out 'apps/desktop/src-tauri/target/${{ matrix.target }}/release/bundle/installer-manifest.json' \
+            --distro-dir distro
+      - name: Check platform GUI backend
+        working-directory: apps/desktop/src-tauri
+        run: cargo clippy --locked --all-targets --target '${{ matrix.target }}' -- -D warnings
+      - name: Test worker-window interactions
+        if: matrix.key == 'linux-amd64'
+        run: |
+          pnpm --filter @gridstator/desktop exec playwright install --with-deps chromium
+          pnpm desktop:test:ui
+      - name: Record preview qualification status
+        run: |
+          node -e 'const fs=require("node:fs");fs.writeFileSync("apps/desktop/qualification.json",JSON.stringify({kind:"desktop-preview",target:process.env.DESKTOP_TARGET,buildId:process.env.GRIDSTATOR_DESKTOP_BUILD_ID,sourceRevision:process.env.GITHUB_SHA,compiledOnActualArchitecture:true,signed:false,desktopLifecycleValidated:false,wslLifecycleValidated:false},null,2)+"\n")'
+        env:
+          DESKTOP_TARGET: ${{ matrix.key }}
+      - uses: actions/upload-artifact@v6
+        with:
+          name: gridstator-desktop-preview-${{ matrix.key }}
+          if-no-files-found: error
+          path: |
+            distro/**
+            apps/desktop/qualification.json

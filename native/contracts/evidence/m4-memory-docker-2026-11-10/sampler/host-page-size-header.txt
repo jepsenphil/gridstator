@@ -1,0 +1,39 @@
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/mach_host.h
+ig_external
+#else
+extern
+#endif	/* mig_external */
+kern_return_t host_kernel_version
+(
+	host_t host,
+	kernel_version_t kernel_version
+);
+
+/* Routine _host_page_size */
+#ifdef	mig_external
+mig_external
+#else
+extern
+#endif	/* mig_external */
+kern_return_t _host_page_size
+(
+	host_t host,
+	vm_size_t *out_page_size
+);
+
+/* Routine mach_memory_object_memo
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/mach_host.defs
+st		: host_t;
+	out	kernel_version	: kernel_version_t);
+
+/*
+ *      Get host page size
+ *	(compatibility for running old libraries on new kernels -
+ *	host_page_size() is now a library routine based on constants)
+ */
+routine _host_page_size(
+		host		: host_t;
+	out	out_page_size	: vm_size_t);
+
+/*
+ *	Allow pagers to create named entries that point to 

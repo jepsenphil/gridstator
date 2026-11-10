@@ -1,0 +1,193 @@
+{
+  "scope": "actual macOS user launchd native controller and standalone worker, unique labels; no reboot/system-daemon/signing claim",
+  "target": "darwin/arm64",
+  "labels": [
+    "org.gridstator.native.validation.controller.01m71wt6dghye4n66fzkc12rm0",
+    "org.gridstator.native.validation.agent.01m71wt7ewya3tcbrfrjz0k8t8"
+  ],
+  "node": {
+    "id": "01M71WT73BJ7K7TH6EAXJWBPWB",
+    "name": "mac-proof-01M71WT71V61TT67VMYXQFAKK4",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "native-preview-20261110-1fd6e3d425b3",
+        "version": "2.0.0-dev.1",
+        "sha256": "3aec4ab5df8f9c641285984243ceaa58dda1c0c9f39b9e04ae8c62d8899f28d7",
+        "target": "darwin/arm64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:60411",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 0
+      },
+      "executionCapacity": null,
+      "acceptingWork": false
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794286363428,
+    "connectedAt": 1794286363428,
+    "createdAt": 1794286361707,
+    "update": {
+      "state": "unknown",
+      "build": "native-preview-20261110-1fd6e3d425b3",
+      "detail": "offline; last reported native-preview-20261110-1fd6e3d425b3",
+      "autoUpdate": "follow",
+      "canUpdate": false
+    }
+  },
+  "restartedNode": {
+    "id": "01M71WT73BJ7K7TH6EAXJWBPWB",
+    "name": "mac-proof-01M71WT71V61TT67VMYXQFAKK4",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "native-preview-20261110-1fd6e3d425b3",
+        "version": "2.0.0-dev.1",
+        "sha256": "3aec4ab5df8f9c641285984243ceaa58dda1c0c9f39b9e04ae8c62d8899f28d7",
+        "target": "darwin/arm64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:60411",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 0
+      },
+      "executionCapacity": null,
+      "acceptingWork": false
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794286368959,
+    "connectedAt": 1794286368959,
+    "createdAt": 1794286361707,
+    "update": {
+      "state": "unknown",
+      "build": "native-preview-20261110-1fd6e3d425b3",
+      "detail": "offline; last reported native-preview-20261110-1fd6e3d425b3",
+      "autoUpdate": "follow",
+      "canUpdate": true
+    }
+  },
+  "controllerPids": [
+    92486,
+    92554
+  ],
+  "uninstalled": true
+}

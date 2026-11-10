@@ -1,0 +1,11 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.32s
+     Running tests/worker_toolchain_source.rs (native/target/debug/deps/worker_toolchain_source-9aaeaf83774c6682)
+
+running 1 test
+test source_003_real_managed_act_reprobes_and_invalid_candidate_reports_without_restart_loop ... Worker toolchain source private evidence: /tmp/gridstator-worker-toolchain-source-icnbXo
+Actual managed act 0.2.96 installed/reprobed; three invalid candidate reports preserved core PID 1489189, working tool and activation state
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.31s
+

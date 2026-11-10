@@ -1,0 +1,29 @@
+{
+  "result": "clean",
+  "stoppedPrivateServerPids": [
+    79375,
+    79507,
+    79875,
+    79877,
+    79882,
+    84843,
+    84936
+  ],
+  "validationLabelsAbsent": [
+    "org.gridstator.native.validation.agent.01m71qat13101evzz3zqxs32hd",
+    "org.gridstator.native.validation.agent.01m71qcsymqj4t4phwfsjrrnsm",
+    "org.gridstator.native.validation.agent.01m71qj1jw99y0tg7xs2ktm6ce",
+    "org.gridstator.native.validation.controller.01m71qaqba0wqxam15f819d3wd",
+    "org.gridstator.native.validation.controller.01m71qcq8smb770emh8r12jgac",
+    "org.gridstator.native.validation.controller.01m71qhtwr328b86h60v5qzcd8"
+  ],
+  "removedPrivateState": [
+    "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76",
+    "/Users/philjepsen/gridstator-validation.I50ONpwm/delta-roles-c36d79523a20",
+    "/Users/philjepsen/gridstator-validation.I50ONpwm/delta-managed-c36d79523a20"
+  ],
+  "defaultServerAbsent": true,
+  "existingDesktopPid31833StillLive": true,
+  "remainingOwnedProcesses": [],
+  "retained": "private Rust tools/source/build caches, historical/new public payloads, parser-fixture packages and non-secret evidence logs only"
+}

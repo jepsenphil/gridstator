@@ -1,0 +1,45 @@
+{
+  "buildx.build.provenance": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/alpine@3.20?platform=linux%2Farm64",
+        "digest": {
+          "sha256": "d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.28.0",
+        "platform": "linux/arm64"
+      }
+    }
+  },
+  "buildx.build.ref": "default/default/revazk2xupskk45g0b8pdr0rb",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:1fcc3b8ec475d13e2c130c489c36f4f0dde2003636ca58f80eb9d3e34b6e6976",
+    "size": 855
+  },
+  "containerimage.digest": "sha256:1fcc3b8ec475d13e2c130c489c36f4f0dde2003636ca58f80eb9d3e34b6e6976",
+  "image.name": "docker.io/gridstator-validation/e3-metadata-repro:latest"
+}

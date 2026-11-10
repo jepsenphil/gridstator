@@ -669,8 +669,9 @@ export function registerClientCommands(program: Command): void {
 
   nodes
     .command('set')
-    .description('Change scheduling settings for a node')
+    .description('Change a node name or scheduling settings')
     .argument('<node>', 'node name or id')
+    .option('--name <name>', 'rename the worker without changing its identity')
     .option('--max-concurrency <n>', 'maximum concurrent jobs')
     .option('--reserve-cpus <n>', 'CPUs held back for the host')
     .option('--reserve-memory <size>', 'memory held back for the host, e.g. 8g')
@@ -679,6 +680,7 @@ export function registerClientCommands(program: Command): void {
       async (
         name: string,
         opts: {
+          name?: string;
           maxConcurrency?: string;
           reserveCpus?: string;
           reserveMemory?: string;
@@ -687,6 +689,7 @@ export function registerClientCommands(program: Command): void {
       ) =>
         withClient(async (client) => {
           const patch = {
+            ...(opts.name !== undefined ? { name: opts.name } : {}),
             ...(opts.maxConcurrency !== undefined
               ? { maxConcurrency: Number(opts.maxConcurrency) }
               : {}),

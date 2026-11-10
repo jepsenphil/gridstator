@@ -1,0 +1,68 @@
+{
+  "result": "passed",
+  "recordedAt": "2026-11-10T06:07:12Z",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "nativeSha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+  "unitNames": [
+    "gridstator-native-proof-01m7212j5y02bs1mnkfv31yzj3.service"
+  ],
+  "actualSystemdContract": "actual_systemd_supervisor_controller_and_embedded_worker_lifecycle",
+  "windowsNativeTlsHealth": [
+    {
+      "controllerPid": 825853,
+      "port": 46629,
+      "health": {
+        "ok": true,
+        "service": "gridstator-controller",
+        "version": "2.0.0-dev.1",
+        "apiVersion": "v1",
+        "native": true
+      },
+      "trust": "Exact private CA and hostname verification; per-invocation revocation disabled for ephemeral private CA only. Global Windows trust unchanged."
+    },
+    {
+      "controllerPid": 826384,
+      "port": 44971,
+      "health": {
+        "ok": true,
+        "service": "gridstator-controller",
+        "version": "2.0.0-dev.1",
+        "apiVersion": "v1",
+        "native": true
+      },
+      "trust": "Exact private CA and hostname verification; per-invocation revocation disabled for ephemeral private CA only. Global Windows trust unchanged."
+    }
+  ],
+  "unitAdaptations": [
+    {
+      "unit": "gridstator-native-proof-01m7212j5y02bs1mnkfv31yzj3.service",
+      "scope": "Owned test unit only; stale user manager lacks the account's already granted Docker group.",
+      "before": "ExecStart=\"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store/supervisor\" \"supervise\" \"--install-root\" \"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store\" \"--\" \"controller\" \"start\" \"--data-dir\" \"/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/controller\" \"--with-agent\" \"--agent-name\" \"systemd-proof-worker\"",
+      "after": "ExecStart=/usr/bin/sg docker -c \"exec '/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store/supervisor' supervise --install-root '/home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/managed store' -- controller start --data-dir /home/pj/gridstator-native-validation-v00jpyv0/service-tmp/.tmpOYIpAh/controller --with-agent --agent-name systemd-proof-worker\"",
+      "killMode": {
+        "before": "mixed",
+        "after": "control-group",
+        "reason": "Extra sg launcher remains main process; signal all native actors for graceful stop."
+      },
+      "mechanism": "Noninteractive OS sg helper refreshes existing docker membership; no group files, sudo, Docker socket permissions or user-manager credentials changed."
+    }
+  ],
+  "observationMethod": "Only the owned test-driver process was paused briefly via pidfd while real systemd/native actors continued; no product timing or OS adapter calls were mocked.",
+  "checks": [
+    "Actual unique user-systemd install/start and native supervisor/controller/embedded worker Docker job",
+    "Actual user-unit restart with changed payload PID",
+    "Windows native curl private-CA loopback health for initial and restarted service PIDs",
+    "Graceful stop, runtime removal, unit disable/uninstall and empty fixture cleanup"
+  ],
+  "limits": [
+    "The existing library test uses its documented single-host managed-install fixture; this is not four-target release production proof.",
+    "The owned unit adds OS sg only to refresh existing Docker membership absent from the stale user manager; this does not claim the unadapted stale manager can access Docker.",
+    "User service only, with existing active system v1 agent untouched. No sudo password, linger enable, WSL termination/reboot or stopped-distro autostart claim."
+  ],
+  "cleanup": {
+    "privateFixtureEmptyAndRemoved": true,
+    "ownedUnitsRemoved": true,
+    "preexistingUnitNamesPreserved": [],
+    "preexistingDirectoriesNotRemoved": true
+  }
+}

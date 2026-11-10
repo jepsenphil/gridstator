@@ -1,0 +1,21 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.24s
+     Running tests/install_source_contract.rs (native/target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 1 test
+
+running 1 test
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 10.57s
+
+
+running 1 test
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 10.52s
+
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 43.58s
+

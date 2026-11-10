@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-11-10T06:20:51Z",
+  "result": "passed",
+  "classification": "Historical unpublished cd6 preview; superseded by the pending inspectable Buildx image-reference correction, not latest delivery",
+  "releaseDirectory": "/repos/gridstator/native/release/native-preview-20261110-cd6b769ebe6e",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "version": "2.0.0-dev.1",
+  "manifestSha256": "27a1cc6555923b24d19f08580b0a2dafdd7c1e7baf88c9697313878950df6e2e",
+  "bundleSha256": "62ced760bdbba0bca74ca73b59eeae8f367b86796d09c81c3ae4a49286b4d929",
+  "releaseChecksumFileSha256": "2f85b601d007209ab65a2685209086c4d11e0af497d76fd1fe251fb0f9906bc5",
+  "checksummedFiles": 115,
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "finalInstallerDownloadedExactlyFinalChecksumFile": true,
+  "installedEncodedDigestReadBack": {
+    "path": "/v1/blobs/sha256%3Ad7879b543b0f768d0a283cddc99425de71f8824ea75cedf2c014bd959db7f0e9",
+    "bytes": 33,
+    "matchesExactUploadedBytes": true
+  },
+  "requests": [
+    "/v2.0.0-dev.1/SHA256SUMS",
+    "/v2.0.0-dev.1/gridstator-release.json",
+    "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+  ],
+  "finalChecksumCheckExitCode": 0,
+  "nestedProvenanceChecksums": [
+    {
+      "directory": "provenance/linux",
+      "exitCode": 0,
+      "checkedLines": 37
+    },
+    {
+      "directory": "provenance/linux-arm64-runtime",
+      "exitCode": 0,
+      "checkedLines": 10
+    },
+    {
+      "directory": "provenance/mac",
+      "exitCode": 0,
+      "checkedLines": 31
+    }
+  ],
+  "cleanup": {
+    "ownedHttpServerStopped": true,
+    "controllerStoppedByRuntimeSmoke": true,
+    "privateCredentialsAndDataRemoved": true,
+    "globalPrefixOrLiveServiceChanged": false
+  },
+  "limits": "With older Buildx0.30.1 against modern containerd, a present config digest may not be locally inspectable even when manifest/index digest is. A further resolver fallback is pending; this historical build is not the latest delivery."
+}

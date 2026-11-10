@@ -1,0 +1,49 @@
+{
+  "result": "passed",
+  "recordedDate": "2026-11-10",
+  "buildId": "native-preview-20261110-e3e5fae51c8e",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview. Embedded sourceRevision is the parent reference commit; the native production/build checkpoint and supplemental inputs identify actual sources. No clean-release provenance claim.",
+  "productionCheckpointSha256": "e3e5fae51c8e12f26935ab2d8aabaef85175c5fe81d9fe0fd843ffc6ea8b4b5c",
+  "supplementalEmbeddedInputs": {
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "scripts/install-native.sh": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc"
+  },
+  "artifacts": [
+    {
+      "target": "darwin/arm64",
+      "size": 23173632,
+      "sha256": "25a8ac64287989442665104d1ad1831cbc5da059645d2e5fe1eb17c91d20059f",
+      "path": "/tmp/gridstator-mac-preview-artifacts-e3e5fae51c8e/gridstator-darwin-arm64",
+      "portableEncodedBlobTLSTest": "passed",
+      "strictAllTargetClippy": "passed",
+      "actualReleaseByteRoles": 2,
+      "execution": "native M4"
+    },
+    {
+      "target": "darwin/amd64",
+      "size": 23789976,
+      "sha256": "344d5aa05284fb17f2451d7fda420b366030def4290b542014a9ed2ba9c8c46d",
+      "path": "/tmp/gridstator-mac-preview-artifacts-e3e5fae51c8e/gridstator-darwin-amd64",
+      "portableEncodedBlobTLSTest": "passed",
+      "strictAllTargetClippy": "passed",
+      "actualReleaseByteRoles": 2,
+      "execution": "Rosetta on M4, not physical Intel"
+    }
+  ],
+  "actualPackagedSDKEncodedGET": {
+    "result": "passed",
+    "readbacks": 4,
+    "evidence": "actual-sdk-encoded-get.json",
+    "scope": "real SSH extension host on Mac ARM64, actual frozen final VSIX GridstatorClient.getBlob against exact replacement ARM controller; authenticated sha256%3A path exact bytes"
+  },
+  "signing": "Developer ID unsigned/not notarized; any linker ad-hoc state is not release signing",
+  "limits": [
+    "Uncommitted development preview; sourceRevision is parent reference commit and checkpoint captures actual source inputs.",
+    "Intel runtime is Rosetta on M4, not physical Intel hardware.",
+    "Final-byte role checks force Docker/act unavailable and do not establish Mac Docker-positive behavior.",
+    "No new stable release publication/global install or v1 state changes.",
+    "Historical95/c36 workflows retain their exact byte/source scopes; focused replacement tests cover encodedGET delta."
+  ]
+}

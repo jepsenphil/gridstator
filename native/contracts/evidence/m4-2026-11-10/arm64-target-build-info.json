@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-dev.1",
+  "buildId": "m4-confirmed-cd056d87b2da",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-cd056d87b2da",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "darwin/arm64",
+  "size": 56971696,
+  "sha256": "66cc1c2206aa5412d0f784c04756d4ee750ba2e41dcf8a92bb22b8ec53ebde55"
+}

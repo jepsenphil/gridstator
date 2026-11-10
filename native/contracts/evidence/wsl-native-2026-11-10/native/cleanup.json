@@ -1,0 +1,30 @@
+{
+  "remainingOwnedNativeActors": [],
+  "privateRuntimeAndCredentialsAbsent": true,
+  "serviceFixtureAbsent": true,
+  "uniqueBuildTagAbsent": true,
+  "remainingOwnedUserUnits": "",
+  "legacySystemAgent": "MainPID=618566\nActiveState=active\nSubState=running\nFragmentPath=/etc/systemd/system/gridstator-agent.service",
+  "legacyUnitSha256": "c2450846820fd06a0e4199995fe1ea9735b7c3ffe2ff2a34e44dadd0dcf1658c",
+  "userManagerCredentials": [
+    "Uid:\t1000\t1000\t1000\t1000",
+    "Gid:\t1000\t1000\t1000\t1000",
+    "Groups:\t4 24 27 30 46 100 1000 "
+  ],
+  "defaultPaths": {
+    "/home/pj/.config/gridstator-v2": false,
+    "/home/pj/.local/share/gridstator-v2": false,
+    "/home/pj/.vscode-server": false,
+    "/home/pj/.config/systemd/user": false
+  },
+  "windows": {
+    "windowsKernel": "Microsoft Windows NT 10.0.26200.0",
+    "windowsVersion": "10.0.26200.0",
+    "windowsUser": "Phil"
+  },
+  "wslNetworkingMode": "mirrored",
+  "globalGroupSocketOrManagerChanges": false,
+  "sudoUsed": false,
+  "wslTerminatedOrRebooted": false,
+  "ownedNativeTaskPrefixRemoved": true
+}

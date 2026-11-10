@@ -1,0 +1,39 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.11s
+     Running tests/release_workflow_contract.rs (native/target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 1 test
+test same_active_build_id_cannot_rebind_the_controller_mirror ... FAILED
+
+failures:
+
+---- same_active_build_id_cannot_rebind_the_controller_mirror stdout ----
+
+thread 'same_active_build_id_cannot_rebind_the_controller_mirror' (1499838) panicked at tests/release_workflow_contract.rs:75:5:
+scenariosame-id-collision:
+
+running 1 test
+test release_scenario_child ... FAILED
+
+failures:
+
+failures:
+    release_scenario_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 1.80s
+
+
+
+thread 'release_scenario_child' (1499931) panicked at tests/release_workflow_contract.rs:410:157:
+called `Result::unwrap_err()` on an `Ok` value: Response { status: 200, version: HTTP/1.1, headers: {"content-type": "application/json"}, body: Body(UnsyncBoxBody) }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    same_active_build_id_cannot_rebind_the_controller_mirror
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 3.84s
+
+error: test failed, to rerun pass `--test release_workflow_contract`

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "buildId": "rehearsal-confirmed",
+  "version": "2.0.0-rehearsal.2",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "protocol": {
+    "api": 1,
+    "agent": 1,
+    "update": 1
+  },
+  "artifacts": {
+    "darwin/amd64": {
+      "archive": {
+        "file": "gridstator-2.0.0-rehearsal.2-darwin-amd64.tar.gz",
+        "size": 102,
+        "sha256": "825ac63bbad8566c107eed6c018a78d4ae489ffa3260bf68959082e92fd478e7"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 64,
+        "sha256": "92903f1dba8f0e4e9fb2a4e6cd87db561c6ce1627af9d59347f4d32501f3be1d"
+      }
+    },
+    "darwin/arm64": {
+      "archive": {
+        "file": "gridstator-2.0.0-rehearsal.2-darwin-arm64.tar.gz",
+        "size": 102,
+        "sha256": "2d0af17ce2bffb0533b6a848f0581fc8733b9de124e46b4cf7cce2320b832f78"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 64,
+        "sha256": "9feb082822d630eb203ef94e3861e91c9d1c918bd8b7a6111f60f584707d1864"
+      }
+    },
+    "linux/amd64": {
+      "archive": {
+        "file": "gridstator-2.0.0-rehearsal.2-linux-amd64.tar.gz",
+        "size": 23156511,
+        "sha256": "99ff72eafc9cd6006f68e7112945ece8b7474006fe53402e3ba18d346714553c"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 54828688,
+        "sha256": "9e4efef29fa5fb86aa052a3e1b41b20c23cf12656e2bc4a7ba9c1a52caa883da"
+      }
+    },
+    "linux/arm64": {
+      "archive": {
+        "file": "gridstator-2.0.0-rehearsal.2-linux-arm64.tar.gz",
+        "size": 101,
+        "sha256": "b698be1fe6e57005d819167b682f833b50f836f02329063b75f9fd6fa9d618ec"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 64,
+        "sha256": "6c86bf9edbe9ca8986850357a936a45855a98b64425cd8f864a896fcd6bacc88"
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "linux-arm64": {
+    "path": "/tmp/gridstator-buildkit-self-build-zmu7efin/artifacts/self-build/linux-arm64/gridstator",
+    "sha256": "18e2c8464d912ede9021b88d203fae4b69da584321517875500569b008748314",
+    "size": 26568520,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-1fd6e3d425b3",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/arm64",
+      "sha256": "18e2c8464d912ede9021b88d203fae4b69da584321517875500569b008748314",
+      "size": 26568520,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "not executed"
+  },
+  "linux-amd64": {
+    "path": "/tmp/gridstator-buildkit-self-build-zmu7efin/artifacts/self-build/linux-amd64/gridstator",
+    "sha256": "85564631a2c3ca785401da53ab13cc27fcf47da84796f91b7aa785392e9e9577",
+    "size": 27608144,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-1fd6e3d425b3",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/amd64",
+      "sha256": "85564631a2c3ca785401da53ab13cc27fcf47da84796f91b7aa785392e9e9577",
+      "size": 27608144,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-1fd6e3d425b3",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/amd64",
+      "size": 27608144,
+      "sha256": "85564631a2c3ca785401da53ab13cc27fcf47da84796f91b7aa785392e9e9577"
+    }
+  }
+}

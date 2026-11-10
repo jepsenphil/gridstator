@@ -1,4 +1,17 @@
 dist/
+/distro/
 coverage/
+native/target/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+native/local-control-protocol/target/
+native/release/
+native/self-build/
+# Preserve recorded byte identities and generated differential fixtures.
+native/contracts/evidence/
+native/contracts/cli-native-help-v2.json
+native/contracts/cli-process-boundaries-v1.json
+native/contracts/buildx-containerd-m4.json
+native/contracts/buildx-containerd-linux-arm-inspect.json
 pnpm-lock.yaml
 *.md

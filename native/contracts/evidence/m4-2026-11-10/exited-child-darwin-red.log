@@ -1,0 +1,19 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-target/native)
+    Finished `test` profile [unoptimized] target(s) in 2.88s
+     Running unittests src/lib.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/gridstator-8ef54234a9955c24)
+
+running 1 test
+
+thread 'install::termination_tests::exited_owned_child_is_reaped_before_group_shutdown' (3072296) panicked at src/install.rs:1070:14:
+called `Result::unwrap()` on an `Err` value: Os { code: 1, kind: PermissionDenied, message: "Operation not permitted" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test install::termination_tests::exited_owned_child_is_reaped_before_group_shutdown ... FAILED
+
+failures:
+
+failures:
+    install::termination_tests::exited_owned_child_is_reaped_before_group_shutdown
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 28 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `--lib`

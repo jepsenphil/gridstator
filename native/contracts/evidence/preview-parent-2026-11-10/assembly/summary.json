@@ -1,0 +1,159 @@
+{
+  "recordedAt": "2026-11-10T07:22:51Z",
+  "result": "passed",
+  "classification": "unpublished native development preview; stable release gates remain open",
+  "releaseDirectory": "/repos/gridstator/native/release/native-preview-20261110-6994d2cc804b",
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "version": "2.0.0-dev.1",
+  "manifestSha256": "c5e83996dac1776178bc2494021c718dfe97e96f4c5149dd8958c8a101d8d131",
+  "bundleSha256": "b22052eaeabfd7d8a498c2958638c22e44c960e1e689e27c847cf4d43b6a350c",
+  "releaseChecksumFileSha256": "7752cc111158603ac71220ae331a9873db3ceb4d9fe610e14979a6bd556b8c5d",
+  "checksummedFiles": 195,
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "finalInstallerDownloadedExactlyFinalChecksumFile": true,
+  "installedEncodedDigestReadBack": {
+    "path": "/v1/blobs/sha256%3Ad7879b543b0f768d0a283cddc99425de71f8824ea75cedf2c014bd959db7f0e9",
+    "bytes": 33,
+    "matchesExactUploadedBytes": true
+  },
+  "installedCustomConfigPermissions": [
+    {
+      "case": "absolute-existing-parent",
+      "existingParentMode": "0775",
+      "configFileMode": "0600",
+      "dedicatedControllerDataMode": "0700"
+    },
+    {
+      "case": "relative-leaf-existing-parent",
+      "existingParentMode": "0775",
+      "configFileMode": "0600",
+      "dedicatedControllerDataMode": "0700"
+    },
+    {
+      "case": "new-missing-parents",
+      "firstNewParentMode": "0700",
+      "nestedNewParentMode": "0700",
+      "configFileMode": "0600",
+      "dedicatedControllerDataMode": "0700"
+    }
+  ],
+  "requests": [
+    "/v2.0.0-dev.1/SHA256SUMS",
+    "/v2.0.0-dev.1/gridstator-release.json",
+    "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+  ],
+  "finalChecksumCheckExitCode": 0,
+  "nestedProvenanceChecksums": [
+    {
+      "directory": "provenance/historical-remote-wsl-cd6",
+      "exitCode": 0,
+      "checkedLines": 42
+    },
+    {
+      "directory": "provenance/historical-wsl-native-cd6",
+      "exitCode": 0,
+      "checkedLines": 23
+    },
+    {
+      "directory": "provenance/linux",
+      "exitCode": 0,
+      "checkedLines": 41
+    },
+    {
+      "directory": "provenance/linux-arm64-clean-runtime",
+      "exitCode": 0,
+      "checkedLines": 5
+    },
+    {
+      "directory": "provenance/linux-arm64-workflow",
+      "exitCode": 0,
+      "checkedLines": 15
+    },
+    {
+      "directory": "provenance/mac",
+      "exitCode": 0,
+      "checkedLines": 39
+    }
+  ],
+  "cleanup": {
+    "ownedHttpServerStopped": true,
+    "controllerStoppedByRuntimeSmoke": true,
+    "privateCredentialsAndDataRemoved": true,
+    "globalPrefixOrLiveServiceChanged": false
+  },
+  "limits": {
+    "openStableReleaseGates": [
+      {
+        "id": "mac-signing",
+        "status": "not started",
+        "behavior": "Stable macOS candidate bytes are Developer ID signed and notarized before checksum/distribution validation.",
+        "acceptance": {
+          "caseId": "mac-signing",
+          "description": "Owner provides Apple credentials/access; sign/notarize candidate and verify downloaded bytes on each Mac architecture.",
+          "requiredEvidence": [
+            "Native source revision, exact command/scenario and result log",
+            "Actual target/tool/environment identity for platform or real-tool claims"
+          ]
+        },
+        "owner": "project owner + native::release"
+      },
+      {
+        "id": "four-target-linkage",
+        "status": "implemented",
+        "behavior": "All four native targets run without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
+        "acceptance": {
+          "caseId": "four-target-linkage",
+          "description": "Build and audit linkage then run actual tested bytes on clean Linux x64/ARM64 and macOS Intel/ARM64 hosts.",
+          "requiredEvidence": [
+            "Native source revision, exact command/scenario and result log",
+            "Actual target/tool/environment identity for platform or real-tool claims"
+          ]
+        },
+        "owner": "native::build/release"
+      },
+      {
+        "id": "mac-docker-capacity",
+        "status": "implemented",
+        "behavior": "Docker Desktop availability and VM capacity are distinct from host pressure and recover after late startup/restart.",
+        "acceptance": {
+          "caseId": "mac-docker-capacity",
+          "description": "On both Mac architectures, limit the Docker VM below host capacity and prove placement respects the smaller capacity.",
+          "requiredEvidence": [
+            "Native source revision, exact command/scenario and result log",
+            "Actual target/tool/environment identity for platform or real-tool claims"
+          ]
+        },
+        "owner": "native::platform/worker"
+      },
+      {
+        "id": "launchd-live",
+        "status": "implemented",
+        "behavior": "Mac services distinguish boot-start system daemons and login-start user agents, with stable user/environment/path.",
+        "acceptance": {
+          "caseId": "launchd-live",
+          "description": "Run launchd lifecycle, login/logout/reboot and late-Docker recovery on Intel and Apple Silicon Macs.",
+          "requiredEvidence": [
+            "Native source revision, exact command/scenario and result log",
+            "Actual target/tool/environment identity for platform or real-tool claims"
+          ]
+        },
+        "owner": "native::services"
+      },
+      {
+        "id": "systemd-live",
+        "status": "implemented",
+        "behavior": "Linux system/user units install, replace, start, stop, restart and uninstall with correct ownership and isolated v2 paths.",
+        "acceptance": {
+          "caseId": "systemd-live",
+          "description": "Run actual service lifecycle on Linux x64/ARM64; a rendered unit is insufficient.",
+          "requiredEvidence": [
+            "Native source revision, exact command/scenario and result log",
+            "Actual target/tool/environment identity for platform or real-tool claims"
+          ]
+        },
+        "owner": "native::services"
+      }
+    ],
+    "stableRelease": false
+  }
+}

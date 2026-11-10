@@ -1,0 +1,33 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.61s
+     Running unittests src/lib.rs (target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 2 tests
+test state::tests::atomic_config_writes_preserve_existing_parent_permissions ... FAILED
+test state::tests::atomic_config_writes_create_private_missing_parents ... FAILED
+
+failures:
+
+---- state::tests::atomic_config_writes_preserve_existing_parent_permissions stdout ----
+
+thread 'state::tests::atomic_config_writes_preserve_existing_parent_permissions' (1957953) panicked at src/state.rs:142:9:
+assertion `left == right` failed
+  left: 448
+ right: 509
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- state::tests::atomic_config_writes_create_private_missing_parents stdout ----
+
+thread 'state::tests::atomic_config_writes_create_private_missing_parents' (1957952) panicked at src/state.rs:162:9:
+assertion `left == right` failed
+  left: 509
+ right: 448
+
+
+failures:
+    state::tests::atomic_config_writes_create_private_missing_parents
+    state::tests::atomic_config_writes_preserve_existing_parent_permissions
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 36 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--lib`

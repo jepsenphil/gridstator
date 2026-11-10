@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.83s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 1 test
+test release::transport_shutdown_tests::successful_release_cache_expires_after_five_minutes_and_clones_share_install_guard ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.00s
+

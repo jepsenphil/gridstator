@@ -1,0 +1,11 @@
+{
+  "source": "/repos/gridstator/native/target/debug/deps/systemd_e2e-5d88278ebf4ed5f1",
+  "sourceSha256": "fb37fe32b8eabfe9cebf4f2d221839a1cf3da579803daadfc7aacd293f745531",
+  "transferredHarness": "/tmp/gridstator-wsl-validation-v00jpyv0/systemd-wsl-proof",
+  "transferredSha256": "587bfea3b814beb83c2f07c6f56c09d05bfe58983f1cdd8b5fe78d9541f76b21",
+  "strippedDebugInformationOnly": true,
+  "bytes": 23432872,
+  "testSource": "native/tests/systemd_e2e.rs",
+  "testSourceSha256": "ded26576e242d99d47112b2f22a7e677d9642c1b9081121177497c96bbb65052",
+  "selectedNativeBinary": "Set GRIDSTATOR_TEST_BINARY to the final verified release payload; test helper will not select the local cargo binary."
+}

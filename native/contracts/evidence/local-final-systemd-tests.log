@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.45s
+     Running tests/systemd_e2e.rs (target/debug/deps/systemd_e2e-3a9e941ab16289b1)
+
+running 1 test
+test actual_systemd_supervisor_controller_and_embedded_worker_lifecycle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.88s
+

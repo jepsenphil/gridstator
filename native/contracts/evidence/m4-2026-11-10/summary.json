@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-11-10T02:04:06.848890+00:00",
+  "sourceCheckpoint": "99e85b47269bcbea6bc489805c8d4557d6f49d42a2f479d6822a09dce7cdb458",
+  "host": "M4 arm64, macOS15.6/24G84",
+  "runtimeScopes": {
+    "arm64": "native Apple Silicon",
+    "x86_64": "Rosetta translation on Apple Silicon; not physical Intel host"
+  },
+  "proofFiles": [
+    "native-mac-role-1dCRes-launchd-evidence.json",
+    "native-mac-role-PGacF6-foreground-evidence.json",
+    "native-mac-role-WcRi2D-foreground-evidence.json",
+    "native-mac-role-arUpEI-launchd-evidence.json",
+    "native-mac-role-hpGWRR-launchd-evidence.json",
+    "native-mac-role-rY1XeD-foreground-evidence.json"
+  ],
+  "targets": {
+    "arm64": {
+      "defaultPassed": 177,
+      "defaultFailed": 0,
+      "explicitIgnored": 27,
+      "testBinaries": 34,
+      "strictClippy": "passed",
+      "foregroundAndLaunchd": 2
+    },
+    "x86_64": {
+      "defaultPassed": 177,
+      "defaultFailed": 0,
+      "explicitIgnored": 27,
+      "testBinaries": 34,
+      "strictClippy": "passed",
+      "foregroundAndLaunchd": 2
+    }
+  },
+  "managedUpdate": {
+    "target": "darwin/arm64",
+    "result": "passed",
+    "scope": "actual standalone worker+independent stable supervisor, host artifact real, other target artifacts explicit parser fixtures",
+    "baseline": "m4-fixed-base-b99b913ff83a",
+    "confirmed": "m4-fixed-target-b99b913ff83a",
+    "sourceMap": "fixed-effective-source.json",
+    "redRegression": "Darwin killpg of exited unreaped child returns EPERM; native regression red then green; supervisor only tolerates error after confirmed exit"
+  },
+  "notClaimed": [
+    "Docker/BuildKit/act execution or Docker Desktop capacity/restart (tools absent, user choice pending)",
+    "Physical Intel Mac hardware",
+    "Reboot/logout/login persistence or system LaunchDaemon",
+    "DeveloperID signing/notarization or stable release approval"
+  ]
+}

@@ -1,0 +1,60 @@
+No Node/npm/Rust/Cargo/Zig executable in runtime PATH
+{
+  "version": "2.0.0-dev.1",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "linux/amd64",
+  "size": 27550072,
+  "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+}
+2.0.0-dev.1
+{
+  "cluster": {
+    "clusterId": "01M71YRSM3JSZS16XER4YWH8AQ",
+    "version": "2.0.0-dev.1",
+    "build": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": null,
+      "updatable": false,
+      "reason": "This build has no verified four-target native release archives in the controller mirror",
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": false,
+        "reason": "Install this controller as a verified native managed service to enable self-update"
+      }
+    },
+    "controller": {
+      "hostname": "06cad2c50dd2",
+      "machineId": "sha256:800a6563c65ca747723466b60425682802e49cf451f65f67e075f9fdd9557bf8"
+    },
+    "caFingerprint": "sha256:639059669359c584710b07864f18af2aa23f19ef80855cea7d2969c513e51bcb",
+    "startedAt": 1794288412301,
+    "nodes": {
+      "total": 0,
+      "online": 0
+    },
+    "jobs": {},
+    "whoami": {
+      "name": "local-admin",
+      "role": "admin"
+    }
+  },
+  "nodes": [],
+  "activeJobs": []
+}
+Clean Alpine live TLS controller status and graceful stop passed
+Cluster initialized in /tmp/controller
+Controller: https://127.0.0.1:0
+CA fingerprint: sha256:639059669359c584710b07864f18af2aa23f19ef80855cea7d2969c513e51bcb
+Admin token: <redacted-token>
+Saved local credentials to /tmp/client.json

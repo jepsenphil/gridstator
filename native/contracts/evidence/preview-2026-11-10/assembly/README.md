@@ -1,0 +1,7 @@
+# Four-target preview assembly and private installer proof
+
+The final release directory is `native/release/native-preview-20261110-95cfa7161440`. The four real executables passed independent archive/member, digest, header, shared identity and Linux static-linkage checks. All40 source checkpoint inputs and3 supplemental inputs still match. The exact native VSIX is included. `release-SHA256SUMS` is the immutable final35-file list; `summary.json` records its digest and final manifest/bundle digests.
+
+`installer-runtime-smoke.json` and `installer.log` retain actual manual native release verification, loopback installation/reinstallation, installed build-info, private controller initialization, authenticated pinned TLS status and graceful stop. The target processes ran with only ordinary OS tools in PATH; Node/npm/Rust/Python/jq were absent. The private HTTP orchestrator ran outside that restricted PATH. `verify-preview.py` records the exact harness; initialization tokens were discarded and were never copied here. The final installer ran once more against the completed35-file checksum list; `final-installer.log` and `final-checksums.log` retain that result.
+
+Private HTTP/controller processes stopped; private credentials/data were removed. No global prefix, live service or publication changed. Linux ARM64 is build/header/static-only; final Mac Intel bytes were exercised under Rosetta on M4, not physical Intel. Mac bytes lack Developer ID signing/notarization. See PREVIEW.json for all bounded platform/source claims.

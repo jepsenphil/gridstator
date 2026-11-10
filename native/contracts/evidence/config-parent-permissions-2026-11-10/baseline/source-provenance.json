@@ -1,0 +1,15 @@
+{
+  "recordedAtUTC": "2026-11-10T07:00:51.726522+00:00",
+  "nativeBuildId": "native-preview-20261110-7c41b2f3c79d",
+  "nativeLinuxAmd64BinarySha256": "8cf0f97be1fcfae1b9d1a6a601ccb7f600298bb9ca59f862c6369351f4c6aa60",
+  "nativeSourceCheckpoint": "native/contracts/evidence/self-build-image-ref-preview-2026-11-10/common-preview-checkpoint.json",
+  "nativeCheckpointDocumentSha256": "7f469707e9048215bc3cba455bfc1535f02f0479909fcb63eacac3b6327399bd",
+  "nativeCoreCheckpointSha256": "7c41b2f3c79d68d0bfebbea691d34f0ff355a6db5cd559cbf484fbe5e5ea1b61",
+  "nativeStateSourceSha256": "7f406a9b5a2a6eba65474b4440a421af1dd27f40837314e2be97a870586cd21e",
+  "nativeStateRecovery": "Pre-fix source reconstructed from the recorded minimal delta; exact bytes independently matched the immutable7c production checkpoint before being saved.",
+  "frozenV1AcceptedBaseline": "native/contracts/accepted-v1/baseline.json",
+  "frozenV1BaselineDocumentSha256": "22a98c3c935c4e272d3fbfd37bd49928e89bae7dfc2252d4872e20ebdc35b0a9",
+  "frozenV1Revision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "frozenV1FsSourceSha256": "0f73cc2686ec82d460ffbe09e7f487098bceb9a532490e93b8de099b5b6067df",
+  "referenceRuntimeHelper": "frozen-v1-fs.mjs is a byte copy of the existing compiled packages/shared/dist/fs.js (type annotations erased); it imports only Node builtins. Its matching TypeScript source is frozen-v1-fs.ts and matches accepted baseline. No build or production edit was performed."
+}

@@ -1,0 +1,127 @@
+{
+  "recordedAtUTC": "2026-11-10T04:42:22.561694+00:00",
+  "result": "passed",
+  "scope": "Replacement native preview after the encoded blob-URI compatibility correction, built through actual Gridstator CLI/controller/embedded worker and Docker; both Linux musl targets compiled, x64 executed in clean Alpine; no publication/deployment.",
+  "buildId": "native-preview-20261110-e3e5fae51c8e",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview; sourceRevision is the parent reference commit, and this checkpoint identifies actual native production/build inputs. Not a stable release or clean-commit provenance claim.",
+  "productionCheckpointSha256": "e3e5fae51c8e12f26935ab2d8aabaef85175c5fe81d9fe0fd843ffc6ea8b4b5c",
+  "checkpointDocumentSha256": "52edfa4646e7347c6fcebcda901fcc1f8da0c31585cda3346d85dd62a20ca331",
+  "jobId": "01M71VMMVXGSK5XNEATVAHHFDP",
+  "snapshotId": "sha256:216fa791057a14e9cad1e2c2e8b4b07d22fc3c1a6a2de9d617226e30a82de153",
+  "snapshotEntryCount": 827,
+  "snapshotSourceBytes": 7216861,
+  "runSeconds": 444.135,
+  "submissionThroughFinishSeconds": 458.146,
+  "submittedCommand": [
+    "gridstator",
+    "run",
+    "--task",
+    "native-linux",
+    "--env",
+    "GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "--env",
+    "GRIDSTATOR_BUILD_ID=native-preview-20261110-e3e5fae51c8e",
+    "--detach",
+    "--json"
+  ],
+  "sourceVerification": {
+    "productionCheckpointEntries": 40,
+    "allProductionCheckpointEntriesMatchSubmittedSnapshot": true,
+    "snapshotManifestDigest": "sha256:216fa791057a14e9cad1e2c2e8b4b07d22fc3c1a6a2de9d617226e30a82de153",
+    "artifactSourceManifestEntries": 510,
+    "allSourceManifestEntriesMatchSubmittedSnapshot": true
+  },
+  "supplementalBuildInputs": {
+    "recordedAtUTC": "2026-11-10T04:32:41.660354+00:00",
+    "snapshotId": "sha256:216fa791057a14e9cad1e2c2e8b4b07d22fc3c1a6a2de9d617226e30a82de153",
+    "coreCheckpointEntries": 40,
+    "coreCheckpointUnchanged": true,
+    "supplementalBuildInputs": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "snapshotEntry": {
+          "path": "LICENSE",
+          "type": "file",
+          "size": 11358,
+          "digest": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "scripts/install-native.sh",
+        "sha256": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+        "snapshotEntry": {
+          "path": "scripts/install-native.sh",
+          "type": "file",
+          "size": 9606,
+          "digest": "sha256:9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+          "executable": true
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "gridstator.yml",
+        "sha256": "87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+        "snapshotEntry": {
+          "path": "gridstator.yml",
+          "type": "file",
+          "size": 776,
+          "digest": "sha256:87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      }
+    ]
+  },
+  "archive": {
+    "name": "native/self-build.tar",
+    "sha256": "12f6fcda27d6cfd5b012655d9b93d606648969cb5be77dbe5bd5ed36fc73b251",
+    "size": 54255104,
+    "retainedIgnoredPath": "native/self-build/proof-01M71VMMVXGSK5XNEATVAHHFDP/self-build.tar"
+  },
+  "artifacts": {
+    "linux-arm64": {
+      "binary": "native/self-build/proof-01M71VMMVXGSK5XNEATVAHHFDP/linux-arm64/gridstator",
+      "metadata": "native/self-build/proof-01M71VMMVXGSK5XNEATVAHHFDP/linux-arm64/build-info.json",
+      "sha256": "995d69b467dc571117e84a580b29d9df406e5d6d6ed110215997e29eedb4ebf7",
+      "size": 26578344,
+      "runtime": "not executed"
+    },
+    "linux-amd64": {
+      "binary": "native/self-build/proof-01M71VMMVXGSK5XNEATVAHHFDP/linux-amd64/gridstator",
+      "metadata": "native/self-build/proof-01M71VMMVXGSK5XNEATVAHHFDP/linux-amd64/build-info.json",
+      "sha256": "d408a50bf80a4e430b55ccf3fcdec38e48534ac79e52db35025d38050de6e601",
+      "size": 27598768,
+      "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig"
+    }
+  },
+  "actualEnvironment": {
+    "hostOS": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "hostArchitecture": "x86_64",
+    "buildContainer": "build-container.json",
+    "toolVersions": "build-toolchain.json",
+    "runtimeImage": "runtime-image.json"
+  },
+  "nativeCodeChangesDuringProof": false,
+  "cleanup": "cleanup.json",
+  "limits": [
+    "Git sourceRevision is the parent commit of an uncommitted preview. Exact source is the canonical immutable snapshot and recorded source manifest, not a clean/reproducible stable release.",
+    "linux/amd64 passed version/build-info/cluster-init and live TLS controller status with graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig. This does not repeat the full executor/CLI/service acceptance suite against this static binary.",
+    "linux/arm64 is cross-compilation, correct ELF machine/static-linkage evidence only; not executed or labeled runtime-ready.",
+    "Both Linux binaries share the preallocated preview ID with the separately compiled Mac outputs; Mac compilation/runtime and four-target packaging are separate evidence.",
+    "No signing/notarization, WSL2, physical IntelMac/ARM Linux runtime, service/reboot, external publication or live cluster deployment is implied."
+  ],
+  "predecessor": {
+    "buildId": "native-preview-20261110-95cfa7161440",
+    "evidence": "native/contracts/evidence/self-build-preview-2026-11-10",
+    "state": "Frozen historical bytes/evidence preserved unchanged.",
+    "changedProductionInputs": [
+      "native/src/controller.rs"
+    ],
+    "correction": "Decode the GET blob digest once through the existing safe path-component decoder before digest validation, preserving raw and escaped-colon SDK requests."
+  }
+}

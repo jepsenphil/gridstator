@@ -1,0 +1,31 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.25s
+     Running tests/controller_reconnect_races.rs (native/target/debug/deps/controller_reconnect_races-3dd885cb9ddbab3f)
+
+running 2 tests
+Controller listening on https://127.0.0.1:34237
+Controller listening on https://127.0.0.1:33281
+
+thread 'refresh_before_reading_assignment_keeps_identity_resources_and_success' (1408314) panicked at tests/controller_reconnect_races.rs:238:5:
+assertion `left == right` failed: same-socket refresh replaced assignment
+  left: String("01M71PDC4WEFENDVFTWDBYQNKX")
+ right: String("01M71PDC2FRRCPGMZ5KVYNMQYY")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test refresh_before_reading_assignment_keeps_identity_resources_and_success ... FAILED
+
+thread 'empty_refresh_keeps_running_work_and_pending_operator_cancellation' (1408313) panicked at tests/controller_reconnect_races.rs:276:5:
+assertion `left == right` failed: same-socket refresh prematurely finalized a pending cancellation
+  left: String("cancelled")
+ right: "running"
+test empty_refresh_keeps_running_work_and_pending_operator_cancellation ... FAILED
+
+failures:
+
+failures:
+    empty_refresh_keeps_running_work_and_pending_operator_cancellation
+    refresh_before_reading_assignment_keeps_identity_resources_and_success
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+error: test failed, to rerun pass `--test controller_reconnect_races`

@@ -1,0 +1,19 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.33s
+     Running tests/release_workflow_contract.rs (native/target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 11 tests
+test release_scenario_child ... ok
+test reference_controller_releases_005_operator_lists_but_cannot_install ... ok
+test reference_controller_releases_007_invalid_identifiers_never_leave_controller ... ok
+test reference_controller_releases_001_cached_stable_and_prerelease_identity ... ok
+test reference_controller_releases_003_corruption_cannot_change_active_install ... ok
+test reference_controller_releases_006_discovery_failure_is_not_cached_or_mutating ... ok
+test reference_controller_releases_004_bad_checksums_do_not_download_payloads ... ok
+test same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror ... ok
+test reference_controller_releases_002_verified_download_order_and_activation ... ok
+test source_controller_self_update_003_refuses_unmanaged_and_bad_checksums ... ok
+test same_active_build_id_cannot_rebind_the_controller_mirror ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.09s
+

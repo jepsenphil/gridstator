@@ -1,0 +1,39 @@
+29.9.3
+github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5
+act version 0.2.97
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-preview-e3e5fae51c8e/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.26s
+     Running tests/executor_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/executor_contract-e166ce82cba3148d)
+
+running 14 tests
+test cleanup_respects_owned_node_and_keeps_explicit_active_jobs ... ok
+test keep_failed_preserves_command_resources_until_explicit_owned_cleanup ... ok
+test real_act_cancellation_cleans_labelled_workflow_containers ... ok
+test real_act_failed_job_and_missing_workflow_preserve_source_errors ... ok
+test real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact ... ok
+test real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps ... ok
+test real_act_socket_opt_in_shares_runner_files_with_nested_container ... ok
+test real_buildx_cancellation_interrupts_running_build ... ok
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ok
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... 
+thread 'real_buildx_load_describes_image_and_preserves_stage_args_and_labels' (3219966) panicked at tests/executor_contract.rs:625:14:
+called `Option::unwrap()` on a `None` value
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... FAILED
+test real_docker_cancellation_and_timeout_stop_actual_container ... 
+thread 'real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag' (3220092) panicked at tests/executor_contract.rs:258:14:
+called `Option::unwrap()` on a `None` value
+ok
+test real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans ... ok
+test real_docker_success_streams_env_cache_and_missing_image_is_clear ... ok
+
+failures:
+
+failures:
+    real_buildx_load_describes_image_and_preserves_stage_args_and_labels
+    real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag
+
+test result: FAILED. 12 passed; 2 failed; 0 ignored; 0 measured; 3 filtered out; finished in 40.82s
+
+error: test failed, to rerun pass `--test executor_contract`

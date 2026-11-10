@@ -1,0 +1,41 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running tests/install_source_contract.rs (native/target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 1 test
+
+running 1 test
+
+thread 'source_install_013_healthy_confirmation_refreshes_verified_supervisor_child' (1335128) panicked at tests/install_source_contract.rs:538:9:
+assertion `left == right` failed: healthy confirmation must automatically refresh the verified stable launcher
+  left: "d276e19d500eb18a3f54ec6f661129c8f524a2608d76ee6c020d0f54379909bc"
+ right: "bb1647f32219aac43daec86b3a08e6557d2234bb33c361834756287c68a024d4"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... FAILED
+
+failures:
+
+failures:
+    source_install_013_healthy_confirmation_refreshes_verified_supervisor_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 1.94s
+
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... FAILED
+
+failures:
+
+---- source_install_013_healthy_confirmation_refreshes_verified_supervisor_child stdout ----
+
+thread 'source_install_013_healthy_confirmation_refreshes_verified_supervisor_child' (1334911) panicked at tests/install_source_contract.rs:582:5:
+assertion `left == right` failed: installed payload must confirm and refresh successfully
+  left: 101
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_install_013_healthy_confirmation_refreshes_verified_supervisor_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 10.75s
+
+error: test failed, to rerun pass `--test install_source_contract`

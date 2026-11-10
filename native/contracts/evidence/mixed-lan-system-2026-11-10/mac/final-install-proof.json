@@ -1,0 +1,32 @@
+{
+  "state": {
+    "schemaVersion": 1,
+    "current": "native-preview-20261110-cd6b769ebe6e",
+    "previous": "native-preview-20261110-e3e5fae51c8e",
+    "pending": null,
+    "lastRollback": null
+  },
+  "buildInfo": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-cd6b769ebe6e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 23188896,
+    "sha256": "111f031b1b659137d9f36dd549f6234f7d44974f25e28bf8777e1d593a977663"
+  },
+  "versionManifestSha256": "27a1cc6555923b24d19f08580b0a2dafdd7c1e7baf88c9697313878950df6e2e",
+  "supervisorPid": 97787,
+  "supervisorProcess": "97787 97786 Ss   /Users/philjepsen/gridstator-validation.I50ONpwm/mixed-cd6-20261110-31df/install/supervisor",
+  "currentExecutableSha256": "111f031b1b659137d9f36dd549f6234f7d44974f25e28bf8777e1d593a977663",
+  "stableSupervisorSha256": "111f031b1b659137d9f36dd549f6234f7d44974f25e28bf8777e1d593a977663",
+  "privateConfig": true,
+  "credentialHelperDirectoryExcludedFromPATH": true,
+  "launch": "foreground SSH remains open; direct LAN native connection, no tunnel"
+}

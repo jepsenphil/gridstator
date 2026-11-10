@@ -17,10 +17,30 @@ function log(msg) {
   process.stdout.write(`[gridstator-it] ${msg}\n`);
 }
 
+async function bounded(promise, what) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`timed out waiting for ${what}`)), 120_000);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 exports.run = async function run() {
   const ext = vscode.extensions.getExtension('gridstator.gridstator-vscode');
   assert.ok(ext, 'extension is installed');
   const api = await ext.activate();
+  if (process.env.GRIDSTATOR_NATIVE_CLI_E2E) {
+    assert.ok(
+      !('gridstator.nativeCli.enabled' in ext.packageJSON.contributes.configuration.properties),
+      'native package has no legacy mode switch',
+    );
+  }
   await vscode.workspace
     .getConfiguration('gridstator')
     .update('unsavedFiles', 'ignore', vscode.ConfigurationTarget.Workspace);
@@ -34,6 +54,8 @@ exports.run = async function run() {
     .update('defaultNode', target, vscode.ConfigurationTarget.Workspace);
 
   await waitFor(() => api.state.connection.status === 'connected', 'connection');
+  if (process.env.GRIDSTATOR_NATIVE_CLI_E2E)
+    assert.equal((await api.state.requireClient().cluster()).build.runtime, 'rust');
   log(`connected as ${api.state.connection.user}`);
   const node = await waitFor(
     () => api.state.nodeList().find((n) => n.status === 'online' && n.name === target),
@@ -61,7 +83,7 @@ exports.run = async function run() {
   // Run the JUnit task: one test fails on purpose.
   const job = await api.launcher.launch({ itemId: `task:${folder}:junit`, options: {} });
   log(`submitted ${job.id}`);
-  const done = await api.results.waitFor(job.id);
+  const done = await bounded(api.results.waitFor(job.id), 'JUnit job completion');
   assert.equal(done.state, 'failed', `job failed as expected (error: ${done.error})`);
   assert.equal(done.nodeName, target);
   log(`ran on ${done.nodeName}`);
@@ -101,7 +123,7 @@ exports.run = async function run() {
     options: { shards: 2 },
   });
   assert.equal(group.shardTotal, 2, 'launch returned a job group');
-  const finishedGroup = await api.results.waitForGroup(group.id);
+  const finishedGroup = await bounded(api.results.waitForGroup(group.id), 'live group completion');
   assert.equal(finishedGroup.jobs.length, 2);
   const combined = await api.results.processGroup(
     await api.state.requireClient().getGroup(group.id),

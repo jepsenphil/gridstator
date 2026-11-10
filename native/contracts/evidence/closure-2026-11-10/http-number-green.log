@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.59s
+     Running tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)
+
+running 1 test
+test source_http_integer_fields_accept_whole_number_json_literals ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 9.28s
+

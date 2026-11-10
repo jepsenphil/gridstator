@@ -1,0 +1,117 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.71s
+     Running tests/cli_acceptance.rs (native/target/debug/deps/cli_acceptance-e0d34ee2097bdce3)
+
+running 3 tests
+test production_registry_retains_the_frozen_workflow_flags_and_arities ... ok
+test all_fifty_six_help_paths_match_source_commander_bytes ... ok
+test all_source_parser_boundaries_preserve_bytes_streams_and_exit_codes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.28s
+
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-283459ea04c477c9)
+
+running 9 tests
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test frozen_local_service_inspection_ownership_and_invalid_configuration_are_read_only ... ok
+test local_operator_promotion_preserves_the_saved_public_cluster_url ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test local_bootstrap_preserves_an_explicit_foreign_cluster_connection ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.93s
+
+     Running tests/client_errors.rs (native/target/debug/deps/client_errors-9728a916a9f92805)
+
+running 3 tests
+test source_error_bodies_retain_codes_optional_hints_and_details ... ok
+test response_size_limits_match_the_source_client ... ok
+test untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/client_urls.rs (native/target/debug/deps/client_urls-a365c14becf87d15)
+
+running 1 test
+test controller_origins_match_the_frozen_source_url_normalizer ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contract_fixtures.rs (native/target/debug/deps/contract_fixtures-3127c4ae8af964c8)
+
+running 6 tests
+test complete_job_transition_matrix_and_terminal_states_match_v1 ... ok
+test manifest_canonical_bytes_and_ids_match_v1 ... ok
+test manifest_structural_rejections_match_v1 ... ok
+test timestamp_and_step_telemetry_match_v1 ... ok
+test frozen_fixture_bytes_match_recorded_reference_hashes ... ok
+test job_spec_defaults_validation_and_unknown_fields_match_v1 ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/discovery_contract.rs (native/target/debug/deps/discovery_contract-62a576b31b08b983)
+
+running 6 tests
+test local_lockfiles_override_root_fallback_and_symlinks_are_not_walked ... ok
+test project_environment_limits_count_source_unicode_code_points ... ok
+test frozen_project_defaults_and_strictness_match ... ok
+test project_yaml_whole_numbers_match_javascript_normalization ... ok
+test walk_order_exclusions_managers_stages_and_tasks_are_preserved ... ok
+test workflow_events_inputs_and_warnings_match_reference ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/protocol_boundaries.rs (native/target/debug/deps/protocol_boundaries-e407f0819b85bf8b)
+
+running 3 tests
+test whole_json_numbers_survive_downstream_integer_accessors ... ok
+test source_accepted_nul_paths_are_rejected_before_filesystem_or_tool_use ... ok
+test every_source_boundary_matches_native_acceptance_and_normalization ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running tests/protocol_validation.rs (native/target/debug/deps/protocol_validation-63ec4c4f564a3a04)
+
+running 3 tests
+test negative_step_telemetry_is_normalized_without_rejecting_a_valid_result ... ok
+test error_clipping_preserves_utf16_limit_and_utf8_boundaries ... ok
+test build_and_actions_collection_bounds_match_the_protocol ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/release_workflow_contract.rs (native/target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 8 tests
+test release_scenario_child ... ok
+test reference_controller_releases_007_invalid_identifiers_never_leave_controller ... ok
+test reference_controller_releases_005_operator_lists_but_cannot_install ... ok
+test reference_controller_releases_004_bad_checksums_do_not_download_payloads ... ok
+test reference_controller_releases_001_cached_stable_and_prerelease_identity ... ok
+test reference_controller_releases_006_discovery_failure_is_not_cached_or_mutating ... ok
+test reference_controller_releases_003_corruption_cannot_change_active_install ... ok
+test reference_controller_releases_002_verified_download_order_and_activation ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
+
+     Running tests/reports_contract.rs (native/target/debug/deps/reports_contract-16545561a205d55e)
+
+running 6 tests
+test candidates_and_shard_summaries_match_reference ... ok
+test failure_precedence_cdata_and_negative_rounding_are_preserved ... ok
+test direct_cases_precede_suites_and_use_file_names ... ok
+test nested_suites_failures_entities_files_and_durations_match_reference ... ok
+test raw_tar_zip_extraction_and_collection_use_xml_files ... ok
+test malformed_and_expansion_prone_inputs_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/update_compatibility_contract.rs (native/target/debug/deps/update_compatibility_contract-76aca163706b819a)
+
+running 1 test
+test seven_frozen_update_requests_preserve_indefinite_draining_without_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+

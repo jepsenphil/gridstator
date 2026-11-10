@@ -350,7 +350,7 @@ export async function buildServer(deps: ServerDeps): Promise<FastifyInstance> {
   app.patch<{ Params: { id: string } }>('/v1/nodes/:id', async (req) =>
     cluster.updateNodeSettings(
       req.params.id,
-      parse(PatchNodeRequestSchema, req.body, 'node settings'),
+      parse(PatchNodeRequestSchema, req.body, 'node update'),
     ),
   );
 

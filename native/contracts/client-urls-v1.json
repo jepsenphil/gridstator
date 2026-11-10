@@ -1,0 +1,232 @@
+{
+  "formatVersion": 1,
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "source": {
+    "path": "packages/client/src/http.ts",
+    "sha256": "a48e8c800104f32a933d5281d0a7b58dc25408cb392dc33b41a92272e87df39d"
+  },
+  "cases": [
+    {
+      "id": "url-001",
+      "input": "controller",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-002",
+      "input": "controller.local",
+      "value": "https://controller.local:7300"
+    },
+    {
+      "id": "url-003",
+      "input": "controller:7312",
+      "value": "https://controller:7312"
+    },
+    {
+      "id": "url-004",
+      "input": "127.0.0.1",
+      "value": "https://127.0.0.1:7300"
+    },
+    {
+      "id": "url-005",
+      "input": "127.0.0.1:7312",
+      "value": "https://127.0.0.1:7312"
+    },
+    {
+      "id": "url-006",
+      "input": "[::1]",
+      "value": "https://[::1]:7300"
+    },
+    {
+      "id": "url-007",
+      "input": "[::1]:7312",
+      "value": "https://[::1]:7312"
+    },
+    {
+      "id": "url-008",
+      "input": "https://[2001:db8::1]:443",
+      "value": "https://[2001:db8::1]:7300"
+    },
+    {
+      "id": "url-009",
+      "input": "https://[2001:db8::1]:7443",
+      "value": "https://[2001:db8::1]:7443"
+    },
+    {
+      "id": "url-010",
+      "input": "https://controller",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-011",
+      "input": "https://controller:443",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-012",
+      "input": "https://controller:7300",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-013",
+      "input": "https://controller:0",
+      "value": "https://controller:0"
+    },
+    {
+      "id": "url-014",
+      "input": "https://controller:65535",
+      "value": "https://controller:65535"
+    },
+    {
+      "id": "url-015",
+      "input": "https://controller:65536",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"https://controller:65536\""
+      }
+    },
+    {
+      "id": "url-016",
+      "input": " HTTPS://CONTROLLER:7312/path?query=value#fragment ",
+      "value": "https://controller:7312"
+    },
+    {
+      "id": "url-017",
+      "input": "﻿controller﻿",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-018",
+      "input": "\t\ncontroller\r\n",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-019",
+      "input": "controller",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"controller\""
+      }
+    },
+    {
+      "id": "url-020",
+      "input": "https://user:password@controller/path?q=secret#secret",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-021",
+      "input": "https://controller/a/b///",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-022",
+      "input": "http://controller:7300/path",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Gridstator controllers only accept HTTPS connections",
+        "hint": "Use https://controller:7300/path"
+      }
+    },
+    {
+      "id": "url-023",
+      "input": "HTTP://controller",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Gridstator controllers only accept HTTPS connections",
+        "hint": "Use https://controller"
+      }
+    },
+    {
+      "id": "url-024",
+      "input": "https://",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"https://\""
+      }
+    },
+    {
+      "id": "url-025",
+      "input": "",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"\""
+      }
+    },
+    {
+      "id": "url-026",
+      "input": "a b",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"a b\""
+      }
+    },
+    {
+      "id": "url-027",
+      "input": "controller:invalid",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"controller:invalid\""
+      }
+    },
+    {
+      "id": "url-028",
+      "input": "::1",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"::1\""
+      }
+    },
+    {
+      "id": "url-029",
+      "input": "https://[invalid]",
+      "error": {
+        "code": "BAD_REQUEST",
+        "message": "Invalid controller URL \"https://[invalid]\""
+      }
+    },
+    {
+      "id": "url-030",
+      "input": "https://münich.example",
+      "value": "https://xn--mnich-kva.example:7300"
+    },
+    {
+      "id": "url-031",
+      "input": "https://127.1",
+      "value": "https://127.0.0.1:7300"
+    },
+    {
+      "id": "url-032",
+      "input": "https://2130706433",
+      "value": "https://127.0.0.1:7300"
+    },
+    {
+      "id": "url-033",
+      "input": "https://0x7f000001",
+      "value": "https://127.0.0.1:7300"
+    },
+    {
+      "id": "url-034",
+      "input": "https://controller:0443",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-035",
+      "input": "https://controller:07300",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-036",
+      "input": "ftp://controller",
+      "value": "https://ftp:7300"
+    },
+    {
+      "id": "url-037",
+      "input": "https://user%40name:password@controller",
+      "value": "https://controller:7300"
+    },
+    {
+      "id": "url-038",
+      "input": "https://controller\\path",
+      "value": "https://controller:7300"
+    }
+  ]
+}

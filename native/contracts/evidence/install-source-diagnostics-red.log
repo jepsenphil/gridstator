@@ -1,0 +1,35 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.36s
+     Running tests/install_source_contract.rs (native/target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 8 tests
+test source_install_002_and_005_native_executable_and_archive_install_identically_and_idempotently ... ok
+test source_install_010_missing_active_version_has_actionable_identity ... ok
+test source_install_006_forwards_exact_arguments_and_verified_launcher_environment ... ok
+test source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic ... FAILED
+test source_install_009_and_011_confirmed_native_version_keeps_arguments_and_single_trial_attempt ... ok
+test source_install_003_rejects_unverified_launcher_identity_child ... ok
+test source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit ... FAILED
+test source_install_013_refreshes_older_native_launcher_then_runs_active_version ... ok
+
+failures:
+
+---- source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic stdout ----
+
+thread 'source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic' (1315436) panicked at tests/install_source_contract.rs:338:5:
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit stdout ----
+
+thread 'source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit' (1315435) panicked at tests/install_source_contract.rs:284:5:
+
+
+
+failures:
+    source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit
+    source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic
+
+test result: FAILED. 6 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.28s
+
+error: test failed, to rerun pass `--test install_source_contract`

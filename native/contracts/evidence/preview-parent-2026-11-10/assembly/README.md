@@ -1,0 +1,9 @@
+# Native preview assembly and private installer verification
+
+Classification: unpublished native development preview; stable release gates remain open. Exact build `native-preview-20261110-6994d2cc804b` is in `native/release/native-preview-20261110-6994d2cc804b`. The manifest/native-bundle bytes are immutable; all adjacent files are covered by the copied final `release-SHA256SUMS`. `summary.json` records their exact digests and verified file count.
+
+The four real target archives passed independent header, size, executable/archive digest, shared identity, license and native-bundle membership checks. The original source/embedded-input checkpoint was verified at assembly time; these records are bounded to that source snapshot, while later workspace fixes may differ. Linux static linkage was checked directly. Per-target runtime records distinguish actual execution from compilation and retain Rosetta, signing, boot/service and workload limits.
+
+The actual Linux x64 installer/manual verification used only OS tools in the target PATH, with Node/npm/Rust/Python/jq absent. Private init/TLS status/native snapshot/encoded-digest exact byte read-back and graceful stop passed. For the parent-permissions candidate, installed-byte checks also preserve existing absolute/relative 0775 config parents, write config files with mode 0600, and create missing config parents plus dedicated data directories with mode 0700; see the recorded mode cases. The final installer then downloaded the completed checksum file exactly, into a private prefix containing spaces; final and nested provenance checksums passed. No global prefix or live service changed. Owned HTTP/controller actors stopped and private credentials/data were removed.
+
+See PREVIEW.json for historical status or remaining release limits. No public release was published.

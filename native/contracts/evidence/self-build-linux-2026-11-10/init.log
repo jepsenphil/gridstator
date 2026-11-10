@@ -1,0 +1,5 @@
+Cluster initialized in /tmp/gridstator-self-build-27roilfr/controller
+Controller: https://127.0.0.1:0
+CA fingerprint: sha256:d3407ecb41eab90b025314152dfd9350ab284d7c1a38fe77fee2f4deea4728ab
+Admin token: <redacted-token>
+Saved local credentials to /tmp/gridstator-self-build-27roilfr/client.json

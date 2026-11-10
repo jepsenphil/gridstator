@@ -1,0 +1,294 @@
+{
+  "recordedAtUTC": "2026-11-10T03:11:17.602911+00:00",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted shared working tree. Immutable copied executables and before/after source digest checkpoints identify these bounded proofs; this is not final-release provenance.",
+  "runs": {
+    "001-007": {
+      "privateRoot": "/tmp/gridstator-integration-source-XWIJRy",
+      "binary": {
+        "version": "2.0.0-dev.1",
+        "buildId": "dev-4b8f13ccf1b2-1794279257446974855",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "linux/amd64",
+        "size": 240688640,
+        "sha256": "a0c3dcdbc77a1ac43940116264d459a6f8ee4beb54c7a38140ab36604834bc7d"
+      },
+      "independentlyHashedExecutableSha256": "a0c3dcdbc77a1ac43940116264d459a6f8ee4beb54c7a38140ab36604834bc7d",
+      "retainedIgnoredExecutable": "native/target/integration-source-binaries/a0c3dcdbc77a1ac43940116264d459a6f8ee4beb54c7a38140ab36604834bc7d/gridstator",
+      "passedRows": [
+        "reference-integration-e2e-001",
+        "reference-integration-e2e-002",
+        "reference-integration-e2e-003",
+        "reference-integration-e2e-004",
+        "reference-integration-e2e-005",
+        "reference-integration-e2e-006",
+        "reference-integration-e2e-007"
+      ]
+    },
+    "008-011": {
+      "privateRoot": "/tmp/gridstator-integration-source-26VFB9",
+      "binary": {
+        "version": "2.0.0-dev.1",
+        "buildId": "dev-4b8f13ccf1b2-1794279674294205494",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "linux/amd64",
+        "size": 240775872,
+        "sha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be"
+      },
+      "independentlyHashedExecutableSha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be",
+      "retainedIgnoredExecutable": "native/target/integration-source-binaries/c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be/gridstator",
+      "passedRows": [
+        "reference-integration-e2e-008",
+        "reference-integration-e2e-009",
+        "reference-integration-e2e-010",
+        "reference-integration-e2e-011"
+      ]
+    },
+    "012-actions": {
+      "privateRoot": "/tmp/gridstator-integration-source-tNv421",
+      "binary": {
+        "version": "2.0.0-dev.1",
+        "buildId": "dev-4b8f13ccf1b2-1794279674294205494",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "linux/amd64",
+        "size": 240775872,
+        "sha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be"
+      },
+      "independentlyHashedExecutableSha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be",
+      "retainedIgnoredExecutable": "native/target/integration-source-binaries/c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be/gridstator",
+      "passedRows": [
+        "reference-integration-e2e-012"
+      ]
+    }
+  },
+  "verifiedRows": [
+    {
+      "id": "reference-integration-e2e-001",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 223
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_001",
+      "run": "001-007",
+      "assertions": "Chosen Beta; streamed stdout/stderr; exit7 and failed-on-Beta summary."
+    },
+    {
+      "id": "reference-integration-e2e-002",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 242
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_002",
+      "run": "001-007",
+      "assertions": "Exact dirty/untracked Git worktree, .env and ignored-build exclusion, workdir, deterministic snapshot and nothing-to-upload output."
+    },
+    {
+      "id": "reference-integration-e2e-003",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 287
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_003",
+      "run": "001-007",
+      "assertions": "Secret-env masking and no secret in public job JSON."
+    },
+    {
+      "id": "reference-integration-e2e-004",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 312
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_004",
+      "run": "001-007",
+      "assertions": "Two default independent jobs on Alpha/Beta with overlapping intervals."
+    },
+    {
+      "id": "reference-integration-e2e-005",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 323
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_005",
+      "run": "001-007",
+      "assertions": "Fast label placement, unschedulable GPU explanation and cancellation."
+    },
+    {
+      "id": "reference-integration-e2e-006",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 333
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_006",
+      "run": "001-007",
+      "assertions": "Running cancellation under15s, actual container removal, manual retry attempt2/lineage."
+    },
+    {
+      "id": "reference-integration-e2e-007",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 370
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_007",
+      "run": "001-007",
+      "assertions": "Real controller interruption preserves Alpha execution and exactly12 ordered log lines, both workers reconnect."
+    },
+    {
+      "id": "reference-integration-e2e-008",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 397
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_008",
+      "run": "008-011",
+      "assertions": "SIGKILL/restart after observing real running owned container+volume; owned cleanup, unrelated-node container+volume survive; lost diagnostic and successful automatic attempt2."
+    },
+    {
+      "id": "reference-integration-e2e-009",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 435
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_009",
+      "run": "008-011",
+      "assertions": "Actual remote BuildKit image on Beta with target/buildarg, unique tag, image summary, job ownership label and image output."
+    },
+    {
+      "id": "reference-integration-e2e-010",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 529
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_010",
+      "run": "008-011",
+      "assertions": "Two-worker overlapping shards, both log prefixes, successful group and combined JUnit8/8."
+    },
+    {
+      "id": "reference-integration-e2e-011",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 550
+      },
+      "nativeTest": "all_eleven_source_scenarios_with_two_real_native_workers::source_011",
+      "run": "008-011",
+      "assertions": "Doctor exits0 with healthy controller and2/2 workers online."
+    },
+    {
+      "id": "reference-integration-e2e-012",
+      "source": {
+        "path": "tests/integration/e2e.test.ts",
+        "line": 475
+      },
+      "nativeTest": "conditional_actions_source_012_runs_dirty_tree_and_downloads_exact_artifact",
+      "run": "012-actions",
+      "assertions": "Conditional source Actions test actually enabled: list test/lint, dirty greet test on Alpha, Run tests step success, exact named artifact downloaded asZIP."
+    }
+  ],
+  "commandMatrix": [
+    {
+      "cases": "001-007",
+      "command": "GRIDSTATOR_KEEP_INTEGRATION_SOURCE_EVIDENCE=1 cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test integration_source_scenarios -- --ignored --nocapture --test-threads=1",
+      "result": "The seven listed cases passed; overall command FAILED at source008, exposing the same-socket hello race. Later cases were not executed by this command.",
+      "log": "source-001-007-then-race-red.log"
+    },
+    {
+      "cases": "008-011",
+      "command": "GRIDSTATOR_KEEP_INTEGRATION_SOURCE_EVIDENCE=1 GRIDSTATOR_INTEGRATION_SOURCE_CASES=008,009,010,011 cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test integration_source_scenarios -- --ignored --nocapture --test-threads=1",
+      "result": "passed, all4 selected cases,64.38s",
+      "log": "source-008-011-green.log"
+    },
+    {
+      "cases": "012",
+      "command": "GRIDSTATOR_KEEP_INTEGRATION_SOURCE_EVIDENCE=1 cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test integration_source_scenarios conditional_actions_source_012 -- --ignored --nocapture --test-threads=1",
+      "result": "passed45.74s; act available, not skipped",
+      "log": "source-012-actions-green.log"
+    },
+    {
+      "cases": "same-socket assignment/running/cancel race",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test controller_reconnect_races -- --nocapture --test-threads=1",
+      "result": "3passed1.28s, after2 deterministic red failures0.57s",
+      "log": "reconnect-races-green.log"
+    },
+    {
+      "cases": "scoped lint",
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --test controller_reconnect_races --test integration_source_scenarios -- -D warnings",
+      "result": "passed",
+      "log": "strict-clippy.log"
+    }
+  ],
+  "checkpointNativeDifferences": [
+    "native/src/controller.rs",
+    "native/src/install.rs",
+    "native/src/updates.rs",
+    "native/tests/integration_source_scenarios.rs"
+  ],
+  "nativeChangesProved": [
+    "Preserve deferred shell -- delimiter.",
+    "Restore source terminal/node/image/artifact and duplicate-upload CLI summaries.",
+    "Restore worker startup lost diagnostic.",
+    "Ignore absent jobs in later same-socket refresh hello; keep authoritative negative reconciliation for initial hello/new connection."
+  ],
+  "raceRationale": {
+    "v1Controller": "apps/controller/src/cluster.ts903-1003 reconciles everyhello.",
+    "v1Worker": "apps/agent/src/agent.ts258 emits hello only on socketopen.",
+    "nativeWorker": "Capability/admission refreshes send hello on an existing socket, whose snapshot cannot include assignments still in flight.",
+    "testProof": "Three deterministic loopback TLS/WS tests keep assigned identity/resources, running work, and pending operator cancellation through stale empty refresh; initial reconnect source tests remain separate.",
+    "actualTimeline": "retry-race-audit.json contains exact ordered durable events; hello frame placement is inferred from the exclusive controller branch, not a packet capture."
+  },
+  "supportingCoreRows": [
+    {
+      "id": "agent-restart-owned-cleanup",
+      "evidence": "Source007 + strengthened008: real network interruption versus process death; cleanup includes actual preobserved resources and unrelated-node guards."
+    }
+  ],
+  "partialSupportOnly": [
+    {
+      "id": "log-result-ordering",
+      "limit": "Source007 checks exact ordered12 full lines across interruption. It alone does not prove final partialUTF8, disconnect-through-completion, or exactlyone terminalack; use the separate worker/controller result-ordering proofs."
+    }
+  ],
+  "artifact": {
+    "file": "actions-test-report.zip",
+    "sha256": "a6754c4016658d3fd1fe278fa276ca8e9d64027def7fdc814bae7620f3e745df",
+    "entries": [
+      "junit.xml",
+      "summary.txt"
+    ],
+    "signature": "PK"
+  },
+  "inventoryNote": "012 appends the previously unindexed it.skipIf(!actAvailable) source475 scenario. Existing001-011 IDs remain fixed, despite source Actions appearing before010/011. The frozen conditional inventory also identified the separately tracked managed Node/toolchain exception at agent updater232.",
+  "limits": [
+    "Actual runtime evidence is Linux x86_64 only, on one physical host and Docker29.0.2.",
+    "No macOS, WSL2, actual IntelMac, multi-host LAN, OS service/reboot, signing/notarization or release-publication claims.",
+    "The host has external git/Docker/buildx/act; Node used inside the Actions/build images does not imply host Node is required by the native executable.",
+    "Two immutable debug CLI checkpoints were used; the first intentionally retains the exposed hello race. This matrix is not one all12 green command against a final release binary.",
+    "Install/update changes between checkpoints do not affect these unmanaged workers; install root and supervised identity variables are removed, autoUpdate and managedact are disabled."
+  ],
+  "sourceDigestsAtEvidenceRecord": {
+    "native/tests/integration_source_scenarios.rs": "4c6823051f99a4d11891ddef79a6b036610e21ef5e66daed7ff3bd374e544bdf",
+    "native/tests/controller_reconnect_races.rs": "ac9403a25df8232b2c7dfc309c1f948568f736fd03f487eef5d823400ca56f37",
+    "tests/integration/e2e.test.ts": "533a67dded0d878914b6155c98adafcdbf9367e8d481fcc8cd3aea1aaf98fcab",
+    "apps/controller/src/cluster.ts": "644256018b61efc91c58f65f0df34cf9d1de2dd90f478c0d17728f9e2d7b1da5",
+    "apps/agent/src/agent.ts": "c2efac1eedae57eaf320543dc2445f6d58ef7ea78e59f6b4e7544657017a7115"
+  }
+}

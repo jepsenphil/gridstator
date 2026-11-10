@@ -1,0 +1,62 @@
+{
+  "helperFailures": [
+    {
+      "helper": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/missing-native-helper",
+      "warnings": [
+        "Native Gridstator CLI was not found at /home/pj/gridstator-validation-v00jpyv0/gui-proof/missing-native-helper. Install the native preview on this workspace host, or set the machine setting gridstator.nativeCli.path to its absolute path."
+      ]
+    },
+    {
+      "helper": "/usr/bin/true",
+      "warnings": [
+        "This native CLI does not support the extension bridge-v1 contract. Install a matching native v2 preview and check gridstator.nativeCli.path."
+      ]
+    }
+  ],
+  "result": "passed",
+  "remoteName": "wsl",
+  "extensionHost": {
+    "platform": "linux",
+    "arch": "x64",
+    "pid": 816447
+  },
+  "workspace": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/workspace with spaces",
+  "extension": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/extension",
+  "native": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-cd6b769ebe6e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/amd64",
+    "size": 27550072,
+    "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+  },
+  "clusterId": "01M71ZS3G2F1CG0K2B6ZNYP7V5",
+  "url": "https://127.0.0.1:47299",
+  "worker": {
+    "id": "01M71ZS3XRAB9PAR5H9CDCVER9",
+    "name": "private-actual-wsl-editor",
+    "platform": "linux"
+  },
+  "job": {
+    "id": "01M71ZYY75Q0NGAKC16N9F1YH8",
+    "state": "succeeded",
+    "snapshot": "sha256:6a0d670c89da8d7bd8ff6a643bfcf3fb2a3c436bd76f902339717398a05b5f5f",
+    "stdout": "captured-on-actual-wsl\n",
+    "artifact": {
+      "name": "reports/result.txt.tar",
+      "size": 2048,
+      "downloadedBytes": 2048,
+      "content": "remote-native-artifact\n"
+    },
+    "parsedTests": 1
+  },
+  "cancelledJob": "01M71ZZ13DZTFHQHGT7RS1JXEF",
+  "scope": "actual Windows VS Code1.145.0 stock RemoteWSL1.104.7; actual Microsoft WSL2 Linux x64 extension host/final static native CLI/private controller and Docker worker; private client/server metadata and all storage paths explicitly isolated; one real editor window"
+}

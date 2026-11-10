@@ -1,0 +1,108 @@
+{
+  "recordedDate": "2026-11-10",
+  "result": "passed",
+  "testCount": 10,
+  "elapsedSeconds": 37.16,
+  "command": "GRIDSTATOR_NATIVE_WINDOWS_E2E=/tmp/gridstator-native-window-cli-proof-5sny_23c/gridstator GRIDSTATOR_NATIVE_WINDOWS_RELEASES=/tmp/gridstator-recovery-arhXMg pnpm exec vitest run apps/vscode/src/native-windows.integration.test.ts --no-file-parallelism",
+  "environment": {
+    "os": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "node": "v24.15.0",
+    "pnpm": "10.33.2"
+  },
+  "rows": [
+    {
+      "id": "reference-vscode-state-001",
+      "reference": "apps/vscode/src/state.test.ts:23",
+      "nativeTest": "three model windows connect on first shared login and adopt rotated native credentials",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-state-002",
+      "reference": "apps/vscode/src/state.test.ts:80",
+      "nativeTest": "revoked native shared credentials stop reconnecting and expose explicit local restoration",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-settings-001",
+      "reference": "apps/vscode/src/settings.test.ts:226",
+      "nativeTest": "a second native model window leaves the first window’s active worker drain in place",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-settings-002",
+      "reference": "apps/vscode/src/settings.test.ts:251",
+      "nativeTest": "a new native model window restores ready and expired worker leases without changing another cluster",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-settings-003",
+      "reference": "apps/vscode/src/settings.test.ts:274",
+      "nativeTest": "changing the shared native cluster while waiting cancels installation and restores the original worker",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-settings-004",
+      "reference": "apps/vscode/src/settings.test.ts:309",
+      "nativeTest": "rejects a changed native login before its window watcher adopts the new cluster",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    },
+    {
+      "id": "reference-vscode-settings-005",
+      "reference": "apps/vscode/src/settings.test.ts:341",
+      "nativeTest": "keeps model workers drained through a slow real native controller update then restores scheduling",
+      "statusProposal": "verified",
+      "evidence": "models-final.log"
+    }
+  ],
+  "packages": [
+    {
+      "buildId": "rehearsal-baseline",
+      "version": "2.0.0-rehearsal.1",
+      "manifestSha256": "4beb84171e895a61a6727ef9c980980e5b910b1fb374bd5c75f7b2eeec45ba3f",
+      "executable": {
+        "file": "gridstator",
+        "size": 54828680,
+        "sha256": "02f669cb7d45395245f7357957dbf7e099120f3a45033e706d1be07f3e03e1e0"
+      },
+      "sourceEvidence": "../linux-cutover-2026-11-10/rehearsal-baseline-source-sha256.json",
+      "scope": "linux/amd64 actual executable; non-host manifest entries are parser fixtures, not runtime proof"
+    },
+    {
+      "buildId": "rehearsal-confirmed",
+      "version": "2.0.0-rehearsal.2",
+      "manifestSha256": "3a3a3a778452826757426eb400b61b25f03f6d1c3e5f114a2b3b7f833ae71e88",
+      "executable": {
+        "file": "gridstator",
+        "size": 54828688,
+        "sha256": "9e4efef29fa5fb86aa052a3e1b41b20c23cf12656e2bc4a7ba9c1a52caa883da"
+      },
+      "sourceEvidence": "../linux-cutover-2026-11-10/rehearsal-confirmed-source-sha256.json",
+      "scope": "linux/amd64 actual executable; non-host manifest entries are parser fixtures, not runtime proof"
+    }
+  ],
+  "scope": [
+    "Three ClusterState and DashboardSettings component models share actual private native credentials and storage in one test process; this does not model real SSH/editor window processes.",
+    "Real Rust controller REST/TLS/WebSocket transport and actual NativeCli bridge/local administration are used; the hoisted client subclass validates fixture isolation and retains real transport/results.",
+    "ProtocolWorker is a scripted protocol peer to reproduce original model assertions; it is not real worker or Docker executor evidence.",
+    "Actual native managed supervisor baseline/target executable bytes perform the update/restart; only file selection and controlled owned-supervisor pause are test seams.",
+    "No Docker/act is needed or advertised by real worker execution. External release artifacts are private rehearsal fixtures; no stable signed-release claim."
+  ],
+  "guard": "File-wide fail-closed URL/native-mode/private-config policy independently reviewed by parent; two boundary regressions passed before private model reruns. See ../native-window-isolation-2026-11-10 incident audit.",
+  "earlierFailures": [
+    {
+      "log": "fixture-canonicalization-red.log",
+      "reason": "Test fixture initially hashed compact JSON rather than native producer pretty JSON plus LF; supervisor correctly refused it; helper now asserts byte equality before launch."
+    },
+    {
+      "log": "peer-startup-first-timeout.log",
+      "reason": "Private protocol peer online poll reached timeout once on frozen baseline. Diagnostic context added; subsequent isolated case and complete unchanged-timeout run passed. No production change or timeout increase."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "root": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76",
+  "workspace": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/workspace with spaces",
+  "config": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/private-client.json",
+  "cli": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-c36d79523a20-arm64",
+  "controllerData": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/controller-unused",
+  "agentData": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/agent-unused",
+  "url": "https://127.0.0.1:59091",
+  "remotePort": 59091,
+  "clusterId": "01M71Q8M2T873VHHQSFDP9E4F8",
+  "nodeId": "01M71Q8VKATD3G4S3FRQ037W8R",
+  "nodeName": "remote-native-gst-m4-proof-zq7g9l76",
+  "nativeBuildId": "m4-final-c36d79523a20",
+  "nativeSha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86",
+  "caFingerprint": "sha256:d36d0b0fe6b33f89cfab183d41341662489e72210faba4c18a820f4f48011971",
+  "packageSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "cache": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/cache",
+  "projectYaml": "version: 1\nproject: actual-m4-native-smoke\ndefaults:\n  image: alpine:3.21\n  resources:\n    cpus: 1\n    memory: 128m\ntasks:\n  proof:\n    command: |\n      set -eu\n      cat 'payload with spaces.txt'\n      mkdir -p reports\n      printf '%s\\n' 'remote-native-artifact' > reports/result.txt\n      printf '%s\\n' '<testsuites><testsuite name=\"remote\" tests=\"1\"><testcase name=\"actual M4 snapshot\" classname=\"remote\" file=\"source.js\" line=\"1\"/></testsuite></testsuites>' > reports/junit.xml\n    artifacts: [reports/result.txt]\n    junit: reports/junit.xml\n  slow:\n    command: echo remote-running; sleep 300\n"
+}

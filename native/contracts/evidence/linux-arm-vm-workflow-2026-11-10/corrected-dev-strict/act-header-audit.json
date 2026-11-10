@@ -1,0 +1,10 @@
+{
+  "externalTool": "act",
+  "version": "0.2.96",
+  "archive": "act_Linux_arm64.tar.gz",
+  "executableSha256": "aa958a689fc887427065d264e9be496ec2fd57f728256435636c4c9c5f69d75d",
+  "elfClass": "ELF64",
+  "elfMachine": 183,
+  "target": "linux/arm64",
+  "actualExecution": "Both corrected-dev native workers probed this mounted readonly file and actual Actions shell step succeeded; audit hashes in corrected-dev-strict/post-cleanup-audit.json"
+}

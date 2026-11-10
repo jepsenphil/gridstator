@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-preview-7c41b2f3c79d/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.08s
+     Running unittests src/lib.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/gridstator-f8946007188b254b)
+
+running 2 tests
+test worker::admission_tests::host_available_memory_counts_reclaimable_pages_without_compressor_subtraction ... ok
+test worker::admission_tests::host_available_memory_is_sampled_for_heartbeats ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 35 filtered out; finished in 0.13s
+

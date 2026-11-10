@@ -1,0 +1,177 @@
+{
+  "recordedAt": "2026-11-10T03:56:47Z",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "target": "linux/amd64",
+  "manifestSha256": "2607e050f0a9d14b19d1d1027516c587348d963fa0942766267e50cef2161a68",
+  "executable": {
+    "sha256": "8f9adecdeb1eff5a07824239c9d692298b10728b766184cb36143c8cfa471eed",
+    "size": 27598104
+  },
+  "runtimePathPolicy": {
+    "tools": [
+      "awk",
+      "cat",
+      "chmod",
+      "cp",
+      "curl",
+      "gzip",
+      "mkdir",
+      "mktemp",
+      "mv",
+      "od",
+      "rm",
+      "rmdir",
+      "sh",
+      "sha256sum",
+      "tar",
+      "tr",
+      "uname",
+      "wc"
+    ],
+    "absent": [
+      "node",
+      "npm",
+      "npx",
+      "rustc",
+      "cargo",
+      "rustup",
+      "python",
+      "python3",
+      "jq"
+    ],
+    "scope": "Installer, verifier, installed CLI and controller child processes. The private HTTP test server runs outside this PATH."
+  },
+  "checks": {
+    "manualArchiveRegularMember": true,
+    "manualNativeReleaseVerify": true,
+    "installerLoopbackDownload": true,
+    "repeatIdenticalInstall": true,
+    "prefixContainsSpaces": true,
+    "installedBytesMatchManualArchive": true,
+    "metadataRetained": true,
+    "installerLockAndTempCleaned": true,
+    "privateInit": true,
+    "actualPinnedTlsStatus": true,
+    "gracefulStopExitCode": 0,
+    "liveServiceOrGlobalPrefixChanged": false
+  },
+  "commands": [
+    {
+      "argv": [
+        "<private>/manual/gridstator",
+        "release",
+        "verify",
+        "--manifest",
+        "/repos/gridstator/native/release/native-preview-20261110-95cfa7161440/gridstator-release.json",
+        "--manifest-sha256",
+        "2607e050f0a9d14b19d1d1027516c587348d963fa0942766267e50cef2161a68",
+        "--archive",
+        "/repos/gridstator/native/release/native-preview-20261110-95cfa7161440/gridstator-2.0.0-dev.1-linux-amd64.tar.gz",
+        "--executable",
+        "<private>/manual/gridstator",
+        "--target",
+        "linux/amd64"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "<private>/manual/gridstator",
+        "build-info",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "/bin/sh",
+        "/repos/gridstator/native/release/native-preview-20261110-95cfa7161440/install-native.sh",
+        "--tag",
+        "v2.0.0-dev.1",
+        "--prefix",
+        "<private>/installed prefix with spaces",
+        "--base-url",
+        "http://127.0.0.1:37007"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "/bin/sh",
+        "/repos/gridstator/native/release/native-preview-20261110-95cfa7161440/install-native.sh",
+        "--tag",
+        "v2.0.0-dev.1",
+        "--prefix",
+        "<private>/installed prefix with spaces",
+        "--base-url",
+        "http://127.0.0.1:37007"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "<private>/installed prefix with spaces/bin/gridstator",
+        "build-info",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "<private>/installed prefix with spaces/bin/gridstator",
+        "--version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "argv": [
+        "<private>/installed prefix with spaces/bin/gridstator",
+        "controller",
+        "init",
+        "--data-dir",
+        "<private>/runtime/controller",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "37335"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "httpRequests": [
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/SHA256SUMS"
+    },
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/gridstator-release.json"
+    },
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+    },
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/SHA256SUMS"
+    },
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/gridstator-release.json"
+    },
+    {
+      "method": "GET",
+      "path": "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+    }
+  ],
+  "limits": [
+    "Linux amd64 installer/runtime smoke only; foreign target headers, sizes and digests are independently checked during assembly.",
+    "No workload, service registration, reboot or publication was performed."
+  ],
+  "cleanup": {
+    "privateHttpStopped": true,
+    "controllerStopped": true,
+    "privateCredentialsAndDataRemoved": true
+  }
+}

@@ -1,0 +1,14 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.51s
+     Running tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)
+
+running 6 tests
+test source_controller_publish_checksum_error_reports_expected_and_actual ... ok
+test source_http_integer_fields_accept_whole_number_json_literals ... ok
+test retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes ... ok
+test source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests ... ok
+test native_blob_upload_checks_content_and_snapshot_manifest ... ok
+test native_tls_pairing_authority_and_job_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+

@@ -1,0 +1,21 @@
+{
+  "root": "/tmp/gst-real-windows-1mr4ts9n",
+  "remoteRoot": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n",
+  "alias": "gst-m4-windows-1mr4ts9n",
+  "code": "/repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/code",
+  "cli": "/repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/bin/code",
+  "vsix": "/repos/gridstator/apps/vscode/dist/gridstator-native.vsix",
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "native": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/native-preview-20261110-95cfa7161440-arm64",
+  "nativeSha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "controllerPid": 87004,
+  "url": "https://127.0.0.1:59823",
+  "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05",
+  "caFingerprint": "sha256:c6d92fbd1e7e2c28f518dfbc35e60f0699380a00c580c74fac907aae7c8391d9",
+  "config": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/shared-client.json",
+  "workspace": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/workspace with spaces",
+  "controllerData": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/unused-controller",
+  "agentData": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/unused-agent",
+  "cache": "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/cache"
+}

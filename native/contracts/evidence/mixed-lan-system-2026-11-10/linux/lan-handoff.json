@@ -1,0 +1,9 @@
+{
+  "controllerUrl": "https://192.168.1.162:42751",
+  "caFingerprint": "sha256:171bce1f8fb206994adc7502fe0fa8c3e5a15f97ba83ffd08b109f7d19828e89",
+  "baselineBuildId": "native-preview-20261110-e3e5fae51c8e",
+  "macNodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+  "macName": "mixed-cd6-31df-mac",
+  "privateAgentConfig": "/tmp/gridstator-system-proof-cd6-20261110-31df/mac-agent.json",
+  "target": "darwin/arm64"
+}

@@ -1,0 +1,7 @@
+PASSED embedded-command-snapshot-artifact
+PASSED standalone-build-load-image
+PASSED actual-verified-arm-act-shell
+PASSED two-worker-shards-combined-junit
+PASSED standalone-cancel-owned-cleanup
+PASSED doctor-two-native-workers
+Actual Linux ARM workflow passed; owned resources and credentials removed

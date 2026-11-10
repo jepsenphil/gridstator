@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-11-10T05:18:13.359610+00:00",
+  "environment": {
+    "host": "Apple M4;macOS15.6;ARM64nativeRust",
+    "DockerDesktop": "4.99.0",
+    "DockerEngine": "29.9.3",
+    "act": "0.2.97"
+  },
+  "command": "worker-suite.sh; cargo test --locked --target aarch64-apple-darwin --test worker_contract -- --ignored --skip independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put --nocapture --test-threads=1",
+  "result": "passed",
+  "passed": 8,
+  "failed": 0,
+  "durationSeconds": 17.07,
+  "sourceCheckpoint": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "workerSourceSha256": "181bd9221ed71e39894d354592b4b6736179d3ad89ac1defade46877003333ec",
+  "compiledIdentity": "Temporary m4-memory-dev-181bd9221ed7 compiled source test/CLI; final cd6 common identity is built separately from identical production sources",
+  "cases": [
+    "coordinator abort cancels owned work and preserves lost outbox",
+    "actual agent CLI SIGTERM drain finishes work and exits cleanly",
+    "artifact upload failure still delivers durable result",
+    "disconnected completion replays durable logs before result acknowledgement",
+    "drain keeps heartbeat and finishes active work without admission",
+    "missing snapshot yields terminal result",
+    "ordinary shutdown persists lost result",
+    "update probe releases admission and explicit restart handoff"
+  ],
+  "excluded": "Independent managed worker install/update package-fixture case requires its distinct prepared releases and is not claimed by this eight-case run.",
+  "scope": "Actual private M4 Rust controllers/workers and Docker; no physical Intel, boot/reboot or system LaunchDaemon claim."
+}

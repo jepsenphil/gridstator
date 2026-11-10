@@ -1,0 +1,12 @@
+
+running 1 test
+test actual_systemd_supervisor_controller_and_embedded_worker_lifecycle ... Error: controller did not clean runtime identity on stop
+FAILED
+
+failures:
+
+failures:
+    actual_systemd_supervisor_controller_and_embedded_worker_lifecycle
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.53s
+

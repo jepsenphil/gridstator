@@ -1,0 +1,48 @@
+
+ RUN  v5.1.0 /repos/gridstator
+
+ ❯ apps/vscode/src/native-windows.integration.test.ts (10 tests | 1 failed | 9 skipped) 17664ms
+   ❯ retained window component models with real native controller (9)
+     × keeps model workers drained through a slow real native controller update then restores scheduling 17663ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/vscode/src/native-windows.integration.test.ts > retained window component models with real native controller > keeps model workers drained through a slow real native controller update then restores scheduling
+Error: Private native controller failed startup: error: installed release metadata does not match its version store
+
+ ❯ apps/vscode/src/native-windows.integration.test.ts:433:15
+    431|           () => 'log unavailable',
+    432|         );
+    433|         throw new Error(`Private native controller failed startup: ${d…
+       |               ^
+    434|       });
+    435|     const cluster = await this.admin.cluster();
+ ❯ RustController.start apps/vscode/src/native-windows.integration.test.ts:419:5
+ ❯ boot apps/vscode/src/native-windows.integration.test.ts:591:3
+ ❯ apps/vscode/src/native-windows.integration.test.ts:909:16
+
+Caused by: AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ RustController.start apps/vscode/src/native-windows.integration.test.ts:428:8
+ ❯ boot apps/vscode/src/native-windows.integration.test.ts:591:3
+ ❯ apps/vscode/src/native-windows.integration.test.ts:909:16
+
+Caused by: Error: Matcher did not succeed in time.
+ ❯ RustController.start apps/vscode/src/native-windows.integration.test.ts:419:5
+ ❯ boot apps/vscode/src/native-windows.integration.test.ts:591:3
+ ❯ apps/vscode/src/native-windows.integration.test.ts:909:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 skipped (10)
+   Start at  15:51:32
+   Duration  17.99s (tests 99%, import 1%)
+

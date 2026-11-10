@@ -1,0 +1,349 @@
+{
+  "recordedAtUTC": "2026-11-10T02:26:33.316979+00:00",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Shared uncommitted working tree; digests captured after focused checks, not immutable final release provenance. Companion installation proofs identify their earlier exact payload checkpoints.",
+  "environment": {
+    "os": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "proofs": [
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --test updates_source_scenarios -- --nocapture",
+      "result": "expected red before fixes:7 passed,10 failed,1 ignored",
+      "log": "source-red.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_contract --test updates_source_scenarios --test controller_source_scenarios",
+      "result": "passed",
+      "passed": 36,
+      "ignored": 1,
+      "counts": {
+        "controller_source_scenarios": 6,
+        "updates_contract": 10,
+        "updates_source_scenarios": 20
+      },
+      "log": "source-green.log"
+    },
+    {
+      "command": "GRIDSTATOR_UPDATE_SOURCE_EVIDENCE=/tmp/gridstator-managed-act-override-20261110 cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_source_scenarios source_015_actual_act_override_is_checked_against_upstream_checksums -- --ignored --nocapture",
+      "result": "passed",
+      "passed": 1,
+      "elapsedSeconds": 3.42,
+      "log": "actual-act-override.log",
+      "metadata": "actual-act-override.json"
+    },
+    {
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --test updates_contract --test updates_source_scenarios -- -D warnings",
+      "result": "passed",
+      "log": "strict-clippy.log"
+    },
+    {
+      "command": "rustfmt +1.99.1 --edition 2024 --check native/src/updates.rs native/tests/updates_source_scenarios.rs",
+      "result": "passed"
+    }
+  ],
+  "verifiedRows": [
+    {
+      "id": "reference-controller-updates-001",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 353,
+          "scenario": "reports current, behind and unknown workers against the controller build"
+        }
+      ],
+      "nativeTests": [
+        "source_001_current_behind_missing_metadata_unmanaged_and_offline_status"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-artifact-and-update-identity",
+        "native-no-node-runtime-management"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-002",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 392,
+          "scenario": "cannot update workers from an unbundled controller"
+        }
+      ],
+      "nativeTests": [
+        "source_002_native_unbundled_replacement_rejects_admin_update"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-artifact-and-update-identity"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-003",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 421,
+          "scenario": "waits without cancelling running jobs by default, even beyond the old drain deadline"
+        }
+      ],
+      "nativeTests": [
+        "source_003_default_drain_preserves_jobs_beyond_eight_days_and_nudges_once"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-004",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 463,
+          "scenario": "drains, updates one node at a time and finishes when nodes return on the new build"
+        }
+      ],
+      "nativeTests": [
+        "source_004_sequential_drain_holds_placements_and_finishes_both_returned_workers",
+        "source_004_native_offers_wait_for_drain_and_only_one_worker_gets_a_candidate"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-artifact-and-update-identity"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-005",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 509,
+          "scenario": "cancels running jobs with --now"
+        }
+      ],
+      "nativeTests": [
+        "source_005_now_cancels_once_then_checks_after_jobs_finish",
+        "source_005_actual_api_now_cancels_the_job_before_nudging_its_worker"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-006",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 535,
+          "scenario": "halts the rollout when a node reports a failed update, and does not retry it"
+        }
+      ],
+      "nativeTests": [
+        "source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry",
+        "source_006_a_report_from_a_pending_worker_does_not_halt_the_active_worker"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-007",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 561,
+          "scenario": "fails a node the launcher rolled back"
+        }
+      ],
+      "nativeTests": [
+        "source_007_launcher_rollback_halts_with_source_diagnostic"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-008",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 578,
+          "scenario": "fails a node that does not come back in time"
+        }
+      ],
+      "nativeTests": [
+        "source_008_update_deadline_halts_and_does_not_advance_the_next_worker"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-009",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 588,
+          "scenario": "stops a rollout on request"
+        }
+      ],
+      "nativeTests": [
+        "source_009_cancel_rollout_restores_worker_and_projects_behind_immediately"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-010",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 604,
+          "scenario": "follows the controller by default"
+        }
+      ],
+      "nativeTests": [
+        "source_010_follow_is_the_default_and_marks_the_rollout_automatic"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-011",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 611,
+          "scenario": "honours node overrides and the update window"
+        }
+      ],
+      "nativeTests": [
+        "source_011_node_override_bypasses_a_closed_window",
+        "source_011_api_rejects_window_mode_without_a_window"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-012",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 634,
+          "scenario": "updates agents that can only reach the update endpoint"
+        }
+      ],
+      "nativeTests": [
+        "source_012_update_only_bootstraps_each_native_target_without_agent_socket"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-artifact-and-update-identity",
+        "mac-platform-and-service-metadata"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-013",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 653,
+          "scenario": "handles windows that wrap past midnight"
+        }
+      ],
+      "nativeTests": [
+        "source_013_normal_and_wrapping_window_boundaries_match_source"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": []
+    },
+    {
+      "id": "reference-controller-updates-014",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 671,
+          "scenario": "counts act and Node.js toward current and serves verified archives"
+        }
+      ],
+      "nativeTests": [
+        "source_014_native_act_only_drift_verified_archives_and_four_target_offers"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-no-node-runtime-management",
+        "mac-platform-and-service-metadata"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-015",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 703,
+          "scenario": "follows a version set in the cluster settings, checked against upstream checksums"
+        }
+      ],
+      "nativeTests": [
+        "source_015_act_override_view_drift_and_off_restore_current",
+        "source_015_actual_act_override_is_checked_against_upstream_checksums"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-no-node-runtime-management"
+      ]
+    },
+    {
+      "id": "reference-controller-updates-016",
+      "source": [
+        {
+          "path": "apps/controller/src/updates.test.ts",
+          "line": 725,
+          "scenario": "ignores the toolchain of agents that cannot update themselves"
+        }
+      ],
+      "nativeTests": [
+        "source_016_unmanaged_same_build_ignores_managed_act_drift"
+      ],
+      "statusRecommendation": "verified for the bounded local scenario/replacement",
+      "exceptions": [
+        "native-no-node-runtime-management"
+      ]
+    }
+  ],
+  "productionChanges": [
+    "Managed act drift affects only managed workers, respecting explicit external overrides.",
+    "Source-compatible status reasons identify missing build metadata, last reported build, queued/halted rollout, configured window and precise act gaps.",
+    "Rollback/deadline failures identify the node and preserve source diagnostic phrases.",
+    "Agent failure reports halt only an active entry, with node-prefixed rollout reason; cancel/report refresh public node update state before returning.",
+    "Root restored settings rejection when autoUpdate is window without updateWindow."
+  ],
+  "companionActualInstallEvidence": [
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/independent-worker-update.json",
+      "scope": "Actual linux/amd64 standalone managed worker install/restart/rejoin/confirmation and unmanaged forced skip; other target members are parsing fixtures."
+    },
+    {
+      "path": "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json",
+      "scope": "Actual linux/amd64 controller update and schema-changing failed executable rollback/DB restoration; other target members are parsing fixtures."
+    },
+    {
+      "path": "native/contracts/evidence/m4-2026-11-10/actual-arm64-managed-update.json",
+      "scope": "Actual darwin/arm64 standalone managed worker install/restart/rejoin/confirmation and unmanaged skip; act off, no Docker; other target members are parsing fixtures."
+    }
+  ],
+  "limits": [
+    "Deterministic archive members contain architecture headers and are never executed by the new tests.",
+    "Update-only and normal offer control tests cover all four target identities/digests in-process; the --now bridge and settings guard also use actual loopback TLS/WebSockets.",
+    "Clock injection proves eight-day drain and deadline/window policy without waiting in real time.",
+    "Node runtime/tool management is removed by approved exception: native replacements assert Rust metadata, act-only toolchain and no legacy entry/Node fields. Darwin managed-act offers replace the former unsupported-Darwin empty result.",
+    "No claim of mixed-target LAN rollout, Mac act/Docker readiness, Intel Mac runtime, WSL2, signing, launchd or reboot acceptance."
+  ],
+  "sourceDigests": {
+    "native/src/updates.rs": "bb4c8d8b228badb6708efbd7cbfe84c5ce8af4bd985bec49a80f570366525c32",
+    "native/src/updates/act.rs": "12b34fc8258b23e64006442b82eb4df40bd052bf63223ef7f0a363bfa957a128",
+    "native/src/controller.rs": "48bf2f9515a1439421338c52ba2fe6e3d24ba28a1324dd9486d722b57381ee80",
+    "native/tests/updates_source_scenarios.rs": "0c273b40e67ef1e9ec80629192d705b29500fa5d9b07a538a87407ceca0d739c",
+    "native/tests/updates_contract.rs": "3ddf90344b883c53ea88409de5d10da10a6c49017ed1c825fcdb0d0b40a513c6",
+    "apps/controller/src/updates.test.ts": "57d65459a7b727131e7eef3653dda1b632d3b30162935650ef6c620057218da1",
+    "apps/controller/src/updates.ts": "028d25e8b4214164b945af863cc3ff27d519f5f3105f64809ecab1ca471e665e",
+    "apps/controller/src/settings.ts": "dc34506a05b3869c554a27ec06811acefbfe6ae3823c446f9ecce328b79890ed",
+    "native/Cargo.lock": "f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+  }
+}

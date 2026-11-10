@@ -1,0 +1,384 @@
+{
+  "job": {
+    "id": "01M720NGQ90MB43XX077QTHY4G",
+    "name": "build Dockerfile",
+    "kind": "docker-build",
+    "state": "succeeded",
+    "stateReason": null,
+    "priority": 0,
+    "owner": "local-admin",
+    "snapshotId": "sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a",
+    "spec": {
+      "kind": "docker-build",
+      "secretEnv": {},
+      "snapshot": "sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a",
+      "resources": {
+        "cpus": 1,
+        "memoryMb": 128
+      },
+      "target": {
+        "labels": [],
+        "prefer": [],
+        "node": "arm-standalone"
+      },
+      "priority": 0,
+      "project": "linux-arm-vm-proof",
+      "context": ".",
+      "buildArgs": {},
+      "tags": [
+        "gridstator-linux-arm-proof:cd6-6c82"
+      ],
+      "platforms": [],
+      "noCache": false,
+      "pull": false,
+      "output": "load",
+      "cacheFrom": [],
+      "cacheTo": [],
+      "env": {},
+      "workdir": ".",
+      "retry": {
+        "max": 0,
+        "on": [
+          "lost"
+        ]
+      }
+    },
+    "nodeId": "01M720NFTY8CSGEVJA9XDFFFM8",
+    "nodeName": "arm-standalone",
+    "assignmentId": "01M720NGQAYPH97CF75VAAR3V3",
+    "attempt": 1,
+    "retryOf": null,
+    "oomKilled": false,
+    "exitCode": 0,
+    "error": null,
+    "queuePosition": null,
+    "logSeq": 40,
+    "outputs": {
+      "image": {
+        "id": "sha256:44e16dea42ca3fc6f30e16ccac82f298ff63f8f44cae8f1527b29f532fbf741c",
+        "digest": "sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286",
+        "tags": [
+          "gridstator-linux-arm-proof:cd6-6c82"
+        ],
+        "sizeBytes": null,
+        "output": "load"
+      }
+    },
+    "artifacts": [],
+    "groupId": null,
+    "shardIndex": null,
+    "shardTotal": null,
+    "createdAt": 1794290402025,
+    "queuedAt": 1794290402025,
+    "assignedAt": 1794290402026,
+    "startedAt": 1794290402076,
+    "finishedAt": 1794290402249,
+    "cancelRequestedAt": null
+  },
+  "logs": {
+    "entries": [
+      {
+        "s": 1,
+        "t": 1794290402029,
+        "o": "system",
+        "d": "Job 01M720NGQ90MB43XX077QTHY4G accepted by worker\n"
+      },
+      {
+        "s": 2,
+        "t": 1794290402075,
+        "o": "system",
+        "d": "Staging build context from the snapshot\n"
+      },
+      {
+        "s": 3,
+        "t": 1794290402232,
+        "o": "stderr",
+        "d": "#0 building with \"default\" instance using docker driver\n"
+      },
+      {
+        "s": 4,
+        "t": 1794290402232,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 5,
+        "t": 1794290402233,
+        "o": "stderr",
+        "d": "#1 [internal] load build definition from Dockerfile\n"
+      },
+      {
+        "s": 6,
+        "t": 1794290402234,
+        "o": "stderr",
+        "d": "#1 transferring dockerfile: 156B done\n"
+      },
+      {
+        "s": 7,
+        "t": 1794290402234,
+        "o": "stderr",
+        "d": "#1 DONE 0.0s\n"
+      },
+      {
+        "s": 8,
+        "t": 1794290402235,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 9,
+        "t": 1794290402236,
+        "o": "stderr",
+        "d": "#2 [internal] load metadata for docker.io/library/alpine:3.21\n"
+      },
+      {
+        "s": 10,
+        "t": 1794290402236,
+        "o": "stderr",
+        "d": "#2 DONE 0.0s\n"
+      },
+      {
+        "s": 11,
+        "t": 1794290402237,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 12,
+        "t": 1794290402237,
+        "o": "stderr",
+        "d": "#3 [internal] load .dockerignore\n"
+      },
+      {
+        "s": 13,
+        "t": 1794290402238,
+        "o": "stderr",
+        "d": "#3 transferring context: 2B done\n"
+      },
+      {
+        "s": 14,
+        "t": 1794290402239,
+        "o": "stderr",
+        "d": "#3 DONE 0.0s\n"
+      },
+      {
+        "s": 15,
+        "t": 1794290402239,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 16,
+        "t": 1794290402239,
+        "o": "stderr",
+        "d": "#4 [1/3] FROM docker.io/library/alpine:3.21@sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab\n"
+      },
+      {
+        "s": 17,
+        "t": 1794290402240,
+        "o": "stderr",
+        "d": "#4 resolve docker.io/library/alpine:3.21@sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab done\n"
+      },
+      {
+        "s": 18,
+        "t": 1794290402240,
+        "o": "stderr",
+        "d": "#4 DONE 0.0s\n"
+      },
+      {
+        "s": 19,
+        "t": 1794290402241,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 20,
+        "t": 1794290402241,
+        "o": "stderr",
+        "d": "#5 [internal] load build context\n"
+      },
+      {
+        "s": 21,
+        "t": 1794290402242,
+        "o": "stderr",
+        "d": "#5 transferring context: 49B done\n"
+      },
+      {
+        "s": 22,
+        "t": 1794290402242,
+        "o": "stderr",
+        "d": "#5 DONE 0.0s\n"
+      },
+      {
+        "s": 23,
+        "t": 1794290402242,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 24,
+        "t": 1794290402243,
+        "o": "stderr",
+        "d": "#6 [2/3] COPY proof.txt /proof.txt\n"
+      },
+      {
+        "s": 25,
+        "t": 1794290402243,
+        "o": "stderr",
+        "d": "#6 CACHED\n"
+      },
+      {
+        "s": 26,
+        "t": 1794290402243,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 27,
+        "t": 1794290402244,
+        "o": "stderr",
+        "d": "#7 [3/3] RUN test \"$(uname -m)\" = aarch64 && test \"$(cat /proof.txt)\" = arm-snapshot\n"
+      },
+      {
+        "s": 28,
+        "t": 1794290402244,
+        "o": "stderr",
+        "d": "#7 CACHED\n"
+      },
+      {
+        "s": 29,
+        "t": 1794290402245,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 30,
+        "t": 1794290402245,
+        "o": "stderr",
+        "d": "#8 exporting to image\n"
+      },
+      {
+        "s": 31,
+        "t": 1794290402246,
+        "o": "stderr",
+        "d": "#8 exporting layers done\n"
+      },
+      {
+        "s": 32,
+        "t": 1794290402247,
+        "o": "stderr",
+        "d": "#8 exporting manifest sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286 done\n"
+      },
+      {
+        "s": 33,
+        "t": 1794290402247,
+        "o": "stderr",
+        "d": "#8 exporting config sha256:44e16dea42ca3fc6f30e16ccac82f298ff63f8f44cae8f1527b29f532fbf741c done\n"
+      },
+      {
+        "s": 34,
+        "t": 1794290402247,
+        "o": "stderr",
+        "d": "#8 naming to docker.io/library/gridstator-linux-arm-proof:cd6-6c82 done\n"
+      },
+      {
+        "s": 35,
+        "t": 1794290402247,
+        "o": "stderr",
+        "d": "#8 unpacking to docker.io/library/gridstator-linux-arm-proof:cd6-6c82 done\n"
+      },
+      {
+        "s": 36,
+        "t": 1794290402247,
+        "o": "stderr",
+        "d": "#8 DONE 0.0s\n"
+      },
+      {
+        "s": 37,
+        "t": 1794290402248,
+        "o": "stderr",
+        "d": "\n"
+      },
+      {
+        "s": 38,
+        "t": 1794290402248,
+        "o": "stderr",
+        "d": "#9 resolving provenance for metadata file\n"
+      },
+      {
+        "s": 39,
+        "t": 1794290402248,
+        "o": "stderr",
+        "d": "#9 DONE 0.0s\n"
+      },
+      {
+        "s": 40,
+        "t": 1794290402248,
+        "o": "system",
+        "d": "Job succeeded\n"
+      }
+    ],
+    "complete": true
+  },
+  "image": {
+    "Id": "sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286",
+    "RepoTags": [
+      "gridstator-linux-arm-proof:cd6-6c82"
+    ],
+    "RepoDigests": [
+      "gridstator-linux-arm-proof@sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286"
+    ],
+    "Comment": "buildkit.dockerfile.v0",
+    "Created": "2026-11-10T05:56:21.032772923Z",
+    "Config": {
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Cmd": [
+        "/bin/sh"
+      ],
+      "WorkingDir": "/",
+      "Labels": {
+        "io.gridstator.assignment": "01M720NGQAYPH97CF75VAAR3V3",
+        "io.gridstator.job": "01M720NGQ90MB43XX077QTHY4G",
+        "io.gridstator.managed": "true",
+        "io.gridstator.node": "01M720NFTY8CSGEVJA9XDFFFM8"
+      }
+    },
+    "Architecture": "arm64",
+    "Os": "linux",
+    "Size": 12787224,
+    "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:c414b70900bff0fc663162f3cff355e6efe10fd87a218fbb99cec3bc8fb1ffa2",
+        "sha256:6186479653c8c02aabfbd982ac23e3a50b888f842a5654d9fa31e6ddf7227d05",
+        "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+      ]
+    },
+    "Metadata": {
+      "LastTagTime": "2026-11-10T06:00:02.198927713Z"
+    },
+    "Descriptor": {
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "digest": "sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286",
+      "size": 856,
+      "annotations": {
+        "config.digest": "sha256:44e16dea42ca3fc6f30e16ccac82f298ff63f8f44cae8f1527b29f532fbf741c"
+      }
+    },
+    "Identity": {
+      "Build": [
+        {
+          "Ref": "02td3ni2myyq4cjlaypwedjrc",
+          "CreatedAt": "2026-11-10T06:00:02.206117838Z"
+        }
+      ]
+    }
+  },
+  "inspectReportedId": {
+    "exitCode": 1,
+    "stdout": "[]\n",
+    "stderr": "Error response from daemon: No such image: sha256:44e16dea42ca3fc6f30e16ccac82f298ff63f8f44cae8f1527b29f532fbf741c\n"
+  }
+}

@@ -1,0 +1,59 @@
+[1645792:1110/174050.531995:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+
+DevTools listening on ws://127.0.0.1:36509/devtools/browser/ffab265b-8416-43c9-929d-9806629ccd2c
+[1645792:1110/174050.546760:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[1645792:1110/174050.546863:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[1645792:1110/174050.552356:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+Warning: 'remote-debugging-address' is not in the list of known options, but still passed to Electron/Chromium.
+Warning: 'remote-debugging-port' is not in the list of known options, but still passed to Electron/Chromium.
+[90m[main 2026-11-10T04:40:50.637Z][0m [node-compile-cache] main: packaged cache enabled (status: enabled, configured: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main, active: /repos/gridstator/apps/vscode/.vscode-test/vscode-linux-x64-1.145.2/resources/app/node-compile-cache/main/v24.22.1-x64-60e4fe36)
+[90m[main 2026-11-10T04:40:50.704Z][0m StorageMainService: creating application shared storage
+[1645792:1110/174050.794033:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[90m[main 2026-11-10T04:40:50.794Z][0m [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)
+[90m[main 2026-11-10T04:40:50.794Z][0m [shared storage] Initializing fallback application storage (path: in-memory)
+[90m[main 2026-11-10T04:40:50.810Z][0m [shared storage] Fallback application storage initialized with 3 items
+[90m[main 2026-11-10T04:40:50.811Z][0m update#setState disabled
+[90m[main 2026-11-10T04:40:50.811Z][0m update#ctor - updates are disabled by the environment
+[1645792:1110/174050.830892:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+Via 'product.json#extensionEnabledApiProposals' extension 'ms-vscode.remote-repositories' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.vscode-pull-request-github' wants API proposal 'agentsWindowActivation' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+Via 'product.json#extensionEnabledApiProposals' extension 'github.remotehub' wants API proposal 'timeline' but that proposal DOES NOT EXIST. Likely, the proposal has been finalized (check 'vscode.d.ts') or was abandoned.
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+[AgentHost:remote] Initializing (remoteAuthority=ssh-remote+gst-m4-windows-1mr4ts9n)
+[AgentHost:remote] Connecting to remote agent host...
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Started local extension host with pid 1646117.
+[AccountPolicyGate] apply: state=inactive, reason=undefined, isRestricted=false
+[RemoteAgentHost] Reconciling: desired=[], current=[]
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Invoking resolveAuthority(ssh-remote)...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][0ms] obtaining proxy...
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[LocalProcess0][resolveAuthority(ssh-remote,1)][1465ms] invoking...
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey=undefined conversationKey=undefined modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Authentication provider github was not declared in the Extension Manifest.
+Authentication provider github-enterprise was not declared in the Extension Manifest.
+[CloudSandboxApi] No 'github' session with scopes [read:user, user:email, repo, workflow]
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/NWJkNDExOGMtMzIzYS00NjU5LTk3YjUtMGZkYWJmYWE1MWI2" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[LocalProcess0][resolveAuthority(ssh-remote,1)][2465ms] waiting...
+[LocalProcess0][resolveAuthority(ssh-remote,1)][2909ms] returned WebSocket(127.0.0.1:40113)
+resolveAuthority(ssh-remote) returned 'WebSocket(127.0.0.1:40113)' after 2910 ms
+Creating a socket (renderer-Management-bd3c30f1-9351-4765-9ea8-6842b1fa6f9b)...
+Creating a socket (renderer-ExtensionHost-23e810ea-c181-4403-be59-08af682536c5)...
+Creating a socket (renderer-Management-bd3c30f1-9351-4765-9ea8-6842b1fa6f9b) was successful after 100 ms.
+Creating a socket (renderer-ExtensionHost-23e810ea-c181-4403-be59-08af682536c5) was successful after 102 ms.
+[reconnection-grace-time] Client received grace time from server: 10800000ms (10800s)
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/NWJkNDExOGMtMzIzYS00NjU5LTk3YjUtMGZkYWJmYWE1MWI2" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+Settings Sync: Account status changed from uninitialized to unavailable
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/NWJkNDExOGMtMzIzYS00NjU5LTk3YjUtMGZkYWJmYWE1MWI2" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[RemoteAgentHostProtocol] Sending initialize: address=vscode-remote://ssh-remote+gst-m4-windows-1mr4ts9n clientId=77e07dc9-98e7-41cf-9a60-b7fea4d78c06 requestId=1
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/NWJkNDExOGMtMzIzYS00NjU5LTk3YjUtMGZkYWJmYWE1MWI2" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[RemoteAgentHostProtocol] Initialized: address=vscode-remote://ssh-remote+gst-m4-windows-1mr4ts9n clientId=77e07dc9-98e7-41cf-9a60-b7fea4d78c06 durationMs=1040
+[AgentHost:remote] Connected; clientId=77e07dc9-98e7-41cf-9a60-b7fea4d78c06
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[ChatModelSelection] event=no-model-at-toolbar-build surface="workbench" sessionKey="local" conversationKey="vscode-chat-session://local/NWJkNDExOGMtMzIzYS00NjU5LTk3YjUtMGZkYWJmYWE1MWI2" modelTarget=undefined storageKey="chat.currentLanguageModel.panel" widgetViewKind="view"
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[AgentHost] No signed-in session resolved for resource: https://api.github.com
+[AgentHost] No signed-in session resolved for resource: https://api.github.com/repos
+[90m[main 2026-11-10T04:40:57.991Z][0m Extension host with pid 1646117 exited with code: 0, signal: unknown.

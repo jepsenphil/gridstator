@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-11-10T04:46:43Z",
+  "result": "passed",
+  "releaseDirectory": "/repos/gridstator/native/release/native-preview-20261110-e3e5fae51c8e",
+  "buildId": "native-preview-20261110-e3e5fae51c8e",
+  "version": "2.0.0-dev.1",
+  "productionCheckpointSha256": "e3e5fae51c8e12f26935ab2d8aabaef85175c5fe81d9fe0fd843ffc6ea8b4b5c",
+  "productionFileDeltaFromHistorical95": [
+    "native/src/controller.rs"
+  ],
+  "manifestSha256": "3250942d77de21f850ab1fdc23fc3b072a5f784dcb0c5ced1ee13f9854104c05",
+  "bundleSha256": "ce59dc20d74baa4bba5194c3539a6e57f7d8f7f5d1b7ac6a2b80a6d59faa1996",
+  "releaseChecksumFileSha256": "b5958b3690e781e30b3a9e0f337bd3f57d017b09e78e767a5c337ca05c80aff1",
+  "checksummedFiles": 37,
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "finalInstallerDownloadedExactlyFinalChecksumFile": true,
+  "installedFinalByteEncodedDigestReadBack": {
+    "path": "/v1/blobs/sha256%3Ad7879b543b0f768d0a283cddc99425de71f8824ea75cedf2c014bd959db7f0e9",
+    "bytes": 33,
+    "matchesExactUploadedBytes": true
+  },
+  "macActualPackagedSdkEncodedReadBacks": 4,
+  "requests": [
+    "/v2.0.0-dev.1/SHA256SUMS",
+    "/v2.0.0-dev.1/gridstator-release.json",
+    "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+  ],
+  "finalChecksumCheckExitCode": 0,
+  "historical95All35FilesUnchanged": true,
+  "cleanup": {
+    "ownedHttpServerStopped": true,
+    "controllerStoppedByRuntimeSmoke": true,
+    "privateCredentialsAndDataRemoved": true,
+    "globalPrefixOrLiveServiceChanged": false
+  },
+  "limits": "Unpublished development preview. Physical Linux ARM64/Intel Mac execution and Developer ID signing/notarization remain unverified; per-target proofs retain their recorded source and environment scope.",
+  "classification": "Historical unpublished development preview; a subsequent real Mac Docker BuildKit0.34.2 run found a separate local image-ID extraction gap before delivery.",
+  "knownLimitation": "Successful BuildKit local load/tar output may report a null image ID when metadata lacks the config digest. A further source fix and replacement preview are pending; these e3 artifacts are not latest delivery."
+}

@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.17s
+     Running tests/executor_contract.rs (target/debug/deps/executor_contract-d71a623940f94f5d)
+
+running 4 tests
+test real_buildx_cancellation_interrupts_running_build ... ok
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ok
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... ok
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 5.17s
+

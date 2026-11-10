@@ -1,0 +1,61 @@
+/Users/philjepsen/gridstator-validation.I50ONpwm/docker-tools/native-preview-20261110-cd6b769ebe6e-linux-arm64: OK
+3.21: Pulling from library/alpine
+Digest: sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab
+Status: Image is up to date for alpine:3.21
+docker.io/library/alpine:3.21
+Linux 7.0.14-linuxkit aarch64
+No Node/npm/Rust/Python/Zig/SQLite/OpenSSL executables in runtime PATH
+{
+  "version": "2.0.0-dev.1",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "linux/arm64",
+  "size": 26556128,
+  "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd"
+}
+2.0.0-dev.1
+{
+  "cluster": {
+    "clusterId": "01M71Z83FC4MC4H73EM1G3ZKQH",
+    "version": "2.0.0-dev.1",
+    "build": {
+      "id": "native-preview-20261110-cd6b769ebe6e",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/arm64",
+      "sha256": null,
+      "updatable": false,
+      "reason": "This build has no verified four-target native release archives in the controller mirror",
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": false,
+        "reason": "Install this controller as a verified native managed service to enable self-update"
+      }
+    },
+    "controller": {
+      "hostname": "05eb0a2705d6",
+      "machineId": "sha256:3213447e55ef248f76bbe01a666e25add61693975e0765eb0f3ae69099eb27f8"
+    },
+    "caFingerprint": "sha256:3bee8bba76daee69ec0ba1147ca3bba95743b5b6761007c71b0601839711eb44",
+    "startedAt": 1794288913909,
+    "nodes": {
+      "total": 0,
+      "online": 0
+    },
+    "jobs": {},
+    "whoami": {
+      "name": "local-admin",
+      "role": "admin"
+    }
+  },
+  "nodes": [],
+  "activeJobs": []
+}
+Actual Linux ARM64 clean offline Alpine TLS lifecycle/graceful cleanup passed

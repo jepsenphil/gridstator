@@ -1,0 +1,17 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.74s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 6 tests
+test cli::tests::remote_error_presentation_preserves_source_hint_and_omission ... ok
+test cli::tests::errors_preserve_frozen_code_and_http_status_exit_mappings ... ok
+test cli::tests::service_identity_uses_explicit_or_verified_environment_paths_and_refuses_wrappers ... ok
+test cli::tests::service_preserves_same_account_docker_connection_and_excludes_foreign_credentials ... ok
+test cli::tests::scalar_flags_take_the_last_value_and_collection_flags_append ... ok
+test cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.92s
+

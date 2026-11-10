@@ -1,0 +1,23 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.32s
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 1 test
+test groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates ... FAILED
+
+failures:
+
+---- groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates stdout ----
+Controller listening on https://127.0.0.1:37933
+Error: waiting for socket message group.updated
+
+Caused by:
+    deadline has elapsed
+
+
+failures:
+    groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 13.73s
+
+error: test failed, to rerun pass `--test controller_lifecycle`

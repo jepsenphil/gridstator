@@ -1,0 +1,25 @@
+[Unit]
+Description=Gridstator native controller
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart="/tmp/gridstator-system-proof-cd6-20261110-31df/install/supervisor" "supervise" "--install-root" "/tmp/gridstator-system-proof-cd6-20261110-31df/install" "--" "controller" "start" "--data-dir" "/tmp/gridstator-system-proof-cd6-20261110-31df/controller" "--with-agent" "--agent-name" "gridstator-native-systemproof-cd6-20261110-31df-worker"
+Environment="DOCKER_CONFIG=/tmp/gridstator-system-proof-cd6-20261110-31df/docker-config"
+Environment="DOCKER_HOST=unix:///var/run/docker.sock"
+Environment="GRIDSTATOR_CACHE=/tmp/gridstator-system-proof-cd6-20261110-31df/cache"
+Environment="GRIDSTATOR_CONFIG=/tmp/gridstator-system-proof-cd6-20261110-31df/client.json"
+Environment="GRIDSTATOR_LOG_FORMAT=json"
+Environment="HOME=/root"
+Environment="PATH=/tmp/gridstator-system-proof-cd6-20261110-31df/install:/root/.local/bin:/root/.docker/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=130 143
+KillMode=mixed
+TimeoutStopSec=90
+
+[Install]
+WantedBy=multi-user.target

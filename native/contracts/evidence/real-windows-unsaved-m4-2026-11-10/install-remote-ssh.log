@@ -1,0 +1,7 @@
+Installing extensions...
+(node:1586037) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `code --trace-deprecation ...` to show where the warning was created)
+Installing extension 'ms-vscode-remote.remote-ssh' v0.129.2026100915...
+Extension 'ms-vscode-remote.remote-ssh-edit' v0.87.0 was successfully installed.
+Extension 'ms-vscode.remote-explorer' v0.5.0 was successfully installed.
+Extension 'ms-vscode-remote.remote-ssh' v0.129.2026100915 was successfully installed.

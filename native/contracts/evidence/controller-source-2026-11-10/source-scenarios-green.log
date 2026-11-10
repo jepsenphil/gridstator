@@ -1,0 +1,21 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.09s
+     Running tests/controller_source_scenarios.rs (native/target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)
+
+running 6 tests
+Controller listening on https://127.0.0.1:38911
+Controller listening on https://127.0.0.1:37321
+Controller listening on https://127.0.0.1:36989
+Controller listening on https://127.0.0.1:34423
+Controller listening on https://127.0.0.1:43717
+Controller listening on https://127.0.0.1:37285
+test source_014_disconnected_pending_result_resumes_and_is_acknowledged ... ok
+test source_006_queued_cancel_and_failed_143_result_become_cancelled ... ok
+Controller listening on https://127.0.0.1:33731
+test source_008_retry_budget_manual_attempt_three_and_active_conflict ... ok
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... ok
+test source_018_two_node_shards_aggregate_and_retry_only_failed_lineage ... ok
+test source_012_disappearance_loses_running_and_requeues_assigned ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.24s
+

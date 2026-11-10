@@ -1,0 +1,67 @@
+{
+  "linux-arm64": {
+    "path": "/tmp/gridstator-image-ref-self-build-vjtd1r_l/artifacts/self-build/linux-arm64/gridstator",
+    "sha256": "479d7eb3b8a375a7b2fb4bfe5ce7a6ad424aa60d3cbf548e55e1bdb662461f6a",
+    "size": 26577880,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-7c41b2f3c79d",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/arm64",
+      "sha256": "479d7eb3b8a375a7b2fb4bfe5ce7a6ad424aa60d3cbf548e55e1bdb662461f6a",
+      "size": 26577880,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed whole actual native CLI/controller/embedded+standalone worker command/snapshot/artifact/build/verified-act/shards+JUnit/cancel/doctor workflow in an unprivileged ARM Linux Docker VM on M4",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-7c41b2f3c79d",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/arm64",
+      "size": 26577880,
+      "sha256": "479d7eb3b8a375a7b2fb4bfe5ce7a6ad424aa60d3cbf548e55e1bdb662461f6a"
+    },
+    "runtimeEvidence": "native/contracts/evidence/linux-arm-vm-workflow-2026-11-10/final-7c41-strict/proof.json"
+  },
+  "linux-amd64": {
+    "path": "/tmp/gridstator-image-ref-self-build-vjtd1r_l/artifacts/self-build/linux-amd64/gridstator",
+    "sha256": "8cf0f97be1fcfae1b9d1a6a601ccb7f600298bb9ca59f862c6369351f4c6aa60",
+    "size": 27536256,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-7c41b2f3c79d",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/amd64",
+      "sha256": "8cf0f97be1fcfae1b9d1a6a601ccb7f600298bb9ca59f862c6369351f4c6aa60",
+      "size": 27536256,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-7c41b2f3c79d",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/amd64",
+      "size": 27536256,
+      "sha256": "8cf0f97be1fcfae1b9d1a6a601ccb7f600298bb9ca59f862c6369351f4c6aa60"
+    }
+  }
+}

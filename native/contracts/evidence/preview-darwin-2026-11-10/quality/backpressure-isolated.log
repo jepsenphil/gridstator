@@ -1,0 +1,16 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.56s
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 1 test
+Controller listening on https://127.0.0.1:34907
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+128MiB archive; four stalled streams; ten stalled +185 full-transfer heartbeat/health probes; max probe 577.963916ms; RSS growth Some(1644)KiB; cancellation 45.754569ms
+test large_archives_apply_backpressure_without_starving_heartbeats_or_cancellation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 11.86s
+

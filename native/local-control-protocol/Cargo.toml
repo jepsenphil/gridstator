@@ -1,0 +1,10 @@
+[package]
+name = "gridstator-local-control-protocol"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

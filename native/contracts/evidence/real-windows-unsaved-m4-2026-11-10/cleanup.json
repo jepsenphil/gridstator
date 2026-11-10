@@ -1,0 +1,26 @@
+{
+  "result": "clean",
+  "controllerPid": 90825,
+  "previousControllerPid": 87004,
+  "stoppedPrivateServerPids": [
+    87287,
+    87789,
+    87797,
+    90825,
+    90889
+  ],
+  "roleLabelsAbsent": [
+    "org.gridstator.native.validation.agent.01m71vvtss17j2x5yz74nvss16",
+    "org.gridstator.native.validation.agent.01m71w01pnnyfaqnnnf6n8pyn0",
+    "org.gridstator.native.validation.controller.01m71vvsjkg8cgjxpt831h7z79",
+    "org.gridstator.native.validation.controller.01m71vzvg0jsjn0592darx5033"
+  ],
+  "removedCredentialRoots": [
+    "/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n",
+    "/Users/philjepsen/gridstator-validation.I50ONpwm/preview-roles-e3e5fae51c8e"
+  ],
+  "ownedProcessesRemaining": [],
+  "defaultServerAbsent": true,
+  "desktopPid31833Live": true,
+  "scope": "Only exact isolated editor/controller/server/role state; Docker Desktop and its preparation directory untouched."
+}

@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-preview-e3e5fae51c8e/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.90s
+     Running tests/controller_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/controller_contract-03c45364e1753816)
+
+running 1 test
+Controller listening on https://127.0.0.1:60155
+test retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.13s
+

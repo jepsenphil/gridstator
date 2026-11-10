@@ -1,0 +1,80 @@
+[
+  {
+    "run": "001-007",
+    "recordedAtUTC": "2026-11-10T03:11:17.602911+00:00",
+    "remainingRolePids": [],
+    "resources": [
+      {
+        "nodeId": "01M71P46KWBSS4YBCR4MRV2HPD",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      },
+      {
+        "nodeId": "01M71P48D1JNVX0EFKQCDZ1CBH",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      }
+    ],
+    "existingServicesTouched": false
+  },
+  {
+    "run": "008-011",
+    "recordedAtUTC": "2026-11-10T03:11:17.602911+00:00",
+    "remainingRolePids": [],
+    "resources": [
+      {
+        "nodeId": "01M71PK8S013YQM6ZG4BSJHX8G",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      },
+      {
+        "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      }
+    ],
+    "existingServicesTouched": false
+  },
+  {
+    "run": "012-actions",
+    "recordedAtUTC": "2026-11-10T03:11:17.602911+00:00",
+    "remainingRolePids": [],
+    "resources": [
+      {
+        "nodeId": "01M71PQJSGV9Z3ENXGAWMA0EKJ",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      },
+      {
+        "nodeId": "01M71PQMBM0TPPEBTYR2N39XM1",
+        "remainingContainers": [],
+        "remainingWorkspaceVolumes": []
+      }
+    ],
+    "existingServicesTouched": false
+  },
+  {
+    "foreignGuardAfterProofCleanup": {
+      "containerName": "gridstator-source-foreign-01m71pkkk6d2eb0c3265gmyhqn",
+      "remainingContainers": [],
+      "volumeName": "gridstator-source-foreign-volume-01m71pkkk6d2eb0c3265gmyhqn",
+      "remainingVolumes": []
+    }
+  },
+  {
+    "privateCredentialFixturesRemoved": [
+      "/tmp/gridstator-integration-source-nz1EKY",
+      "/tmp/gridstator-integration-source-wkKPZS",
+      "/tmp/gridstator-integration-source-dKReFS",
+      "/tmp/gridstator-integration-source-RhkLvU",
+      "/tmp/gridstator-integration-source-OJ5mYV",
+      "/tmp/gridstator-integration-source-M12U6R",
+      "/tmp/gridstator-integration-source-LCF4Rg",
+      "/tmp/gridstator-integration-source-XWIJRy",
+      "/tmp/gridstator-integration-source-26VFB9",
+      "/tmp/gridstator-integration-source-tNv421"
+    ],
+    "credentialFreeExecutableCopiesRetained": true,
+    "recordedAtUTC": "2026-11-10T03:12:36.979723+00:00"
+  }
+]

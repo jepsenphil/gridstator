@@ -1,0 +1,215 @@
+[
+  {
+    "id": "reference-integration-e2e-001",
+    "result": "passed",
+    "elapsedMs": 7476,
+    "observations": {
+      "exitCode": 7,
+      "stdout": "hi from beta\n",
+      "stderr": "Job 01M71P4BHF5GF5VGM03XY1K7XP submitted\n[gridstator] Job 01M71P4BHF5GF5VGM03XY1K7XP accepted by worker\n[gridstator] Creating container on beta\noops\n[gridstator] Job failed\nJob 01M71P4BHF5GF5VGM03XY1K7XP failed on beta in 501ms (exit code 7)\n  Process exited with code 7\n"
+    }
+  },
+  {
+    "id": "reference-integration-e2e-002",
+    "result": "passed",
+    "elapsedMs": 1594,
+    "observations": {
+      "snapshot": "sha256:e3c6ccfa970f1eb07ea57f847a87bd6232663dcb0985e71bdea37905e62fc835",
+      "entries": [
+        {
+          "path": ".gitignore",
+          "type": "file",
+          "size": 7,
+          "digest": "sha256:181314065df2f2fdaf920b1a8b5311daa216a2d6489a06ada5b49cc514d89417",
+          "executable": false
+        },
+        {
+          "path": "src/new.txt",
+          "type": "file",
+          "size": 15,
+          "digest": "sha256:365a9907ca8f4fdc462670c448b8639f346395f0268afd3eef55f143ccbd2889",
+          "executable": false
+        },
+        {
+          "path": "src/value.txt",
+          "type": "file",
+          "size": 17,
+          "digest": "sha256:4798b80d25de20a38f87b2448d9c846879a2ed0ece7ff2877b2dd1c4eb5cafab",
+          "executable": false
+        }
+      ],
+      "stdout": "uncommitted edit\nuntracked file\nno .env\nno build\n/workspace/src\n",
+      "secondUpload": "Snapshot of /tmp/gridstator-integration-source-XWIJRy/project: 3 files, 39 bytes\n  ! .env: excluded: matches a secret file pattern\nSnapshot already on the controller (nothing to upload)\n"
+    }
+  },
+  {
+    "id": "reference-integration-e2e-003",
+    "result": "passed",
+    "elapsedMs": 1163,
+    "observations": {
+      "jobId": "01M71P4ME2TGRQMTJY1MMQJGPN",
+      "stdout": "value=***\n",
+      "publicDetailRedacted": true
+    }
+  },
+  {
+    "id": "reference-integration-e2e-004",
+    "result": "passed",
+    "elapsedMs": 8953,
+    "observations": {
+      "jobs": [
+        {
+          "id": "01M71P4NJEQKFPTYNX2NKB6BQP",
+          "name": "sleep 4",
+          "kind": "command",
+          "state": "succeeded",
+          "stateReason": null,
+          "priority": 0,
+          "owner": "local-admin",
+          "snapshotId": null,
+          "spec": {
+            "kind": "command",
+            "env": {},
+            "secretEnv": {},
+            "workdir": ".",
+            "resources": {
+              "cpus": 2,
+              "memoryMb": 4096
+            },
+            "target": {
+              "labels": [],
+              "prefer": []
+            },
+            "retry": {
+              "max": 0,
+              "on": [
+                "lost"
+              ]
+            },
+            "priority": 0,
+            "project": "gridstator-integration-source-XWIJRy",
+            "image": "alpine:3.20",
+            "command": [
+              "sleep",
+              "4"
+            ],
+            "artifacts": []
+          },
+          "nodeId": "01M71P46KWBSS4YBCR4MRV2HPD",
+          "nodeName": "alpha",
+          "assignmentId": "01M71P4NJQA5TYQ1C1YTA9B6MJ",
+          "attempt": 1,
+          "retryOf": null,
+          "oomKilled": false,
+          "exitCode": 0,
+          "error": null,
+          "queuePosition": null,
+          "logSeq": 3,
+          "outputs": null,
+          "artifacts": [],
+          "groupId": null,
+          "shardIndex": null,
+          "shardTotal": null,
+          "createdAt": 1794279364174,
+          "queuedAt": 1794279364174,
+          "assignedAt": 1794279364179,
+          "startedAt": 1794279368245,
+          "finishedAt": 1794279372843,
+          "cancelRequestedAt": null
+        },
+        {
+          "id": "01M71P4NMNWGFXDJ3YHVCF8ADB",
+          "name": "sleep 4",
+          "kind": "command",
+          "state": "succeeded",
+          "stateReason": null,
+          "priority": 0,
+          "owner": "local-admin",
+          "snapshotId": null,
+          "spec": {
+            "kind": "command",
+            "env": {},
+            "secretEnv": {},
+            "workdir": ".",
+            "resources": {
+              "cpus": 2,
+              "memoryMb": 4096
+            },
+            "target": {
+              "labels": [],
+              "prefer": []
+            },
+            "retry": {
+              "max": 0,
+              "on": [
+                "lost"
+              ]
+            },
+            "priority": 0,
+            "project": "gridstator-integration-source-XWIJRy",
+            "image": "alpine:3.20",
+            "command": [
+              "sleep",
+              "4"
+            ],
+            "artifacts": []
+          },
+          "nodeId": "01M71P48D1JNVX0EFKQCDZ1CBH",
+          "nodeName": "beta",
+          "assignmentId": "01M71P4NN0AW5K7TGFKKWJ7FV5",
+          "attempt": 1,
+          "retryOf": null,
+          "oomKilled": false,
+          "exitCode": 0,
+          "error": null,
+          "queuePosition": null,
+          "logSeq": 3,
+          "outputs": null,
+          "artifacts": [],
+          "groupId": null,
+          "shardIndex": null,
+          "shardTotal": null,
+          "createdAt": 1794279364245,
+          "queuedAt": 1794279364245,
+          "assignedAt": 1794279364246,
+          "startedAt": 1794279368245,
+          "finishedAt": 1794279372895,
+          "cancelRequestedAt": null
+        }
+      ],
+      "overlapped": true
+    }
+  },
+  {
+    "id": "reference-integration-e2e-005",
+    "result": "passed",
+    "elapsedMs": 1041,
+    "observations": {
+      "fastJob": "01M71P4YARM0TX55T7HKKSW3T6",
+      "queuedJob": "01M71P4Z4RTBM0AJDMY505FNBQ",
+      "pendingReason": "no eligible node has label(s) gpu"
+    }
+  },
+  {
+    "id": "reference-integration-e2e-006",
+    "result": "passed",
+    "elapsedMs": 9741,
+    "observations": {
+      "jobId": "01M71P4ZCD6CW6FQ5K0KTAYGRK",
+      "retryId": "01M71P50NT07JCRYXV5KRSEWRM",
+      "attempt": 2,
+      "cancelMilliseconds": 654
+    }
+  },
+  {
+    "id": "reference-integration-e2e-007",
+    "result": "passed",
+    "elapsedMs": 7371,
+    "observations": {
+      "jobId": "01M71P58YVKP1WG1NEXE8G8R45",
+      "node": "alpha",
+      "stdout": "line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\n",
+      "bothWorkersReconnected": true
+    }
+  }
+]

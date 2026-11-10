@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-11-10T02:07:29.859741+00:00",
+  "validationRoot": "/Users/philjepsen/gridstator-validation.I50ONpwm",
+  "removedPrivateRoleStateDirectories": [
+    "native-mac-role-WcRi2D",
+    "native-mac-role-rY1XeD",
+    "native-mac-role-PGacF6",
+    "native-mac-role-1dCRes",
+    "native-mac-role-DzxnQq",
+    "native-mac-role-hpGWRR",
+    "native-mac-role-arUpEI",
+    "gridstator-worker-update-k3N7id",
+    "gridstator-worker-update-ag2BT8"
+  ],
+  "checkedOwnedLaunchdLabels": [
+    "org.gridstator.native.validation.agent.01m71htas5jyvajpfhxybpmpvk",
+    "org.gridstator.native.validation.agent.01m71hxr99z1bcr5z7rdq5vw50",
+    "org.gridstator.native.validation.agent.01m71jwaxczgr63rbr0brntq8y",
+    "org.gridstator.native.validation.agent.01m71k0b76c72evk126eana0qs",
+    "org.gridstator.native.validation.controller.01m71ht8c8sgyakpm50y9wnvm8",
+    "org.gridstator.native.validation.controller.01m71hxnxwrghmx2tedyfzj13k",
+    "org.gridstator.native.validation.controller.01m71jw8fy4fercezj1qc0vpfj",
+    "org.gridstator.native.validation.controller.01m71k054xftcqqe13wpymkymw"
+  ],
+  "loadedOwnedLabels": [],
+  "installedOwnedPlists": [],
+  "runningValidationExecutables": [],
+  "retained": "private Rust/Cargo tools, immutable source snapshots, build cache, fixture archives and candidate executables only; no controller/agent credentials retained",
+  "globalRustHomeExists": false,
+  "globalCargoHomeExists": false,
+  "globalToolsOrVMInstalled": false
+}

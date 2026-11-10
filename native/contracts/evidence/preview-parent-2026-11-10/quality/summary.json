@@ -1,0 +1,151 @@
+{
+  "recordedAt": "2026-11-10T07:22:58.554351+00:00",
+  "classification": "Final working-tree development preview checks; five stable acceptance gates remain open",
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "version": "2.0.0-dev.1",
+  "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "checks": [
+    {
+      "name": "Final coherent full native suite",
+      "command": "GRIDSTATOR_BUILD_ID=native-preview-20261110-6994d2cc804b GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216 cargo test --locked --all-targets -- --test-threads=1",
+      "result": "passed",
+      "exitCode": 0,
+      "passed": 250,
+      "failed": 0,
+      "ignored": 32,
+      "targets": 43,
+      "log": "native-serial-final.log",
+      "counts": "native-counts.json",
+      "counting": "Last summary per Cargo target excludes nested child summaries. All43 targets completed. Environment-dependent ignored cases have separate explicitly scoped actual-host acceptance; overlapping counts are not summed."
+    },
+    {
+      "name": "Strict all-target Clippy",
+      "command": "cargo clippy --locked --all-targets -- -D warnings with the same coherent build/source environment",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "clippy.log"
+    },
+    {
+      "name": "Rust formatting",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "rust-format.log"
+    },
+    {
+      "name": "Repository formatting",
+      "command": "pnpm format:check",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "format.log"
+    },
+    {
+      "name": "Frozen AST inventory",
+      "command": "node native/scripts/check-source-inventory.mjs /tmp/gridstator-v1-reference.NqGv2k",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "source-inventory.log"
+    },
+    {
+      "name": "Structural parity ledger",
+      "command": "node native/scripts/check-ledger.mjs",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "ledger.log"
+    },
+    {
+      "name": "Diff whitespace",
+      "command": "git diff --check",
+      "result": "passed",
+      "exitCode": 0,
+      "log": "git-diff-check.log"
+    },
+    {
+      "name": "Stable release gate",
+      "result": "blocked as expected",
+      "exitCode": 1,
+      "openRows": 5,
+      "log": "release-gate.log"
+    },
+    {
+      "name": "Frozen production and supplemental input identities",
+      "result": "passed",
+      "coreFiles": 40,
+      "supplementalFiles": 3,
+      "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+      "snapshotId": "sha256:de1db0f2e0ae975ea0f4f080ac5716b75370192eadfe951b9d4a6dc8eaf47cde",
+      "checkpointOrderClarification": "Concatenate path + NUL + lowercase hex file SHA256 + LF in the exact recorded files array order. This is pathlib component order (PurePosixPath), not flat full-path string sorting. Original checkpoint documents and native payloads are preserved."
+    },
+    {
+      "name": "Native-only VSIX bytes",
+      "result": "passed",
+      "sha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6"
+    },
+    {
+      "name": "Retained TypeScript acceptance",
+      "result": "passed at unchanged TypeScript checkpoint",
+      "scope": "194 Node tests with ten opt-in skips and20 Playwright cases; typecheck/lint passed. Added actual SDK and real editor host runs are recorded separately. Later production deltas are Rust-only; historical tests are not relabelled final native-byte tests.",
+      "evidenceLocation": "native/contracts/evidence/preview-2026-11-10/quality/summary.json",
+      "typesAndLintEvidence": "native/contracts/evidence/preview-darwin-2026-11-10/quality/summary.json"
+    },
+    {
+      "name": "Final actual Mac targets, modes and roles",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/mac-preview-parent-mode-2026-11-10/README.md"
+    },
+    {
+      "name": "Final actual clean ARM Linux runtime",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/preview-parent-2026-11-10/arm-clean-runtime/evidence.json"
+    },
+    {
+      "name": "Final Linux self-build and clean x64 modes/TLS",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/self-build-parent-preview-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Final actual ARM whole strict workflow and modes",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/linux-arm-vm-workflow-2026-11-10/README.md"
+    },
+    {
+      "name": "Mixed-LAN rollout and system rollback",
+      "result": "passed at its recorded source checkpoints",
+      "evidenceLocation": "native/contracts/evidence/mixed-lan-system-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Actual Windows Remote WSL editor",
+      "result": "passed at its recorded native checkpoint with final VSIX bytes",
+      "evidenceLocation": "native/contracts/evidence/remote-wsl-2026-11-10/README.md"
+    }
+  ],
+  "historicalFailedAttempts": "preview-darwin-2026-11-10/quality/summary.json preserves the earlier parallel archive timing failure and shared-debug-binary Cargo race. Bounds were unchanged; final suite runs coherently and serially. Config-parent regression reds are retained in config-parent-permissions-2026-11-10.",
+  "parity": {
+    "verified": 223,
+    "total": 228,
+    "open": [
+      {
+        "id": "mac-signing",
+        "status": "not started"
+      },
+      {
+        "id": "four-target-linkage",
+        "status": "implemented"
+      },
+      {
+        "id": "mac-docker-capacity",
+        "status": "implemented"
+      },
+      {
+        "id": "launchd-live",
+        "status": "implemented"
+      },
+      {
+        "id": "systemd-live",
+        "status": "implemented"
+      }
+    ]
+  },
+  "provenance": "Uncommitted native working-tree preview. Embedded sourceRevision is the parent reference commit; the native production/build checkpoint and supplemental inputs identify actual sources. No clean-release provenance claim.",
+  "limits": "No publication or upgrade of the existing production v1 cluster, Developer ID/notarization, physical Intel or ARM systemd/boot claim. Private isolated clusters did exercise managed upgrades at their recorded source checkpoints. Working tree remains uncommitted."
+}

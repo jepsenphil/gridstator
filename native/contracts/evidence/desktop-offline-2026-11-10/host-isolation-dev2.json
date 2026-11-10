@@ -1,0 +1,16 @@
+{
+  "result": "passed",
+  "desktopVersion": "2.0.0-dev.2",
+  "buildId": "desktop-host-isolation-dev2",
+  "installer": "distro/2.0.0-dev.2/Gridstator_2.0.0-dev.2_x64-setup.exe",
+  "installerSha256": "37e7ed4231156ba3426eadfba4d291f4f11e0d668ce73a71783afb188c2930d4",
+  "installerSize": 31681421,
+  "hostRouting": "account + canonical executable path + executable SHA-256",
+  "nativeTargets": [
+    "linux/amd64",
+    "linux/arm64"
+  ],
+  "nativeBuildId": "native-desktop-20261110-d99c20f05013",
+  "windowsExecution": "not run on this Linux host",
+  "userConfirmed": "Stopping the legacy Downloads host and reopening the installed companion allows setup to proceed"
+}

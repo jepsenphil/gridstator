@@ -1,0 +1,4 @@
+
+> gridstator-monorepo@0.1.0 typecheck /repos/gridstator
+> tsc -b --pretty && tsc -p tsconfig.tests.json --pretty && tsc -p apps/vscode/tsconfig.json && tsc -p apps/vscode/webview/tsconfig.json && tsc -p apps/vscode/test/tsconfig.json
+

@@ -1,0 +1,11 @@
+native/scripts/capture-cli-registry.mjs 74ms (unchanged)
+native/scripts/capture-cli-acceptance.mjs 39ms (unchanged)
+native/scripts/capture-protocol-boundaries.mjs 71ms (unchanged)
+native/scripts/capture-cli-workflows.mjs 22ms (unchanged)
+native/scripts/capture-client-urls.mjs 10ms (unchanged)
+native/scripts/capture-update-compatibility.mjs 14ms (unchanged)
+native/contracts/protocol-boundaries-v1.json 354ms
+native/contracts/cli-workflows-v1.json 49ms
+native/contracts/client-urls-v1.json 5ms (unchanged)
+native/contracts/update-compatibility-v1.json 5ms
+native/src/cli/commands.json 30ms (unchanged)

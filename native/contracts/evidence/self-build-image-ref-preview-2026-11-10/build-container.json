@@ -1,0 +1,32 @@
+{
+  "Id": "f8ee460bf802c7c828a1aa6d130f9d21e0aa2288a2256096ddd751c9926eaec4",
+  "Image": "sha256:527305910196eafb3720343101dcf3ff7c788f350dd132a5c6b9daa1f65729bd",
+  "ConfigImage": "rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c",
+  "Labels": {
+    "io.gridstator.assignment": "01M72202R2KF3J9S0P6NCHSRD0",
+    "io.gridstator.job": "01M72202QV3TGHQEHTC67VN3HJ",
+    "io.gridstator.managed": "true",
+    "io.gridstator.node": "01M721ZMAQDNY9Y1QM011CHPHE",
+    "org.opencontainers.image.source": "https://github.com/rust-lang/docker-rust"
+  },
+  "HostConfig": {
+    "NanoCpus": 2000000000,
+    "Memory": 4294967296,
+    "MemorySwap": 4294967296,
+    "NetworkMode": "bridge"
+  },
+  "Mounts": [
+    {
+      "Type": "volume",
+      "Name": "gridstator-ws-01m72202qv3tghqehtc67vn3hj",
+      "Destination": "/workspace",
+      "RW": true
+    },
+    {
+      "Type": "volume",
+      "Name": "gridstator-cache",
+      "Destination": "/gridstator/cache",
+      "RW": true
+    }
+  ]
+}

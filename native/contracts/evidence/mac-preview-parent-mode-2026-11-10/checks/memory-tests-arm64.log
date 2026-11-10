@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running unittests src/lib.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/gridstator-a5a67643868146ca)
+
+running 2 tests
+test worker::admission_tests::host_available_memory_counts_reclaimable_pages_without_compressor_subtraction ... ok
+test worker::admission_tests::host_available_memory_is_sampled_for_heartbeats ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 37 filtered out; finished in 0.06s
+

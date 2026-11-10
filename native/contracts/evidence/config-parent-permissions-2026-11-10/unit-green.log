@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.28s
+     Running unittests src/lib.rs (target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 2 tests
+test state::tests::atomic_config_writes_create_private_missing_parents ... ok
+test state::tests::atomic_config_writes_preserve_existing_parent_permissions ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 36 filtered out; finished in 1.19s
+

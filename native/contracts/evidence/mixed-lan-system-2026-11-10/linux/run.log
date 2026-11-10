@@ -1,0 +1,11 @@
+
+running 1 test
+LAN_HANDOFF_READY /tmp/gridstator-system-proof-cd6-20261110-31df/lan-handoff.json
+test actual_root_system_service_drains_and_restores_database_after_schema_crash has been running for over 60 seconds
+MIXED_POSITIVE_DONE /tmp/gridstator-system-proof-cd6-20261110-31df/mixed-positive-finished.json
+MIXED_NEGATIVE_DONE /tmp/gridstator-system-proof-cd6-20261110-31df/mixed-negative-finished.json
+Actual unique root system-service startup/job/restart/drain/schema rollback passed; existing agent unchanged
+test actual_root_system_service_drains_and_restores_database_after_schema_crash ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 345.51s
+

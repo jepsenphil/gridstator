@@ -1,0 +1,6 @@
+{"level":30,"time":1794272286699,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","component":"http","msg":"Server listening at https://127.0.0.1:42073"}
+{"level":30,"time":1794272286700,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","host":"127.0.0.1","port":42073,"clusterId":"01M71FCNATAVMXT54PNCJQ5GJP","fingerprint":"sha256:09b8a7b3bd60247b0be5be0f75bff83e8ce8a64217fc2597942ea941cb5c77cd","msg":"controller listening"}
+{"level":30,"time":1794272286700,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","msg":"CA fingerprint sha256:09b8a7b3bd60247b0be5be0f75bff83e8ce8a64217fc2597942ea941cb5c77cd (09b8a7b3bd60247b)"}
+{"level":30,"time":1794272286776,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","component":"cluster","jobId":"01M71FCP1Q6433JMZ82FP8ZKMS","owner":"admin","name":"archived v1 history","msg":"job submitted"}
+{"level":30,"time":1794272286778,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","signal":"SIGTERM","msg":"shutting down (press Ctrl-C again to force)"}
+{"level":30,"time":1794272286789,"pid":1022232,"hostname":"pj-Precision-5520","name":"controller","msg":"controller stopped"}

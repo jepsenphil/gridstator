@@ -1,0 +1,30 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running tests/worker_contract.rs (target/debug/deps/worker_contract-9bb61282cdb261dc)
+
+running 8 tests
+test aborting_the_coordinator_cancels_owned_work_and_preserves_lost_outbox ... ok
+test actual_agent_cli_sigterm_drain_finishes_work_and_exits_cleanly ... ok
+test artifact_upload_failure_still_delivers_durable_command_result ... ok
+test disconnect_through_completion_replays_durable_logs_before_result_ack ... ok
+test drain_keeps_heartbeat_and_finishes_running_job_without_accepting_more ... FAILED
+test missing_snapshot_blob_yields_terminal_result_instead_of_stranding_job ... ok
+test ordinary_shutdown_stops_work_and_persists_lost_result ... ok
+test update_probe_releases_admission_and_restart_handoff_is_explicit ... ok
+
+failures:
+
+---- drain_keeps_heartbeat_and_finishes_running_job_without_accepting_more stdout ----
+Agent contract-01M71D7K1X64J8671W7XX6TBNN connected
+Agent contract-01M71D7K1X64J8671W7XX6TBNN connected
+Error: deadline has elapsed
+
+
+failures:
+    drain_keeps_heartbeat_and_finishes_running_job_without_accepting_more
+
+test result: FAILED. 7 passed; 1 failed; 0 ignored; 0 measured; 5 filtered out; finished in 118.06s
+
+error: test failed, to rerun pass `--test worker_contract`

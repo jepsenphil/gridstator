@@ -1,0 +1,805 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-11-10T02:32:10.182427+00:00",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted component checkpoint; file hashes identify source. This is not final release provenance. Later identity/installation changes have separate evidence.",
+  "environment": {
+    "os": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "arch": "x86_64",
+    "rust": "1.99.1",
+    "docker": "29.0.2",
+    "node": "24.15.0"
+  },
+  "proofs": {
+    "controller": {
+      "command": "cd native && cargo test --locked --test controller_contract --test controller_lifecycle --test controller_source_scenarios --test controller_retention --test bridge_source_scenarios -- --nocapture",
+      "result": "passed",
+      "passed": 34,
+      "log": "controller-final.log"
+    },
+    "scheduler": {
+      "command": "cd native && cargo test --locked --test scheduler_contract --test scheduler_differential",
+      "result": "passed",
+      "passed": 10,
+      "log": "scheduler-green.log",
+      "cases": 62
+    },
+    "ui": {
+      "command": "pnpm exec vitest run --no-file-parallelism; pnpm --filter gridstator-vscode exec playwright test",
+      "result": "passed",
+      "nodePassed": 193,
+      "nodeOptInSkipped": 1,
+      "playwrightPassed": 20,
+      "logs": [
+        "node-tests.log",
+        "playwright.log"
+      ]
+    },
+    "vscodeHost": {
+      "command": "pnpm --filter gridstator-vscode package:native; cd apps/vscode && GRIDSTATOR_NATIVE_CLI_E2E=/repos/gridstator/native/target/debug/gridstator xvfb-run -a node test/run-integration.mjs",
+      "result": "passed",
+      "log": "vscode-host.log",
+      "scope": "Actual Linux local editor host with extracted native-only VSIX, real Rust CLI/controller/embedded worker and Docker; no actual RemoteSSH/WSL or concurrent editor-window claim."
+    },
+    "cancelSourceOracle": {
+      "command": "node native/scripts/capture-cancel-race.mjs /tmp/gridstator-v1-reference.NqGv2k",
+      "result": "passed",
+      "log": "cancel-source-oracle.log",
+      "scope": "Independently rebuilt frozen v1 checkout; all190 accepted source digests rechecked before actual TLS/WebSocket race."
+    },
+    "services": {
+      "command": "cd native && cargo test --locked --test service_contract",
+      "result": "passed",
+      "passed": 8,
+      "log": "service-source.log",
+      "scope": "Exact originating systemd definition assertions using approved native supervisor/state/name substitutions; rendering/parser proof, not a deployed system service."
+    },
+    "configWatch": {
+      "command": "pnpm exec vitest run --no-file-parallelism",
+      "result": "passed",
+      "log": "node-tests.log",
+      "scope": "Retained Node client watcher: three clients first login, atomic replacement, deletion and disposal; actual native configuration interoperability is separate editor/native helper proof. This is a file-watcher component, not an actual SSH window claim."
+    },
+    "logReplay": {
+      "command": "cd native && cargo test --locked --test worker_contract disconnect_through_completion_replays_durable_logs_before_result_ack -- --ignored --nocapture",
+      "result": "passed",
+      "passed": 1,
+      "log": "log-replay-final.log",
+      "scope": "Actual Docker worker completes while controller is offline; native durable replay retains splitUTF8 crab and finalpartial Eurostdout exactly, all three lines once, highestsequence=result.logSeq, ACK removes outbox."
+    },
+    "authorityChecksum": {
+      "command": "cd native && cargo test --locked --test controller_contract",
+      "result": "passed",
+      "passed": 5,
+      "log": "controller-authority-checksum-final.log",
+      "scope": "Includes no early ACK beforemissingsequence and exactlyone ACK foronecomplete resentresult; checksum errornamesexpected+actualhash."
+    },
+    "managedRoles": {
+      "command": "cd native && cargo test --locked --test managed_role_contract -- --nocapture",
+      "result": "passed",
+      "passed": 1,
+      "log": "managed-role-final.log",
+      "scope": "Actual native controller and standalone worker run under real supervisors from verified installed locations; stable launcher bytes refresh after health/welcome. No Docker: executioncapabilitiesempty and jobstaysqueueduntilcancelled. Directadoption/nonhost/archivefixturesareexplicit; no provisionalupdate/OSservice claim."
+    },
+    "uploadSummary": {
+      "command": "cd native && cargo test --locked --test workspace_contract actual_snapshot_transport_uploads_only_missing_blobs",
+      "result": "passed",
+      "passed": 1,
+      "log": "upload-summary-final.log",
+      "scope": "Actual loopbackHTTP transport reports exactfirstblob/bytecounts andzerorepeatedupload withoutanothercapture/query; existingwrapperretained."
+    },
+    "sourceInventory": {
+      "command": "node native/scripts/check-source-inventory.mjs /tmp/gridstator-v1-reference.NqGv2k",
+      "result": "passed",
+      "log": "source-inventory.log",
+      "sourceDeclarations": 203,
+      "ledgerRows": 226,
+      "scope": "TypeScript AST enumerates frozen test declarations, including chained conditional and parameterized forms. All 190 accepted source hashes are checked before matching the exact source path and line."
+    },
+    "lifecycleFinal": {
+      "command": "cd native && cargo test --locked --test controller_lifecycle",
+      "result": "passed",
+      "passed": 18,
+      "log": "lifecycle-final.log",
+      "scope": "Original one-second archive probe deadlines are unchanged. The alias restart fixture observes actual instance-lease release in place of a fixed 30 ms sleep. The prior mixed failed run is retained separately."
+    }
+  },
+  "acceptance": [
+    {
+      "rowId": "reference-controller-controller-001",
+      "nativeTests": [
+        "native_tls_pairing_authority_and_job_lifecycle"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-002",
+      "nativeTests": [
+        "native_tls_pairing_authority_and_job_lifecycle"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-003",
+      "nativeTests": [
+        "native_tls_pairing_authority_and_job_lifecycle"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-004",
+      "nativeTests": [
+        "native_tls_pairing_authority_and_job_lifecycle",
+        "source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries",
+        "both_worker_and_assignment_identity_fence_every_report_and_release_once"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-005",
+      "nativeTests": [
+        "source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-006",
+      "nativeTests": [
+        "source_006_queued_cancel_and_failed_143_result_become_cancelled"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-007",
+      "nativeTests": [
+        "cancellation_intent_is_idempotent_success_wins_and_timeout_clears_error"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-008",
+      "nativeTests": [
+        "source_008_retry_budget_manual_attempt_three_and_active_conflict"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-009",
+      "nativeTests": [
+        "preferred_nodes_rejection_and_draining_preserve_source_placement"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-010",
+      "nativeTests": [
+        "preferred_nodes_rejection_and_draining_preserve_source_placement"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-011",
+      "nativeTests": [
+        "unknown_snapshot_and_target_are_rejected_before_queuing"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-012",
+      "nativeTests": [
+        "source_012_disappearance_loses_running_and_requeues_assigned"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-013",
+      "nativeTests": [
+        "source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-014",
+      "nativeTests": [
+        "source_014_disconnected_pending_result_resumes_and_is_acknowledged"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-015",
+      "nativeTests": [
+        "native_blob_upload_checks_content_and_snapshot_manifest",
+        "source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-016",
+      "nativeTests": [
+        "source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-017",
+      "nativeTests": [
+        "live_steps_agent_artifacts_and_stale_output_match_source_contract"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-018",
+      "nativeTests": [
+        "source_018_two_node_shards_aggregate_and_retry_only_failed_lineage"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-019",
+      "nativeTests": [
+        "source_group_spreading_placeholders_and_cancellation_are_observable"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-controller-controller-020",
+      "nativeTests": [
+        "preferred_nodes_rejection_and_draining_preserve_source_placement"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-vscode-problems-001",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-problems-002",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-001",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-002",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-003",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-004",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-005",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-006",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-views-007",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-001",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-002",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-003",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-004",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-005",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-006",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-007",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-008",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-009",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-010",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-011",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-012",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-013",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-014",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-vscode-dashboard-015",
+      "nativeTests": [
+        "Retained component source scenario plus full20-case Playwright run; actual native VSIX host provides separate backend integration proof."
+      ],
+      "proof": "ui"
+    },
+    {
+      "rowId": "reference-scheduler-index-001",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-002",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-003",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-004",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-005",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-006",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-007",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-008",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-009",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-010",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-011",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-012",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-013",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-014",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-015",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-scheduler-index-016",
+      "nativeTests": [
+        "frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons"
+      ],
+      "proof": "scheduler"
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-013",
+      "nativeTests": [
+        "source_snapshot_013_git_root_relative_workdir_and_nearest_configuration"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-snapshot-snapshot-014",
+      "nativeTests": [
+        "source_snapshot_014_invalid_configuration_names_the_configuration_file"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "bounded-work",
+      "nativeTests": [
+        "large_archives_apply_backpressure_without_starving_heartbeats_or_cancellation",
+        "cancelling_a_stalled_download_releases_the_blocking_reader"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "assignment-fencing",
+      "nativeTests": [
+        "both_worker_and_assignment_identity_fence_every_report_and_release_once",
+        "assigned_rejection_expires_and_stale_results_are_acknowledged"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "cancel-success-race",
+      "nativeTests": [
+        "cancellation_intent_is_idempotent_success_wins_and_timeout_clears_error"
+      ],
+      "proof": "controller"
+    },
+    {
+      "rowId": "reference-cli-service-001",
+      "nativeTests": [
+        "source_001_controller_user_unit_preserves_payload_arguments_and_deduplicates_path"
+      ],
+      "proof": "services"
+    },
+    {
+      "rowId": "reference-cli-service-002",
+      "nativeTests": [
+        "source_002_agent_system_unit_keeps_account_docker_access_home_and_data_directory"
+      ],
+      "proof": "services"
+    },
+    {
+      "rowId": "reference-client-config-watch-001",
+      "nativeTests": [
+        "three open clients observe first login, atomic credential replacement and deletion"
+      ],
+      "proof": "configWatch"
+    },
+    {
+      "rowId": "log-result-ordering",
+      "nativeTests": [
+        "disconnect_through_completion_replays_durable_logs_before_result_ack",
+        "native_tls_pairing_authority_and_job_lifecycle"
+      ],
+      "proof": "logReplay",
+      "companionProof": "authorityChecksum"
+    }
+  ],
+  "sourceSnapshot": [
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "sha256:48bf2f9515a1439421338c52ba2fe6e3d24ba28a1324dd9486d722b57381ee80"
+    },
+    {
+      "path": "native/src/protocol.rs",
+      "sha256": "sha256:9435e997cf4c6f96d0a043ece19333063934af7b199944e8019ec97f4d2ba13a"
+    },
+    {
+      "path": "native/src/scheduler.rs",
+      "sha256": "sha256:42ef8524b6b4cf6c252be2303f87d805e2c8bf70413672ec61235009d46a1a13"
+    },
+    {
+      "path": "native/src/discovery.rs",
+      "sha256": "sha256:379660e707d4354377736d5feac43f8171e28405d2935c6cfda4744f2625247b"
+    },
+    {
+      "path": "native/src/bridge.rs",
+      "sha256": "sha256:e4494f257a6a2ed7d837b56175929f79f7cfc7e95d34ecf5888b5b28e9c855fc"
+    },
+    {
+      "path": "native/src/transfer.rs",
+      "sha256": "sha256:839f6d00d648f936bac0e493093407935d7bb59b68372cc88ce44e71db4445f6"
+    },
+    {
+      "path": "native/tests/controller_contract.rs",
+      "sha256": "sha256:f2ddc4fd1ef0493e52155ee0a9d0da5fa10b64ac8066063052b0ecc0e405e09a"
+    },
+    {
+      "path": "native/tests/controller_lifecycle.rs",
+      "sha256": "sha256:ee04cfb24f5334a694a3137eb6bdd2d1f29000f96e34b2ebd838416af3bdc6a9"
+    },
+    {
+      "path": "native/tests/controller_source_scenarios.rs",
+      "sha256": "sha256:57e14df593bd553d90f0eba4d44bd2c9cab0ac7cb8a6526a56a8aa55481d9ea6"
+    },
+    {
+      "path": "native/tests/controller_retention.rs",
+      "sha256": "sha256:ac15a0b202c468041c60d291f864f7b9836e4ca389b1dbf009b58aaad03a7496"
+    },
+    {
+      "path": "native/tests/bridge_source_scenarios.rs",
+      "sha256": "sha256:8d34cb1f41d867b7d8dc0de0c59708fa3076e6b8e68af51396206542dde29138"
+    },
+    {
+      "path": "native/tests/transfer_contract.rs",
+      "sha256": "sha256:c70e79148d7403e4da79ead12a373414c0cc6264e59d2082c43f0b927c42ada8"
+    },
+    {
+      "path": "native/tests/scheduler_differential.rs",
+      "sha256": "sha256:5a55f2a3e586af03babda5b9745e20c1c51fc8382388560e20084783b6899eee"
+    },
+    {
+      "path": "native/tests/scheduler_contract.rs",
+      "sha256": "sha256:90dc96d3092f8eaeeeec8d933df4c017af5ca67326e710447ca8eead2fd0b319"
+    },
+    {
+      "path": "native/scripts/capture-scheduler.mjs",
+      "sha256": "sha256:c02c0e650147dc3a483d8559983a28a49b496cc040c0a1c7696b4d6b1848f7fe"
+    },
+    {
+      "path": "native/scripts/capture-cancel-race.mjs",
+      "sha256": "sha256:6d62f2841b7812aed2d3f792f987e75c0990284577d6b00574b1dedf44437122"
+    },
+    {
+      "path": "native/contracts/scheduler-v1.json",
+      "sha256": "sha256:a7631aeefc6b800ec9175b0dad528a595c855b704c69d8c18d85b7e8186ecfe1"
+    },
+    {
+      "path": "native/contracts/cancel-race-v1.json",
+      "sha256": "sha256:334393de6ee5c70cbe2030606e4eba95635a80711ff2c092f8692595b6512d6c"
+    },
+    {
+      "path": "apps/vscode/scripts/build.mjs",
+      "sha256": "sha256:59df1c409472b414e3c54395846d2b98e317dfb72cd394ab185518eea3b306c3"
+    },
+    {
+      "path": "apps/vscode/scripts/package-native.mjs",
+      "sha256": "sha256:4bd38ef235cb13a82bb9d65ebbb2d7f4f56cc06cbad698db77fcc96ac51c9321"
+    },
+    {
+      "path": "apps/vscode/src/build-flavor.ts",
+      "sha256": "sha256:95ea8d33b7bd0bf01326342a859f3e4a7cd2e4fab900fd5453b8d62b027b8db4"
+    },
+    {
+      "path": "apps/vscode/src/native.ts",
+      "sha256": "sha256:48f9964ae99f6bdd9b5447468dd77fd42ee5eb8f0fb6690a8a46a94134904d5f"
+    },
+    {
+      "path": "apps/vscode/src/native.test.ts",
+      "sha256": "sha256:a8158e13671e6065967c60878d3b0296b9d117082402f2c04366e7b300a33df5"
+    },
+    {
+      "path": "apps/vscode/test/run-integration.mjs",
+      "sha256": "sha256:1cadd8011377185dc346a10a7fb0941d27ac70cad910db6ef2796caa27e9ba2f"
+    },
+    {
+      "path": "apps/vscode/test/suite/index.cjs",
+      "sha256": "sha256:6c6b1e223a7ea2eaf556a5220f10939f514a33aedf3c8333ff0fb8e3b96e7262"
+    },
+    {
+      "path": "native/src/services.rs",
+      "sha256": "sha256:22e4a76e5d40f8a5be795bf73a05c6c86e5606dba0c944fd74e0020eff449875"
+    },
+    {
+      "path": "native/tests/service_contract.rs",
+      "sha256": "sha256:6c5aa07db5b1dfd51658b58f8e2d16f747b81f9d23ebd51b863816fdde90d9cb"
+    },
+    {
+      "path": "packages/client/src/config.ts",
+      "sha256": "sha256:6fc0dd0a1544d11157cd08e8c511c10c2ed3a7c11143f2395672473d1b83e227"
+    },
+    {
+      "path": "packages/client/src/config-watch.test.ts",
+      "sha256": "sha256:6fa3595975602ffa5dda496e2795774ebea467ce1e1e8765b8885efd0255dccc"
+    }
+  ],
+  "observations": {
+    "boundedArchive": "128MiB full verified archive; four stalled streams block a fifth; ten stalled and174 full-transfer heartbeat/health probes; maximum33.448236ms; cancellation34.643903ms; observed RSS growth72KiB in combined run. Single-thread async runtime with blocking IO workers.",
+    "schedulerCorrections": [
+      "UTF16 node name tie ordering",
+      "JS positive half-tie decimal memory formatting and exponent thresholds"
+    ],
+    "diagnosticCorrections": [
+      "Unknown snapshots400 / unknown pinned nodes404",
+      "Missing manifest404, invalid/corrupt manifests rejected",
+      "Created+queued atomic state audit",
+      "Group updates use jobs event topic; invalid subscriptions preserve previous topics",
+      "Whole JSON float notation accepted at HTTP integer schema boundaries",
+      "Invalid configuration diagnostic names gridstator.yml"
+    ]
+  },
+  "limits": [
+    "UI24 source rows are component presentation behavior; native backend integration is independently demonstrated in one local editor host. Actual SSH/WSL extension paths remain open.",
+    "No new platform/service/signing gate is closed by this Linux evidence.",
+    "Controller WebSocket worker models exercise protocol/server behavior; they are not Rust executor or Docker worker claims.",
+    "All evidence is bounded to its source checkpoints; final verification is recorded separately."
+  ],
+  "knownFailedRuns": [
+    {
+      "log": "runtime-concurrent-red.log",
+      "result": "failed",
+      "scope": "Overlapping root/agent log redirects caused NUL/mixedoutput; three reconnect casespassed but concurrent lifecycle alias+archive timedout. Aliasfixture racedfixed30ms shutdown; replacedwithactuallease-releaseobservation. Archive deadlines retained; stagecontextadded. Finalisolated/defaultsuite result is separate."
+    }
+  ],
+  "laterSourceSnapshot": [
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "sha256:e8f0d05828e762fcc75d0cd7e1ae9a7200c9a7f0237bb703996c8a38b679cddd"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "sha256:be6201fa25b04fe61ae758712ef6d36d95a59c9690afe5a12d599d322e8a80fb"
+    },
+    {
+      "path": "native/src/install.rs",
+      "sha256": "sha256:6923c3c19038caa0d299e9f77e3b80c92499c8caa659d65e1bb1eabbfb8ab051"
+    },
+    {
+      "path": "native/src/worker.rs",
+      "sha256": "sha256:17463b38ae1d2a46b5870720ed8093e434ef0889b68618d72572d9eaabe33078"
+    },
+    {
+      "path": "native/src/transfer.rs",
+      "sha256": "sha256:763e2019e09fc18f02f2337a42666680cf649eb2cac3499943773cde8104cf47"
+    },
+    {
+      "path": "native/tests/controller_contract.rs",
+      "sha256": "sha256:b0ec1f6ee7d79418eea8761a80bcdf9df70adb49af8760089ca6e9cafa8bcbff"
+    },
+    {
+      "path": "native/tests/controller_lifecycle.rs",
+      "sha256": "sha256:b18f8fd711c012394b36e8fcd8c9ed63fbdde622a3438e8db26ba7929777e1ae"
+    },
+    {
+      "path": "native/tests/worker_contract.rs",
+      "sha256": "sha256:71ab351593814ef26c6def834cd0ec3fb0edd58849b06326d6d5d7ece8c781b3"
+    },
+    {
+      "path": "native/tests/managed_role_contract.rs",
+      "sha256": "sha256:ee6873d45b60e8b4769e0c271471840aa9f3c5d88b5f3544ecb2b1098f363df5"
+    },
+    {
+      "path": "native/tests/workspace_contract.rs",
+      "sha256": "sha256:52772b3c864116aa55821f8976fc0a22676386c93e369c42e9b491a3daa78060"
+    }
+  ],
+  "inventoryCorrections": [
+    {
+      "id": "reference-integration-e2e-012",
+      "source": "tests/integration/e2e.test.ts:475",
+      "reason": "The original declaration extractor missed an individual chained it.skipIf test.",
+      "disposition": "Append the missing case without changing existing IDs or accepted reference bytes. Record actual acceptance and explicitly approved native runtime substitutions."
+    },
+    {
+      "id": "reference-agent-updater-003",
+      "source": "apps/agent/src/updater.test.ts:232",
+      "reason": "The original declaration extractor missed an individual chained it.skipIf test.",
+      "disposition": "Append the missing case without changing existing IDs or accepted reference bytes. Record actual acceptance and explicitly approved native runtime substitutions."
+    }
+  ],
+  "sourceInventoryHarness": {
+    "path": "native/scripts/check-source-inventory.mjs",
+    "sha256": "sha256:f8ab4bed10c9f83b55c387fe14b1336e1d3c193bf2d73817b8cd32ba918c9f21"
+  }
+}

@@ -13,6 +13,7 @@ import {
 import {
   DEFAULT_IMAGE,
   DEFAULT_RESOURCES,
+  ProjectConfigSchema,
   type Job,
   type JobGroup,
   type JobSpec,
@@ -25,6 +26,9 @@ import {
   discoverWorkflows,
   scriptCommand,
   type PackageManager,
+  type DockerfileInfo,
+  type PackageScripts,
+  type WorkflowInfo,
 } from '@gridstator/discovery';
 import {
   captureSnapshot,
@@ -34,6 +38,7 @@ import {
 } from '@gridstator/snapshot';
 import type { LaunchItem, LaunchOptions, LaunchRequest } from './messages';
 import type { ClusterState } from './state';
+import { effectiveClientConfigPath, NativeCancelledError, type NativeCli } from './native';
 
 const execFileAsync = promisify(execFile);
 
@@ -42,6 +47,15 @@ interface Project {
   root: string;
   workdir: string;
   config: ProjectConfig;
+}
+
+interface NativeDiscovery {
+  root: string;
+  workdir: string;
+  config: ProjectConfig;
+  workflows: WorkflowInfo[];
+  packages: PackageScripts[];
+  dockerfiles: DockerfileInfo[];
 }
 
 /** Information needed to map a job's remote paths back to local files and to rerun it. */
@@ -79,6 +93,7 @@ export class Launcher implements vscode.Disposable {
   constructor(
     private readonly state: ClusterState,
     private readonly log: vscode.OutputChannel,
+    private readonly native?: NativeCli,
   ) {
     for (const pattern of [
       '**/gridstator.{yml,yaml}',
@@ -107,18 +122,50 @@ export class Launcher implements vscode.Disposable {
     for (const folder of vscode.workspace.workspaceFolders ?? []) {
       if (folder.uri.scheme !== 'file') continue;
       try {
+        if (this.native?.enabled) {
+          const discovered = await this.native.execute<NativeDiscovery>({
+            operation: 'discover',
+            root: folder.uri.fsPath,
+            configPath: effectiveClientConfigPath(),
+          });
+          const config = ProjectConfigSchema.parse(discovered.config);
+          if (
+            typeof discovered.root !== 'string' ||
+            typeof discovered.workdir !== 'string' ||
+            !Array.isArray(discovered.workflows) ||
+            !Array.isArray(discovered.packages) ||
+            !Array.isArray(discovered.dockerfiles)
+          ) {
+            throw new GridstatorError(
+              'CONFIG',
+              'Native CLI discovery returned an incompatible response',
+            );
+          }
+          projects.set(folder.name, {
+            folder,
+            root: discovered.root,
+            workdir: discovered.workdir,
+            config,
+          });
+          items.push(...(await discoverItems(folder.name, discovered.root, config, discovered)));
+          continue;
+        }
         const loc = await findProject(folder.uri.fsPath);
         const config = await loadProjectConfig(loc.configPath);
         projects.set(folder.name, { folder, root: loc.root, workdir: loc.workdir, config });
         items.push(...(await discoverItems(folder.name, loc.root, config)));
       } catch (err) {
-        this.log.appendLine(`Discovery failed in ${folder.uri.fsPath}: ${(err as Error).message}`);
+        const message =
+          err instanceof GridstatorError && err.hint
+            ? `${err.message}. ${err.hint}`
+            : (err as Error).message;
+        this.log.appendLine(`Discovery failed in ${folder.uri.fsPath}: ${message}`);
         items.push({
           id: `error:${folder.name}`,
           kind: 'command',
           label: `gridstator.yml error in ${folder.name}`,
           folder: folder.name,
-          warnings: [(err as Error).message],
+          warnings: [message],
         });
       }
     }
@@ -162,6 +209,37 @@ export class Launcher implements vscode.Disposable {
       );
     const project = this.project(item.folder);
     await this.handleUnsavedFiles(project.root);
+    if (this.native?.enabled) {
+      const selected = item;
+      return this.nativeProgress(async (signal) => {
+        this.state.requireClient();
+        const clusterId = this.state.connection.clusterId;
+        const spec = buildSpec(selected, request.options, project, '');
+        const taskShards =
+          selected.kind === 'task' ? project.config.tasks[selected.task!.name]?.shards : undefined;
+        const result = await this.native!.execute<LaunchResult>(
+          {
+            operation: 'submit',
+            root: project.root,
+            spec: { ...spec, snapshot: undefined },
+            shards: request.options.shards ?? taskShards ?? 1,
+            snapshotOptions: nativeSnapshotOptions(project.config),
+            configPath: effectiveClientConfigPath(),
+            expectedClusterId: clusterId ?? undefined,
+          },
+          signal,
+        );
+        this.checkNativeCluster(clusterId);
+        const origin: JobOrigin = {
+          root: project.root,
+          workdir: project.workdir,
+          folder: project.folder.name,
+          request,
+        };
+        this.trackNativeResult(result, origin);
+        return result;
+      });
+    }
     const git = item.kind === 'workflow' ? await gitContext(project.root) : undefined;
 
     return vscode.window.withProgress(
@@ -236,12 +314,81 @@ export class Launcher implements vscode.Disposable {
     const project = this.project(vscode.workspace.workspaceFolders?.[0]?.name ?? '');
     const client = this.state.requireClient();
     await this.handleUnsavedFiles(project.root);
+    if (this.native?.enabled) {
+      return this.nativeProgress(async (signal) => {
+        this.state.requireClient();
+        const clusterId = this.state.connection.clusterId;
+        const result = await this.native!.execute<LaunchResult>(
+          {
+            operation: 'submit',
+            root: project.root,
+            spec: { ...job.spec, snapshot: undefined },
+            snapshotOptions: nativeSnapshotOptions(project.config),
+            configPath: effectiveClientConfigPath(),
+            expectedClusterId: clusterId ?? undefined,
+          },
+          signal,
+        );
+        this.checkNativeCluster(clusterId);
+        this.trackNativeResult(result);
+        return result;
+      });
+    }
     const captured = await captureSnapshot({ root: project.root, cacheDir: defaultCacheDir() });
     await uploadSnapshot(captured, client);
     const next = await client.submitJob({ ...job.spec, snapshot: captured.id });
     this.state.myJobs.add(next.id);
     this.state.upsertJob(next);
     return next;
+  }
+
+  private checkNativeCluster(clusterId: string | null): void {
+    if (clusterId !== this.state.connection.clusterId) {
+      throw new GridstatorError(
+        'CONFLICT',
+        'The selected cluster changed during native submission; refresh its job list before retrying',
+      );
+    }
+  }
+
+  private async nativeProgress<T>(work: (signal: AbortSignal) => Promise<T>): Promise<T> {
+    return vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: 'Gridstator: capturing files and submitting through the native CLI…',
+        cancellable: true,
+      },
+      async (_progress, cancellation) => {
+        const abort = new AbortController();
+        const listener = cancellation.onCancellationRequested(() => abort.abort());
+        if (cancellation.isCancellationRequested) abort.abort();
+        try {
+          return await work(abort.signal);
+        } catch (err) {
+          if (err instanceof NativeCancelledError) throw new CancelledByUser();
+          throw err;
+        } finally {
+          listener.dispose();
+        }
+      },
+    );
+  }
+
+  private trackNativeResult(result: LaunchResult, origin?: JobOrigin): void {
+    if (isGroup(result)) {
+      this.state.myGroups.add(result.id);
+      if (origin) this.groupOrigins.set(result.id, origin);
+      for (const job of result.jobs) {
+        this.state.myJobs.add(job.id);
+        if (origin) this.origins.set(job.id, origin);
+        this.state.upsertJob(job);
+      }
+      this.state.upsertGroup(result);
+    } else {
+      this.state.myJobs.add(result.id);
+      if (origin) this.origins.set(result.id, origin);
+      this.state.upsertJob(result);
+    }
   }
 
   private async handleUnsavedFiles(root: string): Promise<void> {
@@ -283,6 +430,7 @@ async function discoverItems(
   folder: string,
   root: string,
   config: ProjectConfig,
+  discovered?: Pick<NativeDiscovery, 'workflows' | 'packages' | 'dockerfiles'>,
 ): Promise<LaunchItem[]> {
   const items: LaunchItem[] = [];
   for (const [name, task] of Object.entries(config.tasks)) {
@@ -318,7 +466,7 @@ async function discoverItems(
       },
     });
   }
-  for (const w of await discoverWorkflows(root)) {
+  for (const w of discovered?.workflows ?? (await discoverWorkflows(root))) {
     items.push({
       id: `workflow:${folder}:${w.file}`,
       kind: 'workflow',
@@ -341,7 +489,7 @@ async function discoverItems(
       },
     });
   }
-  for (const pkg of await discoverPackageScripts(root)) {
+  for (const pkg of discovered?.packages ?? (await discoverPackageScripts(root))) {
     for (const [script, cmd] of Object.entries(pkg.scripts)) {
       items.push({
         id: `script:${folder}:${pkg.dir}:${script}`,
@@ -360,7 +508,7 @@ async function discoverItems(
       });
     }
   }
-  for (const d of await discoverDockerfiles(root)) {
+  for (const d of discovered?.dockerfiles ?? (await discoverDockerfiles(root))) {
     items.push({
       id: `dockerfile:${folder}:${d.file}`,
       kind: 'dockerfile',
@@ -372,6 +520,18 @@ async function discoverItems(
     });
   }
   return items;
+}
+
+function nativeSnapshotOptions(config: ProjectConfig) {
+  return {
+    include: config.snapshot.include,
+    exclude: config.snapshot.exclude,
+    allowSecrets: config.snapshot.allowSecrets,
+    maxFileSize:
+      typeof config.snapshot.maxFileSize === 'number'
+        ? config.snapshot.maxFileSize * 1024 * 1024
+        : parseBytes(config.snapshot.maxFileSize),
+  };
 }
 
 async function gitContext(

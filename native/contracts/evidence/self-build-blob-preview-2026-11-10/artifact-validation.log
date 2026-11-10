@@ -1,0 +1,51 @@
+{
+  "linux-arm64": {
+    "path": "/tmp/gridstator-blob-self-build-79xt6dfp/artifacts/self-build/linux-arm64/gridstator",
+    "sha256": "995d69b467dc571117e84a580b29d9df406e5d6d6ed110215997e29eedb4ebf7",
+    "size": 26578344,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-e3e5fae51c8e",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/arm64",
+      "sha256": "995d69b467dc571117e84a580b29d9df406e5d6d6ed110215997e29eedb4ebf7",
+      "size": 26578344,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "not executed"
+  },
+  "linux-amd64": {
+    "path": "/tmp/gridstator-blob-self-build-79xt6dfp/artifacts/self-build/linux-amd64/gridstator",
+    "sha256": "d408a50bf80a4e430b55ccf3fcdec38e48534ac79e52db35025d38050de6e601",
+    "size": 27598768,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-e3e5fae51c8e",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/amd64",
+      "sha256": "d408a50bf80a4e430b55ccf3fcdec38e48534ac79e52db35025d38050de6e601",
+      "size": 27598768,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-e3e5fae51c8e",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/amd64",
+      "size": 27598768,
+      "sha256": "d408a50bf80a4e430b55ccf3fcdec38e48534ac79e52db35025d38050de6e601"
+    }
+  }
+}

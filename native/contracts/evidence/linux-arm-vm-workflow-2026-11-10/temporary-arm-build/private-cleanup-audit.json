@@ -1,0 +1,7 @@
+{
+  "ownedOrchestratorProcessesAbsent": true,
+  "controllerExited": 0,
+  "privateCredentialsAndControllerDataRemoved": true,
+  "sharedDockerCargoCacheRetained": true,
+  "existingServicesTouched": false
+}

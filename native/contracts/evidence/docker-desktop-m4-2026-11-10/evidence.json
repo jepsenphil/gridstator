@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-11-10T04:40:28.119003+00:00",
+  "host": "M4 macOS15.6; philjepsen@192.168.1.170",
+  "version": "4.99.0",
+  "publishedReleaseDate": "2026-11-09",
+  "download": "https://desktop.docker.com/mac/main/arm64/245822/Docker.dmg",
+  "checksumSource": "https://desktop.docker.com/mac/main/arm64/245822/checksums.txt",
+  "sha256": "0ede7f9917b55c396a17b03c069cadf457a7d21904bc264c6d398fe132da7fb9",
+  "verification": {
+    "publishedChecksum": "passed",
+    "readonlyImageIntegrity": "passed",
+    "deepStrictCodeSignatureBeforeCopy": "passed",
+    "gatekeeper": "accepted; Notarized Developer ID",
+    "teamIdentifier": "9BNSXJN65R",
+    "deepStrictCodeSignatureAfterCopy": "passed",
+    "installedVersion": "4.99.0",
+    "engineVersion": "29.9.3"
+  },
+  "destination": "/Applications/Docker.app",
+  "existingApp": "absent before installation",
+  "firstLaunch": "Application opened; subsequent actual Docker engine probe returned 29.9.3 (exit0). Human setup confirmation is not used as test evidence.",
+  "notClaimed": [
+    "actual Mac worker Docker execution",
+    "capacity/restart tests",
+    "physical Intel validation"
+  ]
+}

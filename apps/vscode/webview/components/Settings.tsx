@@ -3,6 +3,7 @@ import type { ClusterSettings, CreateTokenResponse } from '@gridstator/protocol'
 import type { DashboardState, EditorPreferences, SettingsView } from '../../src/messages';
 import { ago, send } from '../util';
 import { Button, Empty } from './common';
+import { formatConnectionCommand } from '../../src/connection-command';
 
 type Busy = Record<string, boolean>;
 
@@ -142,10 +143,12 @@ function ClusterPreferences({
   cluster,
   admin,
   busy,
+  native,
 }: {
   cluster: ClusterSettings;
   admin: boolean;
   busy: Busy;
+  native: boolean;
 }) {
   const [draft, setDraft] = useState(cluster);
   const saved = JSON.stringify(cluster);
@@ -239,7 +242,7 @@ function ClusterPreferences({
               <p className="hint settings-wide">Times use the controller’s local time zone.</p>
             </>
           ) : null}
-          {(['act', 'node'] as const).map((tool) => (
+          {(native ? (['act'] as const) : (['act', 'node'] as const)).map((tool) => (
             <label className="field" key={tool}>
               <span className="label">{tool === 'node' ? 'Node.js' : 'act'} version override</span>
               <input
@@ -253,7 +256,10 @@ function ClusterPreferences({
                   }))
                 }
               />
-              <span className="hint">A version such as 24.11.0, or “off” to stop managing it.</span>
+              <span className="hint">
+                A version such as {tool === 'node' ? '24.11.0' : '0.2.97'}, or “off” to stop
+                managing it.
+              </span>
             </label>
           ))}
         </div>
@@ -292,11 +298,15 @@ function AccessTokens({
   const [role, setRole] = useState<'operator' | 'admin'>('operator');
   const [ttl, setTtl] = useState('');
   const [uses, setUses] = useState('1');
-  const quote = (value: string) => `'${value.replace(/'/g, "'\\''")}'`;
   const controllerUrl = data.connection.publicUrl || data.connection.url;
   const command =
     createdToken && controllerUrl && data.connection.caFingerprint
-      ? `gridstator ${createdToken.info.kind === 'join' ? 'agent join' : 'login'} ${quote(controllerUrl)} --fingerprint ${quote(data.connection.caFingerprint)} --token ${quote(createdToken.token)}`
+      ? formatConnectionCommand(
+          createdToken.info.kind === 'join' ? 'join' : 'client',
+          controllerUrl,
+          data.connection.caFingerprint,
+          createdToken.token,
+        )
       : null;
   return (
     <div className="stack">
@@ -547,6 +557,7 @@ function SoftwareUpdates({
   const [prereleases, setPrereleases] = useState(settings.includePrereleases);
   const selected = settings.releases.find((release) => release.tag === tag) ?? settings.releases[0];
   const build = settings.updates?.controller;
+  const native = build?.runtime === 'rust' || /^2\./.test(build?.version ?? '');
   const canUpdateController = build?.selfUpdate?.available ?? false;
   const rollout = settings.updates?.rollout;
   return (
@@ -627,7 +638,7 @@ function SoftwareUpdates({
           busy={busy['settings:install']}
           onClick={() => send({ type: 'uploadControllerBuild' })}
         >
-          Upload a package…
+          {native ? 'Upload a native release bundle…' : 'Upload a package…'}
         </Button>
       </div>
       <p className="hint">
@@ -761,6 +772,11 @@ function HostControls({ settings, busy }: { settings: SettingsView; busy: Busy }
       </div>
       <p className="hint">A stopped controller stays stopped until you start it.</p>
       {host.service.reason ? <p className="hint">{host.service.reason}</p> : null}
+      {host.service.persistenceWarning ? (
+        <p className="warn-text" role="status">
+          {host.service.persistenceWarning}
+        </p>
+      ) : null}
       <form
         className="form settings-form"
         onSubmit={(event) => {
@@ -946,7 +962,16 @@ export function Settings({
             <p className="hint">Connect with admin access to change cluster settings.</p>
           ) : null}
           {settings.cluster ? (
-            <ClusterPreferences cluster={settings.cluster} admin={admin} busy={busy} />
+            <ClusterPreferences
+              cluster={settings.cluster}
+              admin={admin}
+              busy={busy}
+              native={
+                settings.updates?.controller.runtime === 'rust' ||
+                c.build?.runtime === 'rust' ||
+                /^2\./.test(c.version ?? '')
+              }
+            />
           ) : (
             <p className="muted">Connect to the controller to load its configuration.</p>
           )}

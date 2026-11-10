@@ -4,6 +4,7 @@ import { ArtifactSchema, JobOutputsSchema, JobSpecSchema, LogEntrySchema } from 
 import {
   NodeInfoSchema,
   NodeMetricsSchema,
+  NodeNameSchema,
   NodeSettingsPatchSchema,
   NodeSettingsSchema,
 } from './node.js';
@@ -143,6 +144,7 @@ export const ControllerJobAckSchema = z.object({
 export const ControllerNodeSettingsSchema = z.object({
   type: z.literal('node.settings'),
   settings: NodeSettingsSchema,
+  name: NodeNameSchema.optional(),
 });
 
 /** Asks the agent to call the update endpoint now (see AGENT_UPDATE_PATH). */

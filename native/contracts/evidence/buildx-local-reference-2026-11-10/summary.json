@@ -1,0 +1,31 @@
+{
+  "result": "passed",
+  "productionBuildRsSha256": "8e696aa15b2edc0b21a2c8bcd68370c316c7573cdd07e0d26b186432e5a881df",
+  "baselineCommon": "native-preview-20261110-cd6b769ebe6e",
+  "temporaryMacTestBuildId": "buildx-fallback-dev-8e696aa15b2e",
+  "linux": {
+    "unitTests": 5,
+    "realBuildxTests": 4,
+    "strictAllTargetsClippy": "passed"
+  },
+  "macArm": {
+    "unitTests": 5,
+    "realBuildxTests": 4,
+    "strictAllTargetsClippy": "passed"
+  },
+  "reviews": [
+    "parent root independent review, no outstanding issue",
+    "v2_contracts_foundation independent review plus captured inspection numeric verification, no outstanding issue"
+  ],
+  "rawFixture": "../../buildx-containerd-linux-arm-inspect.json",
+  "sourceScope": "only executor/build.rs production; executor_contract assertions + supplemental raw fixture; no new common preview allocated",
+  "strictLinuxArmWorkflow": {
+    "location": "../linux-arm-vm-workflow-2026-11-10/corrected-dev-strict/proof.json",
+    "buildId": "buildx-fallback-dev-8e696aa15b2e",
+    "executableSha256": "d3b5e64741b595ce7fb24ab049d67cdc2992b23cc2ebeb98e3dbbb4f8d9d20bd",
+    "scenarioCount": 6,
+    "strictMode": true,
+    "runtimeSeconds": 6.564,
+    "scope": "actual corrected temporary static Linux ARM executable inside real ARM Docker VM; separate final common-byte proof follows"
+  }
+}

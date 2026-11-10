@@ -1,0 +1,106 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.64s
+     Running tests/bridge_source_scenarios.rs (target/debug/deps/bridge_source_scenarios-5e5da42cc96baf98)
+
+running 2 tests
+test source_snapshot_014_invalid_configuration_names_the_configuration_file ... ok
+test source_snapshot_013_git_root_relative_workdir_and_nearest_configuration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)
+
+running 4 tests
+Controller listening on https://127.0.0.1:44625
+Controller listening on https://127.0.0.1:33123
+Controller listening on https://127.0.0.1:39093
+Controller listening on https://127.0.0.1:37097
+test source_http_integer_fields_accept_whole_number_json_literals ... ok
+agent message rejected: result arrived before durable logs
+test source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests ... ok
+test native_blob_upload_checks_content_and_snapshot_manifest ... ok
+test native_tls_pairing_authority_and_job_lifecycle ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.08s
+
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 18 tests
+Controller listening on https://127.0.0.1:38579
+Controller listening on https://127.0.0.1:44405
+Controller listening on https://127.0.0.1:35593
+Controller listening on https://127.0.0.1:39491
+Controller listening on https://127.0.0.1:36783
+Controller listening on https://127.0.0.1:44651
+Controller listening on https://127.0.0.1:39379
+Controller listening on https://127.0.0.1:40909
+Controller listening on https://127.0.0.1:37115
+test controller_alias_listener_advertises_public_url_and_preserves_identity ... ok
+test late_starting_rejection_is_diagnostic_noop_and_force_removal_cancels ... ok
+test groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates ... ok
+Controller listening on https://127.0.0.1:40321
+Controller listening on https://127.0.0.1:38127
+test historical_log_subscription_pages_beyond_ten_thousand_before_end ... ok
+Controller listening on https://127.0.0.1:33791
+test both_worker_and_assignment_identity_fence_every_report_and_release_once ... ok
+test newer_socket_fences_old_generation_and_revocation_closes_both_channels ... ok
+Controller listening on https://127.0.0.1:34265
+Controller listening on https://127.0.0.1:40019
+test protocol_mismatch_flushes_fatal_frame_and_v1_registration_is_rejected ... ok
+Controller listening on https://127.0.0.1:37131
+test assigned_rejection_expires_and_stale_results_are_acknowledged ... ok
+test live_steps_agent_artifacts_and_stale_output_match_source_contract ... ok
+Controller listening on https://127.0.0.1:45975
+test preferred_nodes_rejection_and_draining_preserve_source_placement ... ok
+test reconnect_lost_and_failed_results_share_retry_budget ... ok
+Controller listening on https://127.0.0.1:42115
+Controller listening on https://127.0.0.1:45347
+Controller listening on https://127.0.0.1:34017
+test unknown_snapshot_and_target_are_rejected_before_queuing ... ok
+Controller listening on https://127.0.0.1:33393
+test cancellation_intent_is_idempotent_success_wins_and_timeout_clears_error ... ok
+test source_group_spreading_placeholders_and_cancellation_are_observable ... ok
+test source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries ... ok
+Controller listening on https://127.0.0.1:46163
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+blob download interrupted: broken pipe
+test temporary_native_update_admission_does_not_trigger_long_executor_exclusion ... ok
+test timeout_reassigns_unacknowledged_assignment_and_heartbeat_loss_retries_running ... ok
+128MiB archive; four stalled streams; ten stalled +174 full-transfer heartbeat/health probes; max probe 33.448236ms; RSS growth Some(72)KiB; cancellation 34.643903ms
+test large_archives_apply_backpressure_without_starving_heartbeats_or_cancellation ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.84s
+
+     Running tests/controller_retention.rs (target/debug/deps/controller_retention-de92e78886ca40bb)
+
+running 4 tests
+test initialize_brackets_ipv6_listener_urls ... ok
+snapshot sha256:656a2d58259ab3861f78e1bced0371f00d75e10e6891cb9d71efbd807dde7d6a unreadable during retention: No such file or directory (os error 2)
+test unreadable_snapshot_is_removed_without_following_cas_symlinks ... ok
+test startup_grace_preserves_inflight_then_requeues_assigned_and_retries_lost ... ok
+test retention_keeps_active_inputs_and_artifacts_graces_uploads_and_sweeps_old_orphans ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+
+     Running tests/controller_source_scenarios.rs (target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)
+
+running 6 tests
+Controller listening on https://127.0.0.1:45941
+Controller listening on https://127.0.0.1:34899
+Controller listening on https://127.0.0.1:46857
+Controller listening on https://127.0.0.1:41261
+Controller listening on https://127.0.0.1:37207
+Controller listening on https://127.0.0.1:45047
+test source_014_disconnected_pending_result_resumes_and_is_acknowledged ... ok
+test source_006_queued_cancel_and_failed_143_result_become_cancelled ... ok
+Controller listening on https://127.0.0.1:44761
+test source_018_two_node_shards_aggregate_and_retry_only_failed_lineage ... ok
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... ok
+test source_008_retry_budget_manual_attempt_three_and_active_conflict ... ok
+test source_012_disappearance_loses_running_and_requeues_assigned ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.67s
+

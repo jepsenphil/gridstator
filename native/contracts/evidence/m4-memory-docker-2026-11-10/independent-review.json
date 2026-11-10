@@ -1,0 +1,17 @@
+{
+  "reviewer": "v2_contracts_foundation",
+  "reviewScope": "independent read-only code + primary ABI and numeric comparison",
+  "workerSha256": "181bd9221ed71e39894d354592b4b6736179d3ad89ac1defade46877003333ec",
+  "result": "no outstanding code issues",
+  "nativeMiB": 5053.4375,
+  "rosettaMiB": 5049.28125,
+  "nearbyVmStatComparableMiB": 5056.765625,
+  "differencesMiB": [
+    3.328125,
+    7.484375
+  ],
+  "pageSizeBothBytes": 16384,
+  "returnedStatisticsWords": 38,
+  "sdkStructureWords": 40,
+  "note": "vm_stat separate speculative pages are included once to compare with Mach free_count; estimates are sampled separately and are expected to move. Actual 4x Rosetta undercount excluded."
+}

@@ -1,0 +1,41 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.06s
+     Running tests/install_source_contract.rs (native/target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 1 test
+test source_install_003_rejects_unverified_launcher_identity_child ... FAILED
+
+failures:
+
+---- source_install_003_rejects_unverified_launcher_identity_child stdout ----
+
+thread 'source_install_003_rejects_unverified_launcher_identity_child' (1392864) panicked at tests/install_source_contract.rs:293:13:
+version=dev-4b8f13ccf1b2-1794279257446974855, marker=1, expected=false:
+
+running 1 test
+test source_install_003_rejects_unverified_launcher_identity_child ... FAILED
+
+failures:
+
+failures:
+    source_install_003_rejects_unverified_launcher_identity_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 2.30s
+
+
+
+thread 'source_install_003_rejects_unverified_launcher_identity_child' (1394063) panicked at tests/install_source_contract.rs:333:5:
+assertion `left == right` failed: controller restart capability must verify physical running identity as well
+  left: Bool(true)
+ right: false
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_install_003_rejects_unverified_launcher_identity_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 12.40s
+
+error: test failed, to rerun pass `--test install_source_contract`

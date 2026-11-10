@@ -1,0 +1,640 @@
+{
+  "result": "passed",
+  "scope": "temporary memory-overlay ARM release, actual Docker Desktop stop/start; no other containers existed; same worker PID and websocket connectedAt; heartbeats continued; queued work admitted after reprobe",
+  "build": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-memory-dev-181bd9221ed7",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 23188896,
+    "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8"
+  },
+  "workerPid": 94746,
+  "nodeId": "01M71XTNERAE630F9RDHFF5P7W",
+  "before": {
+    "id": "01M71XTNERAE630F9RDHFF5P7W",
+    "name": "docker-proof-0d0cb012380c",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.9.3"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "m4-memory-dev-181bd9221ed7",
+        "version": "2.0.0-dev.1",
+        "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:61779",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4343
+      },
+      "executionCapacity": {
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794287481528,
+      "cpuPercent": 1.9647362232208252,
+      "memoryAvailableMb": 4663,
+      "diskFreeMb": 303998,
+      "diskTotalMb": 471482,
+      "load1": 1.88818359375,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 6296
+    },
+    "lastSeenAt": 1794287481529,
+    "connectedAt": 1794287426486,
+    "createdAt": 1794287424984,
+    "update": {
+      "state": "current",
+      "build": "m4-memory-dev-181bd9221ed7",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "down": {
+    "id": "01M71XTNERAE630F9RDHFF5P7W",
+    "name": "docker-proof-0d0cb012380c",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: failed to connect to the docker API at unix:///Users/philjepsen/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/philjepsen/.docker/run/docker.sock: connect: no such file or directory\n"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "failed to connect to the docker API at unix:///Users/philjepsen/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/philjepsen/.docker/run/docker.sock: connect: no such file or directory\n"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [],
+      "build": {
+        "id": "m4-memory-dev-181bd9221ed7",
+        "version": "2.0.0-dev.1",
+        "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:61779",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 5339
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794287491533,
+      "cpuPercent": 2.785381555557251,
+      "memoryAvailableMb": 5300,
+      "diskFreeMb": 303998,
+      "diskTotalMb": 471482,
+      "load1": 1.978515625,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794287491533,
+    "connectedAt": 1794287426486,
+    "createdAt": 1794287424984,
+    "update": {
+      "state": "current",
+      "build": "m4-memory-dev-181bd9221ed7",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "after": {
+    "id": "01M71XTNERAE630F9RDHFF5P7W",
+    "name": "docker-proof-0d0cb012380c",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.9.3"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "m4-memory-dev-181bd9221ed7",
+        "version": "2.0.0-dev.1",
+        "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:61779",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4171
+      },
+      "executionCapacity": {
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794287501525,
+      "cpuPercent": 32.779415130615234,
+      "memoryAvailableMb": 4171,
+      "diskFreeMb": 303997,
+      "diskTotalMb": 471482,
+      "load1": 2.38037109375,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 6296
+    },
+    "lastSeenAt": 1794287502523,
+    "connectedAt": 1794287426486,
+    "createdAt": 1794287424984,
+    "update": {
+      "state": "current",
+      "build": "m4-memory-dev-181bd9221ed7",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "queuedJob": {
+    "id": "01M71XWRH7BSDS4F4SM0AGTEPT",
+    "name": "printf desktop-recovered",
+    "kind": "command",
+    "state": "queued",
+    "stateReason": "node docker-proof-0d0cb012380c cannot run \"command\" jobs (Docker unavailable)",
+    "priority": 0,
+    "owner": "local-admin",
+    "snapshotId": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+    "spec": {
+      "kind": "command",
+      "env": {},
+      "secretEnv": {},
+      "snapshot": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+      "workdir": ".",
+      "resources": {
+        "cpus": 1,
+        "memoryMb": 128
+      },
+      "target": {
+        "labels": [],
+        "prefer": []
+      },
+      "retry": {
+        "max": 0,
+        "on": [
+          "lost"
+        ]
+      },
+      "priority": 0,
+      "project": "isolated-m4-docker-proof",
+      "image": "alpine:3.21",
+      "command": [
+        "sh",
+        "-c",
+        "printf desktop-recovered"
+      ],
+      "artifacts": []
+    },
+    "nodeId": null,
+    "nodeName": null,
+    "assignmentId": null,
+    "attempt": 1,
+    "retryOf": null,
+    "cancelRequestedAt": null,
+    "exitCode": null,
+    "error": null,
+    "queuePosition": 1,
+    "logSeq": 0,
+    "outputs": null,
+    "artifacts": [],
+    "groupId": null,
+    "shardIndex": null,
+    "shardTotal": null,
+    "createdAt": 1794287493671,
+    "queuedAt": 1794287493671,
+    "assignedAt": null,
+    "startedAt": null,
+    "finishedAt": null
+  },
+  "completedJob": {
+    "id": "01M71XWRH7BSDS4F4SM0AGTEPT",
+    "name": "printf desktop-recovered",
+    "kind": "command",
+    "state": "succeeded",
+    "stateReason": null,
+    "priority": 0,
+    "owner": "local-admin",
+    "snapshotId": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+    "spec": {
+      "kind": "command",
+      "env": {},
+      "secretEnv": {},
+      "snapshot": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+      "workdir": ".",
+      "resources": {
+        "cpus": 1,
+        "memoryMb": 128
+      },
+      "target": {
+        "labels": [],
+        "prefer": []
+      },
+      "retry": {
+        "max": 0,
+        "on": [
+          "lost"
+        ]
+      },
+      "priority": 0,
+      "project": "isolated-m4-docker-proof",
+      "image": "alpine:3.21",
+      "command": [
+        "sh",
+        "-c",
+        "printf desktop-recovered"
+      ],
+      "artifacts": []
+    },
+    "nodeId": "01M71XTNERAE630F9RDHFF5P7W",
+    "nodeName": "docker-proof-0d0cb012380c",
+    "assignmentId": "01M71XX0RTQE0GNB9YN41AFXPD",
+    "attempt": 1,
+    "retryOf": null,
+    "oomKilled": false,
+    "exitCode": 0,
+    "error": null,
+    "queuePosition": null,
+    "logSeq": 5,
+    "outputs": null,
+    "artifacts": [],
+    "groupId": null,
+    "shardIndex": null,
+    "shardTotal": null,
+    "createdAt": 1794287493671,
+    "queuedAt": 1794287493671,
+    "assignedAt": 1794287502106,
+    "startedAt": 1794287502265,
+    "finishedAt": 1794287502514,
+    "cancelRequestedAt": null
+  },
+  "stdout": "desktop-recovered",
+  "events": [
+    {
+      "stage": "desktopStopped",
+      "time": 1794287493.6125681
+    },
+    {
+      "stage": "workerOnlineWithDockerUnavailable",
+      "node": {
+        "id": "01M71XTNERAE630F9RDHFF5P7W",
+        "name": "docker-proof-0d0cb012380c",
+        "status": "online",
+        "health": "degraded",
+        "healthIssues": [
+          "Docker unavailable: failed to connect to the docker API at unix:///Users/philjepsen/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/philjepsen/.docker/run/docker.sock: connect: no such file or directory\n"
+        ],
+        "info": {
+          "hostname": "Mac.localdomain",
+          "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+          "platform": "darwin",
+          "arch": "arm64",
+          "osRelease": "15.6",
+          "cpus": 10,
+          "memoryTotalMb": 16384,
+          "agentVersion": "2.0.0-dev.1",
+          "docker": {
+            "available": false,
+            "error": "failed to connect to the docker API at unix:///Users/philjepsen/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/philjepsen/.docker/run/docker.sock: connect: no such file or directory\n"
+          },
+          "buildx": {
+            "available": true,
+            "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+          },
+          "act": {
+            "available": true,
+            "version": "act version 0.2.97"
+          },
+          "executors": [],
+          "build": {
+            "id": "m4-memory-dev-181bd9221ed7",
+            "version": "2.0.0-dev.1",
+            "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8",
+            "target": "darwin/arm64",
+            "managed": false,
+            "lastRollback": null,
+            "runtime": "rust",
+            "tools": {
+              "act": "0.2.97",
+              "managed": [],
+              "overrides": [
+                "act"
+              ]
+            }
+          },
+          "controllerUrl": "https://127.0.0.1:61779",
+          "host": {
+            "cpus": 10,
+            "memoryTotalMb": 16384,
+            "memoryAvailableMb": 5339
+          },
+          "executionCapacity": null,
+          "acceptingWork": true
+        },
+        "metrics": {
+          "ts": 1794287491533,
+          "cpuPercent": 2.785381555557251,
+          "memoryAvailableMb": 5300,
+          "diskFreeMb": 303998,
+          "diskTotalMb": 471482,
+          "load1": 1.978515625,
+          "diskScope": "agent-data-host",
+          "executionDisk": null
+        },
+        "settings": {
+          "maxConcurrency": 4,
+          "reserved": {
+            "cpus": 1,
+            "memoryMb": 1638
+          },
+          "labels": [],
+          "schedulingMode": "enabled",
+          "autoUpdate": "inherit"
+        },
+        "effectiveLabels": [
+          "os=darwin",
+          "arch=arm64",
+          "buildx",
+          "act"
+        ],
+        "activeJobs": [],
+        "allocated": {
+          "cpus": -0.0,
+          "memoryMb": 0
+        },
+        "allocatable": {
+          "cpus": 9.0,
+          "memoryMb": 14746
+        },
+        "lastSeenAt": 1794287491533,
+        "connectedAt": 1794287426486,
+        "createdAt": 1794287424984,
+        "update": {
+          "state": "current",
+          "build": "m4-memory-dev-181bd9221ed7",
+          "detail": null,
+          "autoUpdate": "off",
+          "canUpdate": false
+        }
+      },
+      "queuedJob": {
+        "id": "01M71XWRH7BSDS4F4SM0AGTEPT",
+        "name": "printf desktop-recovered",
+        "kind": "command",
+        "state": "queued",
+        "stateReason": "node docker-proof-0d0cb012380c cannot run \"command\" jobs (Docker unavailable)",
+        "priority": 0,
+        "owner": "local-admin",
+        "snapshotId": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+        "spec": {
+          "kind": "command",
+          "env": {},
+          "secretEnv": {},
+          "snapshot": "sha256:baec7527e2f19a088973dc869af84b5b566eaf5e315082059ae59fb8a715524b",
+          "workdir": ".",
+          "resources": {
+            "cpus": 1,
+            "memoryMb": 128
+          },
+          "target": {
+            "labels": [],
+            "prefer": []
+          },
+          "retry": {
+            "max": 0,
+            "on": [
+              "lost"
+            ]
+          },
+          "priority": 0,
+          "project": "isolated-m4-docker-proof",
+          "image": "alpine:3.21",
+          "command": [
+            "sh",
+            "-c",
+            "printf desktop-recovered"
+          ],
+          "artifacts": []
+        },
+        "nodeId": null,
+        "nodeName": null,
+        "assignmentId": null,
+        "attempt": 1,
+        "retryOf": null,
+        "cancelRequestedAt": null,
+        "exitCode": null,
+        "error": null,
+        "queuePosition": 1,
+        "logSeq": 0,
+        "outputs": null,
+        "artifacts": [],
+        "groupId": null,
+        "shardIndex": null,
+        "shardTotal": null,
+        "createdAt": 1794287493671,
+        "queuedAt": 1794287493671,
+        "assignedAt": null,
+        "startedAt": null,
+        "finishedAt": null
+      },
+      "time": 1794287495.69789
+    },
+    {
+      "stage": "desktopStarted",
+      "time": 1794287497.082976
+    }
+  ],
+  "desktopLeftRunning": true
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "argv": [
+      "gridstator",
+      "run",
+      "--node",
+      "arm-embedded",
+      "--image",
+      "alpine:3.21",
+      "--cpus",
+      "1",
+      "--memory",
+      "128m",
+      "--artifact",
+      "results",
+      "--",
+      "sh",
+      "-c",
+      "test \"$(uname -m)\" = aarch64; test \"$(cat proof.txt)\" = arm-snapshot; test ! -e .env; mkdir -p results; printf \"aarch64 artifact\\n\" > results/proof.txt; cat results/proof.txt; echo embedded-arm",
+      "--json"
+    ],
+    "cwd": "/proof/project",
+    "exitCode": 0,
+    "seconds": 0.681,
+    "stdout": "aarch64 artifact\nembedded-arm\n",
+    "stderr": "Snapshot of /proof/project: 4 files, 818 bytes\n  ! .env: excluded: matches a secret file pattern\nUploading 5 new blob(s), 1.4 KiB...\nJob 01M720BRVJ7Q24GGXA8NYCQE95 submitted\n[gridstator] Job 01M720BRVJ7Q24GGXA8NYCQE95 accepted by worker\n[gridstator] Creating container on arm-embedded\n[gridstator] Copying workspace snapshot into the container\n[gridstator] Job succeeded\nJob 01M720BRVJ7Q24GGXA8NYCQE95 succeeded on arm-embedded in 6.3s\n"
+  }
+]

@@ -1,0 +1,7 @@
+PASSED embedded-command-snapshot-artifact
+DIAGNOSTIC standalone-build-load-image
+PASSED actual-verified-arm-act-shell
+PASSED two-worker-shards-combined-junit
+PASSED standalone-cancel-owned-cleanup
+PASSED doctor-two-native-workers
+Diagnostic ARM workflow completed; known build identity assertion remains failed; owned resources and credentials removed

@@ -1,0 +1,12 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-preview-6994d2cc804b/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.16s
+     Running tests/launchd_e2e.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/launchd_e2e-91e52b1ca4f2f691)
+
+running 2 tests
+Mac foreground proof: /Users/philjepsen/gridstator-validation.I50ONpwm/preview-roles-6994d2cc804b/native-mac-role-2WVgB9
+test actual_mac_foreground_controller_worker_without_docker_and_clean_shutdown ... ok
+Mac launchd proof: /Users/philjepsen/gridstator-validation.I50ONpwm/preview-roles-6994d2cc804b/native-mac-role-Xv9mjr
+test actual_launchd_controller_and_worker_start_restart_stop_and_uninstall ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.99s
+

@@ -1,0 +1,186 @@
+{
+  "formatVersion": 1,
+  "recordedDate": "2026-11-09",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native development working tree. Source hashes are a development snapshot after the listed checks; shared integration may continue. These are not immutable final release-candidate evidence.",
+  "environment": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "node": "v24.15.0",
+    "pnpm": "10.33.2"
+  },
+  "proofs": [
+    {
+      "id": "native-owned-contracts",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_contract --test cli_contract --test discovery_contract --test reports_contract --test contract_fixtures",
+      "result": "passed",
+      "testCounts": {
+        "contract_fixtures": 6,
+        "discovery_contract": 4,
+        "reports_contract": 6,
+        "cli_contract": 6,
+        "updates_contract": 10
+      },
+      "total": 32,
+      "log": "native/contracts/evidence/local-native-tests.log"
+    },
+    {
+      "id": "frozen-reference",
+      "command": "In isolated checkout of 4b8f13ccf1b21820007fef0ab52143c961b69216, copy native/contracts + native/scripts; pnpm install --frozen-lockfile --offline; node native/scripts/capture-v1.mjs --check",
+      "result": "passed",
+      "sourceHashes": 190,
+      "fixtureFiles": 6,
+      "log": "native/contracts/evidence/frozen-reference.log"
+    },
+    {
+      "id": "cli-service-and-parser-regressions",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --lib cli::tests",
+      "result": "passed",
+      "total": 3,
+      "log": "native/contracts/evidence/local-cli-unit-tests.log",
+      "scope": "Last scalar value/repeated collection flags; explicit/environment service ownership and wrapper refusal; same-account Docker connection configuration persistence and foreign-account credential isolation."
+    },
+    {
+      "id": "cli-contracts-after-service-fix",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test cli_contract",
+      "result": "passed",
+      "total": 6,
+      "log": "native/contracts/evidence/local-cli-integration-tests.log"
+    },
+    {
+      "id": "update-network-shutdown",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --lib updates::tests::shutdown_interrupts_stalled_update_headers_and_bodies",
+      "result": "passed",
+      "total": 1,
+      "log": "native/contracts/evidence/local-update-cancel-tests.log",
+      "scope": "Real loopback HTTP server stalls before headers and after the first received body chunk. Cancellation interrupts both stages within one second while the server remains connected. The worker owner separately verifies instance-lock retention across started blocking update work."
+    },
+    {
+      "id": "updates-after-network-cancellation",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_contract",
+      "result": "passed",
+      "total": 10,
+      "log": "native/contracts/evidence/local-updates-after-cancellation.log"
+    },
+    {
+      "id": "cli-errors-and-update-ownership",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --lib --test cli_contract --test updates_contract",
+      "result": "passed",
+      "testCounts": {
+        "lib": 11,
+        "cli_contract": 6,
+        "updates_contract": 10
+      },
+      "total": 27,
+      "log": "native/contracts/evidence/local-final-cli-updates.log",
+      "scope": "Includes all ten frozen structured error/exit mappings, updater stalled headers/body, source-descriptor lifetime, official transport cancellation, controller recovery/startup lease and shutdown ownership. Final lifetime-guard chaining and lint-only read-count/duplicate-branch cleanup were subsequently compiled by the shared strict all-target Clippy run."
+    },
+    {
+      "id": "project-yaml-number-parity",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test discovery_contract",
+      "result": "passed",
+      "total": 5,
+      "log": "native/contracts/evidence/local-yaml-number-tests.log",
+      "reproductionLog": "native/contracts/evidence/local-yaml-number-red.log",
+      "scope": "Source-replayed YAML whole-number notation becomes integer JSON before validation and consumption; fractional CPUs remain fractional, integer fields reject fractions, and size numbers respect JavaScript safe-integer bounds. The new test failed before the fix. Expected output was replayed through frozen v1 yaml parser and ProjectConfigSchema at the recorded baseline."
+    },
+    {
+      "id": "strict-clippy-after-project-yaml-fix",
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "native/contracts/evidence/local-yaml-number-clippy.log"
+    },
+    {
+      "id": "updates-public-wire-shape",
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_contract",
+      "result": "passed",
+      "total": 10,
+      "log": "native/contracts/evidence/local-updates-wire-tests.log",
+      "scope": "Actual GET /v1/updates preserves fresh rollout:null and projects a reducer-generated running rollout with every source RolloutSchema field, target.sha256, nullable timestamps and public node fields while filtering internal previousMode."
+    },
+    {
+      "id": "strict-clippy-after-rollout-wire-fix",
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "native/contracts/evidence/local-updates-wire-clippy.log"
+    }
+  ],
+  "sourceDigests": [
+    {
+      "path": "native/src/workspace.rs",
+      "sha256": "712a30f341d07588f2cd5ac0c8a17ae396846b5a5cb6ca6063f54a3a6d61fdc0"
+    },
+    {
+      "path": "native/src/workspace/capture.rs",
+      "sha256": "989f29c4571df6c3230a424c55a2cc024466af21a91d0a2bbc2c0362b33ea860"
+    },
+    {
+      "path": "native/src/workspace/store.rs",
+      "sha256": "3e421dacb028f3f2062b5c99e0fd186f8b34bb405473e66febebcbe27d8a6ff0"
+    },
+    {
+      "path": "native/src/protocol.rs",
+      "sha256": "8b5befdc1144d61aed13380132ace3d0f74d4a4a6ff894ab8b9a73489e5ec2f6"
+    },
+    {
+      "path": "native/src/discovery.rs",
+      "sha256": "676e8c41b839b7561a96ccece0fb0a6f71291810464d93b9ec68631875ccf0ff"
+    },
+    {
+      "path": "native/src/reports.rs",
+      "sha256": "a3710d1a610f3f55384e974d685f411392ef830bd79996cc8fd39cb9933447dd"
+    },
+    {
+      "path": "native/src/cli.rs",
+      "sha256": "4329d21dd016824de56fc41d49654df24773a6f4b9d0b9adf6f8c841c4554cba"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "8bc9adce103ea0a4208c021cf333da78d07913fd9c56d9c6692efcd1c91c70d6"
+    },
+    {
+      "path": "native/src/updates/act.rs",
+      "sha256": "12b34fc8258b23e64006442b82eb4df40bd052bf63223ef7f0a363bfa957a128"
+    },
+    {
+      "path": "native/tests/contract_fixtures.rs",
+      "sha256": "a39c0628d5043f603f24ef75335dd6b9c445e683018523159785b98582fc417d"
+    },
+    {
+      "path": "native/tests/discovery_contract.rs",
+      "sha256": "2ea5507f5ecb718a342fa753365b41e45126c1be4acdd90b035fcb1955086e47"
+    },
+    {
+      "path": "native/tests/reports_contract.rs",
+      "sha256": "a942d27c87770a94bbe9207b1f29d786ff34c37ad95c33ae47a35394c3b7ba40"
+    },
+    {
+      "path": "native/tests/cli_contract.rs",
+      "sha256": "35304144009dc9a5b8765305f25797024296561de7c71a3a356e82f254aa5938"
+    },
+    {
+      "path": "native/tests/updates_contract.rs",
+      "sha256": "1056554ec4a2817043b9580bcc5b234af12bf04263c5c4cda126cc9c9226b262"
+    },
+    {
+      "path": "native/Cargo.toml",
+      "sha256": "c9ae745384095da7d544f6091bade8d866acdf90d9ca3d4caa34c217086aab12"
+    },
+    {
+      "path": "native/Cargo.lock",
+      "sha256": "91d539a29b8fc1559882203d105c8465b83163a696805f85be06564d7c616ac9"
+    },
+    {
+      "path": "native/rust-toolchain.toml",
+      "sha256": "d13306be0ecda81ce779baa290ffb417380d525928477f16200884b5169cca33"
+    }
+  ],
+  "limits": [
+    "Actual local host is Linux x86_64. No native macOS/ARM64/service/reboot/VS Code or mixed-target rollout proof is inferred.",
+    "Bundle and act archive tests use header-only executable fixtures. They prove validation and failure recovery, not that those synthetic files are functioning native target binaries.",
+    "The recovery test intentionally launches invalid header fixtures; Unix startup/failed-child diagnostics are expected in its log.",
+    "CLI tests exercise parser/help availability and selected JSON/process/isolation behavior. Exact help byte matching and complete human presentation remain open.",
+    "Native update policy, safe staging and SQLite restoration are tested locally. A real deployed native candidate/rollback across all target services remains open."
+  ]
+}

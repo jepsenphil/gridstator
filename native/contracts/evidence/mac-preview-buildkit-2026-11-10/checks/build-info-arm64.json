@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-dev.1",
+  "buildId": "native-preview-20261110-1fd6e3d425b3",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "darwin/arm64",
+  "size": 23152688,
+  "sha256": "3aec4ab5df8f9c641285984243ceaa58dda1c0c9f39b9e04ae8c62d8899f28d7"
+}

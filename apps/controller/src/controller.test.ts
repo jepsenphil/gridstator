@@ -438,6 +438,123 @@ describe('job lifecycle', () => {
   });
 });
 
+describe('worker names', () => {
+  it('keeps queued and historical targets bound to the same worker across rename and retry', async () => {
+    const agent = await addAgent('old-box');
+    const hard = await admin.submitJob({
+      ...SPEC,
+      env: { KEEP: 'value' },
+      target: { node: 'old-box', labels: ['os=linux'], prefer: ['old-box', 'unrelated'] },
+    });
+    const preferred = await admin.submitJob({ ...SPEC, target: { prefer: ['old-box'] } });
+    const terminal = await admin.submitJob({ ...SPEC, target: { node: 'old-box' } });
+    const cancelled = await admin.cancelJob(terminal.id);
+    const events = await admin.jobEvents(terminal.id);
+    await admin.updateNode(agent.nodeId, { name: 'big-box' });
+    expect((await admin.getJob(hard.id)).spec).toEqual({
+      ...hard.spec,
+      target: { ...hard.spec.target, node: agent.nodeId, prefer: [agent.nodeId, 'unrelated'] },
+    });
+    expect((await admin.getJob(preferred.id)).spec.target.prefer).toEqual([agent.nodeId]);
+    expect(await admin.getJob(terminal.id)).toEqual({
+      ...cancelled,
+      spec: { ...cancelled.spec, target: { ...cancelled.spec.target, node: agent.nodeId } },
+    });
+    expect(await admin.jobEvents(terminal.id)).toEqual(events);
+    const retry = await admin.retryJob(terminal.id);
+    expect(retry.spec.target.node).toBe(agent.nodeId);
+    await agent.connect();
+    for (const id of [hard.id, preferred.id, retry.id]) {
+      await agent.next('job.assign', (message) => message.jobId === id);
+      expect((await admin.getJob(id)).nodeName).toBe('big-box');
+    }
+  });
+
+  it('renames a live worker without replacing its identity, settings, jobs or credential', async () => {
+    const registration = ctrl.registerLocalAgent('DESKTOP-JEL', INFO);
+    const agent = new FakeAgent(registration.nodeId, registration.credential);
+    agents.push(agent);
+    await agent.connect();
+    const job = await admin.submitJob({ ...SPEC, target: { node: registration.nodeId } });
+    const assignment = await agent.next('job.assign');
+    agent.send({
+      type: 'job.state',
+      jobId: job.id,
+      assignmentId: assignment.assignmentId,
+      phase: 'starting',
+      ts: Date.now(),
+    });
+    agent.send({
+      type: 'job.state',
+      jobId: job.id,
+      assignmentId: assignment.assignmentId,
+      phase: 'running',
+      ts: Date.now(),
+    });
+    const running = await waitForState(job.id, 'running');
+    const before = await admin.getNode(registration.nodeId);
+
+    await admin.request('PATCH', '/v1/nodes/DESKTOP-JEL', { json: { name: 'big-box' } });
+    const renamed = await admin.getNode('big-box');
+    expect(renamed).toMatchObject({
+      id: before.id,
+      name: 'big-box',
+      settings: before.settings,
+      createdAt: before.createdAt,
+      connectedAt: before.connectedAt,
+      activeJobs: [job.id],
+      status: 'online',
+    });
+    expect(await admin.getJob(job.id)).toEqual(running);
+    await expect(admin.getNode('DESKTOP-JEL')).rejects.toMatchObject({ code: 'NOT_FOUND' });
+
+    agent.ws.terminate();
+    await waitFor(
+      async () => (await admin.getNode('big-box')).status === 'offline' || undefined,
+      'renamed worker offline',
+    );
+    const welcome = await agent.connect({
+      activeJobs: [
+        { jobId: job.id, assignmentId: assignment.assignmentId, phase: 'running', logSeq: 0 },
+      ],
+    });
+    expect(welcome.name).toBe('big-box');
+    expect(welcome.nodeId).toBe(before.id);
+    expect((await admin.getNode('big-box')).status).toBe('online');
+    expect((await admin.getJob(job.id)).nodeName).toBe('DESKTOP-JEL');
+    await admin.request('PATCH', `/v1/nodes/${before.id}`, { json: { name: 'big-box-2' } });
+    expect((await admin.getNode('big-box-2')).id).toBe(before.id);
+  });
+
+  it('rejects invalid and colliding names without partially applying settings', async () => {
+    const agent = await addAgent('original');
+    const other = await addAgent('occupied');
+    const before = await admin.getNode(agent.nodeId);
+    for (const name of ['', 'with space', '-leading', 'a/b', 'é', 'a'.repeat(65)]) {
+      await expect(
+        admin.request('PATCH', `/v1/nodes/${agent.nodeId}`, { json: { name, maxConcurrency: 9 } }),
+      ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    }
+    for (const name of ['occupied', other.nodeId]) {
+      await expect(
+        admin.request('PATCH', `/v1/nodes/${agent.nodeId}`, { json: { name, maxConcurrency: 9 } }),
+      ).rejects.toMatchObject({ code: 'CONFLICT' });
+    }
+    await expect(
+      admin.request('PATCH', `/v1/nodes/${agent.nodeId}`, {
+        json: { name: 'new-name', maxConcurrency: 0 },
+      }),
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    const unchanged = await admin.getNode(agent.nodeId);
+    expect(unchanged.name).toBe(before.name);
+    expect(unchanged.settings).toEqual(before.settings);
+    await admin.request('PATCH', `/v1/nodes/${agent.nodeId}`, {
+      json: { name: 'original', maxConcurrency: 5 },
+    });
+    expect((await admin.getNode('original')).settings.maxConcurrency).toBe(5);
+  });
+});
+
 describe('failure handling and reconciliation', () => {
   it('marks running jobs lost and requeues assigned jobs when a node disappears', async () => {
     const agent = await addAgent('n1');

@@ -1,0 +1,29 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.01s
+     Running tests/client_errors.rs (native/target/debug/deps/client_errors-9728a916a9f92805)
+
+running 1 test
+test untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery ... FAILED
+
+failures:
+
+---- untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery stdout ----
+
+thread 'untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery' (1212936) panicked at tests/client_errors.rs:146:28:
+certificate error lost the source auth classification: error sending request for url (https://127.0.0.1:40433/v1/jobs)
+
+Caused by:
+    0: client error (Connect)
+    1: invalid peer certificate: UnknownIssuer
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.19s
+
+error: test failed, to rerun pass `--test client_errors`

@@ -1,0 +1,12 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/gridstator-f8946007188b254b)
+
+running 5 tests
+test executor::build::tests::captured_containerd_metadata_identifies_local_images_without_config_digest ... ok
+test executor::build::tests::source_buildx_flags_map_spec_without_exposing_secrets ... ok
+test executor::build::tests::local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable ... ok
+test executor::build::tests::remote_image_resolution_and_absent_metadata_never_inspect_local_docker ... ok
+test executor::build::tests::local_image_resolution_preserves_config_preference_and_deduplicates_candidates ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 32 filtered out; finished in 0.00s
+

@@ -1,0 +1,36 @@
+
+ RUN  v5.1.0 /repos/gridstator
+
+ ❯ apps/vscode/src/native-windows.integration.test.ts (10 tests | 1 failed | 9 skipped) 12558ms
+   ❯ retained window component models with real native controller (9)
+     × keeps model workers drained through a slow real native controller update then restores scheduling 12555ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/vscode/src/native-windows.integration.test.ts > retained window component models with real native controller > keeps model workers drained through a slow real native controller update then restores scheduling
+Error: expect.poll() function didn't resolve in time.
+ ❯ ProtocolWorker.connect apps/vscode/src/native-windows.integration.test.ts:548:8
+    546|     await expect
+    547|       .poll(async () => (await this.server.admin.getNode(this.nodeId))…
+    548|       .toBe('online');
+       |        ^
+    549|   }
+    550|   async startJob(): Promise<void> {
+ ❯ ProtocolWorker.register apps/vscode/src/native-windows.integration.test.ts:518:5
+ ❯ worker apps/vscode/src/native-windows.integration.test.ts:655:3
+ ❯ apps/vscode/src/native-windows.integration.test.ts:918:20
+
+Caused by: Error: Matcher did not succeed in time.
+ ❯ ProtocolWorker.connect apps/vscode/src/native-windows.integration.test.ts:546:5
+ ❯ ProtocolWorker.register apps/vscode/src/native-windows.integration.test.ts:518:5
+ ❯ worker apps/vscode/src/native-windows.integration.test.ts:655:3
+ ❯ apps/vscode/src/native-windows.integration.test.ts:918:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 skipped (10)
+   Start at  15:52:51
+   Duration  13.36s (tests 95%, transform 2%, import 2%)
+

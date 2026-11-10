@@ -1,0 +1,709 @@
+{
+  "scope": "Actual Linux managed worker, real upstream act 0.2.96 via private controller; three digest-correct synthetic invalid executable candidates fail without an OS process restart; no Docker/services",
+  "target": "linux/amd64",
+  "coreManifest": {
+    "schemaVersion": 1,
+    "buildId": "dev-4b8f13ccf1b2-1794280261283825642",
+    "version": "2.0.0-dev.1",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "protocol": {
+      "api": 1,
+      "agent": 1,
+      "update": 1
+    },
+    "artifacts": {
+      "darwin/amd64": {
+        "archive": {
+          "file": "core-darwin-amd64.bin",
+          "size": 64,
+          "sha256": "92903f1dba8f0e4e9fb2a4e6cd87db561c6ce1627af9d59347f4d32501f3be1d"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "92903f1dba8f0e4e9fb2a4e6cd87db561c6ce1627af9d59347f4d32501f3be1d"
+        }
+      },
+      "darwin/arm64": {
+        "archive": {
+          "file": "core-darwin-arm64.bin",
+          "size": 64,
+          "sha256": "9feb082822d630eb203ef94e3861e91c9d1c918bd8b7a6111f60f584707d1864"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "9feb082822d630eb203ef94e3861e91c9d1c918bd8b7a6111f60f584707d1864"
+        }
+      },
+      "linux/amd64": {
+        "archive": {
+          "file": "core-linux-amd64.bin",
+          "size": 240777072,
+          "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 240777072,
+          "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+        }
+      },
+      "linux/arm64": {
+        "archive": {
+          "file": "core-linux-arm64.bin",
+          "size": 64,
+          "sha256": "6c86bf9edbe9ca8986850357a936a45855a98b64425cd8f864a896fcd6bacc88"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "6c86bf9edbe9ca8986850357a936a45855a98b64425cd8f864a896fcd6bacc88"
+        }
+      }
+    }
+  },
+  "supervisorPid": 1488952,
+  "initialPayloadPid": 1489189,
+  "finalPayloadPid": 1489189,
+  "baseline": {
+    "id": "01M71QXPM3KCBCNV67DASN6W2E",
+    "name": "native-act-source",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/toolchain-source-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "target": "linux/amd64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:35705",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 16393
+      },
+      "executionCapacity": null,
+      "acceptingWork": false
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794281239571,
+    "connectedAt": 1794281239571,
+    "createdAt": 1794281233028,
+    "update": {
+      "state": "unknown",
+      "build": "dev-4b8f13ccf1b2-1794280261283825642",
+      "detail": "offline; last reported dev-4b8f13ccf1b2-1794280261283825642",
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "toolchainDrift": {
+    "id": "01M71QXPM3KCBCNV67DASN6W2E",
+    "name": "native-act-source",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/toolchain-source-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "target": "linux/amd64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:35705",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 16393
+      },
+      "executionCapacity": null,
+      "acceptingWork": false
+    },
+    "metrics": {
+      "ts": 1794281244577,
+      "cpuPercent": 16.176101684570312,
+      "memoryAvailableMb": 17127,
+      "diskFreeMb": 17536,
+      "diskTotalMb": 479118,
+      "load1": 2.12,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794281245201,
+    "connectedAt": 1794281239571,
+    "createdAt": 1794281233028,
+    "update": {
+      "state": "behind",
+      "build": "dev-4b8f13ccf1b2-1794280261283825642",
+      "detail": "toolchain act missing → 0.2.96; auto-update is off; run gridstator agents update",
+      "autoUpdate": "off",
+      "canUpdate": true
+    }
+  },
+  "installed": {
+    "id": "01M71QXPM3KCBCNV67DASN6W2E",
+    "name": "native-act-source",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/toolchain-source-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.96"
+      },
+      "executors": [],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "target": "linux/amd64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.96",
+          "managed": [
+            "act"
+          ],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:35705",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 17043
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "draining",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794281252162,
+    "connectedAt": 1794281252162,
+    "createdAt": 1794281233028,
+    "update": {
+      "state": "updating",
+      "build": "dev-4b8f13ccf1b2-1794280261283825642",
+      "detail": "restarting on dev-4b8f13ccf1b2-1794280261283825642",
+      "autoUpdate": "off",
+      "canUpdate": true
+    }
+  },
+  "coreAfterAct": {
+    "schemaVersion": 1,
+    "current": "dev-4b8f13ccf1b2-1794280261283825642",
+    "previous": null,
+    "pending": null,
+    "lastRollback": null
+  },
+  "completed": {
+    "controller": {
+      "id": "dev-4b8f13ccf1b2-1794280261283825642",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "linux/amd64",
+      "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": false,
+        "reason": "Install this controller as a verified native managed service to enable self-update"
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71QY3WK0Y66FQ0BF5NJ1E3T",
+      "target": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+      },
+      "state": "finished",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794281246610,
+      "finishedAt": 1794281253534,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71QXPM3KCBCNV67DASN6W2E",
+          "name": "native-act-source",
+          "state": "done",
+          "detail": null,
+          "auto": false,
+          "startedAt": 1794281246610,
+          "finishedAt": 1794281253534
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": "0.2.96",
+        "source": "override",
+        "platforms": [
+          {
+            "platform": "linux/amd64",
+            "state": "ready",
+            "reason": null
+          }
+        ]
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  "archiveSha256": "b861e901c9062d841c6e8ecd36cdf27e0ce39ea0124cfd93de6efcebea0e16e7",
+  "actExecutableSha256": "4778494a4f0128828958bdc92828e7bac2ddeb003b640b19ac41b103a4ca433f",
+  "reportedActVersion": "act version 0.2.96",
+  "syntheticInvalidArchive": {
+    "version": "9.9.99",
+    "sha256": "db76ba2a2b791f125fadb96b1ee61de7b03b1c015e4c125625139952e6bc95f2",
+    "size": 73,
+    "contents": "64 zero bytes named act; intentionally not an executable"
+  },
+  "failureChecks": [
+    {
+      "controller": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "runtime": "rust",
+        "target": "linux/amd64",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "updatable": true,
+        "reason": null,
+        "lastRollback": null,
+        "selfUpdate": {
+          "available": false,
+          "reason": "Install this controller as a verified native managed service to enable self-update"
+        }
+      },
+      "autoUpdate": "off",
+      "updateWindow": null,
+      "rollout": {
+        "id": "01M71QYC2ZM2ZD47SH64FKT1CV",
+        "target": {
+          "id": "dev-4b8f13ccf1b2-1794280261283825642",
+          "version": "2.0.0-dev.1",
+          "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+        },
+        "state": "halted",
+        "haltReason": "native-act-source: executable target unsupported does not match linux/amd64",
+        "startedBy": "local-admin",
+        "startedAt": 1794281255007,
+        "finishedAt": 1794281255102,
+        "now": false,
+        "drainTimeoutSeconds": null,
+        "nodes": [
+          {
+            "nodeId": "01M71QXPM3KCBCNV67DASN6W2E",
+            "name": "native-act-source",
+            "state": "failed",
+            "detail": "executable target unsupported does not match linux/amd64",
+            "auto": false,
+            "startedAt": 1794281255014,
+            "finishedAt": 1794281255102
+          }
+        ]
+      },
+      "toolchain": [
+        {
+          "name": "act",
+          "version": "9.9.99",
+          "source": "override",
+          "platforms": [
+            {
+              "platform": "linux/amd64",
+              "state": "ready",
+              "reason": null
+            }
+          ]
+        }
+      ],
+      "controllerUpdate": null,
+      "mirrorPreparation": null
+    },
+    {
+      "controller": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "runtime": "rust",
+        "target": "linux/amd64",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "updatable": true,
+        "reason": null,
+        "lastRollback": null,
+        "selfUpdate": {
+          "available": false,
+          "reason": "Install this controller as a verified native managed service to enable self-update"
+        }
+      },
+      "autoUpdate": "off",
+      "updateWindow": null,
+      "rollout": {
+        "id": "01M71QYCB5AZAXZG8VWCPVP96J",
+        "target": {
+          "id": "dev-4b8f13ccf1b2-1794280261283825642",
+          "version": "2.0.0-dev.1",
+          "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+        },
+        "state": "halted",
+        "haltReason": "native-act-source: executable target unsupported does not match linux/amd64",
+        "startedBy": "local-admin",
+        "startedAt": 1794281255268,
+        "finishedAt": 1794281257487,
+        "now": false,
+        "drainTimeoutSeconds": null,
+        "nodes": [
+          {
+            "nodeId": "01M71QXPM3KCBCNV67DASN6W2E",
+            "name": "native-act-source",
+            "state": "failed",
+            "detail": "executable target unsupported does not match linux/amd64",
+            "auto": false,
+            "startedAt": 1794281255276,
+            "finishedAt": 1794281257487
+          }
+        ]
+      },
+      "toolchain": [
+        {
+          "name": "act",
+          "version": "9.9.99",
+          "source": "override",
+          "platforms": [
+            {
+              "platform": "linux/amd64",
+              "state": "ready",
+              "reason": null
+            }
+          ]
+        }
+      ],
+      "controllerUpdate": null,
+      "mirrorPreparation": null
+    },
+    {
+      "controller": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "runtime": "rust",
+        "target": "linux/amd64",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "updatable": true,
+        "reason": null,
+        "lastRollback": null,
+        "selfUpdate": {
+          "available": false,
+          "reason": "Install this controller as a verified native managed service to enable self-update"
+        }
+      },
+      "autoUpdate": "off",
+      "updateWindow": null,
+      "rollout": {
+        "id": "01M71QYEPSABBXTY9TZ4J5M00V",
+        "target": {
+          "id": "dev-4b8f13ccf1b2-1794280261283825642",
+          "version": "2.0.0-dev.1",
+          "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+        },
+        "state": "halted",
+        "haltReason": "native-act-source: executable target unsupported does not match linux/amd64",
+        "startedBy": "local-admin",
+        "startedAt": 1794281257689,
+        "finishedAt": 1794281259887,
+        "now": false,
+        "drainTimeoutSeconds": null,
+        "nodes": [
+          {
+            "nodeId": "01M71QXPM3KCBCNV67DASN6W2E",
+            "name": "native-act-source",
+            "state": "failed",
+            "detail": "executable target unsupported does not match linux/amd64",
+            "auto": false,
+            "startedAt": 1794281257699,
+            "finishedAt": 1794281259887
+          }
+        ]
+      },
+      "toolchain": [
+        {
+          "name": "act",
+          "version": "9.9.99",
+          "source": "override",
+          "platforms": [
+            {
+              "platform": "linux/amd64",
+              "state": "ready",
+              "reason": null
+            }
+          ]
+        }
+      ],
+      "controllerUpdate": null,
+      "mirrorPreparation": null
+    }
+  ],
+  "finalNode": {
+    "id": "01M71QXPM3KCBCNV67DASN6W2E",
+    "name": "native-act-source",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/toolchain-source-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/toolchain-source-docker unavailable or timed out"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.96"
+      },
+      "executors": [],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794280261283825642",
+        "version": "2.0.0-dev.1",
+        "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+        "target": "linux/amd64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.96",
+          "managed": [
+            "act"
+          ],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:35705",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 17042
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794281257163,
+      "cpuPercent": 19.493629455566406,
+      "memoryAvailableMb": 17065,
+      "diskFreeMb": 17514,
+      "diskTotalMb": 479118,
+      "load1": 2.07,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794281259903,
+    "connectedAt": 1794281252162,
+    "createdAt": 1794281233028,
+    "update": {
+      "state": "failed",
+      "build": "dev-4b8f13ccf1b2-1794280261283825642",
+      "detail": "executable target unsupported does not match linux/amd64",
+      "autoUpdate": "off",
+      "canUpdate": true
+    }
+  },
+  "finalInstall": {
+    "schemaVersion": 1,
+    "current": "dev-4b8f13ccf1b2-1794280261283825642",
+    "previous": null,
+    "pending": null,
+    "lastRollback": null
+  }
+}

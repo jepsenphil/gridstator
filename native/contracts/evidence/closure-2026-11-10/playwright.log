@@ -1,0 +1,40 @@
+
+> gridstator-monorepo@0.1.0 test:ui /repos/gridstator
+> pnpm build && pnpm --filter gridstator-vscode exec playwright test
+
+
+> gridstator-monorepo@0.1.0 build /repos/gridstator
+> tsc -b && pnpm --filter gridstator-vscode build
+
+
+> gridstator-vscode@0.1.0 build /repos/gridstator/apps/vscode
+> node scripts/build.mjs
+
+Built extension and dashboard
+
+Running 20 tests using 1 worker
+
+(node:1129412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 test/ui/dashboard.spec.ts:60:5 › overview summarises nodes and jobs (503ms)
+  ✓   2 test/ui/dashboard.spec.ts:70:5 › jobs list filters and its row actions post cancel and retry (606ms)
+  ✓   3 test/ui/dashboard.spec.ts:85:5 › job details stream logs, filter them, open files and act on the job (560ms)
+  ✓   4 test/ui/dashboard.spec.ts:133:5 › finished job offers retry, rerun and artifact download (491ms)
+  ✓   5 test/ui/dashboard.spec.ts:151:5 › run launcher builds workflow, Docker and command requests (653ms)
+  ✓   6 test/ui/dashboard.spec.ts:204:5 › node management posts scheduling and capacity changes (525ms)
+  ✓   7 test/ui/dashboard.spec.ts:230:5 › native workers show Rust targets and native settings retain act management (701ms)
+  ✓   8 test/ui/dashboard.spec.ts:267:5 › sharded runs show shards, a timeline and combined test results (489ms)
+  ✓   9 test/ui/dashboard.spec.ts:302:5 › launcher can shard a task and prefer a worker (452ms)
+  ✓  10 test/ui/dashboard.spec.ts:319:5 › shows a connection banner with working actions when offline (292ms)
+  ✓  11 test/ui/dashboard.spec.ts:342:5 › controller identity stays visible with and without a worker (305ms)
+  ✓  12 test/ui/dashboard.spec.ts:355:5 › settings save preferences and cluster configuration without losing drafts to live job updates (482ms)
+  ✓  13 test/ui/dashboard.spec.ts:387:5 › settings create usable worker tokens from loopback connections and keep secrets out of persisted navigation (623ms)
+  ✓  14 test/ui/dashboard.spec.ts:427:5 › settings post release, safe rollout and local host actions (516ms)
+  ✓  15 test/ui/dashboard.spec.ts:453:5 › offline settings remain available and offer explicit local recovery and service start (375ms)
+  ✓  16 test/ui/dashboard.spec.ts:487:5 › operator settings show versions and preferences while disabling cluster administration (349ms)
+  ✓  17 test/ui/dashboard.spec.ts:518:9 › settings render without page overflow in dark desktop (511ms)
+  ✓  18 test/ui/dashboard.spec.ts:518:9 › settings render without page overflow in dark narrow (584ms)
+  ✓  19 test/ui/dashboard.spec.ts:518:9 › settings render without page overflow in light desktop (1.0s)
+  ✓  20 test/ui/dashboard.spec.ts:518:9 › settings render without page overflow in light narrow (546ms)
+
+  20 passed (11.8s)

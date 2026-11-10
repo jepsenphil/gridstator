@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0-dev.1",
+  "buildId": "dev-4b8f13ccf1b2-1794284825062554824",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification"
+  ],
+  "target": "linux/amd64",
+  "size": 241466464,
+  "sha256": "e50e5e4e1cdf91ae08b784f22996d00dc596216649c4277ac3519a5b5ea613ee"
+}

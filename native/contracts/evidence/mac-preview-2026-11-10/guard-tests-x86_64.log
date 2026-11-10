@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-preview-95cfa7161440/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.34s
+     Running tests/release_workflow_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/release_workflow_contract-4e6a9ef471a91901)
+
+running 2 tests
+test same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror ... ok
+test same_active_build_id_cannot_rebind_the_controller_mirror ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 8.79s
+

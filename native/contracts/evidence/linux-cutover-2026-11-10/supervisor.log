@@ -1,0 +1,17 @@
+2026-11-10T13:58:14+13:00 pj-Precision-5520 systemd[4230]: Started gridstator-native-cutover-01m71fcww1bwjksd93kjsam2ge.service - Gridstator native controller.
+2026-11-10T13:58:15+13:00 pj-Precision-5520 supervisor[1022487]: Controller listening on https://127.0.0.1:39143
+2026-11-10T13:58:16+13:00 pj-Precision-5520 supervisor[1022487]: Agent rehearsal-embedded connected
+2026-11-10T13:58:16+13:00 pj-Precision-5520 supervisor[1022487]: Agent rehearsal-embedded connected
+2026-11-10T13:58:27+13:00 pj-Precision-5520 supervisor[1022954]: Controller listening on https://127.0.0.1:39143
+2026-11-10T13:58:28+13:00 pj-Precision-5520 supervisor[1022954]: Agent rehearsal-embedded connected
+2026-11-10T13:58:28+13:00 pj-Precision-5520 supervisor[1022954]: Agent rehearsal-embedded connected
+2026-11-10T13:58:40+13:00 pj-Precision-5520 supervisor[1023909]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T13:58:44+13:00 pj-Precision-5520 supervisor[1024011]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T13:58:47+13:00 pj-Precision-5520 supervisor[1024143]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T13:58:50+13:00 pj-Precision-5520 supervisor[1024284]: Restored pre-update database after rollback; failed candidate database retained at /tmp/gridstator-recovery-arhXMg/fresh-v2/controller.db.failed-rehearsal-schema-crash-01M71FE0G9G2XQNS94DZBM5WA9
+2026-11-10T13:58:50+13:00 pj-Precision-5520 supervisor[1024284]: worker update: error sending request for url (https://127.0.0.1:39143/v2/agent/toolchain?target=linux/amd64): client error (Connect): tcp connect error: Connection refused (os error 111)
+2026-11-10T13:58:51+13:00 pj-Precision-5520 supervisor[1024284]: Controller listening on https://127.0.0.1:39143
+2026-11-10T13:58:52+13:00 pj-Precision-5520 supervisor[1024284]: Agent rehearsal-embedded connected
+2026-11-10T13:58:53+13:00 pj-Precision-5520 systemd[4230]: Stopping gridstator-native-cutover-01m71fcww1bwjksd93kjsam2ge.service - Gridstator native controller...
+2026-11-10T13:58:53+13:00 pj-Precision-5520 systemd[4230]: Stopped gridstator-native-cutover-01m71fcww1bwjksd93kjsam2ge.service - Gridstator native controller.
+2026-11-10T13:58:53+13:00 pj-Precision-5520 systemd[4230]: gridstator-native-cutover-01m71fcww1bwjksd93kjsam2ge.service: Consumed 20.171s CPU time.

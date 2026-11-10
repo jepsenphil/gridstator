@@ -1,0 +1,49 @@
+{"s":1,"t":1794291796760,"o":"system","d":"Job 01M72202QV3TGHQEHTC67VN3HJ accepted by worker\n"}
+{"s":2,"t":1794291818383,"o":"system","d":"Creating container on self-build-embedded\n"}
+{"s":3,"t":1794291818517,"o":"system","d":"Copying workspace snapshot into the container\n"}
+{"s":4,"t":1794291819742,"o":"stderr","d":"  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n"}
+{"s":5,"t":1794291819754,"o":"stderr","d":"                                 Dload  Upload   Total   Spent    Left  Speed\n"}
+{"s":6,"t":1794291819767,"o":"stderr","d":"\r"}
+{"s":7,"t":1794291819844,"o":"stderr","d":"  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0"}
+{"s":8,"t":1794291820530,"o":"stderr","d":"\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0"}
+{"s":9,"t":1794291821437,"o":"stderr","d":"\r  0 54.7M    0  431k    0     0   254k      0  0:03:40  0:00:01  0:03:39  254k"}
+{"s":10,"t":1794291822350,"o":"stderr","d":"\r 16 54.7M   16 9375k    0     0  3595k      0  0:00:15  0:00:02  0:00:13 3594k"}
+{"s":11,"t":1794291823411,"o":"stderr","d":"\r 48 54.7M   48 26.3M    0     0  7352k      0  0:00:07  0:00:03  0:00:04 7352k"}
+{"s":12,"t":1794291824411,"o":"stderr","d":"\r 79 54.7M   79 43.4M    0     0  9532k      0  0:00:05  0:00:04  0:00:01 9531k"}
+{"s":13,"t":1794291825074,"o":"stderr","d":"\r100 54.7M  100 54.7M    0     0  10.2M      0  0:00:05  0:00:05 --:--:-- 12.0M\n"}
+{"s":14,"t":1794291830578,"o":"stderr","d":"info: downloading component rust-std\n"}
+{"s":15,"t":1794291841110,"o":"stderr","d":"   Compiling ring v0.17.14\n"}
+{"s":16,"t":1794291841139,"o":"stderr","d":"   Compiling libsqlite3-sys v0.35.0\n"}
+{"s":17,"t":1794291847976,"o":"stderr","d":"   Compiling rustls-webpki v0.103.16\n"}
+{"s":18,"t":1794291849074,"o":"stderr","d":"   Compiling rustls v0.23.46\n"}
+{"s":19,"t":1794291856501,"o":"stderr","d":"   Compiling tokio-rustls v0.26.6\n"}
+{"s":20,"t":1794291856724,"o":"stderr","d":"   Compiling x509-parser v0.18.1\n"}
+{"s":21,"t":1794291860208,"o":"stderr","d":"   Compiling tungstenite v0.28.0\n"}
+{"s":22,"t":1794291862253,"o":"stderr","d":"   Compiling hyper-rustls v0.27.10\n"}
+{"s":23,"t":1794291862574,"o":"stderr","d":"   Compiling gridstator v2.0.0-dev.1 (/workspace/native)\n"}
+{"s":24,"t":1794291862580,"o":"stderr","d":"   Compiling axum-server v0.7.3\n"}
+{"s":25,"t":1794291863613,"o":"stderr","d":"   Compiling rcgen v0.14.10\n"}
+{"s":26,"t":1794291865595,"o":"stderr","d":"   Compiling tokio-tungstenite v0.28.0\n"}
+{"s":27,"t":1794291866020,"o":"stderr","d":"   Compiling reqwest v0.12.28\n"}
+{"s":28,"t":1794291880814,"o":"stderr","d":"   Compiling rusqlite v0.37.0\n"}
+{"s":29,"t":1794292016334,"o":"stderr","d":"    Finished `release` profile [optimized] target(s) in 2m 59s\n"}
+{"s":30,"t":1794292016733,"o":"stdout","d":"self-build/linux-amd64/gridstator: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), static-pie linked, not stripped\n"}
+{"s":31,"t":1794292016827,"o":"stderr","d":"info: downloading component rust-std\n"}
+{"s":32,"t":1794292023889,"o":"stderr","d":"   Compiling ring v0.17.14\n"}
+{"s":33,"t":1794292023960,"o":"stderr","d":"   Compiling libsqlite3-sys v0.35.0\n"}
+{"s":34,"t":1794292029992,"o":"stderr","d":"   Compiling rustls-webpki v0.103.16\n"}
+{"s":35,"t":1794292031090,"o":"stderr","d":"   Compiling rustls v0.23.46\n"}
+{"s":36,"t":1794292038538,"o":"stderr","d":"   Compiling tokio-rustls v0.26.6\n"}
+{"s":37,"t":1794292038743,"o":"stderr","d":"   Compiling tungstenite v0.28.0\n"}
+{"s":38,"t":1794292040952,"o":"stderr","d":"   Compiling x509-parser v0.18.1\n"}
+{"s":39,"t":1794292044412,"o":"stderr","d":"   Compiling hyper-rustls v0.27.10\n"}
+{"s":40,"t":1794292044704,"o":"stderr","d":"   Compiling gridstator v2.0.0-dev.1 (/workspace/native)\n"}
+{"s":41,"t":1794292044709,"o":"stderr","d":"   Compiling axum-server v0.7.3\n"}
+{"s":42,"t":1794292045351,"o":"stderr","d":"   Compiling rcgen v0.14.10\n"}
+{"s":43,"t":1794292047712,"o":"stderr","d":"   Compiling tokio-tungstenite v0.28.0\n"}
+{"s":44,"t":1794292048147,"o":"stderr","d":"   Compiling reqwest v0.12.28\n"}
+{"s":45,"t":1794292066206,"o":"stderr","d":"   Compiling rusqlite v0.37.0\n"}
+{"s":46,"t":1794292212796,"o":"stderr","d":"    Finished `release` profile [optimized] target(s) in 3m 11s\n"}
+{"s":47,"t":1794292213225,"o":"stdout","d":"self-build/linux-arm64/gridstator: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, not stripped\n"}
+{"s":48,"t":1794292213538,"o":"stdout","d":"Built both, build ID native-preview-20261110-7c41b2f3c79d. Cross-compiled artifacts still require target-host runtime validation.\n"}
+{"s":49,"t":1794292219822,"o":"system","d":"Job succeeded\n"}

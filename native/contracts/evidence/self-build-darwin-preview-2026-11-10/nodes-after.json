@@ -1,0 +1,110 @@
+[
+  {
+    "id": "01M71Y3MP4T6B5QKMD68TXK88W",
+    "name": "self-build-embedded",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.0.2"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794287327554441757",
+        "version": "2.0.0-dev.1",
+        "sha256": "819d2545ea3c0f56c505e35269c8083cc41e6dc9957fe23bbaf8a7a920f21f48",
+        "target": "linux/amd64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:46375",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 16985
+      },
+      "executionCapacity": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794288354850,
+      "cpuPercent": 16.76373863220215,
+      "memoryAvailableMb": 17201,
+      "diskFreeMb": 14982,
+      "diskTotalMb": 479118,
+      "load1": 16.29,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794288354853,
+    "connectedAt": 1794287719841,
+    "createdAt": 1794287719108,
+    "update": {
+      "state": "current",
+      "build": "dev-4b8f13ccf1b2-1794287327554441757",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  }
+]

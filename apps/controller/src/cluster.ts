@@ -25,6 +25,7 @@ import {
   type NodeMetrics,
   type NodeSettings,
   type NodeSettingsPatch,
+  type PatchNodeRequest,
 } from '@gridstator/protocol';
 import {
   allocatable,
@@ -777,7 +778,7 @@ export class Cluster {
     patch: NodeSettingsPatch | undefined,
     joinTokenId: string | null,
   ): { nodeId: string; name: string; credential: string } {
-    if (this.store.nodeByName(name)) {
+    if (this.store.nodeByName(name) || this.store.nodeById(name)) {
       throw new GridstatorError('CONFLICT', `A node named "${name}" is already registered`, {
         hint: `Pick another name with --name, or remove the old node with \`gridstator nodes remove ${name}\`.`,
       });
@@ -802,13 +803,29 @@ export class Cluster {
     return { nodeId, name, credential };
   }
 
-  updateNodeSettings(idOrName: string, patch: NodeSettingsPatch): Node {
-    const node = this.findNode(idOrName);
-    const settings = mergeSettings(node.settings, patch);
-    this.store.updateNode(node.id, { settings });
+  updateNodeSettings(idOrName: string, patch: PatchNodeRequest): Node {
+    const { name, ...settingsPatch } = patch;
+    const { node, settings } = this.store.tx(() => {
+      const node = this.findNode(idOrName);
+      const settings = mergeSettings(node.settings, settingsPatch);
+      if (name !== undefined) {
+        const collision = [this.store.nodeByName(name), this.store.nodeById(name)].some(
+          (other) => other !== undefined && other.id !== node.id,
+        );
+        if (collision)
+          throw new GridstatorError(
+            'CONFLICT',
+            `A node named "${name}" is already registered or the name is another node's ID`,
+          );
+        if (name !== node.name) this.store.rebindNodeTargets(node.name, node.id);
+      }
+      this.store.updateNode(node.id, { ...(name === undefined ? {} : { name }), settings });
+      return { node, settings };
+    });
     const rt = this.runtime(node.id);
-    if (rt.conn && rt.welcomed) rt.conn.send({ type: 'node.settings', settings });
-    this.log.info({ node: node.name, settings }, 'node settings updated');
+    if (rt.conn && rt.welcomed)
+      rt.conn.send({ type: 'node.settings', settings, ...(name === undefined ? {} : { name }) });
+    this.log.info({ node: name ?? node.name, settings }, 'node updated');
     this.emitNode(node.id);
     this.requestSchedule();
     if (patch.autoUpdate !== undefined) this.updates?.tick();

@@ -1,0 +1,24 @@
+{
+  "remoteName": "ssh-remote",
+  "platform": "darwin",
+  "arch": "arm64",
+  "pid": 79874,
+  "workspace": "file:///Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/workspace%20with%20spaces",
+  "configurationPath": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/private-client.json",
+  "extension": "file:///Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76/extension",
+  "native": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-99e85b47269b",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-99e85b47269b",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 57001552,
+    "sha256": "d1fbfcd726676dc14d90bb29cbc1312a4a3766fb35552f18e8df48b1a5791908"
+  }
+}

@@ -1,0 +1,21 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.93s
+     Running tests/updates_contract.rs (native/target/debug/deps/updates_contract-03ae217a70592815)
+
+running 10 tests
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+/tmp/.tmp7bOG1Z/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmp7bOG1Z/controller/install/versions/dev-4b8f13ccf1b2-1794281704160275891/gridstator: 1: ELF: not found
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.68s
+

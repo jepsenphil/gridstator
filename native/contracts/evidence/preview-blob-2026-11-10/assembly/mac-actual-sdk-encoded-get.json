@@ -1,0 +1,63 @@
+{
+  "result": "passed",
+  "remoteName": "ssh-remote",
+  "platform": "darwin",
+  "arch": "arm64",
+  "pid": 90888,
+  "native": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-e3e5fae51c8e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 23173632,
+    "sha256": "25a8ac64287989442665104d1ad1831cbc5da059645d2e5fe1eb17c91d20059f"
+  },
+  "backendBuild": {
+    "id": "native-preview-20261110-e3e5fae51c8e",
+    "version": "2.0.0-dev.1",
+    "sha256": null,
+    "runtime": "rust",
+    "target": "darwin/arm64",
+    "updatable": false,
+    "reason": "This build has no verified four-target native release archives in the controller mirror",
+    "selfUpdate": {
+      "available": false,
+      "reason": "Install this controller as a verified native managed service to enable self-update"
+    }
+  },
+  "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05",
+  "readbacks": [
+    {
+      "job": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+      "digest": "sha256:1ba94fe67f9bdb2082b0a4ab85758b99aa34667e71ffe76338490bfb6879ba95",
+      "requestedPath": "/v1/blobs/sha256%3A1ba94fe67f9bdb2082b0a4ab85758b99aa34667e71ffe76338490bfb6879ba95",
+      "body": "disk-original\n"
+    },
+    {
+      "job": "01M71VH59AKW3TG9DYGX301C14",
+      "digest": "sha256:a9747906894649daff3ab10f8dc7a93871442a93ba85cda88ec4bc291a6bc763",
+      "requestedPath": "/v1/blobs/sha256%3Aa9747906894649daff3ab10f8dc7a93871442a93ba85cda88ec4bc291a6bc763",
+      "body": "saved-buffer\n"
+    },
+    {
+      "job": "01M71VH652AX87Z2DJGVPE0N5T",
+      "digest": "sha256:a9747906894649daff3ab10f8dc7a93871442a93ba85cda88ec4bc291a6bc763",
+      "requestedPath": "/v1/blobs/sha256%3Aa9747906894649daff3ab10f8dc7a93871442a93ba85cda88ec4bc291a6bc763",
+      "body": "saved-buffer\n"
+    },
+    {
+      "job": "01M71VH75A3FFW25MD7MJA145J",
+      "digest": "sha256:dad7a9a7bf04ce475c8e41c36e9740bbc1b0c188326df951ebe9bed7a67b3a27",
+      "requestedPath": "/v1/blobs/sha256%3Adad7a9a7bf04ce475c8e41c36e9740bbc1b0c188326df951ebe9bed7a67b3a27",
+      "body": "prompt-saved\n"
+    }
+  ],
+  "scope": "actual frozen packaged GridstatorClient.getBlob in a real SSH extension host against replacement Mac ARM64 native controller; authenticated encoded-colon GET exact bytes"
+}

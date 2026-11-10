@@ -1,0 +1,24 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.09s
+     Running tests/scheduler_contract.rs (target/debug/deps/scheduler_contract-a672e5e85ab56f09)
+
+running 9 tests
+test concurrency_and_scheduling_modes_are_hard_constraints ... ok
+test capabilities_labels_and_explicit_name_or_id_are_enforced ... ok
+test docker_execution_capacity_bounds_host_capacity_without_changing_host_info ... ok
+test pending_reasons_explain_closest_candidate ... ok
+test rejected_workers_are_excluded_and_public_records_are_supported ... ok
+test preferences_and_affinity_are_soft_with_deterministic_ties ... ok
+test reservations_fractional_cpus_and_live_memory_protect_host ... ok
+test priority_fifo_backfill_and_same_pass_reservations ... ok
+test shards_spread_count_running_siblings_and_fall_back_to_one_worker ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/scheduler_differential.rs (target/debug/deps/scheduler_differential-0613c3759c882dd0)
+
+running 1 test
+test frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+

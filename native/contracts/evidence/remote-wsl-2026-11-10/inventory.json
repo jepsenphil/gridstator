@@ -1,0 +1,131 @@
+{
+  "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "uname": {
+    "exitCode": 0,
+    "stdout": "Linux DESKTOP-JEL 6.18.54.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "stderr": ""
+  },
+  "identity": {
+    "exitCode": 0,
+    "stdout": "uid=1000(pj) gid=1000(pj) groups=1000(pj),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),100(users),988(docker)",
+    "stderr": ""
+  },
+  "pid1": {
+    "exitCode": 0,
+    "stdout": "systemd",
+    "stderr": ""
+  },
+  "home": "/home/pj",
+  "xdgRuntimeDir": "/run/user/1000",
+  "commands": {
+    "docker": "/usr/bin/docker",
+    "act": "/usr/local/bin/act",
+    "git": "/usr/bin/git",
+    "curl": "/usr/bin/curl",
+    "tar": "/usr/bin/tar",
+    "gzip": "/usr/bin/gzip",
+    "systemctl": "/usr/bin/systemctl",
+    "loginctl": "/usr/bin/loginctl",
+    "openssl": "/usr/bin/openssl",
+    "ssh": "/usr/bin/ssh",
+    "python3": "/usr/bin/python3",
+    "node": "/usr/local/bin/node",
+    "npm": "/usr/local/bin/npm",
+    "cargo": null,
+    "code": null,
+    "code-insiders": null
+  },
+  "sudoNonInteractive": {
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "sudo: a password is required"
+  },
+  "userManager": {
+    "exitCode": 0,
+    "stdout": "RuntimePath=/run/user/1000\nState=active\nLinger=no",
+    "stderr": ""
+  },
+  "systemGridstatorUnitFiles": {
+    "exitCode": 0,
+    "stdout": "gridstator-agent.service enabled enabled",
+    "stderr": ""
+  },
+  "systemAgent": {
+    "exitCode": 0,
+    "stdout": "MainPID=618566\nActiveState=active\nSubState=running\nFragmentPath=/etc/systemd/system/gridstator-agent.service\nUnitFileState=enabled",
+    "stderr": ""
+  },
+  "userGridstatorUnits": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "existingSystemAgentUnitSha256": "c2450846820fd06a0e4199995fe1ea9735b7c3ffe2ff2a34e44dadd0dcf1658c",
+  "existingSystemAgentExecutable": "/proc/618566/exe",
+  "existingSystemAgentExecutableTarget": "/home/pj/.local/share/gridstator/agent/toolchain/node/24.22.2/node-v24.22.2-linux-x64/bin/node",
+  "existingPaths": {
+    "/home/pj/.config/gridstator": {
+      "exists": false
+    },
+    "/home/pj/.config/gridstator-v2": {
+      "exists": false
+    },
+    "/home/pj/.local/share/gridstator": {
+      "exists": true,
+      "mode": "0o700",
+      "uid": 1000,
+      "type": "directory"
+    },
+    "/home/pj/.local/share/gridstator/agent": {
+      "exists": true,
+      "mode": "0o700",
+      "uid": 1000,
+      "type": "directory"
+    },
+    "/home/pj/.local/share/gridstator-v2": {
+      "exists": false
+    },
+    "/home/pj/.vscode-server": {
+      "exists": false
+    },
+    "/home/pj/.vscode-server-insiders": {
+      "exists": false
+    },
+    "/home/pj/.config/systemd/user": {
+      "exists": false
+    }
+  },
+  "dockerVersion": {
+    "exitCode": 0,
+    "stdout": "29.9.3 / 29.9.3",
+    "stderr": ""
+  },
+  "dockerInfo": {
+    "exitCode": 0,
+    "stdout": "OS=linux Version=29.9.3 CPUs=16 Memory=33187319808 Root=/var/lib/docker Name=DESKTOP-JEL",
+    "stderr": ""
+  },
+  "dockerContext": {
+    "exitCode": 0,
+    "stdout": "default",
+    "stderr": ""
+  },
+  "actVersion": {
+    "exitCode": 0,
+    "stdout": "act version 0.2.97",
+    "stderr": ""
+  },
+  "gitVersion": {
+    "exitCode": 0,
+    "stdout": "git version 2.43.0",
+    "stderr": ""
+  },
+  "windowsInterop": {
+    "powershellExists": true,
+    "metadata": {
+      "exitCode": 0,
+      "stdout": "{\"userProfile\":\"C:\\\\Users\\\\User\",\"wslExtensions\":[\"C:\\\\Users\\\\User\\\\.vscode\\\\extensions\\\\ms-vscode-remote.remote-wsl-1.104.7\"],\"runningCodeCount\":23,\"distroNames\":[\"Ubuntu\"]}",
+      "stderr": ""
+    }
+  }
+}

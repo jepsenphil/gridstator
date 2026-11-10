@@ -1,0 +1,375 @@
+{
+  "result": "failed",
+  "scope": "Actual final static Linux ARM64 native CLI/controller/embedded+standalone workers inside unprivileged M4 Docker ARM Linux VM; external Docker/buildx/git/act only",
+  "expectedBuildId": "native-preview-20261110-cd6b769ebe6e",
+  "expectedExecutableSha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+  "actors": [
+    {
+      "id": "01M720GYH84FEPA2T9Q52N6VC5",
+      "name": "arm-embedded",
+      "status": "online",
+      "health": "ok",
+      "healthIssues": [],
+      "info": {
+        "hostname": "8453630b223c",
+        "machineId": "sha256:ef48a8033c1f5ef67abb21d0f9f40b5b6e4085e99de5275c95352e07dc3ae6ba",
+        "platform": "linux",
+        "arch": "arm64",
+        "osRelease": "3.23.2",
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "agentVersion": "2.0.0-dev.1",
+        "docker": {
+          "available": true,
+          "version": "29.9.3"
+        },
+        "buildx": {
+          "available": true,
+          "version": "github.com/docker/buildx v0.30.1 9e66234aa13328a5e75b75aa5574e1ca6d6d9c01"
+        },
+        "act": {
+          "available": true,
+          "version": "act version 0.2.96"
+        },
+        "executors": [
+          "command",
+          "docker-build",
+          "actions"
+        ],
+        "build": {
+          "id": "native-preview-20261110-cd6b769ebe6e",
+          "version": "2.0.0-dev.1",
+          "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+          "target": "linux/arm64",
+          "managed": false,
+          "lastRollback": null,
+          "runtime": "rust",
+          "tools": {
+            "act": "0.2.96",
+            "managed": [],
+            "overrides": [
+              "act"
+            ]
+          }
+        },
+        "controllerUrl": "https://127.0.0.1:4242",
+        "host": {
+          "cpus": 10,
+          "memoryTotalMb": 7934,
+          "memoryAvailableMb": 7442
+        },
+        "executionCapacity": {
+          "cpus": 10,
+          "memoryTotalMb": 7934,
+          "memoryAvailableMb": null,
+          "diskFreeMb": null,
+          "diskTotalMb": null
+        },
+        "acceptingWork": true
+      },
+      "metrics": null,
+      "settings": {
+        "maxConcurrency": 1,
+        "reserved": {
+          "cpus": 0,
+          "memoryMb": 0
+        },
+        "labels": [],
+        "schedulingMode": "enabled",
+        "autoUpdate": "inherit"
+      },
+      "effectiveLabels": [
+        "os=linux",
+        "arch=arm64",
+        "docker",
+        "buildx",
+        "act"
+      ],
+      "activeJobs": [],
+      "allocated": {
+        "cpus": -0.0,
+        "memoryMb": 0
+      },
+      "allocatable": {
+        "cpus": 10.0,
+        "memoryMb": 7934
+      },
+      "lastSeenAt": 1794290252381,
+      "connectedAt": 1794290252380,
+      "createdAt": 1794290252328
+    },
+    {
+      "id": "01M720GYQ9J2EJ1HWC7A59VSVM",
+      "name": "arm-standalone",
+      "status": "online",
+      "health": "ok",
+      "healthIssues": [],
+      "info": {
+        "hostname": "8453630b223c",
+        "machineId": "sha256:ef48a8033c1f5ef67abb21d0f9f40b5b6e4085e99de5275c95352e07dc3ae6ba",
+        "platform": "linux",
+        "arch": "arm64",
+        "osRelease": "3.23.2",
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "agentVersion": "2.0.0-dev.1",
+        "docker": {
+          "available": true,
+          "version": "29.9.3"
+        },
+        "buildx": {
+          "available": true,
+          "version": "github.com/docker/buildx v0.30.1 9e66234aa13328a5e75b75aa5574e1ca6d6d9c01"
+        },
+        "act": {
+          "available": true,
+          "version": "act version 0.2.96"
+        },
+        "executors": [
+          "command",
+          "docker-build",
+          "actions"
+        ],
+        "build": {
+          "id": "native-preview-20261110-cd6b769ebe6e",
+          "version": "2.0.0-dev.1",
+          "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+          "target": "linux/arm64",
+          "managed": false,
+          "lastRollback": null,
+          "runtime": "rust",
+          "tools": {
+            "act": "0.2.96",
+            "managed": [],
+            "overrides": [
+              "act"
+            ]
+          }
+        },
+        "controllerUrl": "https://127.0.0.1:4242",
+        "host": {
+          "cpus": 10,
+          "memoryTotalMb": 7934,
+          "memoryAvailableMb": 7447
+        },
+        "executionCapacity": {
+          "cpus": 10,
+          "memoryTotalMb": 7934,
+          "memoryAvailableMb": null,
+          "diskFreeMb": null,
+          "diskTotalMb": null
+        },
+        "acceptingWork": true
+      },
+      "metrics": null,
+      "settings": {
+        "maxConcurrency": 1,
+        "reserved": {
+          "cpus": 0,
+          "memoryMb": 0
+        },
+        "labels": [],
+        "schedulingMode": "enabled",
+        "autoUpdate": "off"
+      },
+      "effectiveLabels": [
+        "os=linux",
+        "arch=arm64",
+        "docker",
+        "buildx",
+        "act"
+      ],
+      "activeJobs": [],
+      "allocated": {
+        "cpus": -0.0,
+        "memoryMb": 0
+      },
+      "allocatable": {
+        "cpus": 10.0,
+        "memoryMb": 7934
+      },
+      "lastSeenAt": 1794290252732,
+      "connectedAt": 1794290252730,
+      "createdAt": 1794290252521
+    }
+  ],
+  "scenarios": {
+    "embedded-command-snapshot-artifact": {
+      "job": {
+        "id": "01M720GZ2H2GYMCQGTC7C27BP5",
+        "name": "set -eu; test \"$(uname -m)\" = aarch64; test \"$(cat proof.txt)\" = arm-snapshot...",
+        "kind": "command",
+        "state": "succeeded",
+        "stateReason": null,
+        "priority": 0,
+        "owner": "local-admin",
+        "snapshotId": "sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a",
+        "spec": {
+          "kind": "command",
+          "env": {},
+          "secretEnv": {},
+          "snapshot": "sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a",
+          "workdir": ".",
+          "resources": {
+            "cpus": 1,
+            "memoryMb": 128
+          },
+          "target": {
+            "labels": [],
+            "prefer": [],
+            "node": "arm-embedded"
+          },
+          "retry": {
+            "max": 0,
+            "on": [
+              "lost"
+            ]
+          },
+          "priority": 0,
+          "project": "linux-arm-vm-proof",
+          "image": "alpine:3.21",
+          "command": [
+            "sh",
+            "-c",
+            "set -eu; test \"$(uname -m)\" = aarch64; test \"$(cat proof.txt)\" = arm-snapshot; test ! -e .env; mkdir -p results; printf \"aarch64 artifact\\n\" > results/proof.txt; cat results/proof.txt; echo embedded-arm"
+          ],
+          "artifacts": [
+            "results"
+          ]
+        },
+        "nodeId": "01M720GYH84FEPA2T9Q52N6VC5",
+        "nodeName": "arm-embedded",
+        "assignmentId": "01M720GZ2JA4DDQZ95E5N6DKXK",
+        "attempt": 1,
+        "retryOf": null,
+        "oomKilled": false,
+        "exitCode": 0,
+        "error": null,
+        "queuePosition": null,
+        "logSeq": 6,
+        "outputs": null,
+        "artifacts": [
+          {
+            "name": "results.tar",
+            "digest": "sha256:cfe2d2d5fd22996e29af357d763e2df361611805e8d07e1ec9cc668562519b93",
+            "size": 2560
+          }
+        ],
+        "groupId": null,
+        "shardIndex": null,
+        "shardTotal": null,
+        "createdAt": 1794290252881,
+        "queuedAt": 1794290252881,
+        "assignedAt": 1794290252882,
+        "startedAt": 1794290252996,
+        "finishedAt": 1794290253176,
+        "cancelRequestedAt": null
+      },
+      "logs": {
+        "entries": [
+          {
+            "s": 1,
+            "t": 1794290252885,
+            "o": "system",
+            "d": "Job 01M720GZ2H2GYMCQGTC7C27BP5 accepted by worker\n"
+          },
+          {
+            "s": 2,
+            "t": 1794290252956,
+            "o": "system",
+            "d": "Creating container on arm-embedded\n"
+          },
+          {
+            "s": 3,
+            "t": 1794290252979,
+            "o": "system",
+            "d": "Copying workspace snapshot into the container\n"
+          },
+          {
+            "s": 4,
+            "t": 1794290253051,
+            "o": "stdout",
+            "d": "aarch64 artifact\n"
+          },
+          {
+            "s": 5,
+            "t": 1794290253053,
+            "o": "stdout",
+            "d": "embedded-arm\n"
+          },
+          {
+            "s": 6,
+            "t": 1794290253175,
+            "o": "system",
+            "d": "Job succeeded\n"
+          }
+        ],
+        "complete": true
+      },
+      "artifact": {
+        "name": "results.tar",
+        "digest": "sha256:cfe2d2d5fd22996e29af357d763e2df361611805e8d07e1ec9cc668562519b93",
+        "size": 2560
+      },
+      "snapshot": {
+        "id": "sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a",
+        "manifest": {
+          "version": 1,
+          "entries": [
+            {
+              "path": ".github/workflows/arm.yml",
+              "type": "file",
+              "size": 242,
+              "digest": "sha256:44480b682896d48107aa80dc7dbc65bf4e5ee322d01971c9285783ad5ba31d10",
+              "executable": false
+            },
+            {
+              "path": "Dockerfile",
+              "type": "file",
+              "size": 119,
+              "digest": "sha256:a680f3016ac79d9c949b784171f77d48dcece2bdf3ad4027d9286b086f5a8758",
+              "executable": false
+            },
+            {
+              "path": "gridstator.yml",
+              "type": "file",
+              "size": 444,
+              "digest": "sha256:ee56d3d4999c237a00dce9de35a86eb8b40c5b4057e1fb6538243637d5e5b6e5",
+              "executable": false
+            },
+            {
+              "path": "proof.txt",
+              "type": "file",
+              "size": 13,
+              "digest": "sha256:b82d14e5466af2dc3084d69d3eb8a787883bcc9529464358a7118e4dce0d5614",
+              "executable": false
+            }
+          ]
+        },
+        "fileCount": 4,
+        "totalBytes": 818,
+        "createdAt": 1794290252880,
+        "lastUsedAt": 1794290252881,
+        "owner": "local-admin"
+      },
+      "downloadSha256": "cfe2d2d5fd22996e29af357d763e2df361611805e8d07e1ec9cc668562519b93"
+    }
+  },
+  "actualBuildInfo": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-cd6b769ebe6e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/arm64",
+    "size": 26556128,
+    "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd"
+  },
+  "error": "",
+  "seconds": 2.519
+}

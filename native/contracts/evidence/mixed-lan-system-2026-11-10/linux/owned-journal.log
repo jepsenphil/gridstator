@@ -1,0 +1,49 @@
+2026-11-10T05:36:01+00:00 ubuntu systemd[1]: Started gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:36:01+00:00 ubuntu supervisor[8046]: Controller listening on https://192.168.1.162:42751
+2026-11-10T05:36:02+00:00 ubuntu supervisor[8046]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:02+00:00 ubuntu supervisor[8046]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:02+00:00 ubuntu supervisor[8046]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:04+00:00 ubuntu systemd[1]: Stopping gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller...
+2026-11-10T05:36:04+00:00 ubuntu systemd[1]: gridstator-native-systemproof-cd6-20261110-31df.service: Deactivated successfully.
+2026-11-10T05:36:04+00:00 ubuntu systemd[1]: Stopped gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:36:04+00:00 ubuntu systemd[1]: Started gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:36:05+00:00 ubuntu supervisor[8629]: Controller listening on https://192.168.1.162:42751
+2026-11-10T05:36:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:36:35+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:37:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:37:35+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:38:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:38:35+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:39:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:39:35+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:05+00:00 ubuntu supervisor[8629]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:11+00:00 ubuntu supervisor[12180]: Controller listening on https://192.168.1.162:42751
+2026-11-10T05:40:11+00:00 ubuntu supervisor[12180]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:11+00:00 ubuntu supervisor[12180]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:11+00:00 ubuntu supervisor[12180]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:41+00:00 ubuntu supervisor[12180]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:42+00:00 ubuntu systemd[1]: Stopping gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller...
+2026-11-10T05:40:42+00:00 ubuntu systemd[1]: gridstator-native-systemproof-cd6-20261110-31df.service: Deactivated successfully.
+2026-11-10T05:40:42+00:00 ubuntu systemd[1]: Stopped gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:40:42+00:00 ubuntu systemd[1]: gridstator-native-systemproof-cd6-20261110-31df.service: Consumed 7.882s CPU time, 139.1M memory peak.
+2026-11-10T05:40:42+00:00 ubuntu systemd[1]: Started gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:40:42+00:00 ubuntu supervisor[13269]: Controller listening on https://192.168.1.162:42751
+2026-11-10T05:40:43+00:00 ubuntu supervisor[13269]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:43+00:00 ubuntu supervisor[13269]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:43+00:00 ubuntu supervisor[13269]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:40:57+00:00 ubuntu supervisor[13692]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T05:40:58+00:00 ubuntu supervisor[13789]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T05:40:59+00:00 ubuntu supervisor[13798]: deliberate rehearsal candidate changed schema and exits before controller health
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13260]: gridstator supervisor: version rehearsal-schema-crash failed to start 3 times; rolled back to native-preview-20261110-cd6b769ebe6e
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13808]: Restored pre-update database after rollback; failed candidate database retained at /tmp/gridstator-system-proof-cd6-20261110-31df/controller/controller.db.failed-rehearsal-schema-crash-01M71ZJNRHT8PCVKHA82KE60RE
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13808]: Controller listening on https://192.168.1.162:42751
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13808]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13808]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:41:00+00:00 ubuntu supervisor[13808]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:41:30+00:00 ubuntu supervisor[13808]: Agent gridstator-native-systemproof-cd6-20261110-31df-worker connected
+2026-11-10T05:41:44+00:00 ubuntu systemd[1]: Stopping gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller...
+2026-11-10T05:41:44+00:00 ubuntu systemd[1]: gridstator-native-systemproof-cd6-20261110-31df.service: Deactivated successfully.
+2026-11-10T05:41:44+00:00 ubuntu systemd[1]: Stopped gridstator-native-systemproof-cd6-20261110-31df.service - Gridstator native controller.
+2026-11-10T05:41:44+00:00 ubuntu systemd[1]: gridstator-native-systemproof-cd6-20261110-31df.service: Consumed 2.450s CPU time, 115.9M memory peak.

@@ -1,0 +1,48 @@
+{
+  "result": "passed",
+  "checks": [
+    {
+      "kind": "container",
+      "name": "gridstator-linux-arm-proof-buildx-dev-3b7e",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "gridstator-linux-arm-proof-buildx-dev-3b7e-state",
+      "absent": true
+    },
+    {
+      "kind": "image",
+      "name": "gridstator-linux-arm-proof:buildx-dev-3b7e",
+      "absent": true
+    },
+    {
+      "kind": "containers",
+      "nodeId": "01M721SP301WZR6HED3SY4DPJS",
+      "remainingIds": []
+    },
+    {
+      "kind": "volumes",
+      "nodeId": "01M721SP301WZR6HED3SY4DPJS",
+      "remainingIds": []
+    },
+    {
+      "kind": "containers",
+      "nodeId": "01M721SP90N1FTX05EHGXCBBGX",
+      "remainingIds": []
+    },
+    {
+      "kind": "volumes",
+      "nodeId": "01M721SP90N1FTX05EHGXCBBGX",
+      "remainingIds": []
+    }
+  ],
+  "readOnlyToolInputHashes": {
+    "gridstator": "d3b5e64741b595ce7fb24ab049d67cdc2992b23cc2ebeb98e3dbbb4f8d9d20bd",
+    "act": "aa958a689fc887427065d264e9be496ec2fd57f728256435636c4c9c5f69d75d"
+  },
+  "desktopRestarted": false,
+  "globalConfigChanged": false,
+  "privilegedUsed": false,
+  "stateVolumeContainingNativeCredentialsDestroyed": true
+}

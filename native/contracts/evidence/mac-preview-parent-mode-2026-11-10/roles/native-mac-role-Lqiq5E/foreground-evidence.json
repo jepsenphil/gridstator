@@ -1,0 +1,97 @@
+{
+  "scope": "actual foreground native macOS CLI/controller/worker; intentionally missing Docker; no signing claim",
+  "target": "darwin/arm64",
+  "node": {
+    "id": "01M7249M1D1KK3XR8DJ10ADEAD",
+    "name": "mac-proof-01M7249KYQWXJAQZYCFSC9GS21",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "native-preview-20261110-6994d2cc804b",
+        "version": "2.0.0-dev.1",
+        "sha256": "42502f8d71ba2e860e0bed965c4ecb725853a12ab5671db93a75624628156483",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:62918",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4384
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794294206605,
+      "cpuPercent": 7.175233364105225,
+      "memoryAvailableMb": 4377,
+      "diskFreeMb": 301316,
+      "diskTotalMb": 471482,
+      "load1": 2.55029296875,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794294206605,
+    "connectedAt": 1794294206583,
+    "createdAt": 1794294206509
+  },
+  "controllerPid": 931
+}

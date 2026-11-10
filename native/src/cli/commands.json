@@ -1,0 +1,2227 @@
+{
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "policy": "Declarative command metadata, not expected help bytes. The native registry and renderer share these declarations; accepted-v1 remains the independent presentation oracle.",
+  "cases": [
+    {
+      "path": [],
+      "description": "Gridstator: multiple machines, one workflow. Run builds and tests on your LAN cluster.",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "-v, --version",
+          "description": "output the version number",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["login"],
+      "description": "Connect this machine to a controller (verifies the CA fingerprint and token)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <url>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "url",
+          "description": "controller URL, e.g. https://192.168.1.20:7300",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--fingerprint <sha256>",
+          "description": "cluster CA fingerprint (printed by `controller init`)",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--token <token>",
+          "description": "client token (from `gridstator token create`)",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["status"],
+      "description": "Show cluster, node and job summary",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["nodes"],
+      "description": "List and manage worker nodes",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["nodes", "show"],
+      "description": "",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["nodes", "set"],
+      "description": "Rename a node or change its scheduling settings",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--name <name>",
+          "description": "change the worker name without changing its identity",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum concurrent jobs",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "replace labels (comma-separated; empty string clears)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["nodes", "enable"],
+      "description": "Allow the scheduler to place jobs on a node",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["nodes", "disable"],
+      "description": "Stop placing new jobs on a node (running jobs continue)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["nodes", "drain"],
+      "description": "Stop placing new jobs on a node and let running jobs finish",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["nodes", "remove"],
+      "description": "Remove a node and revoke its credential (admin)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <node>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--force",
+          "description": "cancel jobs still running on the node",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["jobs"],
+      "description": "List jobs (most recent first)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--state <states>",
+          "description": "filter by state (comma-separated: created, queued, assigned, starting, running, succeeded, failed, cancelled, lost)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--node <node>",
+          "description": "filter by node",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--limit <n>",
+          "description": "maximum number of jobs",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "30"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["job"],
+      "description": "Show details of one job",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "job id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["run"],
+      "description": "Run a command in a container on a cluster node, against a snapshot of this project",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [command...]",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "command",
+          "description": "command to run (after --). A single argument is run with sh -c",
+          "required": false,
+          "variadic": true
+        }
+      ],
+      "options": [
+        {
+          "flags": "-t, --task <name>",
+          "description": "run a task defined in gridstator.yml",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--image <image>",
+          "description": "container image (default from gridstator.yml, else node:24-bookworm)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve and limit the container to",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve and limit the container to, e.g. 4g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-e, --env <NAME=value>",
+          "description": "environment variable (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--retries <n>",
+          "description": "automatic retries if the node is lost",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--shell",
+          "description": "run the arguments as one shell command (sh -c)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-a, --artifact <path>",
+          "description": "collect a file or directory as an artifact after the run (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--shards <n>",
+          "description": "split into N parallel shards across workers; use {shard} and {total} in the command",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--no-snapshot",
+          "description": "do not send the project; run in an empty /workspace",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["logs"],
+      "description": "Print a job's logs",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "job id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "-f, --follow",
+          "description": "keep streaming until the job finishes",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "print log entries as JSON lines",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["cancel"],
+      "description": "Cancel a queued or running job",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "job id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["retry"],
+      "description": "Run a finished job again with the same snapshot and settings",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "job id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "-d, --detach",
+          "description": "print the new job id and exit",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["snapshot"],
+      "description": "Capture this project as a snapshot and upload it (shows what would be sent)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--dry-run",
+          "description": "capture only; do not upload",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output including the full file list",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["token"],
+      "description": "Manage client and join tokens (admin)",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["token", "create"],
+      "description": "Create a client token, or a join token for adding a worker",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--join",
+          "description": "create a join token for `gridstator agent join`",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--name <name>",
+          "description": "token name (shown in job ownership and audit records)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--role <role>",
+          "description": "client token role: operator or admin",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "operator"
+        },
+        {
+          "flags": "--ttl <duration>",
+          "description": "expiry, e.g. 24h (join tokens default to 24h; client tokens never expire)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--uses <n>",
+          "description": "join token: number of agents that may use it",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "1"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["token", "list"],
+      "description": "",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["token", "revoke"],
+      "description": "",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "token id (from `gridstator token list`)",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["groups"],
+      "description": "List job groups (sharded runs), most recent first",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--limit <n>",
+          "description": "maximum number of groups",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "20"
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["group"],
+      "description": "Inspect and control a job group (sharded run)",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["group", "show"],
+      "description": "",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "group id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output (includes combined test results)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["group", "cancel"],
+      "description": "",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "group id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": []
+    },
+    {
+      "path": ["group", "retry"],
+      "description": "Run the shards that failed, were lost or were cancelled again",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "group id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "-d, --detach",
+          "description": "do not stream logs",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["init"],
+      "description": "Create a gridstator.yml in the current project",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--force",
+          "description": "overwrite an existing gridstator.yml",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agents"],
+      "description": "Keep worker agents on the controller’s build (status, updates, auto-update)",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["agents", "status"],
+      "description": "Show which workers run the controller’s build",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--check",
+          "description": "exit with code 3 if a reachable worker is not on the controller’s build (offline workers do not count)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agents", "update"],
+      "description": "Update workers to the controller’s build, one at a time: drain, update, wait until it is back (admin)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [nodes...]",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "nodes",
+          "description": "node names or ids (default: every online worker that is not current)",
+          "required": false,
+          "variadic": true
+        }
+      ],
+      "options": [
+        {
+          "flags": "--now",
+          "description": "do not wait for running jobs: cancel them and update straight away",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--drain-timeout <duration>",
+          "description": "explicitly cancel jobs still running after this long (default: wait without cancelling)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--wait",
+          "description": "follow the rollout until it finishes or halts",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agents", "cancel"],
+      "description": "Stop the running rollout; the worker being updated right now finishes (admin)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["agents", "set"],
+      "description": "Set auto-update and toolchain options: for one worker, or the cluster default (no node)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [node]",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "node",
+          "description": "node name or id; omit to change the cluster default",
+          "required": false,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--auto-update <mode>",
+          "description": "off | follow | window, or inherit (node only: use the cluster default)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--window <HH:MM-HH:MM>",
+          "description": "daily update window in the controller’s local time",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--act <version>",
+          "description": "act for self-updating workers: a version, \"pinned\" or \"off\"",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--node <version>",
+          "description": "Node.js for self-updating workers: a version, \"pinned\" or \"off\"",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["build"],
+      "description": "Build a Docker image from this project on a cluster node (BuildKit)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [context]",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "context",
+          "description": "build context directory (default: .)",
+          "required": false,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "-f, --file <Dockerfile>",
+          "description": "Dockerfile (default: <context>/Dockerfile)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-b, --build <name>",
+          "description": "use a build defined under `builds:` in gridstator.yml",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--target <stage>",
+          "description": "Dockerfile stage to build",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--build-arg <KEY=value>",
+          "description": "build argument (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-t, --tag <tag>",
+          "description": "image tag (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--platform <platform>",
+          "description": "target platform, e.g. linux/arm64 (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--output <mode>",
+          "description": "load (into the worker), push, tar (download as artifact) or none",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--no-cache",
+          "description": "do not use the build cache",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--pull",
+          "description": "always pull newer base images",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--cache-from <spec>",
+          "description": "external cache source, e.g. type=registry,ref=... (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--cache-to <spec>",
+          "description": "external cache destination (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["actions"],
+      "description": "Run GitHub Actions workflows on the cluster with act",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["actions", "list"],
+      "description": "List workflows and jobs in this project, with local-execution caveats",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["actions", "run"],
+      "description": "Run a workflow (or one job) against this working tree on a cluster node",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <workflow>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "workflow",
+          "description": "workflow file name (ci.yml), path, or name",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "-j, --job <id>",
+          "description": "run only this job",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-e, --event <name>",
+          "description": "triggering event (default: push, else the first event the workflow declares)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-i, --input <key=value>",
+          "description": "workflow_dispatch input (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--var <key=value>",
+          "description": "value for the vars context (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--env <KEY=value>",
+          "description": "environment variable for workflow steps (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-P, --platform <label=image>",
+          "description": "runner image for a runs-on label (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--matrix <key:value>",
+          "description": "run only matching matrix combinations (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--event-payload <file>",
+          "description": "JSON file used as github.event",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--docker-socket",
+          "description": "mount the worker's Docker socket into workflow containers",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--node <node>",
+          "description": "run on this node (name or id)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--prefer <node>",
+          "description": "prefer this worker when it can take the job (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-l, --label <label>",
+          "description": "require a node label (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "--cpus <n>",
+          "description": "CPUs to reserve",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--memory <size>",
+          "description": "memory to reserve, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--timeout <duration>",
+          "description": "stop the job after this long, e.g. 30m",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--priority <n>",
+          "description": "higher runs first (-100..100)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--name <name>",
+          "description": "display name for the job",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-s, --secret-env <NAME>",
+          "description": "forward a secret from this shell; masked in logs (repeatable)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": []
+        },
+        {
+          "flags": "-d, --detach",
+          "description": "print the job id and exit instead of streaming logs",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "print the submitted job as JSON (implies --detach)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["artifacts"],
+      "description": "List or download the artifacts of a job",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <id>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "id",
+          "description": "job id",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--download <name>",
+          "description": "download this artifact",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "-o, --out <path>",
+          "description": "where to write the download (\"-\" for stdout; default: the artifact file name)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["doctor"],
+      "description": "Check this machine's setup and the connection to the controller",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--json",
+          "description": "machine-readable output",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller"],
+      "description": "Run and manage the cluster controller",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["controller", "local"],
+      "description": "Manage the controller owned by this account (used by the VS Code extension)",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["controller", "local", "status"],
+      "description": "Inspect local ownership, endpoint and user-service state",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "local", "ensure-login"],
+      "description": "Reuse or create one shared local admin login without printing credentials",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--restore",
+          "description": "explicitly replace a revoked or expired local login",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "local", "service"],
+      "description": "Control the local controller user service",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <action>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "action",
+          "description": "start, stop or restart",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "local", "configure"],
+      "description": "Apply a coordinated endpoint change and restart, recovering on failure",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "local controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--config <path>",
+          "description": "shared client configuration",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_CONFIG/client.json"
+        },
+        {
+          "flags": "--json",
+          "description": "print JSON (local commands always print JSON)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--host <address>",
+          "description": "address to listen on",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--port <port>",
+          "description": "TCP port",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--url <url>",
+          "description": "HTTPS controller URL reachable by every worker",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "init"],
+      "description": "Create a new cluster: CA, server certificate, database and an admin token",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--host <host>",
+          "description": "address to listen on",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "0.0.0.0"
+        },
+        {
+          "flags": "--port <port>",
+          "description": "port to listen on",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "7300"
+        },
+        {
+          "flags": "--san <names...>",
+          "description": "extra hostnames/IPs for the server certificate",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": true
+        },
+        {
+          "flags": "--force",
+          "description": "create a new cluster even if one exists (the old data directory is backed up)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--no-login",
+          "description": "do not save the admin credentials as this machine's client configuration",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "start"],
+      "description": "Run the controller in the foreground",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--host <host>",
+          "description": "address to listen on (overrides controller.json)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--port <port>",
+          "description": "port to listen on (overrides controller.json)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--with-agent",
+          "description": "also run a worker agent in this process (embedded mode)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--agent-name <name>",
+          "description": "node name for the embedded agent",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "<HOSTNAME>"
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "publish-build"],
+      "description": "Switch the controller to another build, which workers then follow: this CLI's own bundled build, or a gridstator .tgz (admin)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] [tarball]",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "tarball",
+          "description": "gridstator package (.tgz); default: the build running this command",
+          "required": false,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--no-wait",
+          "description": "do not wait for the controller to come back on the new build",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "token"],
+      "description": "Recovery: issue client tokens directly in the controller database",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["controller", "token", "create"],
+      "description": "Issue a client token without an admin token (needs access to the data directory; works while the controller runs)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--name <name>",
+          "description": "token name, e.g. \"admin-recovered\"",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--role <role>",
+          "description": "admin or operator",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "admin"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/controller"
+        },
+        {
+          "flags": "--login",
+          "description": "save it as this machine's client login (replaces the current one)",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "install-service"],
+      "description": "Run the controller as a systemd service that starts at boot",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--system",
+          "description": "install a system service (needs sudo) instead of a user service",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--user <name>",
+          "description": "with --system: the user the service runs as (default: the sudo user)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "controller data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--print",
+          "description": "print the unit file instead of installing it",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--force",
+          "description": "replace an existing unit",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--with-agent",
+          "description": "also run a worker agent in the controller process",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--agent-name <name>",
+          "description": "node name for that agent",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["controller", "uninstall-service"],
+      "description": "Stop and remove the controller systemd service (keeps data)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--system",
+          "description": "remove the system service instead of the user service",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agent"],
+      "description": "Run a worker agent on this machine",
+      "hasAction": false,
+      "implicitHelp": true,
+      "usage": "[options] [command]",
+      "aliases": [],
+      "arguments": [],
+      "options": []
+    },
+    {
+      "path": ["agent", "join"],
+      "description": "Register this machine with a controller",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options] <url>",
+      "aliases": [],
+      "arguments": [
+        {
+          "name": "url",
+          "description": "controller URL, e.g. https://192.168.1.20:7300",
+          "required": true,
+          "variadic": false
+        }
+      ],
+      "options": [
+        {
+          "flags": "--token <token>",
+          "description": "join token from `gridstator token create --join`",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--fingerprint <sha256>",
+          "description": "cluster CA fingerprint",
+          "mandatory": true,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--name <name>",
+          "description": "node name",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "<HOSTNAME>"
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/agent"
+        },
+        {
+          "flags": "--force",
+          "description": "join again even if this machine already joined a cluster",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agent", "start"],
+      "description": "Run the agent in the foreground",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "/V1_DATA/agent"
+        },
+        {
+          "flags": "--cache-size <size>",
+          "description": "maximum snapshot cache size",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false,
+          "default": "10g"
+        },
+        {
+          "flags": "--keep-failed",
+          "description": "keep containers and volumes of failed jobs for inspection",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--drain",
+          "description": "on shutdown, wait for running jobs instead of stopping them",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--max-concurrency <n>",
+          "description": "maximum number of jobs this node runs at once",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-cpus <n>",
+          "description": "CPUs held back for the host (never given to jobs)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--reserve-memory <size>",
+          "description": "memory held back for the host, e.g. 8g",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--labels <list>",
+          "description": "comma-separated node labels, e.g. fast,ssd",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agent", "install-service"],
+      "description": "Run the agent as a systemd service that starts at boot",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--system",
+          "description": "install a system service (needs sudo) instead of a user service",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--user <name>",
+          "description": "with --system: the user the service runs as (default: the sudo user)",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--data-dir <dir>",
+          "description": "agent data directory",
+          "mandatory": false,
+          "required": true,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--print",
+          "description": "print the unit file instead of installing it",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        },
+        {
+          "flags": "--force",
+          "description": "replace an existing unit",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    },
+    {
+      "path": ["agent", "uninstall-service"],
+      "description": "Stop and remove the agent systemd service (keeps data)",
+      "hasAction": true,
+      "implicitHelp": false,
+      "usage": "[options]",
+      "aliases": [],
+      "arguments": [],
+      "options": [
+        {
+          "flags": "--system",
+          "description": "remove the system service instead of the user service",
+          "mandatory": false,
+          "required": false,
+          "optional": false,
+          "variadic": false
+        }
+      ]
+    }
+  ]
+}

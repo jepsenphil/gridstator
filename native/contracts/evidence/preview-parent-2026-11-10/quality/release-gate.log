@@ -1,0 +1,8 @@
+Expected exit code: 1
+Validated 228 parity rows; 223 verified
+Stable v2 acceptance is incomplete: 5 open rows.
+  mac-signing: not started
+  four-target-linkage: implemented
+  mac-docker-capacity: implemented
+  launchd-live: implemented
+  systemd-live: implemented

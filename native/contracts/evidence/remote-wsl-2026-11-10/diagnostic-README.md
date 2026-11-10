@@ -1,0 +1,9 @@
+# Windows Code isolation diagnostic
+
+This records a harness preflight issue before any WSL extension host, Gridstator extension activation or private native backend started. Direct Code.exe test launches exited 255 before producing profile/server logs. Two small private diagnostic windows did run; stock Code 1.145.0 opened the preexisting Windows `.vscode-shared/sharedStorage/state.vscdb` despite a private `--user-data-dir`. Logs reported `wasCreated: false`. No guarantee of zero shared-storage writes is made. The shared database was not reset or restored.
+
+No Windows Gridstator extension was installed, and no Gridstator action or backend was invoked by these windows. The exact set of 23 original desktop Code PIDs and the legacy WSL Gridstator system-service unit SHA remained unchanged at the audit. Only processes whose executable was the copied app under the unique validation prefix were stopped. Only the private profiles populated during diagnosis were removed.
+
+Before any next launch, `window_guard.py` now requires explicit private client user/extensions/shared/agent/download/crash paths, in-memory secret storage, exact remote test/workspace URIs and a free stock resolver-pipe namespace. It verifies stock plugin hashes, executable identity, private product namespace deltas, server environment and Machine paths. Missing/private-path negative cases and an actual uniquely owned temporary Windows named pipe prove failure occurs before Code launch. No stock plugin source was patched; `launch_guarded.py` is the sole subsequent launcher.
+
+The server copy adds only private `serverDataFolderName` and `sharedDataFolderName` metadata. Private server environment also sets `VSCODE_AGENT_FOLDER` and `VSCODE_PORTABLE`, containing server data/shared/secret fallback under the validation prefix. These changes are validation isolation and are not represented as an unmodified default editor configuration.

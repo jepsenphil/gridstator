@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized] target(s) in 0.29s
+     Running tests/launchd_e2e.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/x86_64-apple-darwin/debug/deps/launchd_e2e-195efbfbbaaf04e5)
+
+running 2 tests
+test actual_launchd_controller_and_worker_start_restart_stop_and_uninstall ... Mac launchd proof: /Users/philjepsen/gridstator-validation.I50ONpwm/native-mac-role-arUpEI
+ok
+test actual_mac_foreground_controller_worker_without_docker_and_clean_shutdown ... Mac foreground proof: /Users/philjepsen/gridstator-validation.I50ONpwm/native-mac-role-rY1XeD
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.36s
+

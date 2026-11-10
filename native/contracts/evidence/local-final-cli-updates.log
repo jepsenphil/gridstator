@@ -1,0 +1,49 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.77s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-19c1ceb4a39629b3)
+
+running 11 tests
+test cli::tests::service_identity_uses_explicit_or_verified_environment_paths_and_refuses_wrappers ... ok
+test cli::tests::errors_preserve_frozen_code_and_http_status_exit_mappings ... ok
+test cli::tests::service_preserves_same_account_docker_connection_and_excludes_foreign_credentials ... ok
+test updates::tests::queued_bundle_import_owns_its_source_after_handler_unlinks_the_upload ... ok
+test bridge::tests::snapshot_limits_use_project_units_and_explicit_overrides ... ok
+test updates::tests::shutdown_interrupts_stalled_update_headers_and_bodies ... ok
+test release::transport_shutdown_tests::official_transport_cancels_stalled_headers_and_body ... ok
+test cli::tests::scalar_flags_take_the_last_value_and_collection_flags_append ... ok
+test bridge::tests::project_discovery_stops_at_git_root ... ok
+test controller::shutdown_tests::active_controller_lease_blocks_recovery_before_it_reads_switch_marker ... ok
+test controller::shutdown_tests::shutdown_joins_update_mutation_and_abort_keeps_startup_lease ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-1cf98379990e2ab8)
+
+running 6 tests
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s
+
+     Running tests/updates_contract.rs (native/target/debug/deps/updates_contract-032870d8114c5df5)
+
+running 10 tests
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+/tmp/.tmpOTgTnD/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmpOTgTnD/controller/install/versions/dev-4b8f13ccf1b2-1794267396991793850/gridstator: 1: ELF: not found
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s
+

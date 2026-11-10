@@ -1,0 +1,6 @@
+{
+  "ownedRolesStopped": true,
+  "ownedContainersAndWorkspaceVolumesAbsent": true,
+  "existingServicesTouched": false,
+  "sharedCachesRetained": true
+}

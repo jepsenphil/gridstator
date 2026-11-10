@@ -1,0 +1,783 @@
+{
+  "formatVersion": 1,
+  "recordedDate": "2026-11-09",
+  "recordedAt": "2026-11-10T03:23:46.800917+00:00",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "scope": "Exact shared install001\u2013013 and controller self-update003\u2013004 acceptance, with per-field approved native substitutions. No ledger/progress mutation.",
+  "environment": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "proofs": [
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test install_source_contract --test install_contract --test release_workflow_contract --test updates_contract",
+      "result": "passed",
+      "testCounts": {
+        "install_contract": 20,
+        "install_source_contract": 10,
+        "release_workflow_contract": 9,
+        "updates_contract": 10
+      },
+      "log": "native/contracts/evidence/install-source-final-tests.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test install_source_contract source_install_010",
+      "result": "passed",
+      "total": 1,
+      "log": "native/contracts/evidence/install-source-missing-cli.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test cli_local_coordination source_self_update_004",
+      "result": "passed",
+      "total": 1,
+      "log": "native/contracts/evidence/offline-recovery-token.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test release_workflow_contract source_controller_self_update_003",
+      "result": "passed",
+      "total": 1,
+      "log": "native/contracts/evidence/self-update-refusals-green.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --lib cli::tests",
+      "result": "passed",
+      "total": 7,
+      "log": "native/contracts/evidence/cli-terminal-output-tests.log",
+      "scope": "35 frozen whole-program workflow cases include deferred child flags plus literal --; terminal/image/artifact guidance and source numeric formatting are checked."
+    },
+    {
+      "command": "node native/scripts/check-cli-protocol-fixtures.mjs FROZEN_CHECKOUT",
+      "result": "passed",
+      "documents": 7,
+      "log": "native/contracts/evidence/cli-final-fixture-replay.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test release_workflow_contract",
+      "result": "passed",
+      "total": 11,
+      "log": "native/contracts/evidence/same-id-release-refusal-suite.log",
+      "scope": "All seven source release scenarios, self-update refusals, physical installed-fixture identity and same-ID publication/bootstrap/official-install guards."
+    },
+    {
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "native/contracts/evidence/same-id-final-clippy.log"
+    },
+    {
+      "command": "cargo +1.99.1 fmt --manifest-path native/Cargo.toml --all -- --check",
+      "result": "passed",
+      "log": "native/contracts/evidence/same-id-final-format.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test updates_contract",
+      "result": "passed",
+      "total": 10,
+      "log": "native/contracts/evidence/same-id-updates-regression.log"
+    }
+  ],
+  "acceptance": [
+    {
+      "rowId": "reference-shared-install-001",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 68,
+          "scenario": "ids packages by version and content, and recognises bundled entries"
+        }
+      ],
+      "sourceAssertions": [
+        "Package IDs contain version plus12contenthash characters; different package contents differ.",
+        "Bundled entry is recognized while workspace JS entry is not."
+      ],
+      "nativeAssertions": [
+        "Embedded build/version/source/target metadata survive relocation and ignore forged runtime build environment.",
+        "Reported executable digest equals actual bytes. An allocated native ID cannot be rebound to changed content."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_001_and_004_native_identity_is_embedded_and_digest_describes_current_bytes"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "version-content-derived package ID / bundled JS entry",
+          "nativeReplacement": "Build ID is allocated before compilation; SHA-256 independently describes final native bytes. A single executable replaces package-directory detection."
+        }
+      ],
+      "parentEvidence": [],
+      "additionalNativeTests": [
+        "native/tests/release_workflow_contract.rs::same_active_build_id_cannot_rebind_the_controller_mirror",
+        "native/tests/release_workflow_contract.rs::same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-002",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 78,
+          "scenario": "installs from a directory or an npm tarball, idempotently"
+        }
+      ],
+      "sourceAssertions": [
+        "Directory and npm tarball installation are idempotent.",
+        "Different package content is installed under its own ID and the entry has expected content."
+      ],
+      "nativeAssertions": [
+        "Verified executable adoption and native tar extraction produce the same allocated ID, manifest identity, target and exact executable bytes.",
+        "Repeated adoption does not change payload or activate it; immutable-ID collision is rejected."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_002_and_005_native_executable_and_archive_install_identically_and_idempotently",
+        "native/tests/install_source_contract.rs::source_install_001_and_004_native_identity_is_embedded_and_digest_describes_current_bytes"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "npm directory/tarball and automatic content ID",
+          "nativeReplacement": "Checksum-verified native executable/archive plus preallocated immutable build ID."
+        }
+      ],
+      "parentEvidence": [],
+      "additionalNativeTests": [
+        "native/tests/release_workflow_contract.rs::same_active_build_id_cannot_rebind_the_controller_mirror",
+        "native/tests/release_workflow_contract.rs::same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-003",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 97,
+          "scenario": "identifies a managed install from the launcher environment"
+        }
+      ],
+      "sourceAssertions": [
+        "Launcher environment selects the managed package instead of supplied fallback version/entry.",
+        "Identity contains managed root/id and actual content digest."
+      ],
+      "nativeAssertions": [
+        "Embedded ID is authoritative; forged environment and uninstalled execution cannot claim management.",
+        "Correct installed path/metadata/bytes are managed, including verified old provisional payload.",
+        "Controller restart capability requires active physical identity; previous provisional payload cannot confirm the candidate."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_003_rejects_unverified_launcher_identity_child"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "packageDir, install.id, version and sha256 fields",
+          "nativeReplacement": "Verified native installed executable path, embedded build/version, target, executable digest and fresh active/provisional state replace Node package introspection."
+        }
+      ],
+      "parentEvidence": []
+    },
+    {
+      "rowId": "reference-shared-install-004",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 113,
+          "scenario": "identifies a bundled package, and falls back for the workspace build"
+        }
+      ],
+      "sourceAssertions": [
+        "Bundled entry reports package identity with install:null.",
+        "Workspace entry reports fallback-version-unbundled with null digest/packageDir/install."
+      ],
+      "nativeAssertions": [
+        "Actual native build-info returns embedded identity and exact executable digest both at original and copied package location.",
+        "Uninstalled native execution is reported unmanaged and cannot claim controller self-update capability."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_001_and_004_native_identity_is_embedded_and_digest_describes_current_bytes",
+        "native/tests/install_source_contract.rs::source_install_003_rejects_unverified_launcher_identity_child"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "JS bundled/workspace detection, packageDir and unbundled ID suffix",
+          "nativeReplacement": "Native executables always contain build metadata; physical managed/unmanaged status is separate from embedded identity."
+        }
+      ],
+      "parentEvidence": []
+    },
+    {
+      "rowId": "reference-shared-install-005",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 130,
+          "scenario": "packs a package into a tarball that installs as the same build"
+        }
+      ],
+      "sourceAssertions": [
+        "Packing and reinstalling a package yields the same build ID."
+      ],
+      "nativeAssertions": [
+        "Native tar fixture and direct verified executable adoption yield identical build/manifest identity and exact selected executable bytes."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_002_and_005_native_executable_and_archive_install_identically_and_idempotently"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "npm package pack/unpack",
+          "nativeReplacement": "Verified native archive/executable envelope; production assembly is additionally covered by packaging_contract."
+        }
+      ],
+      "parentEvidence": [
+        "native/tests/packaging_contract.rs"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-006",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 140,
+          "scenario": "runs the active version with the original arguments"
+        }
+      ],
+      "sourceAssertions": [
+        "Active entry receives original role arguments and selected root/version environment."
+      ],
+      "nativeAssertions": [
+        "Actual native child receives exact original arguments, including empty/quoted/newline/Unicode values.",
+        "argv0 is the immutable installed native path; root/version/build/target/supervised values override spoofed inherited values."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_006_forwards_exact_arguments_and_verified_launcher_environment"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "argv0 JS entry and Node executable",
+          "nativeReplacement": "Native payload executable path and stable native supervisor; role arguments are unchanged."
+        }
+      ],
+      "parentEvidence": []
+    },
+    {
+      "rowId": "reference-shared-install-007",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 161,
+          "scenario": "rolls back a pending version that keeps crashing"
+        }
+      ],
+      "sourceAssertions": [
+        "Three failed attempts exit7; the next launch uses good package.",
+        "stderr explains attempt limit and rollback; current/lastRollback updated; pending and previous cleared."
+      ],
+      "nativeAssertions": [
+        "The stable native supervisor owns three actual failed child attempts and automatically starts old payload.",
+        "Exact crash-limit/rollback diagnostic is emitted; all state and trace assertions match."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "Four externally repeated JS launcher invocations",
+          "nativeReplacement": "One persistent native supervisor owns the same three-trial failure policy and final fallback, as required by the native supervision plan."
+        }
+      ],
+      "parentEvidence": [
+        "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-008",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 182,
+          "scenario": "rolls back a pending version that missed its deadline"
+        }
+      ],
+      "sourceAssertions": [
+        "An expired unconfirmed trial is rolled back before using it; stderr says was not confirmed in time."
+      ],
+      "nativeAssertions": [
+        "A real started native trial is expired under the install lock; supervisor stops it and runs old payload.",
+        "Timeout diagnosis, current, pending, previous and rollback reason are checked."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "Absolute v1 activation deadline",
+          "nativeReplacement": "Native confirmWithin interval begins at first actual payload launch; the effective expired-health-trial rollback and diagnostics are preserved."
+        }
+      ],
+      "parentEvidence": [
+        "native/tests/install_contract.rs::launch_based_deadline_allows_prelaunch_wait_and_healthy_confirmation"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-009",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 193,
+          "scenario": "keeps a confirmed version"
+        }
+      ],
+      "sourceAssertions": [
+        "Wrong-ID confirmation is false; selected ID confirms; later launches retain confirmed version and prior version without pending state."
+      ],
+      "nativeAssertions": [
+        "One native launch counts once; wrong-ID confirm is false; healthy selected ID clears pending.",
+        "Four subsequent launches keep candidate, previous old, no pending and no rollback."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_009_and_011_confirmed_native_version_keeps_arguments_and_single_trial_attempt"
+      ],
+      "recommendation": "verified for the originating bounded scenario",
+      "approvedExceptionIds": [],
+      "fieldSubstitutions": [],
+      "parentEvidence": []
+    },
+    {
+      "rowId": "reference-shared-install-010",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 206,
+          "scenario": "fails clearly when the active version is missing"
+        }
+      ],
+      "sourceAssertions": [
+        "Missing active version exits1 and names the missing version in stderr."
+      ],
+      "nativeAssertions": [
+        "Public supervise returns NotFound with version old is missing.",
+        "Actual native CLI exits1, emits no stdout and preserves the missing-version diagnostic."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_010_missing_active_version_has_actionable_identity"
+      ],
+      "recommendation": "verified for the originating bounded scenario",
+      "approvedExceptionIds": [],
+      "fieldSubstitutions": [],
+      "parentEvidence": []
+    },
+    {
+      "rowId": "reference-shared-install-011",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 231,
+          "scenario": "re-executes the launcher under the managed binary and keeps it once confirmed"
+        }
+      ],
+      "sourceAssertions": [
+        "Managed Node reexec preserves role arguments; launch counts once; confirming keeps binary; later package activation keeps managed Node."
+      ],
+      "nativeAssertions": [
+        "Native payload/supervisor require no Node reexec; original arguments and verified environment are unchanged.",
+        "One provisional native launch is counted once; confirmed version persists across repeated launches.",
+        "Healthy current controller/worker refreshes stable supervisor to the verified running native bytes."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_006_forwards_exact_arguments_and_verified_launcher_environment",
+        "native/tests/install_source_contract.rs::source_install_009_and_011_confirmed_native_version_keeps_arguments_and_single_trial_attempt",
+        "native/tests/install_source_contract.rs::source_install_013_healthy_confirmation_refreshes_verified_supervisor_child"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-no-node-runtime-management"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-no-node-runtime-management",
+          "sourceFieldOrOperation": "state.node / previousNode / host Node selection",
+          "nativeReplacement": "Host Node runtime management is removed. Native payload switching, exact arguments, confirmation and supervisor refresh remain required and tested."
+        }
+      ],
+      "parentEvidence": [
+        "native/tests/managed_role_contract.rs::actual_managed_controller_and_worker_refresh_the_verified_stable_supervisor",
+        "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-012",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 258,
+          "scenario": "goes back to the previous binary when the new one keeps failing"
+        }
+      ],
+      "sourceAssertions": [
+        "Broken managed Node fails three times, then old binary/package is restored with crashed rollback and node cleared."
+      ],
+      "nativeAssertions": [
+        "Broken native selected payload fails exactly three times, then old payload returns success.",
+        "Rollback from/to/reason and cleared pending/previous are checked; real native schema-crash rollback has separate actual-service evidence."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-no-node-runtime-management"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-no-node-runtime-management",
+          "sourceFieldOrOperation": "Broken host Node path and state.node removal",
+          "nativeReplacement": "Removed host runtime component; retained native executable failure/recovery policy is verified rather than waived."
+        }
+      ],
+      "parentEvidence": [
+        "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json",
+        "native/contracts/evidence/linux-cutover-2026-11-10/supervisor.log"
+      ]
+    },
+    {
+      "rowId": "reference-shared-install-013",
+      "source": [
+        {
+          "path": "packages/shared/src/install.test.ts",
+          "line": 277,
+          "scenario": "combines with a version switch and rewrites older launchers"
+        }
+      ],
+      "sourceAssertions": [
+        "Version switch and managed binary update preserve old rollback fields.",
+        "Older launcher is rewritten once; second refresh is unchanged; active version launches."
+      ],
+      "nativeAssertions": [
+        "Explicit atomic replacement of an old native launcher is byte-verified; refreshed actual supervisor launches active payload.",
+        "Automatic healthy confirmation keeps old stable bytes before health, then refreshes selected verified bytes; repeated health is unchanged.",
+        "Uninstalled caller cannot confirm; previous provisional process is a no-op; changed manifest invalidates cached verification.",
+        "Refresh failure is explicit and nonfatal after healthy confirmation, without rollback."
+      ],
+      "nativeTests": [
+        "native/tests/install_source_contract.rs::source_install_013_refreshes_older_native_launcher_then_runs_active_version",
+        "native/tests/install_source_contract.rs::source_install_013_healthy_confirmation_refreshes_verified_supervisor_child",
+        "native/tests/install_source_contract.rs::source_install_003_rejects_unverified_launcher_identity_child"
+      ],
+      "recommendation": "verified replacement within the recorded native artifact/runtime contract",
+      "approvedExceptionIds": [
+        "native-no-node-runtime-management",
+        "native-artifact-and-update-identity"
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-no-node-runtime-management",
+          "sourceFieldOrOperation": "Managed Node update combined with package switch",
+          "nativeReplacement": "Removed host Node management; native version-switch, rollback, automatic stable-launcher refresh and role preservation are retained."
+        },
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "Generated JS launcher-version marker",
+          "nativeReplacement": "Atomic checksum-verified replacement of the stable native executable after authenticated role health."
+        }
+      ],
+      "parentEvidence": [
+        "native/tests/managed_role_contract.rs::actual_managed_controller_and_worker_refresh_the_verified_stable_supervisor",
+        "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json"
+      ],
+      "additionalNativeTests": [
+        "native/tests/release_workflow_contract.rs::same_active_build_id_cannot_rebind_the_controller_mirror",
+        "native/tests/release_workflow_contract.rs::same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror"
+      ]
+    },
+    {
+      "rowId": "reference-controller-self-update-003",
+      "source": [
+        {
+          "path": "apps/controller/src/self-update.test.ts",
+          "line": 148,
+          "scenario": "refuses builds it cannot switch to"
+        }
+      ],
+      "sourceAssertions": [
+        "Unmanaged build refuses update.",
+        "Missing restart capability refuses update.",
+        "Wrong SHA digest reports expected0000 and does not restart."
+      ],
+      "nativeTests": [
+        "native/tests/release_workflow_contract.rs::source_controller_self_update_003_refuses_unmanaged_and_bad_checksums",
+        "native/tests/install_source_contract.rs::source_install_003_rejects_unverified_launcher_identity_child"
+      ],
+      "nativeAssertions": [
+        "Unmanaged native controller returns CONFLICT before scheduling any update.",
+        "Physical current executable identity is required; outside-store or forged markers cannot advertise restart capability.",
+        "Bad bundle digest includes expected/actual, returns BAD_REQUEST and leaves active/pending/database update state untouched."
+      ],
+      "fieldSubstitutions": [
+        {
+          "exceptionId": "native-artifact-and-update-identity",
+          "sourceFieldOrOperation": "Optional injected onRestart callback",
+          "nativeReplacement": "Every running native controller has a restart Notify wired to graceful server exit; physical managed ownership is the capability gate. No product option creates a managed server without that hook."
+        }
+      ],
+      "parentEvidence": [
+        "native/tests/managed_role_contract.rs",
+        "native/tests/controller_contract.rs::source_controller_publish_checksum_error_reports_expected_and_actual"
+      ],
+      "recommendation": "verified native capability/refusal replacement; combine with parent actual-role and HTTP checksum proofs"
+    },
+    {
+      "rowId": "reference-controller-self-update-004",
+      "source": [
+        {
+          "path": "apps/controller/src/self-update.test.ts",
+          "line": 164,
+          "scenario": "issues client tokens offline for recovery"
+        }
+      ],
+      "sourceAssertions": [
+        "Offline-issued admin token has local HTTPS URL and authenticates as recovered/admin."
+      ],
+      "nativeTests": [
+        "native/tests/cli_local_coordination.rs::source_self_update_004_offline_cli_credential_authenticates_on_running_controller"
+      ],
+      "nativeAssertions": [
+        "Actual offline CLI token creation while controller is live authenticates as recovered/admin.",
+        "After client config deletion, --login reconstructs local URL/pinned CA/admin credential offline; new client authenticates and stderr does not expose the token."
+      ],
+      "recommendation": "verified for the originating bounded scenario"
+    }
+  ],
+  "implementation": {
+    "identity": "Embedded BUILD_ID/VERSION and actual executable path/target/bytes must match verified installed metadata; active/provisional state is read afresh. Environment markers alone are insufficient.",
+    "cache": "A single-entry successful byte-verification cache is keyed by canonical store/exe path, canonical manifest digest and kernel device/inode/size/mtime/ctime nanoseconds; stat is checked again after hashing. Small metadata/state remain fresh.",
+    "asyncOwnership": "All async managed-store gates run blocking work off the reactor. Controller Arc/instance leases are captured through blocking gates and healthy confirmation; worker confirmation retains its instance lease.",
+    "confirmation": "Old stable bytes remain until authenticated role health. Confirmation and atomic verified refresh share the install lock. A refresh error is explicit while healthy confirmation remains committed.",
+    "review": "Behavior owner independently reviewed identity/cache/state invalidation, provisional previous no-op, nonfatal refresh and blocking ownership; no high-confidence introduced issue found."
+  },
+  "sourceSnapshot": [
+    {
+      "path": "native/src/install.rs",
+      "sha256": "sha256:6923c3c19038caa0d299e9f77e3b80c92499c8caa659d65e1bb1eabbfb8ab051"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "sha256:1d6efa91c4bb2c6d2b32cca048ec79ac862df369091241b5894650c2995d9758"
+    },
+    {
+      "path": "native/src/worker.rs",
+      "sha256": "sha256:17463b38ae1d2a46b5870720ed8093e434ef0889b68618d72572d9eaabe33078"
+    },
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "sha256:e8f0d05828e762fcc75d0cd7e1ae9a7200c9a7f0237bb703996c8a38b679cddd"
+    },
+    {
+      "path": "native/src/cli.rs",
+      "sha256": "sha256:5ecae8b82f2e20c4b546087454177ad4611a6b995bb44f7b856b88e5003cc958"
+    },
+    {
+      "path": "native/src/cli/parse.rs",
+      "sha256": "sha256:81acddb2bc35a6459a2ca8a36e6ca972d31810bcb10916e6ba38f1e897a7a65a"
+    },
+    {
+      "path": "native/src/transfer.rs",
+      "sha256": "sha256:763e2019e09fc18f02f2337a42666680cf649eb2cac3499943773cde8104cf47"
+    },
+    {
+      "path": "native/tests/install_source_contract.rs",
+      "sha256": "sha256:5c37dd3baf1fa905925f4a70f50b008d125489daa110f8fec68d29cae46512c4"
+    },
+    {
+      "path": "native/tests/install_contract.rs",
+      "sha256": "sha256:410756eec7ce59b6ddc317e213712f930b6cbb624a12a364edd0997f78a92b22"
+    },
+    {
+      "path": "native/tests/release_workflow_contract.rs",
+      "sha256": "sha256:88f005f9a98bda6f891e8b5959c173cd0cbeefdb0261eedfc4902d89aded28ef"
+    },
+    {
+      "path": "native/tests/cli_local_coordination.rs",
+      "sha256": "sha256:de02a6073af3dc1326f94280b2d6d0e3c2a1cd627ccc962031af9669abcb90a2"
+    },
+    {
+      "path": "native/tests/managed_role_contract.rs",
+      "sha256": "sha256:ee6873d45b60e8b4769e0c271471840aa9f3c5d88b5f3544ecb2b1098f363df5"
+    },
+    {
+      "path": "native/tests/controller_contract.rs",
+      "sha256": "sha256:b0ec1f6ee7d79418eea8761a80bcdf9df70adb49af8760089ca6e9cafa8bcbff"
+    },
+    {
+      "path": "native/tests/recovery_e2e.rs",
+      "sha256": "sha256:883e8dc3653f8a0c08d97d0f5e6e0108c9e97f39b18474d232e80edf7f83b3b9"
+    },
+    {
+      "path": "native/Cargo.lock",
+      "sha256": "sha256:f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+    },
+    {
+      "path": "native/scripts/capture-cli-workflows.mjs",
+      "sha256": "sha256:3a62dbf333c9365ec2075f68673f55ffc4bd4902f71ed7d7e2dac7e47efbf5e4"
+    },
+    {
+      "path": "native/contracts/cli-workflows-v1.json",
+      "sha256": "sha256:51d7be412fe23045e42ef6ed6dba5fd58eb1ed4adabd285ea753a27f9d525aeb"
+    }
+  ],
+  "logs": [
+    {
+      "path": "native/contracts/evidence/install-source-red.log",
+      "sha256": "sha256:62c903feee21abc098ad53755dcd0fe1b2ba4753f56e560197cfca0a51b3295a"
+    },
+    {
+      "path": "native/contracts/evidence/install-source-diagnostics-red.log",
+      "sha256": "sha256:47bcd4d8d367bb49134bf63d368fe4342904a466151ca9743c123d9a8b38f3ca"
+    },
+    {
+      "path": "native/contracts/evidence/controller-managed-identity-red.log",
+      "sha256": "sha256:166f2e8f8089411c6830136d2f74ef82e8298ee3f59d8ebf5a8b66232a1f7aa5"
+    },
+    {
+      "path": "native/contracts/evidence/controller-managed-identity-green.log",
+      "sha256": "sha256:a7bd9a735c1395a6bd890da42687cbb284100b87a48ab78e647032384bdcbafd"
+    },
+    {
+      "path": "native/contracts/evidence/supervisor-health-refresh-red.log",
+      "sha256": "sha256:f4b33d582dd1dd671fe22d0888e6cd061633e2a88516bb575a2fd4d9d6f80390"
+    },
+    {
+      "path": "native/contracts/evidence/supervisor-health-refresh-green.log",
+      "sha256": "sha256:59659ded87a827b8d414b5f334f86fd90df455c69edc4bb2be5d92e8184cd758"
+    },
+    {
+      "path": "native/contracts/evidence/install-source-final-tests.log",
+      "sha256": "sha256:6d1129d798d7b9bce386fe1b8a8173010a887fc22d4f6e55132dc9a7797ea795"
+    },
+    {
+      "path": "native/contracts/evidence/install-source-missing-cli.log",
+      "sha256": "sha256:cf278443ac4b4b849883493cfb1d97448dcee27e32d77607837129e53835d005"
+    },
+    {
+      "path": "native/contracts/evidence/self-update-refusals-red.log",
+      "sha256": "sha256:e3d5a7dc3b5775ec83c3ec5e2c9c42fe593419b4f9238cb4d4be0b870416302d"
+    },
+    {
+      "path": "native/contracts/evidence/self-update-refusals-green.log",
+      "sha256": "sha256:7e12f0dc72e29d97c9e5493cda7dc72cc370046bbd190384a930f8afc5858def"
+    },
+    {
+      "path": "native/contracts/evidence/offline-recovery-token.log",
+      "sha256": "sha256:095fff1db4f2c60e6d837bb14da24b3b12315ee1697017c9b184fe1a97f5ccee"
+    },
+    {
+      "path": "native/contracts/evidence/cli-delimiter-red.log",
+      "sha256": "sha256:79386439827d8783f8b4dc7bd37ed7d6b8a5bebb3cb40dfa36577cf5325c413a"
+    },
+    {
+      "path": "native/contracts/evidence/cli-delimiter-acceptance-green.log",
+      "sha256": "sha256:03eb49593bbc8e2d829c526eba4dc731f7212e50e9a45b5f5d6370d1eef5a89b"
+    },
+    {
+      "path": "native/contracts/evidence/cli-terminal-output-tests.log",
+      "sha256": "sha256:f8246cccce4777162096cd0a199c7cbef8fe1a465f9afcad7f801ab6cafff4aa"
+    },
+    {
+      "path": "native/contracts/evidence/cli-final-fixture-replay.log",
+      "sha256": "sha256:6cb7e558ad9d640148a04c92aae204a89ea97b7e8b32b16562c762b5c3d6c45f"
+    },
+    {
+      "path": "native/contracts/evidence/release-physical-identity-tests.log",
+      "sha256": "sha256:a08ad8c53153824b172b6d41cd985d1de4715f3ec2abc28564ba45879ca5b196"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-publication-red.log",
+      "sha256": "sha256:75ce88aa85a8bc9c045206a3e7176dff4764871535bc40801428a43149b59c6d"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-publication-green.log",
+      "sha256": "sha256:2921a2c4523c25a50a4cebb952169ccda5a64152ab5a4d3883e1b0b79af8e410"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-release-refusal-suite.log",
+      "sha256": "sha256:fcf1f9f3460b943698a2c6ce6b85968beea43c8e1c2b5c48f4165a9ed02c633d"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-final-clippy.log",
+      "sha256": "sha256:dcfe1419be834616950011b7fb8be346fae2f450d693edf21f1b606b3ae21c99"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-final-format.log",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native/contracts/evidence/same-id-updates-regression.log",
+      "sha256": "sha256:ab3a5d219f73d200cf23547d2fabdb30ad37b9149ae174446109bc39762e5f49"
+    }
+  ],
+  "limits": [
+    "Linux x86_64 local proof. Actual Mac overlay/runtime evidence is owned by parent/behavior.",
+    "Controlled native C children prove arguments, retries, deadline and lifecycle state; they do not substitute for a real controller/worker deployment.",
+    "Current actual managed-role proof and earlier Linux real-service cutover/rollback evidence are linked separately, with their own binary/source provenance.",
+    "Node state fields and npm/package identity formulas are explicitly replaced; retained native version-switch, argument, confirmation, rollback and launcher-refresh behavior is verified.",
+    "No signing, publication, reboot or external target claim."
+  ],
+  "sameIdPublication": {
+    "red": "An internally consistent changed bundle reused the active ID and returned HTTP200/action:none, allowing a fresh current-build mirror to be populated with conflicting artifacts.",
+    "correction": "The verified active store manifest anchors same-ID input before mirror mutation. Publisher import, official installation and bootstrap all compare the entire parsed manifest; changed input is rejected, identical publication remains idempotent.",
+    "tests": [
+      "native/tests/release_workflow_contract.rs::same_active_build_id_cannot_rebind_the_controller_mirror",
+      "native/tests/release_workflow_contract.rs::same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror"
+    ],
+    "assertions": [
+      "Collision is rejected before current mirror manifest/artifacts are written.",
+      "Installed active manifest/current/pending state remain unchanged.",
+      "Repeated honest identical bundle returns action:none twice.",
+      "Bootstrap and official install fetch only tag metadata, checksums and manifest; no target archive is requested after collision."
+    ]
+  },
+  "productionFreeze": {
+    "status": "frozen",
+    "buildId": "native-preview-20261110-95cfa7161440",
+    "productionInputFiles": 40,
+    "productionInputSha256": "95cfa71614400b4d726f9c6caccbd87d75e4e003701bd753879f8158e580e3e4",
+    "captureSnapshotSha256": "dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+    "captureJob": "01M71RTC1RCA4FHFE8BZBF8G94",
+    "reportedBy": "Parent/operations agent; isolated release build was submitted after production hash verification. This record does not assert its later build outcome."
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "recordedDate": "2026-11-10",
+  "status": "unsigned development preview; no publication/live install",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview; sourceRevision is the parent reference commit, and this checkpoint identifies actual native production/build inputs. Not a stable release or clean-commit provenance claim.",
+  "productionCheckpointSha256": "95cfa71614400b4d726f9c6caccbd87d75e4e003701bd753879f8158e580e3e4",
+  "supplementalEmbeddedInputs": {
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "scripts/install-native.sh": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc"
+  },
+  "relatedLinuxSnapshot": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+  "artifacts": [
+    {
+      "target": "darwin/arm64",
+      "path": "/tmp/gridstator-mac-preview-artifacts-95cfa7161440/gridstator-darwin-arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "targetedCollisionTests": {
+        "passed": 2,
+        "log": "guard-tests-arm64.log"
+      },
+      "strictAllTargetClippy": "passed",
+      "actualReleaseByteRoles": {
+        "passed": 2,
+        "log": "release-roles-arm64.log"
+      },
+      "runtimeScope": "native ARM64 M4"
+    },
+    {
+      "target": "darwin/amd64",
+      "path": "/tmp/gridstator-mac-preview-artifacts-95cfa7161440/gridstator-darwin-amd64",
+      "size": 23789856,
+      "sha256": "e01c99db7c374f84204bd703a85a8f0bdf4049028dd5de0ba2d14da2f39cf265",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "targetedCollisionTests": {
+        "passed": 2,
+        "log": "guard-tests-x86_64.log"
+      },
+      "strictAllTargetClippy": "passed",
+      "actualReleaseByteRoles": {
+        "passed": 2,
+        "log": "release-roles-x86_64.log"
+      },
+      "runtimeScope": "x86_64 under Rosetta on M4; not physical Intel hardware"
+    }
+  ],
+  "productionDeltaFromC36": [
+    "native/src/updates.rs: active BuildID manifest collision guard"
+  ],
+  "priorBroadAcceptance": "../m4-delta-2026-11-10/summary.json records c36 ARM/Rosetta234default tests each, strict Clippy, actual managed update and roles; ../remote-ssh-m4-2026-11-10 records actual SSH workflow for c36/finalVSIX. Those proofs remain bounded to their recorded bytes.",
+  "limits": [
+    "The executables are development previews from an uncommitted working tree. sourceRevision is the parent commit; the checkpoint identifies the actual production/build files.",
+    "Mac linker ad-hoc signature state is inspected only; no Developer ID signing/notarization/stable release claim.",
+    "Intel binary executes under Rosetta on M4; physical Intel hardware remains unverified.",
+    "Release-byte role checks intentionally force Docker/act unavailable and use private temporary manifest/store fixtures; this is not Mac Docker-positive or stable four-target update availability evidence.",
+    "No global installation, default editor settings changes, production v1 changes or release publication."
+  ],
+  "actualRoleNodeBuildMetadataVerifiedAgainstReleaseArtifacts": [
+    {
+      "record": "foreground-evidence.json-native-mac-role-kjxshq",
+      "target": "darwin/arm64",
+      "reportedBuildId": "native-preview-20261110-95cfa7161440",
+      "reportedSha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff",
+      "managed": false
+    },
+    {
+      "record": "launchd-evidence.json-native-mac-role-82EVoc",
+      "target": "darwin/arm64",
+      "reportedBuildId": "native-preview-20261110-95cfa7161440",
+      "reportedSha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff",
+      "managed": true
+    },
+    {
+      "record": "foreground-evidence.json-native-mac-role-jAwW9j",
+      "target": "darwin/amd64",
+      "reportedBuildId": "native-preview-20261110-95cfa7161440",
+      "reportedSha256": "e01c99db7c374f84204bd703a85a8f0bdf4049028dd5de0ba2d14da2f39cf265",
+      "managed": false
+    },
+    {
+      "record": "launchd-evidence.json-native-mac-role-vIZHFA",
+      "target": "darwin/amd64",
+      "reportedBuildId": "native-preview-20261110-95cfa7161440",
+      "reportedSha256": "e01c99db7c374f84204bd703a85a8f0bdf4049028dd5de0ba2d14da2f39cf265",
+      "managed": true
+    }
+  ]
+}

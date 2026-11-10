@@ -1,0 +1,20 @@
+{
+  "target": {
+    "version": "2.0.0-dev.1",
+    "buildId": "buildx-fallback-dev-8e696aa15b2e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "target": "linux/arm64",
+    "sha256": "d3b5e64741b595ce7fb24ab049d67cdc2992b23cc2ebeb98e3dbbb4f8d9d20bd",
+    "size": 26577552,
+    "runtime": "rust",
+    "sourceState": "working-tree-snapshot",
+    "runtimeValidated": false
+  },
+  "staticELFVerified": true,
+  "sourceManifestEntries": 981,
+  "allSourceManifestEntriesMatchSnapshot": true,
+  "snapshotId": "sha256:de18c8cb8da1393d6463054e5bce13672c4411c826165bb73fca704baf874b91",
+  "jobId": "01M721B3N1R7ABBPWW0PSSBJRC",
+  "runtimeSeconds": 333.836,
+  "nativeExecution": "Whole actual ARM workflow passed exit0/default strict6cases on this exact binary; ../corrected-dev-strict/proof.json"
+}

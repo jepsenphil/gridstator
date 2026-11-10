@@ -30,6 +30,7 @@ export const testHost = {
 };
 
 export const workspace = {
+  isTrusted: true,
   workspaceFolders: [],
   getConfiguration: () => ({
     get<T>(key: string, fallback: T): T {
@@ -54,6 +55,7 @@ export const ConfigurationTarget = { Global: 1, Workspace: 2 };
 
 export const window = {
   showWarningMessage: async (_message: string, _options: unknown, action: string) => action,
+  showOpenDialog: async (): Promise<Array<{ fsPath: string }> | undefined> => undefined,
   async withProgress<T>(
     _options: unknown,
     task: (

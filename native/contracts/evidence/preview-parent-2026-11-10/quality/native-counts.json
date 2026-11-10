@@ -1,0 +1,303 @@
+[
+  {
+    "target": "unittests src/lib.rs (target/debug/deps/gridstator-d8a36458b157b87e)",
+    "status": "ok",
+    "passed": 38,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "unittests src/main.rs (target/debug/deps/gridstator-f9a55642b093bb79)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/bridge_source_scenarios.rs (target/debug/deps/bridge_source_scenarios-5e5da42cc96baf98)",
+    "status": "ok",
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/cli_acceptance.rs (target/debug/deps/cli_acceptance-e0d34ee2097bdce3)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/cli_contract.rs (target/debug/deps/cli_contract-283459ea04c477c9)",
+    "status": "ok",
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/cli_local_coordination.rs (target/debug/deps/cli_local_coordination-3b3e673a280702cc)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/client_errors.rs (target/debug/deps/client_errors-9728a916a9f92805)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/client_urls.rs (target/debug/deps/client_urls-a365c14becf87d15)",
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/cluster_e2e.rs (target/debug/deps/cluster_e2e-d50994f4b9df58ea)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 2
+  },
+  {
+    "target": "tests/contract_fixtures.rs (target/debug/deps/contract_fixtures-3127c4ae8af964c8)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)",
+    "status": "ok",
+    "passed": 18,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/controller_reconnect_races.rs (target/debug/deps/controller_reconnect_races-3dd885cb9ddbab3f)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/controller_retention.rs (target/debug/deps/controller_retention-de92e78886ca40bb)",
+    "status": "ok",
+    "passed": 4,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/controller_source_scenarios.rs (target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/db_contract.rs (target/debug/deps/db_contract-43c489f5d38c4942)",
+    "status": "ok",
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/discovery_contract.rs (target/debug/deps/discovery_contract-62a576b31b08b983)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/executor_contract.rs (target/debug/deps/executor_contract-d71a623940f94f5d)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 14
+  },
+  {
+    "target": "tests/install_contract.rs (target/debug/deps/install_contract-e1be5cd5c9083584)",
+    "status": "ok",
+    "passed": 20,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/install_source_contract.rs (target/debug/deps/install_source_contract-b231de4dfacde950)",
+    "status": "ok",
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/integration_source_scenarios.rs (target/debug/deps/integration_source_scenarios-888724d87c103afe)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 2
+  },
+  {
+    "target": "tests/launchd_e2e.rs (target/debug/deps/launchd_e2e-b74b212750498e13)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/managed_role_contract.rs (target/debug/deps/managed_role_contract-3e3bb70692f04581)",
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/packaging_contract.rs (target/debug/deps/packaging_contract-e168774cea41fe15)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/pki_contract.rs (target/debug/deps/pki_contract-450303c06323db84)",
+    "status": "ok",
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/protocol_boundaries.rs (target/debug/deps/protocol_boundaries-e407f0819b85bf8b)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/protocol_validation.rs (target/debug/deps/protocol_validation-63ec4c4f564a3a04)",
+    "status": "ok",
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/recovery_e2e.rs (target/debug/deps/recovery_e2e-98dedbbe82bc2be7)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 1
+  },
+  {
+    "target": "tests/release_workflow_contract.rs (target/debug/deps/release_workflow_contract-d6800d054464e423)",
+    "status": "ok",
+    "passed": 11,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/reports_contract.rs (target/debug/deps/reports_contract-16545561a205d55e)",
+    "status": "ok",
+    "passed": 6,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/scheduler_contract.rs (target/debug/deps/scheduler_contract-a672e5e85ab56f09)",
+    "status": "ok",
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/scheduler_differential.rs (target/debug/deps/scheduler_differential-0613c3759c882dd0)",
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/service_contract.rs (target/debug/deps/service_contract-f62eb80c96d6c53d)",
+    "status": "ok",
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/system_scope_e2e.rs (target/debug/deps/system_scope_e2e-c9227f0aa00e9191)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 1
+  },
+  {
+    "target": "tests/systemd_e2e.rs (target/debug/deps/systemd_e2e-5d88278ebf4ed5f1)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 1
+  },
+  {
+    "target": "tests/transfer_contract.rs (target/debug/deps/transfer_contract-10972c1e4bc07c07)",
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/update_compatibility_contract.rs (target/debug/deps/update_compatibility_contract-76aca163706b819a)",
+    "status": "ok",
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/updates_contract.rs (target/debug/deps/updates_contract-03ae217a70592815)",
+    "status": "ok",
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "tests/updates_source_scenarios.rs (target/debug/deps/updates_source_scenarios-f029d82918c7744b)",
+    "status": "ok",
+    "passed": 20,
+    "failed": 0,
+    "ignored": 1
+  },
+  {
+    "target": "tests/worker_contract.rs (target/debug/deps/worker_contract-4d34f7263bb198b9)",
+    "status": "ok",
+    "passed": 5,
+    "failed": 0,
+    "ignored": 9
+  },
+  {
+    "target": "tests/worker_toolchain_source.rs (target/debug/deps/worker_toolchain_source-9aaeaf83774c6682)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 1
+  },
+  {
+    "target": "tests/workspace_contract.rs (target/debug/deps/workspace_contract-f59aac5f098b4ebe)",
+    "status": "ok",
+    "passed": 19,
+    "failed": 0,
+    "ignored": 0
+  },
+  {
+    "target": "unittests examples/assemble_release.rs (target/debug/examples/assemble_release-818178f1f31a15d4)",
+    "status": "ok",
+    "passed": 0,
+    "failed": 0,
+    "ignored": 0
+  }
+]

@@ -1,0 +1,16 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running tests/service_contract.rs (target/debug/deps/service_contract-f62eb80c96d6c53d)
+
+running 8 tests
+test controls_are_argument_vectors_and_mac_stop_boots_out_instead_of_triggering_keepalive ... ok
+test service_definitions_reject_control_injection_relative_paths_and_ambiguous_names ... ok
+test source_001_controller_user_unit_preserves_payload_arguments_and_deduplicates_path ... ok
+test source_002_agent_system_unit_keeps_account_docker_access_home_and_data_directory ... ok
+test systemd_user_definition_runs_the_native_supervisor_and_escapes_service_arguments ... ok
+test launchd_uses_argument_array_account_home_docker_context_and_separate_logs ... ok
+test system_scope_requires_an_explicit_account_and_renders_boot_start_configuration ... ok
+test actual_systemd_parser_accepts_working_directory_with_spaces ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TimestampSchema } from './common.js';
-import { AgentToolsSchema, ToolNameSchema, ToolPlatformSchema } from './toolchain.js';
+import { AgentToolsSchema, ToolNameSchema, ReportedToolPlatformSchema } from './toolchain.js';
 
 /**
  * Worker updates. The controller is the source of truth: a worker is current when it runs the
@@ -31,8 +31,10 @@ export const RollbackSchema = z.object({
 export const AgentBuildSchema = BuildRefSchema.extend({
   /** Started from a managed install (version store + launcher), so it can update itself. */
   managed: z.boolean(),
-  /** Node.js version, e.g. "v24.11.0". */
-  node: z.string().max(32),
+  /** Node.js version for the legacy core; Rust agents have no host Node runtime. */
+  node: z.string().max(32).optional(),
+  runtime: z.enum(['node', 'rust']).optional(),
+  target: z.string().max(64).optional(),
   /** The launcher's last automatic rollback, if any. */
   lastRollback: RollbackSchema.nullable(),
   /** Versions of the managed tools it runs; absent before toolchain management. */
@@ -41,6 +43,8 @@ export const AgentBuildSchema = BuildRefSchema.extend({
 export type AgentBuild = z.infer<typeof AgentBuildSchema>;
 
 export const ControllerBuildSchema = BuildRefSchema.extend({
+  runtime: z.enum(['node', 'rust']).optional(),
+  target: z.string().max(64).optional(),
   /** Workers can download this build from the controller. */
   updatable: z.boolean(),
   /** Why workers cannot update to it (e.g. the controller runs an unbundled build). */
@@ -143,7 +147,7 @@ export const ToolchainEntrySchema = z.object({
   /** Mirror state per platform that workers need. */
   platforms: z.array(
     z.object({
-      platform: ToolPlatformSchema,
+      platform: ReportedToolPlatformSchema,
       state: z.enum(['ready', 'preparing', 'failed']),
       reason: z.string().nullable(),
     }),

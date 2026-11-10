@@ -1,0 +1,7 @@
+{
+  "productionCheckpointEntries": 40,
+  "allProductionCheckpointEntriesMatchSubmittedSnapshot": true,
+  "snapshotManifestDigest": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+  "artifactSourceManifestEntries": 649,
+  "allSourceManifestEntriesMatchSubmittedSnapshot": true
+}

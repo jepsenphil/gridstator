@@ -1,0 +1,33 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-memory-dev/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.59s
+     Running tests/worker_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/worker_contract-f0e165539f9bd0ba)
+
+running 8 tests
+test aborting_the_coordinator_cancels_owned_work_and_preserves_lost_outbox ... Agent contract-01M71Y2XNQ0JEDM01ZE0SFE6AK connected
+ok
+test actual_agent_cli_sigterm_drain_finishes_work_and_exits_cleanly ... ok
+test artifact_upload_failure_still_delivers_durable_command_result ... Agent contract-01M71Y3206CV1YR55KNCFWVX2X connected
+Agent contract-01M71Y3206CV1YR55KNCFWVX2X connected
+ok
+test disconnect_through_completion_replays_durable_logs_before_result_ack ... Agent contract-01M71Y32YESZ2S5XWR56M7TKQ8 connected
+Agent contract-01M71Y32YESZ2S5XWR56M7TKQ8 connected
+Agent contract-01M71Y32YESZ2S5XWR56M7TKQ8 connected
+ok
+test drain_keeps_heartbeat_and_finishes_running_job_without_accepting_more ... Agent contract-01M71Y36C3RN6NRSCK5M838NFW connected
+Agent contract-01M71Y36C3RN6NRSCK5M838NFW connected
+ok
+test missing_snapshot_blob_yields_terminal_result_instead_of_stranding_job ... Agent contract-01M71Y399R1XQ41P36CQF5J308 connected
+Agent contract-01M71Y399R1XQ41P36CQF5J308 connected
+ok
+test ordinary_shutdown_stops_work_and_persists_lost_result ... Agent contract-01M71Y39TT0KSVAN4DAACCZ40C connected
+Agent contract-01M71Y39TT0KSVAN4DAACCZ40C connected
+ok
+test update_probe_releases_admission_and_restart_handoff_is_explicit ... Agent contract-01M71Y3AMQSA9E5T3VC5XQSPM0 connected
+Agent contract-01M71Y3AMQSA9E5T3VC5XQSPM0 connected
+Agent contract-01M71Y3AMQSA9E5T3VC5XQSPM0 connected
+Agent contract-01M71Y3AMQSA9E5T3VC5XQSPM0 connected
+Agent contract-01M71Y3AMQSA9E5T3VC5XQSPM0 connected
+ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 17.07s
+

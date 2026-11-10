@@ -1,0 +1,24 @@
+{
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "result": "passed",
+  "actualTargets": [
+    "linux/amd64",
+    "linux/arm64"
+  ],
+  "binarySha256": {
+    "linux-arm64": "0668296c0f7a8711ac5654385ea00a7e69600f411d63c5f2effcb2e53c675f88",
+    "linux-amd64": "0d496703deb256b6b10ebbb8d87edfe788995f093975708adbeed62abf61df1f"
+  },
+  "sourceCheckpoint": "native/contracts/evidence/self-build-parent-preview-2026-11-10/common-preview-checkpoint.json",
+  "coreCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "dedicatedPrivateDirFunctionLiterallyUnchanged": true,
+  "dedicatedPrivateDirFunctionSha256": "f2b2f4c6ca525888379e7100dab468465afb41a103834f4f9ab9ed37d07da094",
+  "cases": {
+    "existingAbsoluteParent": "0775 preserved, client0600, dedicateddata0700",
+    "relativeLeafConfig": "success, cwd0775 preserved, client0600, dedicateddata0700",
+    "missingNestedParents": "0700/0700, client0600, dedicateddata0700"
+  },
+  "rawConfigOrCredentialRetained": false,
+  "privateStateRemoved": true,
+  "scope": "Exactfrozen6994 bytes; actualx64 read-only networknoneAlpine and actualARMunprivilegedM4LinuxVM; Mac proofs are separate"
+}

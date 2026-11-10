@@ -1,0 +1,23 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.02s
+     Running tests/integration_source_scenarios.rs (native/target/debug/deps/integration_source_scenarios-888724d87c103afe)
+
+running 1 test
+test all_eleven_source_scenarios_with_two_real_native_workers ... Integration source evidence: /tmp/gridstator-integration-source-nz1EKY
+Starting integration source 001
+Error: integration source 001 (private evidence /tmp/gridstator-integration-source-nz1EKY)
+
+Caused by:
+    CLI ["run", "--no-snapshot", "--image", "alpine:3.20", "--node", "beta", "--", "sh", "-c", "echo \"hi from $GRIDSTATOR_NODE_NAME\"; echo oops >&2; exit 7"] exit 2; stdout ; stderr error: unknown option '-c'
+    (run with --help for usage)
+    
+FAILED
+
+failures:
+
+failures:
+    all_eleven_source_scenarios_with_two_real_native_workers
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.11s
+
+error: test failed, to rerun pass `--test integration_source_scenarios`

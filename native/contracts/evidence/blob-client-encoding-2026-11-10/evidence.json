@@ -1,0 +1,82 @@
+{
+  "recordedAt": "2026-11-10T04:37:39.156035+00:00",
+  "classification": "Additional retained-client wire acceptance; development evidence, not stable release approval",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "row": "blob-get-client-encoding",
+  "environment": {
+    "os": "Linux",
+    "arch": "x86_64",
+    "rust": "1.99.1",
+    "transport": "actual private native TLS controller; isolated initialized config and copied CLI"
+  },
+  "regression": {
+    "before": "Retained client encodes digest colon as %3A; raw request path was validated as a digest and returned 404",
+    "after": "Existing safe URI decoder runs exactly once before strict digest validation/open",
+    "negativeBoundaries": [
+      "double-encoded colon returns 404",
+      "encoded slash/traversal returns 404",
+      "malformed percent escape returns 400"
+    ]
+  },
+  "checks": [
+    {
+      "command": "cd native && cargo test --locked --test controller_contract retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes",
+      "result": "expected failure before fix",
+      "log": "red.log"
+    },
+    {
+      "command": "cd native && cargo test --locked --test controller_contract",
+      "result": "passed",
+      "passed": 6,
+      "log": "native-green.log"
+    },
+    {
+      "command": "GRIDSTATOR_NATIVE_CLI_E2E=IMMUTABLE_COPIED_NATIVE_CLI pnpm exec vitest run apps/vscode/src/native.integration.test.ts --no-file-parallelism",
+      "result": "passed",
+      "passed": 1,
+      "log": "sdk-green.log",
+      "executableIdentity": "sdk-cli.json",
+      "scope": "Actual retained TypeScript GridstatorClient.getBlob reads exact capture bytes against a native TLS controller; temporary binary/config/data removed by owned cleanup."
+    },
+    {
+      "command": "cd native && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "clippy.log"
+    },
+    {
+      "command": "cd native && cargo fmt --all -- --check",
+      "result": "passed",
+      "log": "fmt.log"
+    }
+  ],
+  "sources": [
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "2c52f77684923031e049ad5c11a7734405424750513c5fa2984f1ee8dab4c32c"
+    },
+    {
+      "path": "native/tests/controller_contract.rs",
+      "sha256": "7f08d737d367165c12011ccb94fb03715cd3b9fcf7dd87cef1f9e40f3b08405a"
+    },
+    {
+      "path": "apps/vscode/src/native.integration.test.ts",
+      "sha256": "5fa8f8711d0a974f517c486534842554737ba1e37d6487ceb902a4bf9070d387"
+    },
+    {
+      "path": "packages/client/src/client.ts",
+      "sha256": "bf685af3b98b36b90279a3a6b2628c4f3bd54270b209dafcce8b2051a8028aa1"
+    }
+  ],
+  "replacementPreview": "native-preview-20261110-e3e5fae51c8e",
+  "scope": "This supplements frozen declarations rather than changing frozen source. Final Linux/Mac release-byte checks are separate.",
+  "postVerificationFormatting": {
+    "path": "apps/vscode/src/native.integration.test.ts",
+    "beforeSha256": "126c32572335625b68e91c9b58eee7834b8377bef2b6aa933695a3ec2ae52fd2",
+    "afterSha256": "5fa8f8711d0a974f517c486534842554737ba1e37d6487ceb902a4bf9070d387",
+    "change": "Prettier formatting only after the recorded SDK run; getBlob behavior assertion unchanged. Final typecheck, scoped lint and full format check passed."
+  },
+  "independentReview": {
+    "result": "no code issues found",
+    "scope": "One safe decode; authorization precedes reading; strict digest validation before path construction; malformed, traversal and double encoding behavior; exact binary stream. Targeted test independently passed 1/1; all ten prior evidence checksums passed."
+  }
+}

@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.03s
+     Running unittests src/lib.rs (target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 2 tests
+test executor::build::tests::captured_containerd_metadata_identifies_local_images_without_config_digest ... ok
+test executor::build::tests::source_buildx_flags_map_spec_without_exposing_secrets ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.00s
+

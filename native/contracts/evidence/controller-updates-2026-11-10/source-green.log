@@ -1,0 +1,59 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.63s
+     Running tests/controller_source_scenarios.rs (native/target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)
+
+running 6 tests
+test source_014_disconnected_pending_result_resumes_and_is_acknowledged ... ok
+test source_006_queued_cancel_and_failed_143_result_become_cancelled ... ok
+test source_008_retry_budget_manual_attempt_three_and_active_conflict ... ok
+test source_018_two_node_shards_aggregate_and_retry_only_failed_lineage ... ok
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... ok
+test source_012_disappearance_loses_running_and_requeues_assigned ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.87s
+
+     Running tests/updates_contract.rs (native/target/debug/deps/updates_contract-03ae217a70592815)
+
+running 10 tests
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+/tmp/.tmpBemkot/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmpBemkot/controller/install/versions/dev-4b8f13ccf1b2-1794276886542797846/gridstator: 1: ELF: not found
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.12s
+
+     Running tests/updates_source_scenarios.rs (native/target/debug/deps/updates_source_scenarios-f029d82918c7744b)
+
+running 21 tests
+test source_001_current_behind_missing_metadata_unmanaged_and_offline_status ... ok
+test source_003_default_drain_preserves_jobs_beyond_eight_days_and_nudges_once ... ok
+test source_005_now_cancels_once_then_checks_after_jobs_finish ... ok
+test source_007_launcher_rollback_halts_with_source_diagnostic ... ok
+test source_004_sequential_drain_holds_placements_and_finishes_both_returned_workers ... ok
+test source_008_update_deadline_halts_and_does_not_advance_the_next_worker ... ok
+test source_010_follow_is_the_default_and_marks_the_rollout_automatic ... ok
+test source_011_node_override_bypasses_a_closed_window ... ok
+test source_011_api_rejects_window_mode_without_a_window ... ok
+test source_013_normal_and_wrapping_window_boundaries_match_source ... ok
+test source_002_native_unbundled_replacement_rejects_admin_update ... ok
+test source_006_a_report_from_a_pending_worker_does_not_halt_the_active_worker ... ok
+test source_015_actual_act_override_is_checked_against_upstream_checksums ... ignored, downloads the actual act override/checksums from upstream; no services or workloads
+test source_016_unmanaged_same_build_ignores_managed_act_drift ... ok
+test source_009_cancel_rollout_restores_worker_and_projects_behind_immediately ... ok
+test source_004_native_offers_wait_for_drain_and_only_one_worker_gets_a_candidate ... ok
+test source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry ... ok
+test source_014_native_act_only_drift_verified_archives_and_four_target_offers ... ok
+test source_015_act_override_view_drift_and_off_restore_current ... ok
+test source_012_update_only_bootstraps_each_native_target_without_agent_socket ... ok
+test source_005_actual_api_now_cancels_the_job_before_nudging_its_worker ... ok
+
+test result: ok. 20 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.51s
+

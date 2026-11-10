@@ -1,0 +1,4 @@
+{
+  "state": "MainPID=4214\nActiveState=active\nSubState=running\nFragmentPath=/etc/systemd/system/gridstator-agent.service\nUnitFileState=enabled\nInvocationID=07f8df94764b4d55a8f4063997d40380\n",
+  "unitSha256": "f2773ccbc3e4fdf0765579b92367cc42c7c8ea53344c917586448816d5704893"
+}

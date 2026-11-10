@@ -1,0 +1,98 @@
+{
+  "recordedAtUTC": "2026-11-10T01:45:03.118638+00:00",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted shared working tree; source hashes recorded after scoped checks, not an immutable release candidate.",
+  "environment": {
+    "os": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "architecture": "x86_64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "network": "Private loopback TLS and WebSockets only; no Docker or live service/cluster actions."
+  },
+  "proofs": [
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --test controller_source_scenarios source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs -- --nocapture",
+      "result": "expected red: public reconnect diagnostic differed from frozen source",
+      "log": "source-013-red.log"
+    },
+    {
+      "command": "cargo +1.99.1 test --manifest-path native/Cargo.toml --test controller_source_scenarios -- --nocapture",
+      "result": "passed",
+      "passed": 6,
+      "elapsedSeconds": 2.24,
+      "log": "source-scenarios-green.log"
+    },
+    {
+      "command": "cargo +1.99.1 clippy --manifest-path native/Cargo.toml --locked --test controller_source_scenarios -- -D warnings",
+      "result": "passed",
+      "log": "source-scenarios-clippy.log"
+    },
+    {
+      "command": "rustfmt +1.99.1 --edition 2024 --check native/tests/controller_source_scenarios.rs",
+      "result": "passed"
+    }
+  ],
+  "verifiedRows": [
+    {
+      "id": "reference-controller-controller-006",
+      "test": "source_006_queued_cancel_and_failed_143_result_become_cancelled",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 298
+      },
+      "assertions": "Queued cancellation is immediate; running cancellation sends job.cancel and failed exit143 becomes cancelled."
+    },
+    {
+      "id": "reference-controller-controller-008",
+      "test": "source_008_retry_budget_manual_attempt_three_and_active_conflict",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 354
+      },
+      "assertions": "One automatic failed retry, exhaustion, manual attempt3/retryOf and active retry409."
+    },
+    {
+      "id": "reference-controller-controller-012",
+      "test": "source_012_disappearance_loses_running_and_requeues_assigned",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 442
+      },
+      "assertions": "The same disconnected worker loses running work with source diagnostic and requeues assigned work without node/assignment."
+    },
+    {
+      "id": "reference-controller-controller-013",
+      "test": "source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 464
+      },
+      "assertions": "Actual controller restart preserves active keep, loses forget with exact source error, cancels unknown active, resumes durable log position and deduplicates replay."
+    },
+    {
+      "id": "reference-controller-controller-014",
+      "test": "source_014_disconnected_pending_result_resumes_and_is_acknowledged",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 548
+      },
+      "assertions": "Reconnect pending result appears in welcome.resume at durable logSeq0, then succeeds and is acknowledged."
+    },
+    {
+      "id": "reference-controller-controller-018",
+      "test": "source_018_two_node_shards_aggregate_and_retry_only_failed_lineage",
+      "source": {
+        "path": "apps/controller/src/controller.test.ts",
+        "line": 791
+      },
+      "assertions": "Two-node spread/placeholders/env, mixed counts/nodes/timestamps, failed-only group retry assignment/lineage and list membership."
+    }
+  ],
+  "productionChange": "Only the public missing-running-job reconnect diagnostic was changed, after the red test, to The agent on <name> restarted or lost track of the job.",
+  "sourceDigests": {
+    "native/src/controller.rs": "da2f57053112c82a93af92de599b94295b906b4bcde3c278a9c7d2943776095b",
+    "native/tests/controller_source_scenarios.rs": "57e14df593bd553d90f0eba4d44bd2c9cab0ac7cb8a6526a56a8aa55481d9ea6",
+    "apps/controller/src/controller.test.ts": "d5ef1f4a56d1c8c6a6cab87f0134ca5ddc1fa6753ed429b1149211f6c589eeb8",
+    "apps/controller/src/cluster.ts": "644256018b61efc91c58f65f0df34cf9d1de2dd90f478c0d17728f9e2d7b1da5",
+    "native/Cargo.lock": "f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+  }
+}

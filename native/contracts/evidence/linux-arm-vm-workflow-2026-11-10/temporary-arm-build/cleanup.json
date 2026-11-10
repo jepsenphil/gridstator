@@ -1,0 +1,16 @@
+{
+  "controllerExited": 0,
+  "ownedRoleStopped": true,
+  "jobResourceObservationsBeforeFallbackCleanup": [
+    {
+      "kind": "container",
+      "remainingIds": []
+    },
+    {
+      "kind": "volume",
+      "remainingIds": []
+    }
+  ],
+  "sharedBuildCacheRetained": true,
+  "existingServicesTouched": false
+}

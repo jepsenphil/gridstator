@@ -90,7 +90,7 @@ Toolchain archives (not part of the frozen routes): `GET /v1/agent/toolchain?pla
 |---|---|---|
 | `GET /v1/nodes` | client | `{ nodes: Node[] }` |
 | `GET /v1/nodes/:idOrName` | client | `Node` |
-| `PATCH /v1/nodes/:idOrName` | client | body: `{ maxConcurrency?, reserved?: {cpus?, memoryMb?}, labels?, schedulingMode?: "enabled"\|"disabled"\|"draining", autoUpdate?: "inherit"\|"off"\|"follow"\|"window" }` |
+| `PATCH /v1/nodes/:idOrName` | client | body: `{ name?, maxConcurrency?, reserved?: {cpus?, memoryMb?}, labels?, schedulingMode?: "enabled"\|"disabled"\|"draining", autoUpdate?: "inherit"\|"off"\|"follow"\|"window" }`; rename and settings commit atomically |
 | `DELETE /v1/nodes/:idOrName[?force=true]` | admin | revokes the agent credential; 409 if jobs are active unless `force` |
 | `POST /v1/agents/register` | join | body: `{ name, info: NodeInfo, settings? }` → `{ nodeId, name, credential }`; consumes one use of the join token |
 

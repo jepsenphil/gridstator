@@ -1,0 +1,11 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.58s
+     Running tests/integration_source_scenarios.rs (native/target/debug/deps/integration_source_scenarios-888724d87c103afe)
+
+running 1 test
+test conditional_actions_source_012_runs_dirty_tree_and_downloads_exact_artifact ... Integration source evidence: /tmp/gridstator-integration-source-tNv421
+Conditional Actions source012 passed; evidence /tmp/gridstator-integration-source-tNv421
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 45.74s
+

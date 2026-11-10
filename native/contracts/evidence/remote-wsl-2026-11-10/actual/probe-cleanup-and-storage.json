@@ -1,0 +1,41 @@
+{
+  "stoppedOwnedIds": [
+    null
+  ],
+  "stockIds": [
+    2052,
+    3032,
+    5648,
+    10044,
+    10868,
+    13096,
+    14256,
+    14832,
+    18124,
+    19804,
+    20128,
+    20816,
+    27840,
+    28560,
+    28784,
+    30884,
+    31536,
+    31928,
+    34912,
+    41776,
+    42048,
+    44936,
+    47516
+  ],
+  "ownedLinuxServerProcessesSignalled": [],
+  "actualSharedStorageLogs": [
+    {
+      "file": "/mnt/c/Users/User/AppData/Local/Temp/gridstator-wsl-v00jpyv0/user-data/logs/20261109T214331/main.log",
+      "lines": [
+        "2026-11-09 22:43:31.248 [info] [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)",
+        "2026-11-09 22:43:31.248 [info] [shared storage] Initializing fallback application storage (path: in-memory)",
+        "2026-11-09 22:43:31.251 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    }
+  ]
+}

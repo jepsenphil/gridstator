@@ -1,6 +1,6 @@
 import type { CreateTokenResponse, JobEvent, LogEntry } from '@gridstator/protocol';
 import type { TestSummary } from '@gridstator/reports';
-import type { DashboardState, ToWebview, View } from '../src/messages';
+import type { DashboardState, ToWebview, View, WorkerJoinCommand } from '../src/messages';
 
 export interface LogLine {
   seq: number;
@@ -36,6 +36,7 @@ export interface UiState {
   toasts: Toast[];
   /** Shown once after creation; never persisted with the webview's navigation state. */
   createdToken: CreateTokenResponse | null;
+  workerJoinCommand: WorkerJoinCommand | null;
 }
 
 export const initialState: UiState = {
@@ -51,6 +52,7 @@ export const initialState: UiState = {
   busy: {},
   toasts: [],
   createdToken: null,
+  workerJoinCommand: null,
 };
 
 export type Action =
@@ -64,7 +66,8 @@ export type Action =
       groupId?: string | null;
     }
   | { type: 'dismissToast'; id: number }
-  | { type: 'dismissToken' };
+  | { type: 'dismissToken' }
+  | { type: 'dismissWorkerJoinCommand' };
 
 const MAX_LINES = 200_000;
 let toastId = 0;
@@ -107,6 +110,12 @@ export function reducer(state: UiState, action: Action): UiState {
       return { ...state, createdToken: { token: action.token, info: action.info } };
     case 'dismissToken':
       return { ...state, createdToken: null };
+    case 'workerJoinCommandCreated':
+      return action.result.clusterId === state.data?.connection.clusterId
+        ? { ...state, workerJoinCommand: action.result }
+        : state;
+    case 'dismissWorkerJoinCommand':
+      return { ...state, workerJoinCommand: null };
     case 'state':
       return {
         ...state,
@@ -114,6 +123,10 @@ export function reducer(state: UiState, action: Action): UiState {
         createdToken:
           state.data?.connection.clusterId === action.state.connection.clusterId
             ? state.createdToken
+            : null,
+        workerJoinCommand:
+          state.data?.connection.clusterId === action.state.connection.clusterId
+            ? state.workerJoinCommand
             : null,
       };
     case 'navigate':

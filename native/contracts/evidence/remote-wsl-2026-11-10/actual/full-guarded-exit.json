@@ -1,0 +1,79 @@
+{
+  "mode": "full",
+  "exitCode": 0,
+  "args": [
+    "/mnt/c/Users/User/AppData/Local/Temp/gridstator-wsl-v00jpyv0/CodeApp/Code.exe",
+    "--user-data-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\user-data",
+    "--extensions-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\extensions",
+    "--shared-data-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\shared-data",
+    "--agents-user-data-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\agents-user-data",
+    "--agents-extensions-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\agents-extensions",
+    "--agent-plugins-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\agent-plugins",
+    "--extensions-download-dir=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\extensions-download",
+    "--crash-reporter-directory=C:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\crash-reports",
+    "--use-inmemory-secretstorage",
+    "--new-window",
+    "--sync=off",
+    "--disable-updates",
+    "--skip-welcome",
+    "--skip-release-notes",
+    "--disable-workspace-trust",
+    "--disable-gpu",
+    "--remote=wsl+Ubuntu",
+    "--folder-uri=vscode-remote://wsl+Ubuntu/home/pj/gridstator-validation-v00jpyv0/gui-proof/workspace%20with%20spaces",
+    "--extensionDevelopmentKind=workspace",
+    "--extensionDevelopmentPath=vscode-remote://wsl+Ubuntu/home/pj/gridstator-validation-v00jpyv0/gui-proof/extension",
+    "--extensionTestsPath=vscode-remote://wsl+Ubuntu/home/pj/gridstator-validation-v00jpyv0/gui-proof/tests/smoke.cjs"
+  ],
+  "preflight": {
+    "user": "Phil",
+    "pipes": [],
+    "privateCode": [],
+    "stockCodeIds": [
+      2052,
+      3032,
+      5648,
+      10044,
+      10868,
+      13096,
+      14256,
+      14832,
+      18124,
+      19804,
+      20128,
+      20816,
+      27840,
+      28560,
+      28784,
+      30884,
+      31536,
+      31928,
+      34912,
+      41776,
+      42048,
+      44936,
+      47516
+    ],
+    "effectivePipe": "\\\\.\\pipe\\vscode-wsl-13783b072557a8fe440fa977dbd6a7162909726dc1e627efe218aac2f21b2145-sock",
+    "nativeBackend": {
+      "build": {
+        "version": "2.0.0-dev.1",
+        "buildId": "native-preview-20261110-cd6b769ebe6e",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "linux/amd64",
+        "size": 27550072,
+        "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+      },
+      "clusterId": "01M71ZS3G2F1CG0K2B6ZNYP7V5",
+      "url": "https://127.0.0.1:47299",
+      "privateConfig": "/home/pj/gridstator-validation-v00jpyv0/gui-proof/client.json"
+    }
+  }
+}

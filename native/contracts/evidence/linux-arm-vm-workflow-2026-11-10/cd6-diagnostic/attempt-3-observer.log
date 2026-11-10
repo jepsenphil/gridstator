@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 335, in <module>
+    main()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 322, in main
+    proof.run()
+  File "/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/scenario.py", line 189, in run
+    (project / ".github/workflows").mkdir(parents=True)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1313, in mkdir
+    self._accessor.mkdir(self, mode)
+FileExistsError: [Errno 17] File exists: '/Users/philjepsen/gridstator-validation.I50ONpwm/linux-arm-vm-cd6-6c82/project/.github/workflows'

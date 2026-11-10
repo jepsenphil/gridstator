@@ -2,6 +2,12 @@ import { z } from 'zod';
 import { LabelSchema, TimestampSchema } from './common.js';
 import { AgentBuildSchema, NodeAutoUpdateSchema, NodeUpdateStatusSchema } from './update.js';
 
+export const NodeNameSchema = z
+  .string()
+  .min(1)
+  .max(64)
+  .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, 'node names may contain letters, digits, ".", "_", "-"');
+
 export const ToolStatusSchema = z.object({
   available: z.boolean(),
   version: z.string().optional(),

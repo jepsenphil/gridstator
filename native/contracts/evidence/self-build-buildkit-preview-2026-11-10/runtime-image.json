@@ -1,0 +1,11 @@
+{
+  "Id": "sha256:e50d940e9d2c4d81e5b3506b2ed87bfc7e91267b36ff016eb4b4cb21c39a3331",
+  "RepoTags": [
+    "alpine:3.21"
+  ],
+  "RepoDigests": [
+    "alpine@sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab"
+  ],
+  "Os": "linux",
+  "Architecture": "amd64"
+}

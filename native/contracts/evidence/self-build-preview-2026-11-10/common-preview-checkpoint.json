@@ -1,0 +1,170 @@
+{
+  "recordedAt": "2026-11-10T03:39:20.286411+00:00",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview; sourceRevision is the parent reference commit, and this checkpoint identifies actual native production/build inputs. Not a stable release or clean-commit provenance claim.",
+  "productionCheckpointSha256": "95cfa71614400b4d726f9c6caccbd87d75e4e003701bd753879f8158e580e3e4",
+  "files": [
+    {
+      "path": "native/Cargo.lock",
+      "sha256": "f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+    },
+    {
+      "path": "native/Cargo.toml",
+      "sha256": "b723dd9ef4f888364903686714eb5726891595b05adbd5ac2c821a50283bc4bf"
+    },
+    {
+      "path": "native/build.rs",
+      "sha256": "7ee07516bf1b8d622fc7ce36650041d0f7901e6f60b9f402cdac6165256da0f0"
+    },
+    {
+      "path": "native/rust-toolchain.toml",
+      "sha256": "d13306be0ecda81ce779baa290ffb417380d525928477f16200884b5169cca33"
+    },
+    {
+      "path": "native/scripts/build-linux.sh",
+      "sha256": "87d61cac03035c2df3804af68a2898bae6fa85fe4795b0fbb8f9b24680fb0c10"
+    },
+    {
+      "path": "native/src/bridge.rs",
+      "sha256": "e4494f257a6a2ed7d837b56175929f79f7cfc7e95d34ecf5888b5b28e9c855fc"
+    },
+    {
+      "path": "native/src/cli/commands.json",
+      "sha256": "022468ef806465c09edf2f9f7c2a78c68203473840000bcd1be6a6d0bc475bea"
+    },
+    {
+      "path": "native/src/cli/parse.rs",
+      "sha256": "81acddb2bc35a6459a2ca8a36e6ca972d31810bcb10916e6ba38f1e897a7a65a"
+    },
+    {
+      "path": "native/src/cli/presentation.rs",
+      "sha256": "b0dc3fc365db027cbd1176b3ab7266583b1ca30f6c1a4e67b12aab6d1276ec23"
+    },
+    {
+      "path": "native/src/cli.rs",
+      "sha256": "5ecae8b82f2e20c4b546087454177ad4611a6b995bb44f7b856b88e5003cc958"
+    },
+    {
+      "path": "native/src/client.rs",
+      "sha256": "d17cf94642f90d508d0053446346f68a5150d75b022b2a303c99b8db193c7a98"
+    },
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "e8f0d05828e762fcc75d0cd7e1ae9a7200c9a7f0237bb703996c8a38b679cddd"
+    },
+    {
+      "path": "native/src/db.rs",
+      "sha256": "cf83f676531445ba764b46c59f24b283dac03e0c3926b90a004ce38447a73a2b"
+    },
+    {
+      "path": "native/src/discovery.rs",
+      "sha256": "379660e707d4354377736d5feac43f8171e28405d2935c6cfda4744f2625247b"
+    },
+    {
+      "path": "native/src/executor/actions.rs",
+      "sha256": "dbfb90a6d1c9866cebbea94800f6548d7e06618663af9d85e593e5feadfba64d"
+    },
+    {
+      "path": "native/src/executor/build.rs",
+      "sha256": "bcfa9475c1830edf26e934872f9677abcbe538bc2bbc61a9a329b983aab2e219"
+    },
+    {
+      "path": "native/src/executor/command.rs",
+      "sha256": "07303429d184b35d8ed4bdb5ee68cc5b1ea23645057a48a661e5ec0d6f4e2b26"
+    },
+    {
+      "path": "native/src/executor/process.rs",
+      "sha256": "a19898045bc64c7bf75f6e64506bf0ce007b1335a767768496a3db7bf04210f3"
+    },
+    {
+      "path": "native/src/executor.rs",
+      "sha256": "4082ea4145bb0eccc1f7d2d4769b8db46d9a5134c8f2600314c638143b5c80db"
+    },
+    {
+      "path": "native/src/install.rs",
+      "sha256": "6923c3c19038caa0d299e9f77e3b80c92499c8caa659d65e1bb1eabbfb8ab051"
+    },
+    {
+      "path": "native/src/lib.rs",
+      "sha256": "4f8ba1051c4d888f7aedb1a931ff160ef26e1cebc2db8494a5f27e6843df82cf"
+    },
+    {
+      "path": "native/src/main.rs",
+      "sha256": "e8e4fbacb25f4aaf46c0b3cfbac0df45e9aec147b8f2f358db3962b8c88ae538"
+    },
+    {
+      "path": "native/src/packaging.rs",
+      "sha256": "bfcfd48e08ac7b9838f914a5ab6a34f28d4eb559eb207d1d67e40de936c9875c"
+    },
+    {
+      "path": "native/src/pki.rs",
+      "sha256": "3513094f15dbdf5d616bb87b93fda9b56e090b986ec2d4f56d8598db18e59fb2"
+    },
+    {
+      "path": "native/src/protocol.rs",
+      "sha256": "9435e997cf4c6f96d0a043ece19333063934af7b199944e8019ec97f4d2ba13a"
+    },
+    {
+      "path": "native/src/release.rs",
+      "sha256": "da3d79d72f15da6cbd20e03a46016ab971898a6afd0680d9c56c80935f8313c4"
+    },
+    {
+      "path": "native/src/reports.rs",
+      "sha256": "a3710d1a610f3f55384e974d685f411392ef830bd79996cc8fd39cb9933447dd"
+    },
+    {
+      "path": "native/src/scheduler.rs",
+      "sha256": "42ef8524b6b4cf6c252be2303f87d805e2c8bf70413672ec61235009d46a1a13"
+    },
+    {
+      "path": "native/src/services.rs",
+      "sha256": "22e4a76e5d40f8a5be795bf73a05c6c86e5606dba0c944fd74e0020eff449875"
+    },
+    {
+      "path": "native/src/state.rs",
+      "sha256": "7f406a9b5a2a6eba65474b4440a421af1dd27f40837314e2be97a870586cd21e"
+    },
+    {
+      "path": "native/src/transfer.rs",
+      "sha256": "763e2019e09fc18f02f2337a42666680cf649eb2cac3499943773cde8104cf47"
+    },
+    {
+      "path": "native/src/updates/act.rs",
+      "sha256": "12b34fc8258b23e64006442b82eb4df40bd052bf63223ef7f0a363bfa957a128"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "1d6efa91c4bb2c6d2b32cca048ec79ac862df369091241b5894650c2995d9758"
+    },
+    {
+      "path": "native/src/worker.rs",
+      "sha256": "17463b38ae1d2a46b5870720ed8093e434ef0889b68618d72572d9eaabe33078"
+    },
+    {
+      "path": "native/src/workspace/capture.rs",
+      "sha256": "ea53c3b9c32b7d6ecf656bff2b9a041c9149f8d21f5861764eb102441619dae4"
+    },
+    {
+      "path": "native/src/workspace/pattern/UPSTREAM.md",
+      "sha256": "26c5b3cacdc749b70735d31547223da77ca8d5e474a563284f7462b8d1f85454"
+    },
+    {
+      "path": "native/src/workspace/pattern/regex.rs",
+      "sha256": "19ed4b7d6709fc4ef88f98e036a2b613cf0a8691309546bf6f8bf9a87468b47e"
+    },
+    {
+      "path": "native/src/workspace/pattern.rs",
+      "sha256": "440902957d591dddb62507036177168033aaf3133a6ddcb1a13e4b77ecd5f674"
+    },
+    {
+      "path": "native/src/workspace/store.rs",
+      "sha256": "897ff2766e08a90b03b08446771a879f21abeb145babed46555281f6d6ea62d1"
+    },
+    {
+      "path": "native/src/workspace.rs",
+      "sha256": "4e0b4c78a56b5ca130a955a553feb1df845f853c0c46b15b96c1f3df23452f0b"
+    }
+  ]
+}

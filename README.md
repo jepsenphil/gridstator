@@ -141,6 +141,12 @@ local admin login automatically. Other machines can use **Gridstator: Sign In to
 `gridstator login` once. Revoked local access offers **Restore Local Access** instead of silently
 creating another token.
 
+With no connection configured, choose **Set up a controller here** or **Connect to an existing
+controller**. Local setup installs a verified native CLI if missing, creates a background user
+service with a worker, and signs in automatically. The worker waits for Docker if needed. In remote
+windows, setup runs on the workspace host. Connecting elsewhere accepts a pasted login command or
+manual connection details.
+
 The dashboard shows the controller hostname and identifies machines that run both controller and
 worker. Its **Settings** tab includes component versions/builds, editor preferences, tokens,
 retention, update policies and official release installation. Updates wait for running jobs by
@@ -164,6 +170,18 @@ gridstator nodes drain laptop        # finish running jobs, accept no new ones
 gridstator nodes disable laptop      # accept no new jobs
 gridstator nodes enable laptop
 ```
+
+Rename a worker without rejoining it or changing its identity:
+
+```bash
+gridstator nodes set DESKTOP-JEL --name big-box
+```
+
+The dashboard exposes the same control under **Nodes → Worker name**, and the Cluster tree's
+worker context menu has **Rename Worker**. Names may contain up to 64 letters, numbers, dots,
+underscores and hyphens, starting with a letter or number. Renaming preserves credentials, resource
+settings and history; queued and retried jobs keep targeting the same worker. Update project files
+that should use its new name, or use its stable node ID for targets that should survive renaming.
 
 ## Project configuration
 
@@ -216,12 +234,19 @@ Most commands accept `--json`. Exit codes: the job's exit code for `run`, `130` 
 
 ## Documentation
 
+The Rust v2 implementation lives alongside v1 in [`native/`](native/README.md). Its CLI,
+controller and worker run without Node; VS Code keeps its supplied Node runtime and delegates to
+the native helper. See [validation progress](docs/V2_PROGRESS.md) and
+[native release candidates](native/RELEASING.md) for tested behavior and the remaining release gates.
+
 - [Installation](docs/INSTALL.md), [Windows / WSL2](docs/WINDOWS.md), [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Architecture](docs/ARCHITECTURE.md): components, flows, data model, decisions
 - [Security](docs/SECURITY.md): threat model and controls
 - [API](docs/API.md): controller REST and WebSocket API
 - [Development](docs/DEVELOPMENT.md): building, testing, multi-machine validation
 - [Plan](docs/PLAN.md): milestones and progress
+- [Desktop companion](apps/desktop/README.md): tray/menu-bar app, build instructions and preview limitations; installers are collected in `distro/<version>/`
+- [Desktop companion plan](docs/DESKTOP_COMPANION_PLAN.md): confirmed design and per-OS acceptance checks; [implementation evidence](docs/DESKTOP_COMPANION_PROGRESS.md)
 - [Changelog](CHANGELOG.md), [Contributing](CONTRIBUTING.md), [Code of conduct](CODE_OF_CONDUCT.md), [Security policy](SECURITY.md)
 
 ## License

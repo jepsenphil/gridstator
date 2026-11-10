@@ -1,0 +1,12 @@
+{
+  "recordedAt": "2026-11-10T07:22:49Z",
+  "result": "passed",
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "checkpointFileSha256": "e54da2e454948039d3ff60052b4186368120d2f18755f3f62d5ef94f9722afac",
+  "productionInputCount": 40,
+  "currentProductionFileDigestsMatch": true,
+  "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "algorithmClarification": "SHA256 of UTF-8 path + NUL + lowercase file SHA256 + LF, concatenated in the exact recorded files array order. That array follows pathlib PurePosixPath component ordering; it is not flat full-path UTF-8 string sorting. The frozen checkpoint wording and bytes are preserved.",
+  "recordedFilesFollowPurePosixPathOrder": true,
+  "flatStringOrderWouldProduceDifferentDigest": true
+}

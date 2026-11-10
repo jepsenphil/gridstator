@@ -1,0 +1,14 @@
+Actual normal-window modal choice: Run Saved Versions
+Actual normal-window modal choice: Save All and Run
+locator.waitFor: Error: strict mode violation: getByRole('button', { name: 'Cancel', exact: true }) resolved to 2 elements:
+    1) <a tabindex="0" role="button" custom-hover="true" aria-disabled="false" class="monaco-button monaco-text-button">Cancel</a> aka getByRole('dialog', { name: 'Info: Gridstator: capturing' }).getByRole('button', { name: 'Cancel' })
+    2) <a tabindex="0" role="button" aria-disabled="false" class="monaco-button secondary monaco-text-button">Cancel</a> aka getByRole('button', { name: 'Cancel' }).nth(1)
+
+Call log:
+[2m  - waiting for getByRole('button', { name: 'Cancel', exact: true }) to be visible[22m
+
+    at /tmp/gridstator-normal-dirty-driver.cjs:4:643 {
+  log: [
+    "  - waiting for getByRole('button', { name: 'Cancel', exact: true }) to be visible"
+  ]
+}

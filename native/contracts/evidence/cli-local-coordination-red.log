@@ -1,0 +1,34 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.70s
+     Running tests/cli_local_coordination.rs (native/target/debug/deps/cli_local_coordination-3b3e673a280702cc)
+
+running 5 tests
+test source_local_012_apply_and_restart_starts_a_previously_stopped_controller ... ok
+test source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling ... FAILED
+test source_local_011_retains_old_listener_for_offline_or_unadvertised_workers ... ok
+test source_local_014_busy_new_listener_restores_previous_configuration_and_service ... FAILED
+test source_local_013_requires_fresh_worker_connection_even_at_unchanged_public_endpoint ... ok
+
+failures:
+
+---- source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling stdout ----
+
+thread 'source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling' (1274125) panicked at tests/cli_local_coordination.rs:125:46:
+error: finish running jobs on the embedded worker before restarting; no jobs were cancelled
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- source_local_014_busy_new_listener_restores_previous_configuration_and_service stdout ----
+
+thread 'source_local_014_busy_new_listener_restores_previous_configuration_and_service' (1274129) panicked at tests/cli_local_coordination.rs:156:46:
+error: address change failed; previous configuration restored: systemctl failed (exit status: 97): 
+
+
+
+failures:
+    source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling
+    source_local_014_busy_new_listener_restores_previous_configuration_and_service
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 46.37s
+
+error: test failed, to rerun pass `--test cli_local_coordination`

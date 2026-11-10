@@ -1,0 +1,12 @@
+{
+  "result": "passed",
+  "scope": "pure argv guards rerun locally on final exact guard module after cleanup; actual Windows pipe negative separately recorded",
+  "rejectedBeforeLaunch": [
+    "shared-data-dir",
+    "user-data-dir",
+    "extensions-dir",
+    "crash-reporter-directory",
+    "use-inmemory-secretstorage",
+    "existing-looking-shared-data"
+  ]
+}

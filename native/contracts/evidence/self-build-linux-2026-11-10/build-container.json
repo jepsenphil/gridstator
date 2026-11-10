@@ -1,0 +1,26 @@
+{
+  "Id": "f088701d42bf606c1bb0fd436ccb1968e780a9b5067ab211586fb21f5705a6ed",
+  "Image": "sha256:527305910196eafb3720343101dcf3ff7c788f350dd132a5c6b9daa1f65729bd",
+  "imageReference": "rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c",
+  "resources": {
+    "NanoCpus": 2000000000,
+    "Memory": 4294967296,
+    "MemorySwap": 4294967296,
+    "PidsLimit": 4096,
+    "ReadonlyRootfs": false
+  },
+  "mounts": [
+    {
+      "Type": "volume",
+      "Name": "gridstator-ws-01m71gh6kgbedgctwjsp0hdmfe",
+      "Destination": "/workspace",
+      "RW": true
+    },
+    {
+      "Type": "volume",
+      "Name": "gridstator-cache",
+      "Destination": "/gridstator/cache",
+      "RW": true
+    }
+  ]
+}

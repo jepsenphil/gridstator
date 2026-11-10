@@ -1,0 +1,67 @@
+{
+  "recordedDate": "2026-11-10",
+  "classification": "unpublished development preview",
+  "stableRelease": false,
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "parentSourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted working tree. The embedded sourceRevision is the parent reference commit; SOURCE_CHECKPOINT.json identifies the actual 40 production/build inputs, with supplemental embedded inputs recorded separately. This is not clean-commit provenance.",
+  "productionCheckpointSha256": "95cfa71614400b4d726f9c6caccbd87d75e4e003701bd753879f8158e580e3e4",
+  "linuxBuild": {
+    "jobId": "01M71RTC1RCA4FHFE8BZBF8G94",
+    "snapshotId": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+    "mode": "Actual Gridstator isolated Docker self-build; Linux ARM64 is a cross-build."
+  },
+  "editor": {
+    "file": "gridstator-native.vsix",
+    "sha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+    "mode": "native-only preview extension; VS Code still requires its Node extension host"
+  },
+  "platformEvidence": {
+    "linux/amd64": {
+      "format": "ELF64 x86-64, static",
+      "actualRuntime": "Final bytes: version/build-info/private controller init and authenticated TLS lifecycle in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig; additional assembled-archive installer/manual verification and TLS lifecycle on this Linux host.",
+      "evidence": [
+        "provenance/linux/artifact-validation.json",
+        "verification/installer-runtime-smoke.json"
+      ]
+    },
+    "linux/arm64": {
+      "format": "ELF64 AArch64, static",
+      "actualRuntime": null,
+      "scope": "Cross-build, header/size/digest/linkage verification only. Not executed.",
+      "evidence": [
+        "provenance/linux/artifact-validation.json",
+        "provenance/linux/linux-arm64-linkage.txt"
+      ]
+    },
+    "darwin/arm64": {
+      "format": "thin Mach-O arm64",
+      "actualRuntime": "Final bytes on M4: foreground controller/worker and private user LaunchAgent lifecycle.",
+      "signing": "Linker ad-hoc only; no Developer ID signature or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json",
+        "provenance/mac/binary-format-linkage-signature.json"
+      ]
+    },
+    "darwin/amd64": {
+      "format": "thin Mach-O x86_64",
+      "actualRuntime": "Final bytes under Rosetta on M4: foreground controller/worker and private user LaunchAgent lifecycle. Physical Intel hardware not tested.",
+      "signing": "Unsigned; no Developer ID signature or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json",
+        "provenance/mac/binary-format-linkage-signature.json"
+      ]
+    }
+  },
+  "openStableReleaseGates": [
+    "Physical Linux ARM64 and physical Intel Mac runtime acceptance remain unverified.",
+    "Developer ID signing, notarization and resulting final-byte hashes are not established.",
+    "Broader Mac Docker/managed-update/editor proofs retain their explicitly recorded earlier checkpoint scope; no blanket rerun against these final bytes is claimed.",
+    "Clean release provenance, stable candidate approval and publication remain outstanding."
+  ],
+  "archiveBundle": "gridstator-2.0.0-dev.1-native-bundle.tar.gz contains the release manifest and four native archives. The VSIX, preview metadata and verification records are adjacent files covered by SHA256SUMS.",
+  "checksums": "SHA256SUMS covers every adjacent regular file recursively except itself. The release manifest independently binds archive and executable digests.",
+  "publication": "No GitHub release or other public publication was performed.",
+  "operations": "Installer smoke used only a private prefix and disposable controller state. No global prefix or live service changed; owned HTTP/controller processes and credentials/data were removed."
+}

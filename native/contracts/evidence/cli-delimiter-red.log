@@ -1,0 +1,22 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.38s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 1 test
+test cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source ... FAILED
+
+failures:
+
+---- cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source stdout ----
+
+thread 'cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source' (1346996) panicked at src/cli.rs:3222:17:
+fixture parser failed "shell-options-after-deferred-flags"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 29 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `--lib`

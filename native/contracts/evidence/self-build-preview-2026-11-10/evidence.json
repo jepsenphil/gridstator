@@ -1,0 +1,118 @@
+{
+  "recordedAtUTC": "2026-11-10T03:53:59.526639+00:00",
+  "result": "passed",
+  "scope": "Final native preview builds itself through actual Gridstator CLI/controller/embedded worker and Docker; both Linux musl targets compiled, x64 actually executed in clean Alpine; no publication/deployment.",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview; sourceRevision is the parent reference commit, and this checkpoint identifies actual native production/build inputs. Not a stable release or clean-commit provenance claim.",
+  "productionCheckpointSha256": "95cfa71614400b4d726f9c6caccbd87d75e4e003701bd753879f8158e580e3e4",
+  "checkpointDocumentSha256": "164e42a499313e3b45bf2df2bbd3e4a4e50733f70a4c6e24db0466105c04e61b",
+  "jobId": "01M71RTC1RCA4FHFE8BZBF8G94",
+  "snapshotId": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+  "snapshotEntryCount": 739,
+  "snapshotSourceBytes": 6764881,
+  "runSeconds": 399.239,
+  "submissionThroughFinishSeconds": 412.426,
+  "submittedCommand": [
+    "gridstator",
+    "run",
+    "--task",
+    "native-linux",
+    "--env",
+    "GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "--env",
+    "GRIDSTATOR_BUILD_ID=native-preview-20261110-95cfa7161440",
+    "--detach",
+    "--json"
+  ],
+  "sourceVerification": {
+    "productionCheckpointEntries": 40,
+    "allProductionCheckpointEntriesMatchSubmittedSnapshot": true,
+    "snapshotManifestDigest": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+    "artifactSourceManifestEntries": 422,
+    "allSourceManifestEntriesMatchSubmittedSnapshot": true
+  },
+  "supplementalBuildInputs": {
+    "recordedAtUTC": "2026-11-10T03:43:59.219398+00:00",
+    "snapshotId": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+    "coreCheckpointEntries": 40,
+    "coreCheckpointUnchanged": true,
+    "supplementalBuildInputs": [
+      {
+        "path": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "snapshotEntry": {
+          "path": "LICENSE",
+          "type": "file",
+          "size": 11358,
+          "digest": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "scripts/install-native.sh",
+        "sha256": "9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+        "snapshotEntry": {
+          "path": "scripts/install-native.sh",
+          "type": "file",
+          "size": 9606,
+          "digest": "sha256:9bee2199646fcfd012656958dd082c2b0779236a0f878f22c11972c6d6bb8bfc",
+          "executable": true
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      },
+      {
+        "path": "gridstator.yml",
+        "sha256": "87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+        "snapshotEntry": {
+          "path": "gridstator.yml",
+          "type": "file",
+          "size": 776,
+          "digest": "sha256:87e9bbac5890953852cc56246a23ccc4b6f0dd161859ecdeca996576ade93218",
+          "executable": false
+        },
+        "currentHostMatchesCanonicalSnapshot": true
+      }
+    ]
+  },
+  "archive": {
+    "name": "native/self-build.tar",
+    "sha256": "d436551e0aed887331a261377c2fb323d104e1253254ed9376c68980bfa746d0",
+    "size": 54242816,
+    "retainedIgnoredPath": "native/self-build/proof-01M71RTC1RCA4FHFE8BZBF8G94/self-build.tar"
+  },
+  "artifacts": {
+    "linux-arm64": {
+      "binary": "native/self-build/proof-01M71RTC1RCA4FHFE8BZBF8G94/linux-arm64/gridstator",
+      "metadata": "native/self-build/proof-01M71RTC1RCA4FHFE8BZBF8G94/linux-arm64/build-info.json",
+      "sha256": "036440b41b6e7e9374c00634f7bc9a1fcdcbb575490ad057facc354859b387df",
+      "size": 26578192,
+      "runtime": "not executed"
+    },
+    "linux-amd64": {
+      "binary": "native/self-build/proof-01M71RTC1RCA4FHFE8BZBF8G94/linux-amd64/gridstator",
+      "metadata": "native/self-build/proof-01M71RTC1RCA4FHFE8BZBF8G94/linux-amd64/build-info.json",
+      "sha256": "8f9adecdeb1eff5a07824239c9d692298b10728b766184cb36143c8cfa471eed",
+      "size": 27598104,
+      "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig"
+    }
+  },
+  "actualEnvironment": {
+    "hostOS": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "hostArchitecture": "x86_64",
+    "buildContainer": "build-container.json",
+    "toolVersions": "build-toolchain.json",
+    "runtimeImage": "runtime-image.json"
+  },
+  "nativeCodeChangesDuringProof": false,
+  "cleanup": "cleanup.json",
+  "limits": [
+    "Git sourceRevision is the parent commit of an uncommitted preview. Exact source is the canonical immutable snapshot and recorded source manifest, not a clean/reproducible stable release.",
+    "linux/amd64 passed version/build-info/cluster-init and live TLS controller status with graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig. This does not repeat the full executor/CLI/service acceptance suite against this static binary.",
+    "linux/arm64 is cross-compilation, correct ELF machine/static-linkage evidence only; not executed or labeled runtime-ready.",
+    "Both Linux binaries share the preallocated preview ID with the separately compiled Mac outputs; Mac compilation/runtime and four-target packaging are separate evidence.",
+    "No signing/notarization, WSL2, physical IntelMac/ARM Linux runtime, service/reboot, external publication or live cluster deployment is implied."
+  ]
+}

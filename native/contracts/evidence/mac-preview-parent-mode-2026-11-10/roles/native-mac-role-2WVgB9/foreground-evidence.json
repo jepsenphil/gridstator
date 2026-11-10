@@ -1,0 +1,88 @@
+{
+  "scope": "actual foreground native macOS CLI/controller/worker; intentionally missing Docker; no signing claim",
+  "target": "darwin/amd64",
+  "node": {
+    "id": "01M724CX8ZDQ63YBQXZ104DXTF",
+    "name": "mac-proof-01M724CX4NZWKDQN138J5XKM5F",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "x64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-mac-proof-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "native-preview-20261110-6994d2cc804b",
+        "version": "2.0.0-dev.1",
+        "sha256": "1725e6a8fb9c4d5fe48ff37a7b6fa4a721f7597a055f18298bb7cf9e1657f482",
+        "target": "darwin/amd64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:62960",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4798
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=x64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794294314418,
+    "connectedAt": 1794294314415,
+    "createdAt": 1794294314271
+  },
+  "controllerPid": 1302
+}

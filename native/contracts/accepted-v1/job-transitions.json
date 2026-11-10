@@ -1,0 +1,422 @@
+{
+  "states": [
+    "created",
+    "queued",
+    "assigned",
+    "starting",
+    "running",
+    "succeeded",
+    "failed",
+    "cancelled",
+    "lost"
+  ],
+  "terminal": ["succeeded", "failed", "cancelled", "lost"],
+  "dispatched": ["assigned", "starting", "running"],
+  "cases": [
+    {
+      "from": "created",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "created",
+      "to": "queued",
+      "allowed": true
+    },
+    {
+      "from": "created",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "created",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "created",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "created",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "created",
+      "to": "failed",
+      "allowed": true
+    },
+    {
+      "from": "created",
+      "to": "cancelled",
+      "allowed": true
+    },
+    {
+      "from": "created",
+      "to": "lost",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "assigned",
+      "allowed": true
+    },
+    {
+      "from": "queued",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "queued",
+      "to": "failed",
+      "allowed": true
+    },
+    {
+      "from": "queued",
+      "to": "cancelled",
+      "allowed": true
+    },
+    {
+      "from": "queued",
+      "to": "lost",
+      "allowed": false
+    },
+    {
+      "from": "assigned",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "assigned",
+      "to": "queued",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "assigned",
+      "to": "starting",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "running",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "succeeded",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "failed",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "cancelled",
+      "allowed": true
+    },
+    {
+      "from": "assigned",
+      "to": "lost",
+      "allowed": true
+    },
+    {
+      "from": "starting",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "starting",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "starting",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "starting",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "starting",
+      "to": "running",
+      "allowed": true
+    },
+    {
+      "from": "starting",
+      "to": "succeeded",
+      "allowed": true
+    },
+    {
+      "from": "starting",
+      "to": "failed",
+      "allowed": true
+    },
+    {
+      "from": "starting",
+      "to": "cancelled",
+      "allowed": true
+    },
+    {
+      "from": "starting",
+      "to": "lost",
+      "allowed": true
+    },
+    {
+      "from": "running",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "running",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "running",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "running",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "running",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "running",
+      "to": "succeeded",
+      "allowed": true
+    },
+    {
+      "from": "running",
+      "to": "failed",
+      "allowed": true
+    },
+    {
+      "from": "running",
+      "to": "cancelled",
+      "allowed": true
+    },
+    {
+      "from": "running",
+      "to": "lost",
+      "allowed": true
+    },
+    {
+      "from": "succeeded",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "failed",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "cancelled",
+      "allowed": false
+    },
+    {
+      "from": "succeeded",
+      "to": "lost",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "failed",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "cancelled",
+      "allowed": false
+    },
+    {
+      "from": "failed",
+      "to": "lost",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "failed",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "cancelled",
+      "allowed": false
+    },
+    {
+      "from": "cancelled",
+      "to": "lost",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "created",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "queued",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "assigned",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "starting",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "running",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "succeeded",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "failed",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "cancelled",
+      "allowed": false
+    },
+    {
+      "from": "lost",
+      "to": "lost",
+      "allowed": false
+    }
+  ]
+}

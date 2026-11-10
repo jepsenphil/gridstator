@@ -1,0 +1,22 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running tests/integration_source_scenarios.rs (native/target/debug/deps/integration_source_scenarios-888724d87c103afe)
+
+running 1 test
+test all_eleven_source_scenarios_with_two_real_native_workers ... Integration source evidence: /tmp/gridstator-integration-source-OJ5mYV
+Starting integration source 002
+Error: integration source 002 (private evidence /tmp/gridstator-integration-source-OJ5mYV)
+
+Caused by:
+    duplicate snapshot diagnostic: Snapshot of /tmp/gridstator-integration-source-OJ5mYV/project: 3 files, 39 bytes
+      ! .env: excluded: matches a secret file pattern
+    
+FAILED
+
+failures:
+
+failures:
+    all_eleven_source_scenarios_with_two_real_native_workers
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.87s
+
+error: test failed, to rerun pass `--test integration_source_scenarios`

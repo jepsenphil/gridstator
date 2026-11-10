@@ -1,0 +1,12 @@
+   Compiling gridstator v2.0.0-dev.1 (/Users/philjepsen/gridstator-validation.I50ONpwm/source-buildx-fallback-dev/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.04s
+     Running tests/executor_contract.rs (/Users/philjepsen/gridstator-validation.I50ONpwm/source/native/target/aarch64-apple-darwin/debug/deps/executor_contract-e166ce82cba3148d)
+
+running 4 tests
+test real_buildx_cancellation_interrupts_running_build ... ok
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ok
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... ok
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 1.43s
+

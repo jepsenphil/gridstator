@@ -1,0 +1,36 @@
+{
+  "ownedOuterContainer": "gridstator-linux-arm-proof-7c41-final-68bb",
+  "ownedStateVolume": "gridstator-linux-arm-proof-7c41-final-68bb-state",
+  "nodeIds": [
+    "01M722KMWJVW3Q1B6HYCB7AFKW",
+    "01M722KN2BNKZTZEHMH26ZV7KB"
+  ],
+  "existingDesktopRestarted": false,
+  "privilegedContainerUsed": false,
+  "globalDockerConfigurationChanged": false,
+  "ownedJobResources": [
+    {
+      "nodeId": "01M722KMWJVW3Q1B6HYCB7AFKW",
+      "kind": "containers",
+      "remainingIds": []
+    },
+    {
+      "nodeId": "01M722KMWJVW3Q1B6HYCB7AFKW",
+      "kind": "volumes",
+      "remainingIds": []
+    },
+    {
+      "nodeId": "01M722KN2BNKZTZEHMH26ZV7KB",
+      "kind": "containers",
+      "remainingIds": []
+    },
+    {
+      "nodeId": "01M722KN2BNKZTZEHMH26ZV7KB",
+      "kind": "volumes",
+      "remainingIds": []
+    }
+  ],
+  "ownedOuterContainerRemoved": true,
+  "privateStateVolumeAndCredentialsRemoved": true,
+  "ownedImageTagRemoved": true
+}

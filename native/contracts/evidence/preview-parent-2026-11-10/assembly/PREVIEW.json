@@ -1,0 +1,170 @@
+{
+  "recordedDate": "2026-11-10",
+  "classification": "unpublished native development preview",
+  "stableRelease": false,
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "version": "2.0.0-dev.1",
+  "parentSourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview. Embedded sourceRevision is the parent reference commit; the native production/build checkpoint and supplemental inputs identify actual sources. No clean-release provenance claim.",
+  "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "sourceCheckpoint": "SOURCE_CHECKPOINT.json",
+  "supplementalBuildInputs": "SUPPLEMENTAL_BUILD_INPUTS.json",
+  "historicalPreviews": [
+    "native-preview-20261110-95cfa7161440",
+    "native-preview-20261110-e3e5fae51c8e",
+    "native-preview-20261110-1fd6e3d425b3",
+    "native-preview-20261110-cd6b769ebe6e",
+    "native-preview-20261110-7c41b2f3c79d"
+  ],
+  "corrections": [
+    "Percent-encoded blob digest GET is decoded once before strict digest validation.",
+    "Local load/tar BuildKit image references are tried in config then distinct manifest/index order, bounded to two inspections, preserving an addressable config (including zero size) and remote/cache-only behavior.",
+    "Darwin native host-available memory is free+inactive kernel pages bounded to physical memory with the actual host page size. This approved estimate differs from legacy Node os.freemem free-only semantics; Docker VM capacity remains an independent bound.",
+    "Generic atomic config writes preserve existing parent-directory modes, create missing parents privately and support relative leaf paths with directory fsync. Dedicated private_dir behavior, file0600, atomic replacement and read-modify-write locks remain."
+  ],
+  "linuxBuild": {
+    "jobId": "01M724AVW456E5EY8W9BJ824T7",
+    "snapshotId": "sha256:de1db0f2e0ae975ea0f4f080ac5716b75370192eadfe951b9d4a6dc8eaf47cde",
+    "mode": "Actual isolated Gridstator Docker self-build; both ELF targets statically linked. ARM compilation is cross-target; its exact final bytes are executed separately in the native ARM M4 Linux VM."
+  },
+  "editor": {
+    "file": "gridstator-native.vsix",
+    "sha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+    "mode": "Native-only preview extension; VS Code still requires its Node extension host."
+  },
+  "platformEvidence": {
+    "linux/amd64": {
+      "format": "ELF64 x86-64 static",
+      "runtime": "Exact final bytes passed private init/TLS status/graceful stop in clean read-only, network-disabled Alpine without Node/npm/Rust/Cargo/Zig. Assembled archive installed/manual-verified on Linux build host, with custom config permissions, native snapshot and encoded-digest TLS read-back.",
+      "evidence": [
+        "provenance/linux/artifact-validation.json",
+        "verification/installer-runtime-smoke.json"
+      ]
+    },
+    "linux/arm64": {
+      "format": "ELF64 AArch64 static",
+      "runtime": "Exact final bytes passed all six default strict workflow cases as native ARM64 Linux userspace in the M4 Docker Linux VM: command/snapshot/.env/exact artifact, local image build with addressable reference and size, verified ARM act shell, overlapping two-worker shards/JUnit, cancellation cleanup and doctor. Final custom config-parent permission checks also passed. Separately, exact bytes passed uid65534/read-only/network-disabled Alpine init/TLS/status/graceful stop without separate runtime/compiler tools; the disposable shared tmpfs parent mode was preserved.",
+      "limits": [
+        "No ARM host boot, systemd, reboot or physical standalone Linux service claim."
+      ],
+      "evidence": [
+        "provenance/linux-arm64-workflow/proof.json",
+        "provenance/linux-arm64-workflow/post-cleanup-audit.json",
+        "provenance/linux-arm64-clean-runtime/evidence.json"
+      ]
+    },
+    "darwin/arm64": {
+      "format": "thin Mach-O arm64",
+      "runtime": "Exact final bytes executed natively on M4/macOS15.6 build24G84: foreground/private user LaunchAgent roles; actual Docker command/snapshot/exact artifact/cancel/local build addressable reference+size and encoded-digest read-back. Final custom config-parent permission checks passed.",
+      "signing": "Linker ad-hoc only; no Developer ID signing or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json",
+        "provenance/mac/docker/proof.json"
+      ]
+    },
+    "darwin/amd64": {
+      "format": "thin Mach-O x86_64",
+      "runtime": "Exact final bytes executed under Rosetta on M4/macOS15.6: foreground/private user LaunchAgent roles, targeted sampler/resolver tests, strict all-target Clippy and custom config-parent permission checks.",
+      "limits": [
+        "No physical Intel hardware or Intel Docker-positive claim."
+      ],
+      "signing": "Unsigned; no Developer ID signing or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json"
+      ]
+    }
+  },
+  "historicalEvidence": {
+    "wslNative": {
+      "sourceBuildId": "native-preview-20261110-cd6b769ebe6e",
+      "evidence": "provenance/historical-wsl-native-cd6/summary.json",
+      "scope": "Actual Windows-to-WSL TLS loopback before/after native role restarts, Docker workloads and unique user unit. Owned unit used sg for already-granted Docker group and control-group stop; no unmodified stale-session unit, distro boot or reboot claim. Historical source/bytes retained."
+    },
+    "remoteWslEditor": {
+      "sourceBuildId": "native-preview-20261110-cd6b769ebe6e",
+      "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+      "evidence": "provenance/historical-remote-wsl-cd6/summary.json",
+      "scope": "Actual private Windows Code RemoteWSL with native-only VSIX: snapshot spaces, Docker logs/artifact, Testing, cancel and fail-closed helper checks. Private server namespace required a documented test-only product setting. Early shared-storage diagnostic access is recorded; no blanket zero-write claim."
+    }
+  },
+  "buildMetadataPolicy": "target-build-info records are preserved as build-time metadata. Any runtimeValidated:false predates the separate actual runtime proofs; execution is not inferred from compilation.",
+  "openStableReleaseGates": [
+    {
+      "id": "mac-signing",
+      "status": "not started",
+      "behavior": "Stable macOS candidate bytes are Developer ID signed and notarized before checksum/distribution validation.",
+      "acceptance": {
+        "caseId": "mac-signing",
+        "description": "Owner provides Apple credentials/access; sign/notarize candidate and verify downloaded bytes on each Mac architecture.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "owner": "project owner + native::release"
+    },
+    {
+      "id": "four-target-linkage",
+      "status": "implemented",
+      "behavior": "All four native targets run without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
+      "acceptance": {
+        "caseId": "four-target-linkage",
+        "description": "Build and audit linkage then run actual tested bytes on clean Linux x64/ARM64 and macOS Intel/ARM64 hosts.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "owner": "native::build/release"
+    },
+    {
+      "id": "mac-docker-capacity",
+      "status": "implemented",
+      "behavior": "Docker Desktop availability and VM capacity are distinct from host pressure and recover after late startup/restart.",
+      "acceptance": {
+        "caseId": "mac-docker-capacity",
+        "description": "On both Mac architectures, limit the Docker VM below host capacity and prove placement respects the smaller capacity.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "owner": "native::platform/worker"
+    },
+    {
+      "id": "launchd-live",
+      "status": "implemented",
+      "behavior": "Mac services distinguish boot-start system daemons and login-start user agents, with stable user/environment/path.",
+      "acceptance": {
+        "caseId": "launchd-live",
+        "description": "Run launchd lifecycle, login/logout/reboot and late-Docker recovery on Intel and Apple Silicon Macs.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "owner": "native::services"
+    },
+    {
+      "id": "systemd-live",
+      "status": "implemented",
+      "behavior": "Linux system/user units install, replace, start, stop, restart and uninstall with correct ownership and isolated v2 paths.",
+      "acceptance": {
+        "caseId": "systemd-live",
+        "description": "Run actual service lifecycle on Linux x64/ARM64; a rendered unit is insufficient.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "owner": "native::services"
+    }
+  ],
+  "stableReleaseLimits": [
+    "Developer ID signing/notarization and final signed-byte validation remain open.",
+    "Physical Intel Mac runtime and physical-architecture boot/system-service/workload gates remain bounded to their recorded evidence.",
+    "Clean release provenance, stable approval and publication remain outstanding."
+  ],
+  "archiveBundle": "gridstator-2.0.0-dev.1-native-bundle.tar.gz contains only the manifest and four archives. Adjacent VSIX, metadata and verification records are covered recursively by SHA256SUMS.",
+  "operations": "Only private prefixes and disposable cluster state were used for installer verification; owned HTTP/controller actors stopped and credentials/data were removed. No global prefix, live service or publication was changed."
+}

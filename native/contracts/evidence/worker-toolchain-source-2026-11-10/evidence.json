@@ -1,0 +1,118 @@
+{
+  "recordedAtUTC": "2026-11-10T03:29:07.447881+00:00",
+  "verifiedRows": [
+    "reference-agent-updater-003"
+  ],
+  "source": {
+    "path": "apps/agent/src/updater.test.ts",
+    "line": 232,
+    "condition": "frozen it.skipIf(!linux), source Linux x64/arm64; this actual proof is Linux x86_64 only"
+  },
+  "nativeTest": "native/tests/worker_toolchain_source.rs::source_003_real_managed_act_reprobes_and_invalid_candidate_reports_without_restart_loop",
+  "command": "GRIDSTATOR_TOOLCHAIN_SOURCE_KEEP=1 GRIDSTATOR_TOOLCHAIN_SOURCE_EVIDENCE=<private evidence dir> cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test worker_toolchain_source -- --ignored --nocapture --test-threads=1",
+  "result": {
+    "passed": 1,
+    "elapsedSeconds": 54.31,
+    "log": "source-green.log",
+    "strictClippy": "passed",
+    "rustfmt": "passed"
+  },
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted shared working tree; actual immutable copied executable SHA identifies this proof, not a signed/final release.",
+  "binary": {
+    "buildId": "dev-4b8f13ccf1b2-1794280261283825642",
+    "version": "2.0.0-dev.1",
+    "target": "linux/amd64",
+    "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0",
+    "size": 240777072,
+    "retainedIgnoredPath": "native/target/worker-toolchain-source-artifacts/linux-amd64/gridstator"
+  },
+  "act": {
+    "version": "0.2.96",
+    "archiveSha256": "b861e901c9062d841c6e8ecd36cdf27e0ce39ea0124cfd93de6efcebea0e16e7",
+    "executableSha256": "4778494a4f0128828958bdc92828e7bac2ddeb003b640b19ac41b103a4ca433f",
+    "reportedVersion": "act version 0.2.96",
+    "checksumsSource": "https://github.com/nektos/act/releases/download/v0.2.96/checksums.txt"
+  },
+  "actualProcess": {
+    "supervisorPid": 1488952,
+    "initialPayloadPid": 1489189,
+    "finalPayloadPid": 1489189,
+    "initialConnectedAt": 1794281239571,
+    "reprobedConnectedAt": 1794281252162,
+    "failedCandidateChecks": 3,
+    "initialActAvailable": false,
+    "nativeRolePath": "private empty directory; no host act/Node/npm"
+  },
+  "sourceAssertionMap": [
+    {
+      "source": "Install current controller build and recognize the agent as managed",
+      "native": "The actual host CLI is adopted by a verified InstallStore; its supervised payload reports matching embedded build ID, executable SHA-256, target, managed:true and runtime:rust."
+    },
+    {
+      "source": "Docker/buildx/act initially unavailable; only toolchain work is exercised",
+      "native": "Private empty role PATH excludes host act/Node/npm. Docker is explicitly unavailable; baseline act is unavailable, tools.act is null and tools.managed is empty. No Docker workloads or services start."
+    },
+    {
+      "source": "toolchain act:null/node:null and a reported toolchain gap",
+      "native": "autoUpdate:off with explicit act0.2.96 override; the actual initial behind detail says toolchain act missing \u21920.2.96. Native settings/toolchain views omit Node management."
+    },
+    {
+      "source": "Install fake act9.9.1 and observe its executable",
+      "native": "Controller fetches actual upstream act0.2.96; an independent checksums.txt fetch agrees with the mirrored archive, the worker verifies/extracts it, persisted executable hash agrees and the installed binary executes --version."
+    },
+    {
+      "source": "Restart status after managed act+Node switch",
+      "native": "Act-only changes reprobe/reconnect in the same native OS process. Same payload PID before/after; connection timestamp advances and metadata reports managed act0.2.96. No core activation is created."
+    },
+    {
+      "source": "Node9.9.2 path and install state node/pending/previousNode fields",
+      "exception": "native-no-node-runtime-management; native-artifact-and-update-identity",
+      "native": "The core is one verified Rust executable; its build metadata has no Node field. Current core identity remains unchanged with no pending activation/rollback during an act-only change. Stable supervisor hash matches the verified native executable after health/welcome."
+    },
+    {
+      "source": "Restart outside the Node-switching launcher reports a failed Node version rather than looping",
+      "exception": "native-no-node-runtime-management; native-artifact-and-update-identity",
+      "native": "A digest-correct controlled archive containing an invalid native act executable is offered through the pinned controller. Three explicit checks report target-verification errors and halt rollout without changing PID, core activation, last working act/config or restored scheduling mode. This is a synthetic negative candidate, not an upstream9.9.99 release."
+    },
+    {
+      "source": "After failure, managed act remains reported and there is no restarting status",
+      "native": "Final native metadata still reports act0.2.96 managed; the actual PID is identical across all three failed checks and core activation remains unchanged."
+    }
+  ],
+  "additionalIdentityAndCoreRecoveryEvidence": [
+    {
+      "location": "native/contracts/evidence/closure-2026-11-10/evidence.json",
+      "test": "managed_role_contract::actual_managed_controller_and_worker_refresh_the_verified_stable_supervisor",
+      "scope": "Actual verified installed controller/worker role locations and automatic stable supervisor refresh after authenticated health/welcome; independent negative install-source identity and refresh tests are also recorded there."
+    },
+    {
+      "location": "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json",
+      "scope": "Actual successful native core update and schema-changing crash candidate with supervisor rollback and controller DB restoration. The current tool proof does not repeat that core crash."
+    }
+  ],
+  "cleanup": {
+    "rolesStoppedAndReaped": true,
+    "remainingOwnedRolePids": [],
+    "DockerUsed": false,
+    "existingServicesTouched": false,
+    "privateCredentialFixturesRemovedAfterEvidence": true
+  },
+  "limits": [
+    "Actual runtime target is linux/amd64. Non-host core mirror members are64-byte parser fixtures, never installed/executed.",
+    "The host core entry is the actual executable as an internal raw verified artifact, not an official packaged release archive.",
+    "The invalid9.9.99 tool archive is deliberately synthetic; outer digest is valid, inner executable target verification fails.",
+    "Three explicit failed checks establish the observed no-restart behavior; this does not claim infinite-time liveness or availability.",
+    "Node switch/path assertions are explicit plan-approved runtime/identity replacements, not unchanged v1 behavior.",
+    "No macOS act readiness, ARM Linux runtime, OS-service/reboot, signing/notarization or publication proof is implied."
+  ],
+  "sourceDigestsAtEvidenceRecord": {
+    "native/tests/worker_toolchain_source.rs": "1d6ddcb98b5a0103625f260d7883b6e55784ff8aff090f84c4135b5994571570",
+    "native/src/worker.rs": "17463b38ae1d2a46b5870720ed8093e434ef0889b68618d72572d9eaabe33078",
+    "native/src/install.rs": "6923c3c19038caa0d299e9f77e3b80c92499c8caa659d65e1bb1eabbfb8ab051",
+    "native/src/updates.rs": "be6201fa25b04fe61ae758712ef6d36d95a59c9690afe5a12d599d322e8a80fb",
+    "native/src/updates/act.rs": "12b34fc8258b23e64006442b82eb4df40bd052bf63223ef7f0a363bfa957a128",
+    "apps/agent/src/updater.test.ts": "2666ee4764a0471bb16cf4d058c4910ff80933ea4a66f07230b7c4a1726f0fb6",
+    "native/Cargo.lock": "f5598ea16fd9a99b9d1cf9e8be8c72c4aed8821152b73054acd6bda086a2e7a4"
+  }
+}

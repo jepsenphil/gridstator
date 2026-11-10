@@ -24,8 +24,24 @@ export function Overview({ data, dispatch }: { data: DashboardState; dispatch: D
   const succeeded = recent.filter((j) => j.state === 'succeeded');
   const totalCpus = online.reduce((n, x) => n + (x.info?.cpus ?? 0), 0);
   const totalMem = online.reduce((n, x) => n + (x.info?.memoryTotalMb ?? 0), 0);
+  const waitingWorker = data.nodes.find(
+    (n) =>
+      data.connection.status === 'connected' &&
+      Boolean(data.connection.controller?.machineId) &&
+      n.info?.machineId === data.connection.controller?.machineId &&
+      n.info?.docker.available === false,
+  );
   return (
     <div className="stack">
+      {waitingWorker ? (
+        <div className="banner banner-info" role="status">
+          <Icon name="info" />
+          <span>
+            The worker on {waitingWorker.name} is waiting for Docker. Start Docker on that machine
+            to run jobs there.
+          </span>
+        </div>
+      ) : null}
       <div className="tiles">
         <button className="tile" onClick={() => dispatch({ type: 'go', view: 'nodes' })}>
           <span className="tile-value">
@@ -69,8 +85,15 @@ export function Overview({ data, dispatch }: { data: DashboardState; dispatch: D
         >
           {data.nodes.length === 0 ? (
             <Empty icon="server" title="No worker nodes yet">
-              Run <code>gridstator token create --join</code> on the controller, then{' '}
-              <code>gridstator agent join …</code> on a worker.
+              <Button
+                icon="add"
+                disabled={
+                  data.connection.status !== 'connected' || data.connection.role !== 'admin'
+                }
+                onClick={() => dispatch({ type: 'go', view: 'addWorker' })}
+              >
+                Add worker
+              </Button>
             </Empty>
           ) : (
             <ul className="node-list">

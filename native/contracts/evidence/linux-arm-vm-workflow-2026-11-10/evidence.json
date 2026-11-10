@@ -1,0 +1,107 @@
+{
+  "recordedAtUTC": "2026-11-10T06:06:47.143866+00:00",
+  "status": "Finalcommon6994 exactLinuxARM bytes passed defaultstrict6coreworkflow plus3customconfigpermissioncases; previousreceipts retained",
+  "historicalBuildId": "native-preview-20261110-cd6b769ebe6e",
+  "historicalExecutableSha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+  "expectedExitCode": 3,
+  "diagnosticSeconds": 6.897,
+  "actualNativeTargets": [
+    "linux/arm64"
+  ],
+  "actorNames": [
+    "arm-embedded",
+    "arm-standalone"
+  ],
+  "successfulIndependentScenarios": [
+    "embedded-command-snapshot-artifact",
+    "actual-verified-arm-act-shell",
+    "two-worker-shards-combined-junit",
+    "standalone-cancel-owned-cleanup",
+    "doctor-two-native-workers"
+  ],
+  "knownFailedAssertion": {
+    "reportedId": "sha256:44e16dea42ca3fc6f30e16ccac82f298ff63f8f44cae8f1527b29f532fbf741c",
+    "actualId": "sha256:7495ea6a112a744d0b86fe85a791798b5c388bb15967409ec88e0602e084c286",
+    "strictAssertionFailed": true
+  },
+  "act": {
+    "version": "0.2.96",
+    "target": "linux/arm64",
+    "archiveSha256": "158a16eee7394c266ee87dee9f15ca5f219d47193f7a1df9bad9093774e340c4",
+    "executableSha256": "aa958a689fc887427065d264e9be496ec2fd57f728256435636c4c9c5f69d75d",
+    "checksumDocumentSha256": "2f9d9cfdbefbae62cc08f22ae3db0d6efaac924dc8b369e11914c7215a327160",
+    "urls": [
+      "https://github.com/nektos/act/releases/download/v0.2.96/checksums.txt",
+      "https://github.com/nektos/act/releases/download/v0.2.96/act_Linux_arm64.tar.gz"
+    ]
+  },
+  "executedFixtureSha256": "9634a388592ac16aa7edab693079e44b615311beb602ee7eb5cd3084b1b4d67a",
+  "maintainedFixture": "native/tests/linux_arm_vm_workflow.py",
+  "toolIdentity": "cd6-diagnostic/toolchain.json",
+  "officialImageIdentity": "cd6-diagnostic/official-image.json",
+  "defaultStrictRequiredForNewCandidate": true,
+  "productionEditsByThisTask": false,
+  "systemdOrBootClaim": false,
+  "independentCleanupAudit": "cd6-diagnostic/post-cleanup-audit.json",
+  "correctedCandidate": {
+    "buildId": "buildx-fallback-dev-8e696aa15b2e",
+    "sha256": "d3b5e64741b595ce7fb24ab049d67cdc2992b23cc2ebeb98e3dbbb4f8d9d20bd",
+    "seconds": 6.564,
+    "expectedExitCode": 0,
+    "result": "passed",
+    "scenarios": [
+      "embedded-command-snapshot-artifact",
+      "standalone-build-load-image",
+      "actual-verified-arm-act-shell",
+      "two-worker-shards-combined-junit",
+      "standalone-cancel-owned-cleanup",
+      "doctor-two-native-workers"
+    ],
+    "proof": "corrected-dev-strict/proof.json",
+    "exactExecutedFixtureSha256": "bb77f072d9078fd47a1aaaa542eb0344e9467ccc65ffb12a7dc911eb67c01571",
+    "inputAndCleanupAudit": "corrected-dev-strict/post-cleanup-audit.json",
+    "buildSource": {
+      "target": {
+        "version": "2.0.0-dev.1",
+        "buildId": "buildx-fallback-dev-8e696aa15b2e",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "target": "linux/arm64",
+        "sha256": "d3b5e64741b595ce7fb24ab049d67cdc2992b23cc2ebeb98e3dbbb4f8d9d20bd",
+        "size": 26577552,
+        "runtime": "rust",
+        "sourceState": "working-tree-snapshot",
+        "runtimeValidated": false
+      },
+      "staticELFVerified": true,
+      "sourceManifestEntries": 981,
+      "allSourceManifestEntriesMatchSnapshot": true,
+      "snapshotId": "sha256:de18c8cb8da1393d6463054e5bce13672c4411c826165bb73fca704baf874b91",
+      "jobId": "01M721B3N1R7ABBPWW0PSSBJRC",
+      "runtimeSeconds": 333.836,
+      "nativeExecution": "Whole actual ARM workflow passed exit0/default strict6cases on this exact binary; ../corrected-dev-strict/proof.json"
+    },
+    "retainedIgnoredBinary": "native/self-build/proof-01M721B3N1R7ABBPWW0PSSBJRC/linux-arm64/gridstator"
+  },
+  "pendingFinalCommonId": null,
+  "finalCommonCandidate": {
+    "buildId": "native-preview-20261110-6994d2cc804b",
+    "sha256": "0668296c0f7a8711ac5654385ea00a7e69600f411d63c5f2effcb2e53c675f88",
+    "expectedExitCode": 0,
+    "result": "passed",
+    "seconds": 7.35,
+    "scenarios": [
+      "embedded-command-snapshot-artifact",
+      "standalone-build-load-image",
+      "actual-verified-arm-act-shell",
+      "two-worker-shards-combined-junit",
+      "standalone-cancel-owned-cleanup",
+      "doctor-two-native-workers"
+    ],
+    "proof": "final-6994-strict/proof.json",
+    "configParentPermissions": "final-6994-strict/config-parent-permissions.json",
+    "exactExecutedFixtureSha256": "6ceaccc738c8ba5eb35d8e5bf00ef7ebd4f87e91ce7e647026a0cc7697f8df55",
+    "inputAndCleanupAudit": "final-6994-strict/post-cleanup-audit.json",
+    "sourceProvenance": "../self-build-parent-preview-2026-11-10/evidence.json",
+    "defaultStrict": true
+  }
+}

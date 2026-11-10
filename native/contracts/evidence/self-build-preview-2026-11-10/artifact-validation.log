@@ -1,0 +1,51 @@
+{
+  "linux-arm64": {
+    "path": "/tmp/gridstator-final-self-build-2nwg0wvl/artifacts/self-build/linux-arm64/gridstator",
+    "sha256": "036440b41b6e7e9374c00634f7bc9a1fcdcbb575490ad057facc354859b387df",
+    "size": 26578192,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/arm64",
+      "sha256": "036440b41b6e7e9374c00634f7bc9a1fcdcbb575490ad057facc354859b387df",
+      "size": 26578192,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "not executed"
+  },
+  "linux-amd64": {
+    "path": "/tmp/gridstator-final-self-build-2nwg0wvl/artifacts/self-build/linux-amd64/gridstator",
+    "sha256": "8f9adecdeb1eff5a07824239c9d692298b10728b766184cb36143c8cfa471eed",
+    "size": 27598104,
+    "buildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "target": "linux/amd64",
+      "sha256": "8f9adecdeb1eff5a07824239c9d692298b10728b766184cb36143c8cfa471eed",
+      "size": 27598104,
+      "runtime": "rust",
+      "sourceState": "working-tree-snapshot",
+      "runtimeValidated": false
+    },
+    "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig",
+    "actualBuildInfo": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "linux/amd64",
+      "size": 27598104,
+      "sha256": "8f9adecdeb1eff5a07824239c9d692298b10728b766184cb36143c8cfa471eed"
+    }
+  }
+}

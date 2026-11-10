@@ -1,0 +1,148 @@
+{
+  "recordedAt": "2026-11-10T05:51:31.463046+00:00",
+  "classification": "Development preview evidence; stable-release gates remain open",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "productionCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "checks": [
+    {
+      "name": "Final coherent full native default suite",
+      "command": "GRIDSTATOR_BUILD_ID=native-preview-20261110-cd6b769ebe6e GRIDSTATOR_SOURCE_REVISION=4b8f13ccf1b21820007fef0ab52143c961b69216 cargo test --locked --all-targets -- --test-threads=1",
+      "result": "passed",
+      "exitCode": 0,
+      "passed": 244,
+      "failed": 0,
+      "ignored": 32,
+      "targets": 43,
+      "log": "native-serial-final.log",
+      "counting": "Last summary per Cargo target excludes nested child summaries; all43 targets completed. Environment-dependent ignored cases have separate explicit actual-host proof."
+    },
+    {
+      "name": "Strict all-target Clippy",
+      "command": "cargo clippy --locked --all-targets -- -D warnings (same coherent ID/source environment)",
+      "result": "passed",
+      "log": "clippy.log"
+    },
+    {
+      "name": "Rust formatting",
+      "command": "cargo fmt --all -- --check",
+      "result": "passed",
+      "log": "rust-format.log"
+    },
+    {
+      "name": "TypeScript types",
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "log": "typecheck.log",
+      "scope": "Final TypeScript product/test source; subsequent production changes are Rust-only."
+    },
+    {
+      "name": "ESLint",
+      "command": "pnpm lint",
+      "result": "passed",
+      "log": "lint.log",
+      "scope": "Final TypeScript source; native evidence scripts excluded."
+    },
+    {
+      "name": "Full formatting",
+      "command": "pnpm format:check",
+      "result": "passed",
+      "log": "format.log"
+    },
+    {
+      "name": "Frozen AST inventory",
+      "command": "node native/scripts/check-source-inventory.mjs FROZEN_CHECKOUT",
+      "result": "passed",
+      "sourceDeclarations": 203,
+      "ledgerRows": 227,
+      "log": "source-inventory.log"
+    },
+    {
+      "name": "Actual M4 executor source acceptance",
+      "result": "passed",
+      "cases": 14,
+      "evidenceLocation": "native/contracts/evidence/buildkit-desktop-m4-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Actual M4 worker source acceptance",
+      "result": "passed",
+      "cases": 8,
+      "evidenceLocation": "native/contracts/evidence/m4-worker-docker-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Final Mac payload and checked memory/restart behavior",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/mac-preview-darwin-2026-11-10/summary.json"
+    },
+    {
+      "name": "Final static Linux self-build and clean x64 TLS runtime",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/self-build-darwin-preview-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Actual final ARM64 clean TLS runtime in M4 Linux VM",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/linux-arm-m4vm-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Actual one-cluster mixed-LAN updates and system-scope rollback",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/mixed-lan-system-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Retained Node/editor checkpoint",
+      "result": "passed",
+      "scope": "194 retained Node cases with ten explicit opt-in skips and20 Playwright cases passed. Actual native SDK, editor windows, unsaved buffers and host proofs are separately recorded. Overlapping results are not summed.",
+      "evidenceLocation": "native/contracts/evidence/preview-2026-11-10/quality/summary.json"
+    }
+  ],
+  "failedAttemptsPreserved": [
+    {
+      "log": "native-parallel-failure.log",
+      "scope": "Full parallel attempt stopped in controller_lifecycle:17passed/1failed. One-second heartbeat probe timed out during four stalled archive streams while other builds/cases ran. No source behavior change or relaxed deadline followed."
+    },
+    {
+      "log": "backpressure-isolated.log",
+      "result": "passed",
+      "scope": "Same unchanged isolated case passed:128MiB archive, four stalled streams, ten stalled+185 full-transfer probes, max577.96ms, RSSgrowth1644KiB, cancellation45.75ms. Complete serial final run also passed unchanged."
+    },
+    {
+      "log": "native-shared-build-failure.log",
+      "scope": "First serial attempt stopped at install_source_contract:9passed/1failed because another Cargo operation replaced the shared debug CLI with default dev identity while its test library expected cd6. Shared Cargo work was paused, coherent cd6 binaries rebuilt, then the full serial244case run passed. Release artifacts were not modified."
+    }
+  ],
+  "parity": {
+    "verified": 220,
+    "total": 227,
+    "open": [
+      {
+        "id": "vscode-native-helper",
+        "status": "implemented"
+      },
+      {
+        "id": "mac-signing",
+        "status": "not started"
+      },
+      {
+        "id": "four-target-linkage",
+        "status": "implemented"
+      },
+      {
+        "id": "linux-wsl2",
+        "status": "implemented"
+      },
+      {
+        "id": "mac-docker-capacity",
+        "status": "implemented"
+      },
+      {
+        "id": "launchd-live",
+        "status": "implemented"
+      },
+      {
+        "id": "systemd-live",
+        "status": "implemented"
+      }
+    ]
+  },
+  "provenance": "Working tree remains uncommitted. Embedded sourceRevision is the parent reference; actual native inputs, snapshot and target artifact hashes identify this preview. No Developer ID/notarized stable publication claim."
+}

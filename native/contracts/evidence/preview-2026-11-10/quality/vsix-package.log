@@ -1,0 +1,25 @@
+
+> gridstator-vscode@0.1.0 package:native /repos/gridstator/apps/vscode
+> node scripts/package-native.mjs
+
+Built native v2 extension and dashboard (production)
+ INFO  Files included in the VSIX:
+gridstator-native.vsix
+├─ [Content_Types].xml 
+├─ extension.vsixmanifest 
+└─ extension/
+   ├─ LICENSE.md [0.08 KB]
+   ├─ package.json [13.13 KB]
+   ├─ readme.md 
+   ├─ dist/
+   │  └─ extension.js [714.39 KB]
+   └─ media/
+      ├─ dashboard.css [18.82 KB]
+      ├─ dashboard.js [299.5 KB]
+      ├─ gridstator.svg [0.38 KB]
+      ├─ icon.png [0.4 KB]
+      └─ codicons/
+         ├─ codicon.css [37.96 KB]
+         └─ codicon.ttf [146 KB]
+
+ DONE  Packaged: /repos/gridstator/apps/vscode/dist/gridstator-native.vsix (12 files, 352.96 KB)

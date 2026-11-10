@@ -1,0 +1,79 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.07s
+     Running tests/updates_source_scenarios.rs (native/target/debug/deps/updates_source_scenarios-f029d82918c7744b)
+
+running 18 tests
+
+thread 'source_001_current_behind_missing_metadata_unmanaged_and_offline_status' (1260948) panicked at tests/updates_source_scenarios.rs:33:5:
+"not a managed install; install this worker as a verified native managed service to enable updates" did not contain "predates self-update"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test source_003_default_drain_preserves_jobs_beyond_eight_days_and_nudges_once ... ok
+
+thread 'source_008_update_deadline_halts_and_does_not_advance_the_next_worker' (1260955) panicked at tests/updates_source_scenarios.rs:33:5:
+"worker did not return on the candidate build before its update deadline" did not contain "did not come back"
+test source_005_now_cancels_once_then_checks_after_jobs_finish ... ok
+test source_001_current_behind_missing_metadata_unmanaged_and_offline_status ... FAILED
+test source_008_update_deadline_halts_and_does_not_advance_the_next_worker ... FAILED
+
+thread 'source_011_node_override_bypasses_a_closed_window' (1260959) panicked at tests/updates_source_scenarios.rs:33:5:
+"waiting for the configured daily update window" did not contain "waiting for the update window"
+test source_011_node_override_bypasses_a_closed_window ... FAILED
+test source_004_sequential_drain_holds_placements_and_finishes_both_returned_workers ... ok
+test source_010_follow_is_the_default_and_marks_the_rollout_automatic ... ok
+
+thread 'source_007_launcher_rollback_halts_with_source_diagnostic' (1260954) panicked at tests/updates_source_scenarios.rs:33:5:
+"candidate \"new\" rolled back to \"old\"" did not contain "the launcher rolled back"
+test source_013_normal_and_wrapping_window_boundaries_match_source ... ok
+test source_007_launcher_rollback_halts_with_source_diagnostic ... FAILED
+test source_015_actual_act_override_is_checked_against_upstream_checksums ... ignored, downloads the actual act override/checksums from upstream; no services or workloads
+
+thread 'source_016_unmanaged_same_build_ignores_managed_act_drift' (1260964) panicked at tests/updates_source_scenarios.rs:426:5:
+assertion `left == right` failed
+  left: String("behind")
+ right: "current"
+test source_016_unmanaged_same_build_ignores_managed_act_drift ... FAILED
+Controller listening on https://127.0.0.1:42245
+
+thread 'source_011_api_rejects_window_mode_without_a_window' (1260958) panicked at tests/updates_source_scenarios.rs:822:10:
+window mode without a window must be rejected: Object {"jobRetentionDays": Number(90), "logRetentionDays": Number(30), "snapshotRetentionDays": Number(7), "autoUpdate": String("window"), "updateWindow": Null, "toolchain": Object {"act": Null}}
+test source_011_api_rejects_window_mode_without_a_window ... FAILED
+test source_002_native_unbundled_replacement_rejects_admin_update ... ok
+
+thread 'source_009_cancel_rollout_restores_worker_and_projects_behind_immediately' (1260956) panicked at tests/updates_source_scenarios.rs:718:5:
+assertion `left == right` failed
+  left: String("updating")
+ right: "behind"
+
+thread 'source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry' (1260953) panicked at tests/updates_source_scenarios.rs:648:5:
+assertion `left == right` failed
+  left: String("disk full")
+ right: "a: disk full"
+test source_009_cancel_rollout_restores_worker_and_projects_behind_immediately ... FAILED
+test source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry ... FAILED
+
+thread 'source_014_native_act_only_drift_verified_archives_and_four_target_offers' (1260962) panicked at tests/updates_source_scenarios.rs:33:5:
+"auto-update is off; run gridstator agents update" did not contain "toolchain"
+test source_014_native_act_only_drift_verified_archives_and_four_target_offers ... FAILED
+
+thread 'source_015_act_override_view_drift_and_off_restore_current' (1260963) panicked at tests/updates_source_scenarios.rs:33:5:
+"auto-update is off; run gridstator agents update" did not contain "act 0.2.97 → 9.9.3"
+test source_015_act_override_view_drift_and_off_restore_current ... FAILED
+test source_012_update_only_bootstraps_each_native_target_without_agent_socket ... ok
+
+failures:
+
+failures:
+    source_001_current_behind_missing_metadata_unmanaged_and_offline_status
+    source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry
+    source_007_launcher_rollback_halts_with_source_diagnostic
+    source_008_update_deadline_halts_and_does_not_advance_the_next_worker
+    source_009_cancel_rollout_restores_worker_and_projects_behind_immediately
+    source_011_api_rejects_window_mode_without_a_window
+    source_011_node_override_bypasses_a_closed_window
+    source_014_native_act_only_drift_verified_archives_and_four_target_offers
+    source_015_act_override_view_drift_and_off_restore_current
+    source_016_unmanaged_same_build_ignores_managed_act_drift
+
+test result: FAILED. 7 passed; 10 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.34s
+
+error: test failed, to rerun pass `--test updates_source_scenarios`

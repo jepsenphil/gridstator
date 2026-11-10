@@ -1,0 +1,1037 @@
+{
+  "notes": "Outputs preserve omission/null, defaults, unknown-field and unit distinctions. Zod issue wording is diagnostic evidence, not a new Rust API requirement.",
+  "cases": [
+    {
+      "id": "command-defaults",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"]
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "build-defaults",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "docker-build"
+      },
+      "success": true,
+      "output": {
+        "kind": "docker-build",
+        "context": ".",
+        "buildArgs": {},
+        "tags": [],
+        "platforms": [],
+        "noCache": false,
+        "pull": false,
+        "output": "load",
+        "cacheFrom": [],
+        "cacheTo": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "actions-defaults",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "actions",
+        "workflow": ".github/workflows/test.yml"
+      },
+      "success": true,
+      "output": {
+        "kind": "actions",
+        "workflow": ".github/workflows/test.yml",
+        "event": "push",
+        "inputs": {},
+        "vars": {},
+        "platforms": {},
+        "matrix": [],
+        "dockerSocket": false,
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "unknown-field-stripped",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "unknown": "strip-me",
+        "target": {
+          "extra": true
+        }
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "empty-option-objects",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "target": {},
+        "retry": {}
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "null-env",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "env": null
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": ["env"],
+          "message": "Invalid input: expected record, received null"
+        }
+      ]
+    },
+    {
+      "id": "null-name",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "name": null
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": ["name"],
+          "message": "Invalid input: expected string, received null"
+        }
+      ]
+    },
+    {
+      "id": "empty-command",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": []
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": ["command"],
+          "message": "Too small: expected array to have >=1 items"
+        }
+      ]
+    },
+    {
+      "id": "empty-argv-item-accepted",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": [""]
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": [""],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "fractional-cpu",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 0.25,
+          "memoryMb": 16
+        }
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 0.25,
+          "memoryMb": 16
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "maximum-resources",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 1024,
+          "memoryMb": 16777216
+        }
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 1024,
+          "memoryMb": 16777216
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "zero-cpus",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 0,
+          "memoryMb": 4096
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": ["resources", "cpus"],
+          "message": "Too small: expected number to be >0"
+        }
+      ]
+    },
+    {
+      "id": "over-cpu-limit",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 1025,
+          "memoryMb": 4096
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_big",
+          "path": ["resources", "cpus"],
+          "message": "Too big: expected number to be <=1024"
+        }
+      ]
+    },
+    {
+      "id": "below-memory-minimum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 15
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": ["resources", "memoryMb"],
+          "message": "Too small: expected number to be >=16"
+        }
+      ]
+    },
+    {
+      "id": "fractional-memory",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 16.5
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": ["resources", "memoryMb"],
+          "message": "Invalid input: expected int, received number"
+        }
+      ]
+    },
+    {
+      "id": "over-memory-limit",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 16777217
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_big",
+          "path": ["resources", "memoryMb"],
+          "message": "Too big: expected number to be <=16777216"
+        }
+      ]
+    },
+    {
+      "id": "resources-required-members",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "resources": {}
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": ["resources", "cpus"],
+          "message": "Invalid input: expected number, received undefined"
+        },
+        {
+          "code": "invalid_type",
+          "path": ["resources", "memoryMb"],
+          "message": "Invalid input: expected number, received undefined"
+        }
+      ]
+    },
+    {
+      "id": "priority-minimum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "priority": -100
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": -100
+      }
+    },
+    {
+      "id": "priority-maximum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "priority": 100
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 100
+      }
+    },
+    {
+      "id": "priority-underflow",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "priority": -101
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": ["priority"],
+          "message": "Too small: expected number to be >=-100"
+        }
+      ]
+    },
+    {
+      "id": "priority-overflow",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "priority": 101
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_big",
+          "path": ["priority"],
+          "message": "Too big: expected number to be <=100"
+        }
+      ]
+    },
+    {
+      "id": "timeout-minimum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "timeoutSeconds": 1
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "timeoutSeconds": 1,
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "timeout-maximum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "timeoutSeconds": 604800
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "timeoutSeconds": 604800,
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "timeout-zero",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "timeoutSeconds": 0
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": ["timeoutSeconds"],
+          "message": "Too small: expected number to be >0"
+        }
+      ]
+    },
+    {
+      "id": "timeout-overflow",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "timeoutSeconds": 604801
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_big",
+          "path": ["timeoutSeconds"],
+          "message": "Too big: expected number to be <=604800"
+        }
+      ]
+    },
+    {
+      "id": "retry-maximum",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "retry": {
+          "max": 10,
+          "on": ["failed", "lost"]
+        }
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 10,
+          "on": ["failed", "lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "retry-overflow",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "retry": {
+          "max": 11
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "too_big",
+          "path": ["retry", "max"],
+          "message": "Too big: expected number to be <=10"
+        }
+      ]
+    },
+    {
+      "id": "retry-empty-on",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "retry": {
+          "on": []
+        }
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": []
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "invalid-env-key",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "env": {
+          "INVALID-NAME": "x"
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_key",
+          "path": ["env", "INVALID-NAME"],
+          "message": "Invalid key in record"
+        }
+      ]
+    },
+    {
+      "id": "workdir-parent",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "workdir": "../outside"
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "custom",
+          "path": ["workdir"],
+          "message": "workdir must be \".\" or a normalized relative path without \"..\""
+        }
+      ]
+    },
+    {
+      "id": "workdir-drive-v1-accepted",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "workdir": "C:relative"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "ok"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": "C:relative",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0
+      }
+    },
+    {
+      "id": "artifact-drive-rejected",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "command",
+        "command": ["echo", "ok"],
+        "artifacts": ["C:relative"]
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "custom",
+          "path": ["artifacts", 0],
+          "message": "expected \".\" or a normalized relative path without \"..\""
+        }
+      ]
+    },
+    {
+      "id": "invalid-kind",
+      "schema": "JobSpec",
+      "input": {
+        "kind": "other"
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_union",
+          "path": ["kind"],
+          "message": "Invalid discriminator value. Expected 'command' | 'docker-build' | 'actions'"
+        }
+      ]
+    },
+    {
+      "id": "project-defaults",
+      "schema": "ProjectConfig",
+      "input": {},
+      "success": true,
+      "output": {
+        "version": 1,
+        "defaults": {},
+        "snapshot": {
+          "include": [],
+          "exclude": [],
+          "allowSecrets": [],
+          "maxFileSize": "256m"
+        },
+        "tasks": {},
+        "builds": {},
+        "actions": {}
+      }
+    },
+    {
+      "id": "project-unknown-field",
+      "schema": "ProjectConfig",
+      "input": {
+        "extra": true
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "unrecognized_keys",
+          "path": [],
+          "message": "Unrecognized key: \"extra\""
+        }
+      ]
+    },
+    {
+      "id": "project-null-defaults",
+      "schema": "ProjectConfig",
+      "input": {
+        "defaults": null
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": ["defaults"],
+          "message": "Invalid input: expected object, received null"
+        }
+      ]
+    },
+    {
+      "id": "project-empty-snapshot",
+      "schema": "ProjectConfig",
+      "input": {
+        "snapshot": {}
+      },
+      "success": true,
+      "output": {
+        "version": 1,
+        "defaults": {},
+        "snapshot": {
+          "include": [],
+          "exclude": [],
+          "allowSecrets": [],
+          "maxFileSize": "256m"
+        },
+        "tasks": {},
+        "builds": {},
+        "actions": {}
+      }
+    },
+    {
+      "id": "project-partial-retry",
+      "schema": "ProjectConfig",
+      "input": {
+        "tasks": {
+          "test": {
+            "command": "true",
+            "retry": {}
+          }
+        }
+      },
+      "success": true,
+      "output": {
+        "version": 1,
+        "defaults": {},
+        "snapshot": {
+          "include": [],
+          "exclude": [],
+          "allowSecrets": [],
+          "maxFileSize": "256m"
+        },
+        "tasks": {
+          "test": {
+            "command": "true",
+            "retry": {
+              "max": 0,
+              "on": ["lost"]
+            }
+          }
+        },
+        "builds": {},
+        "actions": {}
+      }
+    },
+    {
+      "id": "project-nested-unknown",
+      "schema": "ProjectConfig",
+      "input": {
+        "defaults": {
+          "extra": true
+        }
+      },
+      "success": false,
+      "issues": [
+        {
+          "code": "unrecognized_keys",
+          "path": ["defaults"],
+          "message": "Unrecognized key: \"extra\""
+        }
+      ]
+    },
+    {
+      "id": "timestamp-zero",
+      "schema": "Timestamp",
+      "input": 0,
+      "success": true,
+      "output": 0
+    },
+    {
+      "id": "timestamp-milliseconds",
+      "schema": "Timestamp",
+      "input": 1700000000123,
+      "success": true,
+      "output": 1700000000123
+    },
+    {
+      "id": "timestamp-negative",
+      "schema": "Timestamp",
+      "input": -1,
+      "success": false,
+      "issues": [
+        {
+          "code": "too_small",
+          "path": [],
+          "message": "Too small: expected number to be >=0"
+        }
+      ]
+    },
+    {
+      "id": "timestamp-fractional",
+      "schema": "Timestamp",
+      "input": 1.5,
+      "success": false,
+      "issues": [
+        {
+          "code": "invalid_type",
+          "path": [],
+          "message": "Invalid input: expected int, received number"
+        }
+      ]
+    },
+    {
+      "id": "duration-negative-clamped",
+      "schema": "JobStep",
+      "input": {
+        "id": "step",
+        "group": null,
+        "name": "Step",
+        "status": "success",
+        "startedAt": null,
+        "durationMs": -1
+      },
+      "success": true,
+      "output": {
+        "id": "step",
+        "group": null,
+        "name": "Step",
+        "status": "success",
+        "startedAt": null,
+        "durationMs": 0
+      }
+    },
+    {
+      "id": "duration-null",
+      "schema": "JobStep",
+      "input": {
+        "id": "step",
+        "group": null,
+        "name": "Step",
+        "status": "success",
+        "startedAt": null,
+        "durationMs": null
+      },
+      "success": true,
+      "output": {
+        "id": "step",
+        "group": null,
+        "name": "Step",
+        "status": "success",
+        "startedAt": null,
+        "durationMs": null
+      }
+    }
+  ]
+}

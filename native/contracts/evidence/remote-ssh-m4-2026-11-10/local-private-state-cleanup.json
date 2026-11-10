@@ -1,0 +1,7 @@
+{
+  "result": "clean",
+  "removed": "/tmp/gst-remote-it-zq7g9l76",
+  "privateBearerScan": "no actual private fixture token/credential or PEM private key in copied evidence",
+  "stoppedOwnedResidualClientPids": [],
+  "scope": "Only isolated test profile/plugins/cache/client credentials and own fixture CLI copy were removed; user configuration, key and existing editor untouched."
+}

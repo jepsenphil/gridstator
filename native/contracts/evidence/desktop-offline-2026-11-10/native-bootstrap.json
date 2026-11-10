@@ -1,0 +1,8 @@
+{
+  "result": "passed",
+  "scope": "real bundled Linux CLI installed with downloads disabled; real verified service payload store prepared; existing host service definition preserved and no service-manager calls",
+  "root": "/tmp/gridstator-desktop-offline-proof-39xrpjms",
+  "buildId": "native-desktop-20261110-d99c20f05013",
+  "hostServiceUnchanged": true,
+  "noServiceManagerCalls": true
+}

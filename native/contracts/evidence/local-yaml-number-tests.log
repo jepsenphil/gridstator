@@ -1,0 +1,13 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.34s
+     Running tests/discovery_contract.rs (native/target/debug/deps/discovery_contract-2661f37d7ac126b4)
+
+running 5 tests
+test local_lockfiles_override_root_fallback_and_symlinks_are_not_walked ... ok
+test frozen_project_defaults_and_strictness_match ... ok
+test project_yaml_whole_numbers_match_javascript_normalization ... ok
+test walk_order_exclusions_managers_stages_and_tasks_are_preserved ... ok
+test workflow_events_inputs_and_warnings_match_reference ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

@@ -1,0 +1,88 @@
+{
+  "recordedAt": "2026-11-10T04:53:36.763473+00:00",
+  "scope": "Actual M4 native executor source checks against Docker Desktop 4.99.0; no physical Intel/reboot/system-service claim",
+  "environment": {
+    "macOS": "15.6",
+    "host": "Apple M4 ARM64",
+    "DockerDesktop": "4.99.0",
+    "engine": "29.9.3",
+    "buildx": "0.38.1",
+    "BuildKit": "0.34.2",
+    "act": "0.2.97",
+    "dockerVM": {
+      "architecture": "aarch64",
+      "cpus": 10,
+      "memoryBytes": 8319438848
+    }
+  },
+  "regression": {
+    "before": "Two local image build tests succeeded but image.id was null because newer containerd-backed BuildKit omits containerimage.config.digest. Twelve executor cases passed.",
+    "actualMetadata": "captured-metadata.json",
+    "actualInspect": "captured-inspect.json",
+    "actualId": "sha256:1fcc3b8ec475d13e2c130c489c36f4f0dde2003636ca58f80eb9d3e34b6e6976",
+    "after": "Preserve config digest when supplied; local load/tar modes fall back to the manifest/index digest matching actual Docker image inspect.Id. Push/cache-only behavior remains unchanged.",
+    "boundedSafety": "No extra Docker command, tag fallback, shell, trust bypass, or execution-mode change was introduced."
+  },
+  "checks": [
+    {
+      "command": "executor-suite.sh against frozen prior e3 source",
+      "result": "expected regression",
+      "passed": 12,
+      "failed": 2,
+      "log": "executor-before.log"
+    },
+    {
+      "command": "executor-suite.sh against reviewed replacement production source",
+      "result": "passed",
+      "passed": 14,
+      "failed": 0,
+      "durationSeconds": 30.07,
+      "log": "executor-after.log",
+      "identity": "Temporary buildkit-compat-validation compiled test/CLI identity; exact production source hashes match the final 1fd checkpoint. This is source acceptance, not a claim that every case ran the final release executable."
+    },
+    {
+      "command": "cd native && cargo test --locked --lib executor::build::tests",
+      "result": "passed",
+      "passed": 2,
+      "log": "portable-unit.log"
+    },
+    {
+      "command": "cd native && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "clippy.log"
+    },
+    {
+      "command": "cd native && cargo test --locked --test executor_contract real_buildx_ -- --ignored --nocapture --test-threads=1",
+      "result": "passed",
+      "passed": 4,
+      "log": "linux-buildx.log",
+      "environment": "Ubuntu x64 with existing Docker/buildx; backward-compatible local build ID/size/export behavior"
+    }
+  ],
+  "independentReview": {
+    "result": "no issues found",
+    "checks": [
+      "configuration digest precedence for all existing modes",
+      "manifest/index fallback limited to actual local load/tar exporters",
+      "captured fixture exact match to actual metadata",
+      "metadata digest and descriptor digest equal actual Docker inspect.Id",
+      "targeted captured fixture test passed independently"
+    ]
+  },
+  "productionCheckpointSha256": "1fd6e3d425b3af82e194eb3168de55d4fe90ffadc4feb7c86d8def60a8b4ed9c",
+  "replacementPreview": "native-preview-20261110-1fd6e3d425b3",
+  "sources": [
+    {
+      "path": "native/src/executor/build.rs",
+      "sha256": "03de025dcef01f0f6de958e225f7b3708859f0e52803476237962cbfcb98df74"
+    },
+    {
+      "path": "native/tests/executor_contract.rs",
+      "sha256": "d66223c060fcd4d8679a719fc7f53e7334a22c89598e1ff7b17d1cd57d4dbe29"
+    },
+    {
+      "path": "native/contracts/buildx-containerd-m4.json",
+      "sha256": "e72b8f27c733f6215d1a098dd052522fc7d8c47ccfd9f39a07e3ccc1f0d8fc0f"
+    }
+  ]
+}

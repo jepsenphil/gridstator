@@ -1,0 +1,36 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.66s
+     Running tests/integration_source_scenarios.rs (native/target/debug/deps/integration_source_scenarios-888724d87c103afe)
+
+running 1 test
+test all_eleven_source_scenarios_with_two_real_native_workers ... Integration source evidence: /tmp/gridstator-integration-source-XWIJRy
+Starting integration source 001
+Passed integration source 001 in 7.49s
+Starting integration source 002
+Passed integration source 002 in 1.61s
+Starting integration source 003
+Passed integration source 003 in 1.17s
+Starting integration source 004
+Passed integration source 004 in 8.96s
+Starting integration source 005
+Passed integration source 005 in 1.05s
+Starting integration source 006
+Passed integration source 006 in 9.82s
+Starting integration source 007
+Passed integration source 007 in 7.38s
+Starting integration source 008
+Error: integration source 008 (private evidence /tmp/gridstator-integration-source-XWIJRy)
+
+Caused by:
+    0: waiting for 01M71P5MSDF1DQMGHJHF7KD55G state succeeded
+    1: deadline has elapsed
+FAILED
+
+failures:
+
+failures:
+    all_eleven_source_scenarios_with_two_real_native_workers
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.94s
+
+error: test failed, to rerun pass `--test integration_source_scenarios`

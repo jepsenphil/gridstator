@@ -1,0 +1,32 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.84s
+     Running tests/executor_contract.rs (target/debug/deps/executor_contract-d71a623940f94f5d)
+
+running 14 tests
+test cleanup_respects_owned_node_and_keeps_explicit_active_jobs ... ok
+test keep_failed_preserves_command_resources_until_explicit_owned_cleanup ... ok
+test real_act_cancellation_cleans_labelled_workflow_containers ... ok
+test real_act_failed_job_and_missing_workflow_preserve_source_errors ... ok
+test real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact ... ok
+test real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps ... ok
+test real_act_socket_opt_in_shares_runner_files_with_nested_container ... ok
+test real_buildx_cancellation_interrupts_running_build ... ok
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ok
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... 
+thread 'real_buildx_load_describes_image_and_preserves_stage_args_and_labels' (1048552) panicked at tests/executor_contract.rs:601:5:
+assertion failed: !text.contains("private-value")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ok
+test real_docker_cancellation_and_timeout_stop_actual_container ... ok
+test real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans ... ok
+test real_docker_success_streams_env_cache_and_missing_image_is_clear ... ok
+
+failures:
+
+failures:
+    real_buildx_load_describes_image_and_preserves_stage_args_and_labels
+
+test result: FAILED. 13 passed; 1 failed; 0 ignored; 0 measured; 3 filtered out; finished in 49.43s
+
+error: test failed, to rerun pass `--test executor_contract`

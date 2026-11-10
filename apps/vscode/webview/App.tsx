@@ -8,6 +8,8 @@ import { Nodes } from './components/Nodes';
 import { Overview } from './components/Overview';
 import { Run } from './components/Run';
 import { Settings } from './components/Settings';
+import { GettingStarted } from './components/GettingStarted';
+import { AddWorker } from './components/AddWorker';
 import { initialState, reducer, type UiState } from './store';
 import { cx, loadUiState, saveUiState, send } from './util';
 
@@ -51,6 +53,7 @@ export function App() {
     );
   }
   const c = data.connection;
+  const firstRun = (c.status === 'signedOut' || c.status === 'error') && c.canSetUpController;
   const running = data.jobs.filter((j) => isActive(j.state)).length;
 
   return (
@@ -74,12 +77,14 @@ export function App() {
               role="tab"
               aria-selected={
                 state.view === t.view ||
-                (t.view === 'jobs' && (state.view === 'job' || state.view === 'group'))
+                (t.view === 'jobs' && (state.view === 'job' || state.view === 'group')) ||
+                (t.view === 'nodes' && state.view === 'addWorker')
               }
               className={cx(
                 'tab',
                 (state.view === t.view ||
-                  (t.view === 'jobs' && (state.view === 'job' || state.view === 'group'))) &&
+                  (t.view === 'jobs' && (state.view === 'job' || state.view === 'group')) ||
+                  (t.view === 'nodes' && state.view === 'addWorker')) &&
                   'tab-on',
               )}
               onClick={() => dispatch({ type: 'go', view: t.view })}
@@ -93,11 +98,13 @@ export function App() {
           <span
             className={cx(
               'dot',
-              c.status === 'connected'
-                ? 'dot-ok'
-                : c.status === 'connecting'
-                  ? 'dot-warn'
-                  : 'dot-bad',
+              firstRun
+                ? 'dot-muted'
+                : c.status === 'connected'
+                  ? 'dot-ok'
+                  : c.status === 'connecting'
+                    ? 'dot-warn'
+                    : 'dot-bad',
             )}
           />
           <div
@@ -117,7 +124,9 @@ export function App() {
                 : c.status === 'connecting'
                   ? 'connecting…'
                   : c.status === 'signedOut'
-                    ? 'signed out'
+                    ? firstRun
+                      ? 'ready to set up'
+                      : 'signed out'
                     : 'offline'}
             </span>
           </div>
@@ -130,7 +139,7 @@ export function App() {
         </div>
       </header>
 
-      {c.status !== 'connected' ? (
+      {c.status !== 'connected' && !firstRun ? (
         <div className={cx('banner', c.status === 'connecting' ? 'banner-info' : 'banner-error')}>
           <Icon
             name={c.status === 'connecting' ? 'loading' : 'plug'}
@@ -149,6 +158,15 @@ export function App() {
               <Button kind="secondary" icon="refresh" onClick={() => send({ type: 'refresh' })}>
                 Retry
               </Button>
+              {c.canStartLocalController ? (
+                <Button
+                  icon="play"
+                  busy={state.busy['settings:host']}
+                  onClick={() => send({ type: 'hostService', action: 'start' })}
+                >
+                  Start controller
+                </Button>
+              ) : null}
               {c.canRestoreLocalAccess ? (
                 <Button icon="key" onClick={() => send({ type: 'restoreLocalAccess' })}>
                   Restore local access
@@ -164,7 +182,13 @@ export function App() {
       ) : null}
 
       <main className="content">
-        {state.view === 'overview' ? <Overview data={data} dispatch={dispatch} /> : null}
+        {state.view === 'overview' ? (
+          firstRun ? (
+            <GettingStarted busy={Boolean(state.busy['setup'])} pending={c.setupPending} />
+          ) : (
+            <Overview data={data} dispatch={dispatch} />
+          )
+        ) : null}
         {state.view === 'jobs' ? <Jobs data={data} dispatch={dispatch} busy={state.busy} /> : null}
         {state.view === 'job' ? (
           <JobDetail
@@ -195,6 +219,16 @@ export function App() {
         ) : null}
         {state.view === 'nodes' ? (
           <Nodes data={data} focus={state.nodeId} busy={state.busy} dispatch={dispatch} />
+        ) : null}
+        {state.view === 'addWorker' ? (
+          <AddWorker
+            key={c.clusterId}
+            data={data}
+            busy={Boolean(state.busy['settings:tokens'])}
+            result={state.workerJoinCommand}
+            dismiss={() => dispatch({ type: 'dismissWorkerJoinCommand' })}
+            back={() => dispatch({ type: 'go', view: 'nodes' })}
+          />
         ) : null}
         {state.view === 'settings' ? (
           <Settings

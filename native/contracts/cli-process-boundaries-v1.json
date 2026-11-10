@@ -1,0 +1,2400 @@
+{
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "cases": [
+    {
+      "argv": [],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator [options] [command]\n\nGridstator: multiple machines, one workflow. Run builds and tests on your LAN\ncluster.\n\nOptions:\n  -v, --version               output the version number\n  -h, --help                  display help for command\n\nCommands:\n  login [options] <url>       Connect this machine to a controller (verifies the\n                              CA fingerprint and token)\n  status [options]            Show cluster, node and job summary\n  nodes [options]             List and manage worker nodes\n  jobs [options]              List jobs (most recent first)\n  job [options] <id>          Show details of one job\n  run [options] [command...]  Run a command in a container on a cluster node,\n                              against a snapshot of this project\n  logs [options] <id>         Print a job's logs\n  cancel <id>                 Cancel a queued or running job\n  retry [options] <id>        Run a finished job again with the same snapshot\n                              and settings\n  snapshot [options]          Capture this project as a snapshot and upload it\n                              (shows what would be sent)\n  token                       Manage client and join tokens (admin)\n  groups [options]            List job groups (sharded runs), most recent first\n  group                       Inspect and control a job group (sharded run)\n  init [options]              Create a gridstator.yml in the current project\n  agents                      Keep worker agents on the controller’s build\n                              (status, updates, auto-update)\n  build [options] [context]   Build a Docker image from this project on a\n                              cluster node (BuildKit)\n  actions                     Run GitHub Actions workflows on the cluster with\n                              act\n  artifacts [options] <id>    List or download the artifacts of a job\n  doctor [options]            Check this machine's setup and the connection to\n                              the controller\n  controller                  Run and manage the cluster controller\n  agent                       Run a worker agent on this machine\n  help [command]              display help for command\n"
+    },
+    {
+      "argv": [
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "help"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator [options] [command]\n\nGridstator: multiple machines, one workflow. Run builds and tests on your LAN\ncluster.\n\nOptions:\n  -v, --version               output the version number\n  -h, --help                  display help for command\n\nCommands:\n  login [options] <url>       Connect this machine to a controller (verifies the\n                              CA fingerprint and token)\n  status [options]            Show cluster, node and job summary\n  nodes [options]             List and manage worker nodes\n  jobs [options]              List jobs (most recent first)\n  job [options] <id>          Show details of one job\n  run [options] [command...]  Run a command in a container on a cluster node,\n                              against a snapshot of this project\n  logs [options] <id>         Print a job's logs\n  cancel <id>                 Cancel a queued or running job\n  retry [options] <id>        Run a finished job again with the same snapshot\n                              and settings\n  snapshot [options]          Capture this project as a snapshot and upload it\n                              (shows what would be sent)\n  token                       Manage client and join tokens (admin)\n  groups [options]            List job groups (sharded runs), most recent first\n  group                       Inspect and control a job group (sharded run)\n  init [options]              Create a gridstator.yml in the current project\n  agents                      Keep worker agents on the controller’s build\n                              (status, updates, auto-update)\n  build [options] [context]   Build a Docker image from this project on a\n                              cluster node (BuildKit)\n  actions                     Run GitHub Actions workflows on the cluster with\n                              act\n  artifacts [options] <id>    List or download the artifacts of a job\n  doctor [options]            Check this machine's setup and the connection to\n                              the controller\n  controller                  Run and manage the cluster controller\n  agent                       Run a worker agent on this machine\n  help [command]              display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "help",
+        "run"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator run [options] [command...]\n\nRun a command in a container on a cluster node, against a snapshot of this\nproject\n\nArguments:\n  command                  command to run (after --). A single argument is run\n                           with sh -c\n\nOptions:\n  -t, --task <name>        run a task defined in gridstator.yml\n  --image <image>          container image (default from gridstator.yml, else\n                           node:24-bookworm)\n  --node <node>            run on this node (name or id)\n  -l, --label <label>      require a node label (repeatable) (default: [])\n  --cpus <n>               CPUs to reserve and limit the container to\n  --memory <size>          memory to reserve and limit the container to, e.g. 4g\n  -e, --env <NAME=value>   environment variable (repeatable) (default: [])\n  -s, --secret-env <NAME>  forward a secret from this shell; masked in logs\n                           (repeatable) (default: [])\n  --timeout <duration>     stop the job after this long, e.g. 30m\n  --priority <n>           higher runs first (-100..100)\n  --retries <n>            automatic retries if the node is lost\n  --name <name>            display name for the job\n  --shell                  run the arguments as one shell command (sh -c)\n  -a, --artifact <path>    collect a file or directory as an artifact after the\n                           run (repeatable) (default: [])\n  --shards <n>             split into N parallel shards across workers; use\n                           {shard} and {total} in the command\n  --prefer <node>          prefer this worker when it can take the job\n                           (repeatable) (default: [])\n  --no-snapshot            do not send the project; run in an empty /workspace\n  -d, --detach             print the job id and exit instead of streaming logs\n  --json                   print the submitted job as JSON (implies --detach)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "controller"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator controller [options] [command]\n\nRun and manage the cluster controller\n\nOptions:\n  -h, --help                         display help for command\n\nCommands:\n  local                              Manage the controller owned by this account\n                                     (used by the VS Code extension)\n  init [options]                     Create a new cluster: CA, server\n                                     certificate, database and an admin token\n  start [options]                    Run the controller in the foreground\n  publish-build [options] [tarball]  Switch the controller to another build,\n                                     which workers then follow: this CLI's own\n                                     bundled build, or a gridstator .tgz (admin)\n  token                              Recovery: issue client tokens directly in\n                                     the controller database\n  install-service [options]          Run the controller as a systemd service\n                                     that starts at boot\n  uninstall-service [options]        Stop and remove the controller systemd\n                                     service (keeps data)\n  help [command]                     display help for command\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator controller local [options] [command]\n\nManage the controller owned by this account (used by the VS Code extension)\n\nOptions:\n  -h, --help                  display help for command\n\nCommands:\n  status [options]            Inspect local ownership, endpoint and user-service\n                              state\n  ensure-login [options]      Reuse or create one shared local admin login\n                              without printing credentials\n  service [options] <action>  Control the local controller user service\n  configure [options]         Apply a coordinated endpoint change and restart,\n                              recovering on failure\n  help [command]              display help for command\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "--help"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator nodes [options] [command]\n\nList and manage worker nodes\n\nOptions:\n  --json                   machine-readable output\n  -h, --help               display help for command\n\nCommands:\n  show [options] <node>\n  set [options] <node>     Change scheduling settings for a node\n  enable <node>            Allow the scheduler to place jobs on a node\n  disable <node>           Stop placing new jobs on a node (running jobs\n                           continue)\n  drain <node>             Stop placing new jobs on a node and let running jobs\n                           finish\n  remove [options] <node>  Remove a node and revoke its credential (admin)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "__unknown_command__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown command '__unknown_command__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "bild"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown command 'bild'\n(Did you mean build?)\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--imge"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--imge'\n(Did you mean --image?)\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "https://localhost"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "--token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--token <token>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "https://localhost",
+        "--fingerprint",
+        "pin"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--token <token>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "--fingerprint",
+        "pin",
+        "--token",
+        "token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'url'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "cancel"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "cancel",
+        "one",
+        "two"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: too many arguments for 'cancel'. Expected 1 argument but got 2: one, two.\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "status",
+        "unexpected"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: too many arguments for 'status'. Expected 0 arguments but got 1: unexpected.\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "help"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: too many arguments for 'nodes'. Expected 0 arguments but got 1: help.\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "unknown"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: too many arguments for 'nodes'. Expected 0 arguments but got 1: unknown.\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--image"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--image <image>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--task"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-t, --task <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--json=false"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--json=false'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--token <token>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "https://localhost",
+        "--token",
+        "token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--host <address>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--host",
+        "127.0.0.1"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--port <port>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "create"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--name <name>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "create",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'workflow'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "__unknown__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown command '__unknown__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "set",
+        "--window"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--window <HH:MM-HH:MM>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "logs"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "login",
+        "--fingerprint"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--fingerprint <sha256>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "status",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "show",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "show"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set",
+        "--max-concurrency"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--max-concurrency <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set",
+        "--reserve-cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set",
+        "--reserve-memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set",
+        "--labels"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--labels <list>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "set"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "enable",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "enable"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "disable",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "disable"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "drain",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "drain"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "remove",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "nodes",
+        "remove"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'node'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "jobs",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "jobs",
+        "--state"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--state <states>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "jobs",
+        "--node"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--node <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "jobs",
+        "--limit"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--limit <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "job",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "job"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--node"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--node <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--label"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-l, --label <label>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--env"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-e, --env <NAME=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--secret-env"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-s, --secret-env <NAME>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--timeout"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--timeout <duration>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--priority"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--priority <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--retries"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--retries <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--artifact"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-a, --artifact <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--shards"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--shards <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "--prefer"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--prefer <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "logs",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "cancel",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "retry",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "retry"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "snapshot",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator token [options] [command]\n\nManage client and join tokens (admin)\n\nOptions:\n  -h, --help        display help for command\n\nCommands:\n  create [options]  Create a client token, or a join token for adding a worker\n  list [options]\n  revoke <id>\n  help [command]    display help for command\n"
+    },
+    {
+      "argv": [
+        "token",
+        "create",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "create",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "create",
+        "--role"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--role <role>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "create",
+        "--ttl"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--ttl <duration>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "create",
+        "--uses"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--uses <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "list",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "revoke",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "token",
+        "revoke"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "groups",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "groups",
+        "--limit"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--limit <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator group [options] [command]\n\nInspect and control a job group (sharded run)\n\nOptions:\n  -h, --help            display help for command\n\nCommands:\n  show [options] <id>\n  cancel <id>\n  retry [options] <id>  Run the shards that failed, were lost or were cancelled\n                        again\n  help [command]        display help for command\n"
+    },
+    {
+      "argv": [
+        "group",
+        "show",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "show"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "cancel",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "cancel"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "retry",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "group",
+        "retry"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "init",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator agents [options] [command]\n\nKeep worker agents on the controller’s build (status, updates, auto-update)\n\nOptions:\n  -h, --help                   display help for command\n\nCommands:\n  status [options]             Show which workers run the controller’s build\n  update [options] [nodes...]  Update workers to the controller’s build, one at\n                               a time: drain, update, wait until it is back\n                               (admin)\n  cancel                       Stop the running rollout; the worker being\n                               updated right now finishes (admin)\n  set [options] [node]         Set auto-update and toolchain options: for one\n                               worker, or the cluster default (no node)\n  help [command]               display help for command\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "status",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "update",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "update",
+        "--drain-timeout"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--drain-timeout <duration>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "cancel",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "set",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "set",
+        "--auto-update"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--auto-update <mode>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agents",
+        "set",
+        "--act"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--act <version>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--file"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-f, --file <Dockerfile>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--build"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-b, --build <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--target"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--target <stage>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--build-arg"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--build-arg <KEY=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--tag"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-t, --tag <tag>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--platform"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--platform <platform>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--output"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--output <mode>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--cache-from"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cache-from <spec>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--cache-to"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cache-to <spec>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--node"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--node <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--prefer"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--prefer <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--label"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-l, --label <label>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--timeout"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--timeout <duration>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--priority"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--priority <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "build",
+        "--secret-env"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-s, --secret-env <NAME>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator actions [options] [command]\n\nRun GitHub Actions workflows on the cluster with act\n\nOptions:\n  -h, --help                display help for command\n\nCommands:\n  list [options]            List workflows and jobs in this project, with\n                            local-execution caveats\n  run [options] <workflow>  Run a workflow (or one job) against this working\n                            tree on a cluster node\n  help [command]            display help for command\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "list",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--job"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-j, --job <id>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--event"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-e, --event <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--input"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-i, --input <key=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--var"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--var <key=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--env"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--env <KEY=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--platform"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-P, --platform <label=image>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--matrix"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--matrix <key:value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--event-payload"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--event-payload <file>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--node"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--node <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--prefer"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--prefer <node>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--label"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-l, --label <label>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--timeout"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--timeout <duration>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--priority"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--priority <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "actions",
+        "run",
+        "--secret-env"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-s, --secret-env <NAME>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "artifacts",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "artifacts",
+        "--download"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--download <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "artifacts",
+        "--out"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-o, --out <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "artifacts"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'id'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "doctor",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "status",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "status",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "status",
+        "--config"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--config <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "ensure-login",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "ensure-login",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "ensure-login",
+        "--config"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--config <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "service",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "service",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "service",
+        "--config"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--config <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "service"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: missing required argument 'action'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--host <address>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--config"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--config <path>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--host"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--host <address>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--port"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--port <port>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "local",
+        "configure",
+        "--url"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--url <url>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "init",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "init",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "init",
+        "--host"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--host <host>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "init",
+        "--port"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--port <port>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "init",
+        "--san"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--san <names...>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--host"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--host <host>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--port"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--port <port>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--agent-name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--agent-name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--max-concurrency"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--max-concurrency <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--reserve-cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--reserve-memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "start",
+        "--labels"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--labels <list>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "publish-build",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator controller token [options] [command]\n\nRecovery: issue client tokens directly in the controller database\n\nOptions:\n  -h, --help        display help for command\n\nCommands:\n  create [options]  Issue a client token without an admin token (needs access to\n                    the data directory; works while the controller runs)\n  help [command]    display help for command\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "create",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--name <name>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "create",
+        "--role"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--role <role>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "token",
+        "create",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "install-service",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "install-service",
+        "--user"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--user <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "install-service",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "install-service",
+        "--agent-name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--agent-name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "uninstall-service",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Usage: gridstator agent [options] [command]\n\nRun a worker agent on this machine\n\nOptions:\n  -h, --help                   display help for command\n\nCommands:\n  join [options] <url>         Register this machine with a controller\n  start [options]              Run the agent in the foreground\n  install-service [options]    Run the agent as a systemd service that starts at\n                               boot\n  uninstall-service [options]  Stop and remove the agent systemd service (keeps\n                               data)\n  help [command]               display help for command\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--token <token>' not specified\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--token"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--token <token>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--fingerprint"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--fingerprint <sha256>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--name"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--name <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--max-concurrency"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--max-concurrency <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--reserve-cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--reserve-memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "join",
+        "--labels"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--labels <list>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--cache-size"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--cache-size <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--max-concurrency"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--max-concurrency <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--reserve-cpus"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-cpus <n>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--reserve-memory"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--reserve-memory <size>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "start",
+        "--labels"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--labels <list>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "install-service",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "install-service",
+        "--user"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--user <name>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "install-service",
+        "--data-dir"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '--data-dir <dir>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "agent",
+        "uninstall-service",
+        "--__unknown_flag__"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-hv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-hV"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hV'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-hfoo"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hfoo'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-vh"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "-vq"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "-qv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-qv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-q"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-q'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "-vv"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "-hv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-hV"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hV'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-hfoo"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hfoo'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-vh"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "-vq"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "-qv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-qv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-q"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-q'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-vv"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "controller",
+        "-hv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "-hV"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hV'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "-hfoo"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hfoo'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "-vh"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "controller",
+        "-vq"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "controller",
+        "-qv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-qv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "-q"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-q'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "controller",
+        "-vv"
+      ],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "-dh"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator run [options] [command...]\n\nRun a command in a container on a cluster node, against a snapshot of this\nproject\n\nArguments:\n  command                  command to run (after --). A single argument is run\n                           with sh -c\n\nOptions:\n  -t, --task <name>        run a task defined in gridstator.yml\n  --image <image>          container image (default from gridstator.yml, else\n                           node:24-bookworm)\n  --node <node>            run on this node (name or id)\n  -l, --label <label>      require a node label (repeatable) (default: [])\n  --cpus <n>               CPUs to reserve and limit the container to\n  --memory <size>          memory to reserve and limit the container to, e.g. 4g\n  -e, --env <NAME=value>   environment variable (repeatable) (default: [])\n  -s, --secret-env <NAME>  forward a secret from this shell; masked in logs\n                           (repeatable) (default: [])\n  --timeout <duration>     stop the job after this long, e.g. 30m\n  --priority <n>           higher runs first (-100..100)\n  --retries <n>            automatic retries if the node is lost\n  --name <name>            display name for the job\n  --shell                  run the arguments as one shell command (sh -c)\n  -a, --artifact <path>    collect a file or directory as an artifact after the\n                           run (repeatable) (default: [])\n  --shards <n>             split into N parallel shards across workers; use\n                           {shard} and {total} in the command\n  --prefer <node>          prefer this worker when it can take the job\n                           (repeatable) (default: [])\n  --no-snapshot            do not send the project; run in an empty /workspace\n  -d, --detach             print the job id and exit instead of streaming logs\n  --json                   print the submitted job as JSON (implies --detach)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "-dhv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-hv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-dv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-v'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-dqv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '-qv'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "run",
+        "-de"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: option '-e, --env <NAME=value>' argument missing\n(run with --help for usage)\n"
+    },
+    {
+      "argv": [
+        "help",
+        "controller",
+        "init"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller [options] [command]\n\nRun and manage the cluster controller\n\nOptions:\n  -h, --help                         display help for command\n\nCommands:\n  local                              Manage the controller owned by this account\n                                     (used by the VS Code extension)\n  init [options]                     Create a new cluster: CA, server\n                                     certificate, database and an admin token\n  start [options]                    Run the controller in the foreground\n  publish-build [options] [tarball]  Switch the controller to another build,\n                                     which workers then follow: this CLI's own\n                                     bundled build, or a gridstator .tgz (admin)\n  token                              Recovery: issue client tokens directly in\n                                     the controller database\n  install-service [options]          Run the controller as a systemd service\n                                     that starts at boot\n  uninstall-service [options]        Stop and remove the controller systemd\n                                     service (keeps data)\n  help [command]                     display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "controller",
+        "help",
+        "init"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator controller init [options]\n\nCreate a new cluster: CA, server certificate, database and an admin token\n\nOptions:\n  --data-dir <dir>  controller data directory (default: \"/V1_DATA/controller\")\n  --host <host>     address to listen on (default: \"0.0.0.0\")\n  --port <port>     port to listen on (default: \"7300\")\n  --san <names...>  extra hostnames/IPs for the server certificate\n  --force           create a new cluster even if one exists (the old data\n                    directory is backed up)\n  --no-login        do not save the admin credentials as this machine's client\n                    configuration\n  -h, --help        display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "run",
+        "--__unknown_flag__",
+        "--help"
+      ],
+      "exitCode": 0,
+      "stdout": "Usage: gridstator run [options] [command...]\n\nRun a command in a container on a cluster node, against a snapshot of this\nproject\n\nArguments:\n  command                  command to run (after --). A single argument is run\n                           with sh -c\n\nOptions:\n  -t, --task <name>        run a task defined in gridstator.yml\n  --image <image>          container image (default from gridstator.yml, else\n                           node:24-bookworm)\n  --node <node>            run on this node (name or id)\n  -l, --label <label>      require a node label (repeatable) (default: [])\n  --cpus <n>               CPUs to reserve and limit the container to\n  --memory <size>          memory to reserve and limit the container to, e.g. 4g\n  -e, --env <NAME=value>   environment variable (repeatable) (default: [])\n  -s, --secret-env <NAME>  forward a secret from this shell; masked in logs\n                           (repeatable) (default: [])\n  --timeout <duration>     stop the job after this long, e.g. 30m\n  --priority <n>           higher runs first (-100..100)\n  --retries <n>            automatic retries if the node is lost\n  --name <name>            display name for the job\n  --shell                  run the arguments as one shell command (sh -c)\n  -a, --artifact <path>    collect a file or directory as an artifact after the\n                           run (repeatable) (default: [])\n  --shards <n>             split into N parallel shards across workers; use\n                           {shard} and {total} in the command\n  --prefer <node>          prefer this worker when it can take the job\n                           (repeatable) (default: [])\n  --no-snapshot            do not send the project; run in an empty /workspace\n  -d, --detach             print the job id and exit instead of streaming logs\n  --json                   print the submitted job as JSON (implies --detach)\n  -h, --help               display help for command\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "login",
+        "--token",
+        "-hv"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    }
+  ]
+}

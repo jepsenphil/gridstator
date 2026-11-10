@@ -1,0 +1,52 @@
+{
+  "result": "passed",
+  "scope": "actual final release executable custom absolute/relative config paths preserve existing0775 parents; missing nested config parents0700, config0600 and dedicated controllerdata0700; only owned directories modified",
+  "binary": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-6994d2cc804b",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 23186848,
+    "sha256": "42502f8d71ba2e860e0bed965c4ecb725853a12ab5671db93a75624628156483"
+  },
+  "cases": [
+    {
+      "case": "absolute",
+      "parentModeBefore": "0o775",
+      "parentModeAfter": "0o775",
+      "configFileMode": "0o600",
+      "controllerDataMode": "0o700",
+      "newParentModes": {},
+      "result": "passed"
+    },
+    {
+      "case": "relative-leaf",
+      "parentModeBefore": "0o775",
+      "parentModeAfter": "0o775",
+      "configFileMode": "0o600",
+      "controllerDataMode": "0o700",
+      "newParentModes": {},
+      "result": "passed"
+    },
+    {
+      "case": "missing-nested-parents",
+      "parentModeBefore": "0o775",
+      "parentModeAfter": "0o775",
+      "configFileMode": "0o600",
+      "controllerDataMode": "0o700",
+      "newParentModes": {
+        "newParent": "0o700",
+        "nestedParent": "0o700"
+      },
+      "result": "passed"
+    }
+  ],
+  "privateFixtureRemoved": true
+}

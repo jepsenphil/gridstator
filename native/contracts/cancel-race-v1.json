@@ -1,0 +1,12 @@
+{
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "scenario": "A successful result wins while a repeated cancellation request is pending.",
+  "expected": {
+    "state": "succeeded",
+    "exitCode": 0,
+    "error": null,
+    "repeatedCancelPreservesTimestamp": true,
+    "cancelRequested": true,
+    "cancelEventCount": 1
+  }
+}

@@ -1,0 +1,23 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.89s
+     Running tests/discovery_contract.rs (native/target/debug/deps/discovery_contract-2661f37d7ac126b4)
+
+running 1 test
+test project_yaml_whole_numbers_match_javascript_normalization ... FAILED
+
+failures:
+
+---- project_yaml_whole_numbers_match_javascript_normalization stdout ----
+
+thread 'project_yaml_whole_numbers_match_javascript_normalization' (817128) panicked at tests/discovery_contract.rs:206:52:
+called `Result::unwrap()` on an `Err` value: resources.memory: expected positive MiB integer or size string
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    project_yaml_whole_numbers_match_javascript_normalization
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test discovery_contract`

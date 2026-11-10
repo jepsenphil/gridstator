@@ -1,0 +1,24 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.26s
+     Running tests/cli_contract.rs (target/debug/deps/cli_contract-283459ea04c477c9)
+
+running 1 test
+test custom_absolute_and_relative_config_paths_preserve_parent_permissions ... FAILED
+
+failures:
+
+---- custom_absolute_and_relative_config_paths_preserve_parent_permissions stdout ----
+
+thread 'custom_absolute_and_relative_config_paths_preserve_parent_permissions' (1961253) panicked at tests/cli_contract.rs:54:9:
+assertion `left == right` failed
+  left: 448
+ right: 509
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    custom_absolute_and_relative_config_paths_preserve_parent_permissions
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.18s
+
+error: test failed, to rerun pass `--test cli_contract`

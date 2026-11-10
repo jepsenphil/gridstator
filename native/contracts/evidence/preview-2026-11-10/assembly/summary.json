@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-10T04:00:00Z",
+  "result": "passed",
+  "releaseDirectory": "/repos/gridstator/native/release/native-preview-20261110-95cfa7161440",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "version": "2.0.0-dev.1",
+  "manifestSha256": "2607e050f0a9d14b19d1d1027516c587348d963fa0942766267e50cef2161a68",
+  "bundleSha256": "02f21c1ecf68822d1ffe6aa408799d0858a7c215c5043aba012182e76a38e442",
+  "releaseChecksumFileSha256": "911475fc9cd7fb1cc6b56d38fcbcb0bcf34741f05488be520409b0dbc64a9f36",
+  "checksummedFiles": 35,
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "finalInstallerDownloadedExactlyFinalChecksumFile": true,
+  "requests": [
+    "/v2.0.0-dev.1/SHA256SUMS",
+    "/v2.0.0-dev.1/gridstator-release.json",
+    "/v2.0.0-dev.1/gridstator-2.0.0-dev.1-linux-amd64.tar.gz"
+  ],
+  "finalChecksumCheckExitCode": 0,
+  "cleanup": {
+    "ownedHttpServerStopped": true,
+    "controllerStoppedByPriorRuntimeSmoke": true,
+    "privateCredentialsAndDataRemoved": true,
+    "globalPrefixOrLiveServiceChanged": false
+  },
+  "limits": "Unpublished development preview. Physical Linux ARM64/Intel Mac execution and Developer ID signing/notarization remain unverified; per-target proofs retain their recorded source scope."
+}

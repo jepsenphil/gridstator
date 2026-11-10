@@ -1,0 +1,20 @@
+Tue Nov 10 01:31:23 UTC 2026
+ProductName:		macOS
+ProductVersion:		15.6
+BuildVersion:		24G84
+arm64
+10
+17179869184
+Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s5   460Gi   112Gi   315Gi    27%    848k  3.3G    0%   /System/Volumes/Data
+git version 2.50.1 (Apple Git-155)
+Apple clang version 17.0.0 (clang-1700.6.3.2)
+Target: arm64-apple-darwin24.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+rustc 1.99.1 (58cf8f9c3 2026-10-13)
+cargo 1.99.1 (5f94df478 2026-08-27)
+aarch64-apple-darwin
+x86_64-apple-darwin
+x86_64
+GUI launchd domain available

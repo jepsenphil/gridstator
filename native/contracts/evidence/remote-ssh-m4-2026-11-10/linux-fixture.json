@@ -1,0 +1,26 @@
+{
+  "linuxPid": 1451855,
+  "tunnelPid": 1453303,
+  "linuxPort": 38525,
+  "remotePort": 59091,
+  "url": "https://127.0.0.1:59091",
+  "clusterId": "01M71Q8M2T873VHHQSFDP9E4F8",
+  "nodeName": "remote-native-gst-m4-proof-zq7g9l76",
+  "nodeId": "01M71Q8VKATD3G4S3FRQ037W8R",
+  "linuxBinary": {
+    "version": "2.0.0-dev.1",
+    "buildId": "dev-4b8f13ccf1b2-1794280261283825642",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/amd64",
+    "size": 240777072,
+    "sha256": "f430a7dfadd6200e340a76626892575e62853d5652b739ae6fcabb8e023e81e0"
+  },
+  "remoteRoot": "/Users/philjepsen/gridstator-validation.I50ONpwm/remote-proof-zq7g9l76"
+}

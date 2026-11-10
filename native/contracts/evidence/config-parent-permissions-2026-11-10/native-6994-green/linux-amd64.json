@@ -1,0 +1,18 @@
+{
+  "result": "passed",
+  "cases": [
+    "absolute",
+    "relative",
+    "missing-nested"
+  ],
+  "existingParentBefore": "0775",
+  "existingParentAfter": "0775",
+  "configFileMode": "0600",
+  "dedicatedDataMode": "0700",
+  "newParentModes": [
+    "0700",
+    "0700"
+  ],
+  "generatedPrivateState": "only private tmpfs in disposable network-disabled Alpine; destroyed with container",
+  "exactCheckScript": "linux-amd64-runtime-check.sh"
+}

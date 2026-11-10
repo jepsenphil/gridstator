@@ -1,0 +1,12 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.17s
+     Running tests/cli_acceptance.rs (native/target/debug/deps/cli_acceptance-e0d34ee2097bdce3)
+
+running 3 tests
+test production_registry_retains_the_frozen_workflow_flags_and_arities ... ok
+test all_fifty_six_help_paths_match_source_commander_bytes ... ok
+test all_source_parser_boundaries_preserve_bytes_streams_and_exit_codes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.49s
+

@@ -1,0 +1,57 @@
+{
+  "actualWindowsLocalExtensionHostPid": 23836,
+  "localHostLogFirstLines": [
+    "2026-11-09 22:47:39.637 [info] Extension host with pid 23836 started",
+    "2026-11-09 22:47:39.637 [info] Skipping acquiring lock for c:\\Users\\User\\AppData\\Local\\Temp\\gridstator-wsl-v00jpyv0\\user-data\\User\\workspaceStorage\\c254b44d2ade9558065705ba430d54d5.",
+    "2026-11-09 22:47:39.637 [info] [resolveAuthority(wsl,1)][0ms] activating remote resolvers wsl+Ubuntu",
+    "2026-11-09 22:47:39.637 [info] [resolveAuthority(wsl,1)][0ms] activating resolver for wsl+Ubuntu...",
+    "2026-11-09 22:47:39.647 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'",
+    "2026-11-09 22:47:39.656 [info] ExtensionService#_doActivateExtension ms-vscode-remote.remote-wsl, startup: false, activationEvent: 'onResolveRemoteAuthority:wsl'"
+  ],
+  "actualRemoteHost": {
+    "platform": "linux",
+    "arch": "x64",
+    "pid": 816447
+  },
+  "actualPrivateClientSharedStorage": [
+    {
+      "file": "user-data/logs/20261109T214331/main.log",
+      "lines": [
+        "2026-11-09 22:43:31.248 [info] [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)",
+        "2026-11-09 22:43:31.248 [info] [shared storage] Initializing fallback application storage (path: in-memory)",
+        "2026-11-09 22:43:31.251 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    },
+    {
+      "file": "user-data/logs/20261109T214542/main.log",
+      "lines": [
+        "2026-11-09 22:45:42.936 [info] [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)",
+        "2026-11-09 22:45:42.936 [info] [shared storage] Initializing fallback application storage (path: in-memory)",
+        "2026-11-09 22:45:42.939 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    },
+    {
+      "file": "user-data/logs/20261109T214738/main.log",
+      "lines": [
+        "2026-11-09 22:47:38.852 [info] [shared storage] Creating shared storage database at ':memory:' (wasCreated: true)",
+        "2026-11-09 22:47:38.852 [info] [shared storage] Initializing fallback application storage (path: in-memory)",
+        "2026-11-09 22:47:38.855 [info] [shared storage] Fallback application storage initialized with 3 items"
+      ]
+    }
+  ],
+  "effectiveMachineSettings": "/home/pj/gridstator-validation-v00jpyv0/server/portable/user-data/Machine/settings.json",
+  "serverEnvironmentSha256": "f434196aefa237aa3c517aa9f3ce4b5a6ab665b5518179763cde7160b41a4f8b",
+  "serverProductOriginalSha256": "166d7dc3042617cc087eaeac70bfb7c8f158511e8d40a9477890cd2132510e18",
+  "serverProductPrivateSha256": "c8c4eceebc0d0dfafbacd1f378425a32bccb73fbfbdb76c08560a11dbcf7504b",
+  "serverProductSemanticDeltas": {
+    "serverDataFolderName": {
+      "before": ".vscode-server",
+      "after": "gridstator-validation-v00jpyv0/server"
+    },
+    "sharedDataFolderName": {
+      "before": ".vscode-shared",
+      "after": "gridstator-validation-v00jpyv0/server/shared-data"
+    }
+  },
+  "noDefaultWslServerCreated": true
+}

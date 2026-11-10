@@ -1,0 +1,5 @@
+Cluster initialized in /tmp/gridstator-darwin-self-build-hiyimurz/controller
+Controller: https://127.0.0.1:0
+CA fingerprint: sha256:3e7db1934f02ab38552a8987e612f70da53ea725b25f53e28b6e9958bceb9f03
+Admin token: <redacted-token>
+Saved local credentials to /tmp/gridstator-darwin-self-build-hiyimurz/client.json

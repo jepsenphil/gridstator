@@ -1,0 +1,169 @@
+{
+  "result": "passed",
+  "root": "/Users/philjepsen/gridstator-validation.I50ONpwm/docker-proof-a593244f522f",
+  "build": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-6994d2cc804b",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 23186848,
+    "sha256": "42502f8d71ba2e860e0bed965c4ecb725853a12ab5671db93a75624628156483"
+  },
+  "controllerPid": 1561,
+  "workerPid": 1590,
+  "nodeId": "01M724N5WG9HKTMHPFNDK2CTMM",
+  "clusterId": "01M724N50T9EDNJBKR6C0WRGZQ",
+  "daemon": {
+    "ServerVersion": "29.9.3",
+    "NCPU": 10,
+    "MemTotal": 8319438848,
+    "Architecture": "aarch64",
+    "OSType": "linux",
+    "OperatingSystem": "Docker Desktop"
+  },
+  "readyNode": {
+    "id": "01M724N5WG9HKTMHPFNDK2CTMM",
+    "name": "docker-proof-a593244f522f",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.9.3"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "native-preview-20261110-6994d2cc804b",
+        "version": "2.0.0-dev.1",
+        "sha256": "42502f8d71ba2e860e0bed965c4ecb725853a12ab5671db93a75624628156483",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:62994",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4898
+      },
+      "executionCapacity": {
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 6296
+    },
+    "lastSeenAt": 1794294586727,
+    "connectedAt": 1794294586727,
+    "createdAt": 1794294585232,
+    "update": {
+      "state": "unknown",
+      "build": "native-preview-20261110-6994d2cc804b",
+      "detail": "offline; last reported native-preview-20261110-6994d2cc804b",
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "command": {
+    "id": "01M724N7H75HSSFHD9XK1F5A1R",
+    "state": "succeeded",
+    "stdout": "from-m4-snapshot\nLinux\n",
+    "artifactBytes": "m4-docker-artifact",
+    "tarBytes": 2048
+  },
+  "cancelled": {
+    "id": "01M724N82HBGTNJX4NCQ1X68WJ",
+    "state": "cancelled"
+  },
+  "dockerBuild": {
+    "id": "01M724N8GMFGPC15D63DDYRVJY",
+    "state": "succeeded",
+    "outputs": {
+      "image": {
+        "id": "sha256:c55e5330705a25da29bb896e48fc82c707f4aa4a4d552c94a933f9fb7abdbf68",
+        "digest": "sha256:c55e5330705a25da29bb896e48fc82c707f4aa4a4d552c94a933f9fb7abdbf68",
+        "tags": [
+          "gridstator-m4-proof/docker-proof-a593244f522f:load"
+        ],
+        "sizeBytes": 9430,
+        "output": "load"
+      }
+    },
+    "reportedReference": "sha256:c55e5330705a25da29bb896e48fc82c707f4aa4a4d552c94a933f9fb7abdbf68",
+    "reportedResolvedId": "sha256:c55e5330705a25da29bb896e48fc82c707f4aa4a4d552c94a933f9fb7abdbf68",
+    "inspectId": "sha256:c55e5330705a25da29bb896e48fc82c707f4aa4a4d552c94a933f9fb7abdbf68",
+    "inspectSize": 9430,
+    "ownedTagRemoved": "gridstator-m4-proof/docker-proof-a593244f522f:load"
+  },
+  "encodedBlobGet": {
+    "digest": "sha256:7eb26717e8a4a6bda2d31a82cc113ec19a7643f1e96c2dec8e540c26d126de4c",
+    "path": "/v1/blobs/sha256%3A7eb26717e8a4a6bda2d31a82cc113ec19a7643f1e96c2dec8e540c26d126de4c",
+    "exactBytes": "from-m4-snapshot\n"
+  },
+  "scope": "actual final common release Mac CLI/controller/standalone worker against Docker Desktop Linux ARM VM; snapshot,command,artifact,cancel,load image metadata and host-vs-VM capacity"
+}

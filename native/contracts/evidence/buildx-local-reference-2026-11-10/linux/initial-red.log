@@ -1,0 +1,21 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.56s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 1 test
+
+thread 'executor::build::tests::local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable' (1854076) panicked at src/executor/build.rs:292:13:
+assertion `left == right` failed
+  left: Some("sha256:3b05aee7d39f67c62502ea87a15629c65a86f2f10d3b396000a70f190732b1c1")
+ right: Some("sha256:35c9ab7d730291666991e3ee219b4159e596b57ee099cbd8e83d236630313388")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test executor::build::tests::local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable ... FAILED
+
+failures:
+
+failures:
+    executor::build::tests::local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

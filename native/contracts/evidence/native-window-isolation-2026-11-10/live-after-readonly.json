@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-11-10T02:33:17.977Z",
+  "url": "https://192.168.1.77:7300",
+  "clusterId": "01M6Z14PAX73TW5JW3YSQQNT7T",
+  "version": "0.1.0",
+  "buildId": "0.1.0-13899f1274f9",
+  "nodes": [
+    {
+      "id": "01M6Z167Y03MEBPBPS92VS8ZEP",
+      "name": "big-box",
+      "mode": "enabled",
+      "activeJobs": []
+    },
+    {
+      "id": "01M6Z15K8MMXM4TRP8G0JKG863",
+      "name": "laptop",
+      "mode": "enabled",
+      "activeJobs": []
+    },
+    {
+      "id": "01M711CNP49Q8BV97434791HA6",
+      "name": "ubuntu-worker",
+      "mode": "enabled",
+      "activeJobs": []
+    }
+  ]
+}

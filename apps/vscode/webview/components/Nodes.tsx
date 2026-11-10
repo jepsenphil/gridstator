@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type Dispatch } from 'react';
 import type { Node, NodeAutoUpdate, SchedulingMode } from '@gridstator/protocol';
+import { NodeNameSchema } from '@gridstator/protocol/node';
 import type { DashboardState } from '../../src/messages';
 import type { Action } from '../store';
 import { ago, cx, formatBytes, send } from '../util';
@@ -18,6 +19,7 @@ function NodeCard({
   focused: boolean;
   dispatch: Dispatch<Action>;
 }) {
+  const [name, setName] = useState(node.name);
   const [concurrency, setConcurrency] = useState(String(node.settings.maxConcurrency));
   const [cpus, setCpus] = useState(String(node.settings.reserved.cpus));
   const [mem, setMem] = useState(
@@ -25,6 +27,9 @@ function NodeCard({
   );
   const [labels, setLabels] = useState(node.settings.labels.join(', '));
   const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setName(node.name);
+  }, [node.name]);
   useEffect(() => {
     setConcurrency(String(node.settings.maxConcurrency));
     setCpus(String(node.settings.reserved.cpus));
@@ -35,12 +40,20 @@ function NodeCard({
     if (focused) ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [focused]);
   const st = nodeStatus(node);
-  const dirty =
+  const settingsDirty =
     concurrency !== String(node.settings.maxConcurrency) ||
     cpus !== String(node.settings.reserved.cpus) ||
     mem !== String(Math.round((node.settings.reserved.memoryMb / 1024) * 10) / 10) ||
     labels !== node.settings.labels.join(', ');
+  const nameDirty = name !== node.name;
+  const nameError = !NodeNameSchema.safeParse(name).success
+    ? 'Use 1–64 letters, numbers, dots, underscores or hyphens; start with a letter or number.'
+    : data.nodes.some((other) => other.id !== node.id && (other.name === name || other.id === name))
+      ? 'Another worker already uses this name.'
+      : null;
+  const dirty = nameDirty || settingsDirty;
   const valid =
+    (!nameDirty || !nameError) &&
     /^\d+$/.test(concurrency) &&
     +concurrency >= 1 &&
     /^\d+(\.\d+)?$/.test(cpus) &&
@@ -52,12 +65,17 @@ function NodeCard({
       type: 'updateNode',
       nodeId: node.id,
       patch: {
-        maxConcurrency: Number(concurrency),
-        reserved: { cpus: Number(cpus), memoryMb: Math.round(Number(mem) * 1024) },
-        labels: labels
-          .split(',')
-          .map((l) => l.trim())
-          .filter(Boolean),
+        ...(nameDirty ? { name } : {}),
+        ...(settingsDirty
+          ? {
+              maxConcurrency: Number(concurrency),
+              reserved: { cpus: Number(cpus), memoryMb: Math.round(Number(mem) * 1024) },
+              labels: labels
+                .split(',')
+                .map((l) => l.trim())
+                .filter(Boolean),
+            }
+          : {}),
       },
     });
   const m = node.metrics;
@@ -215,7 +233,11 @@ function NodeCard({
                 {node.update?.build ??
                   info?.build?.id ??
                   (info ? `v${info.agentVersion} (no build id)` : '–')}
-                {info?.build ? ` · node ${info.build.node}` : ''}
+                {info?.build?.runtime === 'rust'
+                  ? ` · Rust${info.build.target ? ` · ${info.build.target}` : ''}`
+                  : info?.build?.node
+                    ? ` · node ${info.build.node}`
+                    : ''}
               </dd>
               <dt>Auto-update</dt>
               <dd>
@@ -247,9 +269,30 @@ function NodeCard({
             className="form compact-form"
             onSubmit={(e) => {
               e.preventDefault();
-              save();
+              if (dirty && valid && !busy) save();
             }}
           >
+            <label className="field">
+              <span className="label">Worker name</span>
+              <input
+                value={name}
+                maxLength={64}
+                disabled={busy}
+                onChange={(event) => setName(event.target.value)}
+                aria-invalid={nameDirty && !!nameError}
+                aria-describedby={`worker-name-hint-${node.id}`}
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <span
+                id={`worker-name-hint-${node.id}`}
+                className={nameDirty && nameError ? 'error-text small' : 'hint'}
+              >
+                {nameDirty && nameError
+                  ? nameError
+                  : 'Use this name when choosing a worker for a job. History and settings are kept.'}
+              </span>
+            </label>
             <label className="field">
               <span className="label">Max concurrent jobs</span>
               <input
@@ -343,6 +386,21 @@ export function Nodes({
   const build = data.nodes.find((n) => n.update?.state === 'current')?.update?.build;
   return (
     <div className="stack">
+      <div className="form-actions">
+        <span className="spacer" />
+        <Button
+          icon="add"
+          disabled={data.connection.status !== 'connected' || data.connection.role !== 'admin'}
+          title={
+            data.connection.role === 'admin'
+              ? 'Generate a worker join command'
+              : 'Admin access is required to add workers'
+          }
+          onClick={() => dispatch({ type: 'go', view: 'addWorker' })}
+        >
+          Add worker
+        </Button>
+      </div>
       {controller && !controllerHasWorker ? (
         <Card
           className="controller-card"
@@ -391,7 +449,7 @@ export function Nodes({
       ) : null}
       {data.nodes.length === 0 ? (
         <Empty icon="server" title="No worker nodes yet">
-          Create a worker join token in Settings, then run the join command on each worker.
+          Choose Add worker to generate a join command for another computer.
         </Empty>
       ) : null}
       {data.nodes.map((n) => (

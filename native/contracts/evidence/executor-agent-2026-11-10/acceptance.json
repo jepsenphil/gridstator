@@ -1,0 +1,776 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-11-10T01:21:56.215297+00:00",
+  "scope": "29 originating executor plus4 agent acceptance scenarios on actual Linux amd64; source-derived assertions, no host-matrix or signing claim",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "docker": "29.0.2",
+    "buildx": "v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e",
+    "act": "0.2.97",
+    "git": "2.43.0"
+  },
+  "referenceTests": [
+    {
+      "path": "apps/agent/src/relocation.test.ts",
+      "sha256": "sha256:b91c5ea7920e6feb599f0ce5e69bb796966304bacd8b1047d46e8a74f68fb38f",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "apps/agent/src/updater.test.ts",
+      "sha256": "sha256:2666ee4764a0471bb16cf4d058c4910ff80933ea4a66f07230b7c4a1726f0fb6",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "packages/executors/src/act-log.test.ts",
+      "sha256": "sha256:4c0460bfaf997ab112efd6239870f4221e89cd03d68a71c36c5e06c698870fa9",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "packages/executors/src/actions.test.ts",
+      "sha256": "sha256:f49a164714470816f502b4d2b82be53cefcef299e3bfc2669cdf485d41073ecf",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "packages/executors/src/build.test.ts",
+      "sha256": "sha256:b7ca3e013188a1434c06d6cb05f4d7d38122e2121a68041cb457f41f5378dff8",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "packages/executors/src/checkout-rewrite.test.ts",
+      "sha256": "sha256:41f0f18091ade02c533408421800283a832aa445d9850b9b06d88ae65eda43b2",
+      "matchesFrozenRevision": true
+    },
+    {
+      "path": "packages/executors/src/container.test.ts",
+      "sha256": "sha256:34427b98ae382d23a4357dc340182a36ccea65bf5f2e576d376edd58a4bba3cb",
+      "matchesFrozenRevision": true
+    }
+  ],
+  "nativeSourceSnapshot": [
+    {
+      "path": "native/src/executor.rs",
+      "sha256": "sha256:4082ea4145bb0eccc1f7d2d4769b8db46d9a5134c8f2600314c638143b5c80db"
+    },
+    {
+      "path": "native/src/executor/actions.rs",
+      "sha256": "sha256:dbfb90a6d1c9866cebbea94800f6548d7e06618663af9d85e593e5feadfba64d"
+    },
+    {
+      "path": "native/src/executor/build.rs",
+      "sha256": "sha256:bcfa9475c1830edf26e934872f9677abcbe538bc2bbc61a9a329b983aab2e219"
+    },
+    {
+      "path": "native/src/executor/command.rs",
+      "sha256": "sha256:07303429d184b35d8ed4bdb5ee68cc5b1ea23645057a48a661e5ec0d6f4e2b26"
+    },
+    {
+      "path": "native/src/executor/process.rs",
+      "sha256": "sha256:a19898045bc64c7bf75f6e64506bf0ce007b1335a767768496a3db7bf04210f3"
+    },
+    {
+      "path": "native/tests/executor_contract.rs",
+      "sha256": "sha256:edaf781673ed9ac64655ffdb597e1e23a14741fed13ef664cf982ff61e19be50"
+    },
+    {
+      "path": "native/src/worker.rs",
+      "sha256": "sha256:ab6b1d27bbd6a14b3ad3053063432eb8b900576a41af9a38eaa6217a99a0dfeb"
+    },
+    {
+      "path": "native/tests/worker_contract.rs",
+      "sha256": "sha256:38217414db4a5b58aad42adf8b0b496ef83d486085e43037b59fae64fa4c660e"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "sha256:f336f7559d50d4676fddf501c685b365616d29f9a8f9516803dcdfb24d5a1778"
+    },
+    {
+      "path": "native/tests/updates_contract.rs",
+      "sha256": "sha256:3ddf90344b883c53ea88409de5d10da10a6c49017ed1c825fcdb0d0b40a513c6"
+    }
+  ],
+  "testExecutionNotes": [
+    "Initial sequential14-tool run had13 passing cases and one fixture-only failed assertion: test Dockerfile contained the test-secret literal that BuildKit correctly echoed. Corrected to compare a hash; the load case passed on focused rerun.",
+    "Existing Actions cases were strengthened and rerun5/5; the cancellation case was further aligned with socket-enabled file creation and rerun green.",
+    "Exact workdir/stdout assertion exposed Docker-create resource ID contaminating workload stdout. Setup routing was repaired and actual command+environment/missing-image cases rerun green.",
+    "Worker proof pauses only its owned supervisor PID at the activation boundary, resumes the same launcher after observing prelaunch state, and gracefully stops all owned roles in Drop.",
+    "Worker prelaunch observer gate now obtains the install lock while stopping its owned launcher, then waits for WIFSTOPPED before unlocking; this avoids pausing a launcher while it holds the activation lock. Actual Darwin managed proof validates the gate and will be recorded separately."
+  ],
+  "acceptance": [
+    {
+      "rowId": "reference-executors-act-log-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_act_log_console_steps_failures_and_change_tracking"
+      ],
+      "assertions": [
+        "Exact rendered system/stdout lines, raw multiline prefixing, debug suppression, setup/test group+name+status+duration, failedJobs, takeChanged reset"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/act-log.test.ts",
+          "line": 19,
+          "scenario": "renders act JSON logs in act console format and tracks steps"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-act-log-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_act_log_passthrough_post_stage_finish_and_cancelled_failure"
+      ],
+      "assertions": [
+        "Non-JSON stderr passthrough, Post Cache label, unfinished running step becomes skipped"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/act-log.test.ts",
+          "line": 88,
+          "scenario": "passes through non-JSON output and labels Pre/Post stages"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-act-log-003",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_act_log_passthrough_post_stage_finish_and_cancelled_failure"
+      ],
+      "assertions": [
+        "Interrupted step already reported failure is marked cancelled"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/act-log.test.ts",
+          "line": 100,
+          "scenario": "marks interrupted steps as cancelled"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-act-log-004",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::process::tests::line_pump_reassembles_split_utf8_and_flushes_partial_at_eof"
+      ],
+      "assertions": [
+        "Exact héllo/wörld/partial lines after byte chunks split UTF8 and lines, final partial line flushed at EOF"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/act-log.test.ts",
+          "line": 124,
+          "scenario": "reassembles lines and multi-byte characters split across chunks"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_act_arguments_lock_defaults_and_keep_secret_values_out_of_argv"
+      ],
+      "assertions": [
+        "Socket disabled default, private secret file, loopback cache server, ownership job label, selected job, inputs, runner platform, no no-skip-checkout, no secret argv values, exact dotenv escaping"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 142,
+          "scenario": "locks down act defaults and never passes secret values as arguments"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps"
+      ],
+      "assertions": [
+        "Uncommitted snapshot content, original workflow text seen by job, repo/ref/input context, single secret masked and absent raw value, multiline secret line count2, checkout/Snapshot/Secrets steps present, every status success/skipped, live outputs emitted, results/results.zip artifact, no leftover containers/volumes"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 176,
+          "scenario": "runs a job against the snapshot with secrets, inputs, steps and artifacts"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-003",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact"
+      ],
+      "assertions": [
+        "Called workflow reads uncommitted snapshot, system log identifies rewritten called.yml job, artifact collected, no leftover resources"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 218,
+          "scenario": "points checkouts in a called local workflow at the snapshot"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-004",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_failed_job_and_missing_workflow_preserve_source_errors"
+      ],
+      "assertions": [
+        "Failed workflow outcome, exact Workflow job(s) failed: Test/fails, failure step"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 229,
+          "scenario": "reports failed workflow jobs"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-005",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_socket_opt_in_shares_runner_files_with_nested_container"
+      ],
+      "assertions": [
+        "Socket-enabled nested container sees runner-created input, runner sees child output, root-created file ownership restored, workdir removable, no leftover managed resources"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 240,
+          "scenario": "shares runner-created files and nested container output when Docker access is enabled"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-006",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_failed_job_and_missing_workflow_preserve_source_errors"
+      ],
+      "assertions": [
+        "Workflow absent from captured manifest fails with does not exist diagnosis"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 252,
+          "scenario": "rejects a workflow path that is not in the snapshot"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-actions-007",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_act_cancellation_cleans_labelled_workflow_containers"
+      ],
+      "assertions": [
+        "Bound/socket-enabled workflow creates files before running marker, cancellation outcome, step cancelled, all labelled resources removed and workdir removable"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/actions.test.ts",
+          "line": 260,
+          "scenario": "cancels a running workflow and removes its containers"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-build-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::build::tests::source_buildx_flags_map_spec_without_exposing_secrets"
+      ],
+      "assertions": [
+        "Stage, build arg, secret environment name, job ownership label, cacheonly output, platform/no-cache flags, context last, no secret argv value"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/build.test.ts",
+          "line": 37,
+          "scenario": "maps the spec to buildx flags without putting secret values on the command line"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-build-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_buildx_load_describes_image_and_preserves_stage_args_and_labels"
+      ],
+      "assertions": [
+        "Actual stage+ARG+secret mount build, requested tag retained, load output/id/positive size, secret-presence log without secret content, image job/node labels, container reads exact9.9.9 ARG file"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/build.test.ts",
+          "line": 64,
+          "scenario": "builds a stage with build args and secrets, labels and describes the image"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-build-003",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag"
+      ],
+      "assertions": [
+        "image.tar artifact exceeds1000bytes, id is sha256, tar output, owned temporary tag absent after completion"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/build.test.ts",
+          "line": 109,
+          "scenario": "exports an image as a tar artifact and removes the temporary tag"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-build-004",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_buildx_failure_and_missing_dockerfile_return_terminal_results",
+        "executor::path_tests::build_and_workflow_path_resolution_rejects_symlink_escape"
+      ],
+      "assertions": [
+        "Actual BuildKit failing RUN returns failed/exit1, exact missing Dockerfile diagnosis, canonical path resolver rejects symlinked context and Dockerfile outside snapshot"
+      ],
+      "scopeNotes": [
+        "Native manifests reject escaping links before materialization; the resolver is independently exercised on a real symlink tree to retain defense in depth."
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/build.test.ts",
+          "line": 127,
+          "scenario": "reports build failures, missing Dockerfiles and paths escaping the snapshot"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-build-005",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_buildx_cancellation_interrupts_running_build"
+      ],
+      "assertions": [
+        "Actual running build marker, cancel token interrupts build, cancelled outcome before25s deadline"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/build.test.ts",
+          "line": 153,
+          "scenario": "cancels a running build"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_checkout_remote_formats_and_exact_rewrite_contract"
+      ],
+      "assertions": [
+        "HTTPS, SSH and scp remotes map to exact owner/repo; absent remote stays absent"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 17,
+          "scenario": "parses https, ssh and scp remotes"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_checkout_remote_formats_and_exact_rewrite_contract"
+      ],
+      "assertions": [
+        "Exact retained with inputs for all seven step variants, same-repo ref/repository removed, foreign preserved, comments retained, exact rewrite step names/removed metadata"
+      ],
+      "scopeNotes": [
+        "Comments in changed private copies are preserved as a preamble; original workflow files remain byte-identical."
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 58,
+          "scenario": "removes ref/repository from same-repository checkouts only"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-003",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_checkout_remote_formats_and_exact_rewrite_contract"
+      ],
+      "assertions": [
+        "Named repo remains foreign without known remote"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 86,
+          "scenario": "treats a named repository as foreign when the remote is unknown"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-004",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_checkout_remote_formats_and_exact_rewrite_contract"
+      ],
+      "assertions": [
+        "Unchanged/invalid YAML returned byte-identically without rewrites"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 91,
+          "scenario": "returns the original text when nothing changes or the YAML is invalid"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-005",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_private_workflow_copies_preserve_originals_redirect_calls_and_invalid_yaml"
+      ],
+      "assertions": [
+        "Every original workflow remains byte-identical, private caller redirects direct/normalized local calls only, foreign shared call unchanged, coverage ref removed and persist-credentials false retained, unchanged lint copy byte-identical"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 132,
+          "scenario": "rewrites copies for act and leaves the workflows the job sees as written"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-006",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_workflow_preparation_writes_nothing_without_rewrites_or_directory"
+      ],
+      "assertions": [
+        "No rewrite selects original workflow, creates no .git/private copies"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 169,
+          "scenario": "writes nothing when no checkout needs rewriting"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-checkout-rewrite-007",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "executor::actions::tests::source_private_workflow_copies_preserve_originals_redirect_calls_and_invalid_yaml",
+        "executor::actions::tests::source_workflow_preparation_writes_nothing_without_rewrites_or_directory"
+      ],
+      "assertions": [
+        "Invalid workflow copied verbatim when another file needs rewrite, directory named yml ignored, missing workflows directory tolerated"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/checkout-rewrite.test.ts",
+          "line": 175,
+          "scenario": "copies invalid workflows verbatim and tolerates a missing workflows directory"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_success_streams_env_cache_and_missing_image_is_clear",
+        "real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans"
+      ],
+      "assertions": [
+        "Actual command success/exit0/errornull/OOMfalse, stdout/stderr and injected job identity, running control phase, nonzero exit7 failed, no leftover containers/volumes"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 77,
+          "scenario": "runs a command, streams output, reports exit codes, and cleans up"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_success_streams_env_cache_and_missing_image_is_clear",
+        "environment_plan_keeps_multiline_secrets_out_of_argument_values"
+      ],
+      "assertions": [
+        "Ordinary env exact hello world, multiline secret line count2, npm cache path, private env-plan secret value excluded from argv/file and present only pass-through env"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 95,
+          "scenario": "passes env and multi-line secrets without putting them on the command line"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-003",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans"
+      ],
+      "assertions": [
+        "Snapshot tar staged, requested relative workdir produces /workspace/src and exact UTF8 prefix, working-tree file read from relative path, opaque Docker-create ID excluded from workload stdout"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 114,
+          "scenario": "copies the workspace tar into /workspace and honours workdir"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-004",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_cancellation_and_timeout_stop_actual_container"
+      ],
+      "assertions": [
+        "Actual running marker before cancellation, cancelled outcome, managed container and volume removed"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 132,
+          "scenario": "cancels a running job and removes its resources"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-005",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_cancellation_and_timeout_stop_actual_container"
+      ],
+      "assertions": [
+        "Actual sleeping command times out with failed outcome and exact Timed out after1s diagnosis, resources removed"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 152,
+          "scenario": "enforces timeouts"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-executors-container-006",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "real_docker_success_streams_env_cache_and_missing_image_is_clear"
+      ],
+      "assertions": [
+        "Actual nonexistent image returns failed with Could not create container diagnosis, resources removed"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "packages/executors/src/container.test.ts",
+          "line": 159,
+          "scenario": "reports a clear error for a missing image"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-agent-relocation-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "pinned_relocation_persists_before_retarget_and_rejects_other_cluster"
+      ],
+      "assertions": [
+        "Pinned new endpoint accepted, old URL saved as fallback, disk equals memory before client reuse, retargeted client health succeeds"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "apps/agent/src/relocation.test.ts",
+          "line": 29,
+          "scenario": "verifies pinned TLS, persists the move and preserves a fallback before retargeting shared clients"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-agent-relocation-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "pinned_relocation_persists_before_retarget_and_rejects_other_cluster"
+      ],
+      "assertions": [
+        "Foreign CA endpoint rejected; memory, persisted agent.json and shared client URL remain unchanged"
+      ],
+      "originalAcceptance": [
+        {
+          "path": "apps/agent/src/relocation.test.ts",
+          "line": 59,
+          "scenario": "refuses another cluster without changing memory or the saved endpoint"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-agent-updater-001",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put"
+      ],
+      "assertions": [
+        "Distinct actual baseline/target native executables and manifest digests verified, standalone worker owns independent install+real supervisor, downloads and activates target, paused launcher exposes exact current/previous/pending id+previous+attempts0 and no prelaunch deadline, controller says updating, same launcher resumes actual target executable, online rejoin confirms pending cleared, target managed build current, rollout finished"
+      ],
+      "scopeNotes": [
+        "Real host entries executed; other three package entries are declared header-only parsing fixtures. Prebuilt exact source hashes are in ../linux-cutover-2026-11-10/rehearsal-*-source-sha256.json."
+      ],
+      "originalAcceptance": [
+        {
+          "path": "apps/agent/src/updater.test.ts",
+          "line": 130,
+          "scenario": "installs the controller build, restarts, and confirms it after rejoining"
+        }
+      ]
+    },
+    {
+      "rowId": "reference-agent-updater-002",
+      "proposedStatus": "verified",
+      "scope": "Exact originating acceptance behavior executed on this Linux amd64 host; no other-host/runtime/signing claim",
+      "nativeTests": [
+        "independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put",
+        "auto_window_offline_update_only_and_unmanaged_skips_are_distinct"
+      ],
+      "assertions": [
+        "Actual unmanaged baseline worker remains alive on original build, canUpdate false/behind, operator-forced update is skipped with exact not a managed install detail; current reducer regression asserts exact behind diagnosis and capability"
+      ],
+      "scopeNotes": [
+        "Prebuilt real controller has the earlier explanatory unmanaged-service wording. Current source reducer independently asserts the repaired not a managed install diagnosis; no claim old payload contains new text."
+      ],
+      "originalAcceptance": [
+        {
+          "path": "apps/agent/src/updater.test.ts",
+          "line": 188,
+          "scenario": "reports a failed update instead of restarting when the install is not managed"
+        }
+      ]
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/actual-controller.log",
+      "sha256": "sha256:0a68bc72e3584fe46caebb9c14a92c29455c0ef3c4b7dd6b967fa79c8fc705f7"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/actual-managed.log",
+      "sha256": "sha256:03055b9c5127e54f3639ac292aa6865bb7c67484cdb44e1a214ac0c6b55cce60"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/actual-unmanaged.log",
+      "sha256": "sha256:f3bef0b5a558d83f91c141ceba94846fac4d721664eb11cdd72314b68b6c21cd"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/agent-managed-worker.log",
+      "sha256": "sha256:ce1ccaeddcdb6362980dc4349d8edb152d4a134c05901af9b1f533423a21c036"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/agent-relocation.log",
+      "sha256": "sha256:06f19815e519007ddc41a5cda787032a8f554077537e7696b4651ff4ea73fbe4"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/agent-unmanaged.log",
+      "sha256": "sha256:09b15463c7b90886cffa8e96e0263d74b522bb2a918fb953f70bc4968d83e1d0"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-actions.log",
+      "sha256": "sha256:ee3d397ce9ece27ba622d3018217fa45b18f28c523ce80cb9b72a6f7396f21ca"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-cancel.log",
+      "sha256": "sha256:257f087055029b0dda4894eeea172cb8e5a8f47ddb04268a6e52a7794b4f6e37"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-command.log",
+      "sha256": "sha256:193bb5daebd74e64e6e665b490c1d95b451b3c7f15e83e9cebe0ba61a959d35a"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-container.log",
+      "sha256": "sha256:50c3a6f93a91044851083816fb8bdd1e48e449551a36de8b3b5602df166c439b"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-default.log",
+      "sha256": "sha256:46b466b4fe69bc19a5fb476629282281333b6d09a7c3082ddb03be652d26cc68"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-load.log",
+      "sha256": "sha256:5250abcc90fc821c010ae303b032b3088d9978bc834b629eb08be2a435f18943"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-tool-initial.log",
+      "sha256": "sha256:c1f186e4e58b688401f84ed1d4809f73c8733a9ea1f04d1c93d79a91b89fb885"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/executor-unit.log",
+      "sha256": "sha256:bac1203b4d8afc436c4229cd9fbd6fc183ee5bbcd597a18ce4e19f1a25e9a41a"
+    },
+    {
+      "path": "native/contracts/evidence/executor-agent-2026-11-10/independent-worker-update.json",
+      "sha256": "sha256:0d792f0bfcbaefe66be1b7d7a2d680912124dd8bd41e1a4acbf0384943cb2445"
+    }
+  ]
+}

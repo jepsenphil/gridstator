@@ -1,0 +1,61 @@
+{
+  "Id": "sha256:06a1ee7af01fecf797268686773f20d1410a8ef4da497144bd08001011b1fffa",
+  "RepoTags": [
+    "docker:29.1.4-cli"
+  ],
+  "RepoDigests": [
+    "docker@sha256:06a1ee7af01fecf797268686773f20d1410a8ef4da497144bd08001011b1fffa"
+  ],
+  "Comment": "buildkit.dockerfile.v0",
+  "Created": "2026-01-09T19:04:40.872019323Z",
+  "Config": {
+    "Env": [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "DOCKER_VERSION=29.1.4",
+      "DOCKER_BUILDX_VERSION=0.30.1",
+      "DOCKER_COMPOSE_VERSION=5.0.1",
+      "DOCKER_TLS_CERTDIR=/certs"
+    ],
+    "Entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "Cmd": [
+      "sh"
+    ],
+    "WorkingDir": "/"
+  },
+  "Architecture": "arm64",
+  "Variant": "v8",
+  "Os": "linux",
+  "Size": 226160080,
+  "RootFS": {
+    "Type": "layers",
+    "Layers": [
+      "sha256:1869137e3b746de54b735253d5641cdc70b86dbab8a26b9aafcd5faaecc25a8f",
+      "sha256:7f815a58521d7d836dc2495dcd3dc6e1e3e53de1ebfbd48a8ab06db852e48791",
+      "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "sha256:54ec7f087d9bbc3cba871738f67fd3b3a76ca96b802b3b09ea2b5d03ffbcf248",
+      "sha256:b389e2a6a1aed7ab8efed6a83128446d1fdfcf44cc94cac3543a873473bbcc40",
+      "sha256:7ff759f51200cf234f89e0a466d5117cbc9edf979afd21e7a827c2583aec1a5e",
+      "sha256:9c925e77fe66b96c68598e4881caf1bf9ee5464b440a10edae0f48667906c9d8",
+      "sha256:274454dc2e1d5a3bad6070122e19bb564eaba088622fcaa5895442bff87e1909",
+      "sha256:6bb56cf761f077b868995de9cd9a124391c6784c2f6081dac707fbe9b1ec6178",
+      "sha256:3a3dd271f52e839fb0073fa3d4ff127479c34a05ce0b9531301d5fa56b2a2c2e"
+    ]
+  },
+  "Metadata": {
+    "LastTagTime": "2026-11-10T05:44:51.04362172Z"
+  },
+  "Descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:06a1ee7af01fecf797268686773f20d1410a8ef4da497144bd08001011b1fffa",
+    "size": 5149
+  },
+  "Identity": {
+    "Pull": [
+      {
+        "Repository": "docker.io/library/docker"
+      }
+    ]
+  }
+}

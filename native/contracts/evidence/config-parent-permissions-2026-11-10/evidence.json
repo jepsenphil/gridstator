@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-11-10T07:06:54.742832+00:00",
+  "classification": "Additional generic file/config filesystem acceptance discovered during runtime validation; source regression, not a stable-release claim",
+  "referenceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "baselineReceipt": "baseline/results.json",
+  "before": {
+    "existingConfigParent": "Native7c changes0775 to0700; frozen v1 preserves0775",
+    "relativeLeaf": "Native7c fails ENOENT; frozen v1 writes client file0600 in same cwd",
+    "missingIntermediate": "Native generic write created intermediate with ambient0775; frozen v1 creates missing directories privately"
+  },
+  "after": {
+    "existingParent": "Preserve existing mode for atomic write and locked JSON update",
+    "newMissingParents": "DirBuilder0700 applies only to newly created components",
+    "relativeLeaf": "Empty Path::parent normalized to . for temp/lock/rename/directory fsync",
+    "privateFiles": "create_new temp remains0600; lock remains0600/O_NOFOLLOW/flock/nontruncate",
+    "dedicatedDataDirs": "Explicit private_dir implementation unchanged; CLI asserts dedicated controller data0700"
+  },
+  "checks": [
+    {
+      "command": "cd native && cargo test --locked --lib state::tests",
+      "result": "expected red before fix",
+      "failed": 2,
+      "log": "unit-red.log"
+    },
+    {
+      "command": "cd native && cargo test --locked --lib state::tests",
+      "result": "passed",
+      "passed": 2,
+      "log": "unit-green.log"
+    },
+    {
+      "command": "cd native && cargo test --locked --test cli_contract custom_absolute_and_relative_config_paths_preserve_parent_permissions -- --exact",
+      "result": "expected red before fix",
+      "failed": 1,
+      "log": "cli-red.log"
+    },
+    {
+      "command": "cd native && cargo test --locked --test cli_contract",
+      "result": "passed",
+      "passed": 10,
+      "log": "cli-green.log"
+    },
+    {
+      "command": "cd native && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "clippy.log"
+    }
+  ],
+  "independentReview": {
+    "result": "no outstanding issue",
+    "scope": "Only new parent components created0700; existing parent modes and explicit private_dir preserved. Relative leaf temp/rename/lock/fsync use same cwd. Atomic file/lock modes, durability and locking preserved. Scoped CLI tests isolate home/XDG/data and owned temp dirs."
+  },
+  "sourceHashes": [
+    {
+      "path": "native/src/state.rs",
+      "sha256": "9832641741b226576c1badee92c8c66dc5dfc577715941cae3c5b12c2bca9e08"
+    },
+    {
+      "path": "native/tests/cli_contract.rs",
+      "sha256": "8c2bfeb52ae33ce77458a5dc048274e624b2c139137f44505cf421654a80801e"
+    },
+    {
+      "path": "packages/shared/src/fs.ts",
+      "sha256": "0f73cc2686ec82d460ffbe09e7f487098bceb9a532490e93b8de099b5b6067df"
+    },
+    {
+      "path": "packages/client/src/config.ts",
+      "sha256": "6fc0dd0a1544d11157cd08e8c511c10c2ed3a7c11143f2395672473d1b83e227"
+    }
+  ],
+  "replacementPreview": "native-preview-20261110-6994d2cc804b",
+  "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "runtimeScope": "These logs are source-level debug regression acceptance. Actual common release-byte Linux/Mac path/mode and installer checks are recorded separately. No claim of a retrospectively measured debug executable digest.",
+  "isolation": "Both baseline and regression cases use owned TemporaryDirectory paths only. No actual /tmp root or user directory modes were changed; no backend services start during controller init cases."
+}

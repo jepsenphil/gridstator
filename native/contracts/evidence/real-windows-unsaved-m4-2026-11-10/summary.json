@@ -1,0 +1,338 @@
+{
+  "result": "passed",
+  "buildId": "native-preview-20261110-95cfa7161440",
+  "nativeSha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff",
+  "vsixSha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+  "windows": [
+    {
+      "id": 0,
+      "remotePid": 87788,
+      "stages": [
+        {
+          "id": 0,
+          "pid": 87788,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284508138,
+          "status": "signedOut",
+          "user": null,
+          "native": {
+            "version": "2.0.0-dev.1",
+            "buildId": "native-preview-20261110-95cfa7161440",
+            "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+            "capabilities": [
+              "bridge-v1",
+              "native-controller",
+              "native-worker",
+              "snapshots",
+              "release-verification"
+            ],
+            "target": "darwin/arm64",
+            "size": 23173504,
+            "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+          }
+        },
+        {
+          "id": 0,
+          "pid": 87788,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284517415,
+          "status": "connected",
+          "user": "local-admin",
+          "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+        },
+        {
+          "id": 0,
+          "pid": 87788,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284518948,
+          "status": "connected",
+          "user": "shared-after-rotation"
+        },
+        {
+          "id": 0,
+          "pid": 87788,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284520473,
+          "status": "signedOut",
+          "user": null
+        }
+      ],
+      "privateClientProfile": "/tmp/gst-real-windows-1mr4ts9n/profile-0"
+    },
+    {
+      "id": 1,
+      "remotePid": 87912,
+      "stages": [
+        {
+          "id": 1,
+          "pid": 87912,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284515363,
+          "status": "signedOut",
+          "user": null,
+          "native": {
+            "version": "2.0.0-dev.1",
+            "buildId": "native-preview-20261110-95cfa7161440",
+            "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+            "capabilities": [
+              "bridge-v1",
+              "native-controller",
+              "native-worker",
+              "snapshots",
+              "release-verification"
+            ],
+            "target": "darwin/arm64",
+            "size": 23173504,
+            "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+          }
+        },
+        {
+          "id": 1,
+          "pid": 87912,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284517607,
+          "status": "connected",
+          "user": "local-admin",
+          "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+        },
+        {
+          "id": 1,
+          "pid": 87912,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284519035,
+          "status": "connected",
+          "user": "shared-after-rotation"
+        },
+        {
+          "id": 1,
+          "pid": 87912,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284520562,
+          "status": "signedOut",
+          "user": null
+        }
+      ],
+      "privateClientProfile": "/tmp/gst-real-windows-1mr4ts9n/profile-1"
+    },
+    {
+      "id": 2,
+      "remotePid": 87975,
+      "stages": [
+        {
+          "id": 2,
+          "pid": 87975,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284516302,
+          "status": "signedOut",
+          "user": null,
+          "native": {
+            "version": "2.0.0-dev.1",
+            "buildId": "native-preview-20261110-95cfa7161440",
+            "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+            "capabilities": [
+              "bridge-v1",
+              "native-controller",
+              "native-worker",
+              "snapshots",
+              "release-verification"
+            ],
+            "target": "darwin/arm64",
+            "size": 23173504,
+            "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+          }
+        },
+        {
+          "id": 2,
+          "pid": 87975,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284517515,
+          "status": "connected",
+          "user": "local-admin",
+          "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+        },
+        {
+          "id": 2,
+          "pid": 87975,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284519046,
+          "status": "connected",
+          "user": "shared-after-rotation"
+        },
+        {
+          "id": 2,
+          "pid": 87975,
+          "remoteName": "ssh-remote",
+          "platform": "darwin",
+          "arch": "arm64",
+          "at": 1794284520468,
+          "status": "signedOut",
+          "user": null
+        }
+      ],
+      "privateClientProfile": "/tmp/gst-real-windows-1mr4ts9n/profile-2"
+    }
+  ],
+  "dirtyBuffer": {
+    "id": "dirty",
+    "pid": 89529,
+    "stages": [
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285016643,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285017325,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285018321,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285019112,
+        "status": "connected",
+        "dirty": [
+          {
+            "mode": "ignore",
+            "id": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+            "snapshot": "sha256:7332a8f679853f813864204738b810cb4114601cc659a28847b3ca0171a39907",
+            "content": "disk-original\n"
+          },
+          {
+            "mode": "saveAll",
+            "id": "01M71VH59AKW3TG9DYGX301C14",
+            "snapshot": "sha256:9ad162f9700091c649f41a0c292d28e0e2d6add3b3a7425f312325fe2584785a",
+            "content": "saved-buffer\n"
+          },
+          {
+            "mode": "prompt-run-saved",
+            "id": "01M71VH652AX87Z2DJGVPE0N5T",
+            "snapshot": "sha256:19d61734f828803022bdbbecd162adaf327fd4aa152f3a68303edd5f76ff44df",
+            "content": "saved-buffer\n"
+          },
+          {
+            "mode": "prompt-save",
+            "id": "01M71VH75A3FFW25MD7MJA145J",
+            "snapshot": "sha256:33e16e66a5d1cb1279e80b5eabf6d41f504a68ef3252fa7afe860f56176fc797",
+            "content": "prompt-saved\n"
+          },
+          {
+            "mode": "prompt-cancel",
+            "noJobSubmitted": true,
+            "dirtyPreserved": true
+          }
+        ]
+      }
+    ],
+    "dirty": [
+      {
+        "mode": "ignore",
+        "id": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+        "snapshot": "sha256:7332a8f679853f813864204738b810cb4114601cc659a28847b3ca0171a39907",
+        "content": "disk-original\n"
+      },
+      {
+        "mode": "saveAll",
+        "id": "01M71VH59AKW3TG9DYGX301C14",
+        "snapshot": "sha256:9ad162f9700091c649f41a0c292d28e0e2d6add3b3a7425f312325fe2584785a",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-run-saved",
+        "id": "01M71VH652AX87Z2DJGVPE0N5T",
+        "snapshot": "sha256:19d61734f828803022bdbbecd162adaf327fd4aa152f3a68303edd5f76ff44df",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-save",
+        "id": "01M71VH75A3FFW25MD7MJA145J",
+        "snapshot": "sha256:33e16e66a5d1cb1279e80b5eabf6d41f504a68ef3252fa7afe860f56176fc797",
+        "content": "prompt-saved\n"
+      },
+      {
+        "mode": "prompt-cancel",
+        "noJobSubmitted": true,
+        "dirtyPreserved": true
+      }
+    ],
+    "native": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+    },
+    "scope": "actual remote VSCode extension host and native snapshot/submission; jobs intentionally queued then cancelled without a worker"
+  },
+  "scope": "Three actual Linux Code processes/private profiles with distinct actual M4 SSH extension hosts sharing one private client file; five dirty-buffer capture/submission cases in a normal actual editor window via a test-only driver extension and actual modal button clicks. No worker is registered; jobs stay queued and are explicitly cancelled.",
+  "limits": [
+    "Frozen95preview/core and finalVSIX are the tested bytes; decodedGET gap discovered on95is separately fixed in replacement preview.",
+    "POST downloadBlobs read-back verified native snapshot bytes for dirty cases; encodedGET red is preserved, not reported passed.",
+    "No WSL, physical Intel, Mac Docker-positive or signing/notarization claim.",
+    "The VSCode extension test harness refuses modal prompts; a normal private editor plus a small private driver extension exercised the unchanged product API/UI instead."
+  ],
+  "failuresPreserved": [
+    "Encoded GETblob SDK/backend compatibility red, root-owned fix tracked in replacement preview.",
+    "Extension test-harness modal refusal.",
+    "Direct cached Electron startup initially required the same no-sandbox flags as @vscode/test-electron.",
+    "Cancel button initially ambiguous with progress notification; final selectors scope actual unsaved warning."
+  ],
+  "replacementSDKCompanion": {
+    "result": "passed",
+    "buildId": "native-preview-20261110-e3e5fae51c8e",
+    "readbacks": 4,
+    "evidence": "final-sdk-encoded-get.json",
+    "fullReleaseEvidence": "../mac-preview-blobfix-2026-11-10/summary.json"
+  },
+  "cleanup": "cleanup.json"
+}

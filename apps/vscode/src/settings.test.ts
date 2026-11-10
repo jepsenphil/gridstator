@@ -8,6 +8,7 @@ import { initController, startController, type RunningController } from '@gridst
 import {
   AGENT_PROTOCOL_VERSION,
   ControllerMessageSchema,
+  CreateTokenResponseSchema,
   type ControllerMessage,
   type NodeInfo,
 } from '@gridstator/protocol';
@@ -16,6 +17,7 @@ import { LocalController } from './local-controller';
 import { DashboardSettings } from './settings';
 import { ClusterState } from './state';
 import { testHost, Uri } from './test-vscode';
+import type { ToWebview } from './messages';
 
 const RESTORE_KEY = 'controllerUpdate.pendingWorkerRestore';
 const log: vscode.OutputChannel = {
@@ -143,7 +145,9 @@ class ScriptedWorker {
   }
 }
 
-async function openWindow(): Promise<{ state: ClusterState; settings: DashboardSettings }> {
+async function openWindow(
+  post: (message: ToWebview) => void = () => undefined,
+): Promise<{ state: ClusterState; settings: DashboardSettings }> {
   const state = new ClusterState(
     () => configPath,
     () => 100,
@@ -156,13 +160,7 @@ async function openWindow(): Promise<{ state: ClusterState; settings: DashboardS
   } as unknown as vscode.ExtensionContext;
   const local = new LocalController(context, () => configPath, log);
   vi.spyOn(local, 'refresh').mockResolvedValue(null);
-  const settings = new DashboardSettings(
-    context,
-    state,
-    local,
-    () => undefined,
-    () => undefined,
-  );
+  const settings = new DashboardSettings(context, state, local, post, () => undefined);
   const opened = { state, settings };
   windows.push(opened);
   await state.connect();
@@ -220,6 +218,132 @@ afterEach(async () => {
   for (const extra of extraControllers.splice(0)) await extra.close();
   vi.restoreAllMocks();
   await rm(directory, { recursive: true, force: true });
+});
+
+describe('worker join command generation', () => {
+  const url = 'https://192.168.1.77:7300';
+
+  it('issues a one-use token valid for 24 hours and delivers its command only transiently', async () => {
+    const posted: ToWebview[] = [];
+    const first = await openWindow((message) => posted.push(message));
+    const createToken = vi.spyOn(first.state.requireClient(), 'createToken');
+    const persist = vi.spyOn(storage, 'update');
+    const startedAt = Date.now();
+    await first.settings.handle({
+      type: 'createWorkerJoinCommand',
+      name: '  windows-worker  ',
+      url: `${url}/`,
+    });
+    const created = CreateTokenResponseSchema.parse(await createToken.mock.results[0]!.value);
+    const message = posted.find((message) => message.type === 'workerJoinCommandCreated');
+    expect(message).toMatchObject({
+      type: 'workerJoinCommandCreated',
+      result: {
+        name: 'windows-worker',
+        clusterId: controller!.clusterId,
+        expiresAt: created.info.expiresAt,
+      },
+    });
+    if (message?.type !== 'workerJoinCommandCreated') throw new Error('No join command delivered');
+    expect(message.result.command).toContain(`gridstator agent join '${url}'`);
+    expect(message.result.command).toContain(first.state.connection.caFingerprint);
+    expect(message.result.command).toContain(created.token);
+    expect(created.info.expiresAt).toBeGreaterThanOrEqual(startedAt + 24 * 3600 * 1000);
+    expect(created.info.expiresAt).toBeLessThanOrEqual(Date.now() + 24 * 3600 * 1000);
+    expect(await admin.listTokens()).toContainEqual(
+      expect.objectContaining({ name: 'windows-worker', kind: 'join', usesRemaining: 1 }),
+    );
+    expect(JSON.stringify(first.settings.snapshot())).not.toContain(created.token);
+    expect(JSON.stringify(persist.mock.calls)).not.toContain(created.token);
+
+    const nodeInfo = (await admin.getNode(worker.nodeId)).info!;
+    await expect(
+      admin.registerAgent(created.token, { name: 'windows-worker', info: nodeInfo }),
+    ).resolves.toMatchObject({ name: 'windows-worker' });
+    await expect(
+      admin.registerAgent(created.token, { name: 'second-worker', info: nodeInfo }),
+    ).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
+  });
+
+  it('requires an admin login before issuing a token', async () => {
+    const posted: ToWebview[] = [];
+    const first = await openWindow((message) => posted.push(message));
+    const createToken = vi.spyOn(first.state.requireClient(), 'createToken');
+    first.state.connection.role = 'operator';
+    await expect(
+      first.settings.handle({ type: 'createWorkerJoinCommand', name: 'windows-worker', url }),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    expect(createToken).not.toHaveBeenCalled();
+    expect(posted).toEqual([]);
+  });
+
+  it.each([
+    'http://192.168.1.77:7300',
+    'https://127.0.0.1:7300',
+    'https://localhost:7300',
+    'https://[::1]:7300',
+    'https://0.0.0.0:7300',
+    'https://192.168.1.77:7300/path',
+    'https://192.168.1.77:7300?token=private',
+  ])('rejects an unusable worker endpoint before issuing a token (%s)', async (endpoint) => {
+    const first = await openWindow();
+    const createToken = vi.spyOn(first.state.requireClient(), 'createToken');
+    await expect(
+      first.settings.handle({
+        type: 'createWorkerJoinCommand',
+        name: 'windows-worker',
+        url: endpoint,
+      }),
+    ).rejects.toMatchObject({ code: 'BAD_REQUEST' });
+    expect(createToken).not.toHaveBeenCalled();
+  });
+
+  it('does not deliver a command after the selected controller changes during issuance', async () => {
+    const posted: ToWebview[] = [];
+    const first = await openWindow((message) => posted.push(message));
+    const client = first.state.requireClient();
+    const issue = client.createToken.bind(client);
+    let release: () => void = () => undefined;
+    const delayed = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    let issued: () => void = () => undefined;
+    const issuance = new Promise<void>((resolve) => {
+      issued = resolve;
+    });
+    vi.spyOn(client, 'createToken').mockImplementationOnce(async (request) => {
+      const result = await issue(request);
+      issued();
+      await delayed;
+      return result;
+    });
+    const creating = first.settings.handle({
+      type: 'createWorkerJoinCommand',
+      name: 'windows-worker',
+      url,
+    });
+    const outcome = expect(creating).rejects.toThrow(/selected controller changed/);
+    await issuance;
+    const otherDir = join(directory, 'other-controller');
+    const init = await initController({ dataDir: otherDir, host: '127.0.0.1', port: 0 });
+    const other = await startController({ dataDir: otherDir, host: '127.0.0.1', port: 0 });
+    extraControllers.push(other);
+    await writeClientConfig(
+      {
+        version: 1,
+        url: other.url,
+        caPem: init.caPem,
+        caFingerprint: init.fingerprint,
+        token: init.adminToken,
+      },
+      configPath,
+    );
+    await first.state.connect();
+    release();
+    await outcome;
+    expect(first.state.connection.clusterId).toBe(other.clusterId);
+    expect(posted).toEqual([]);
+  });
 });
 
 describe('controller update lifecycle across SSH windows', () => {

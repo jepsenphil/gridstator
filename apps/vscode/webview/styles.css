@@ -178,6 +178,24 @@ h3 {
   padding: 16px;
   flex: 1;
 }
+.getting-started {
+  max-width: 640px;
+  margin: 24px auto;
+}
+.getting-started h2 {
+  font-size: 1.65em;
+}
+.getting-started p {
+  line-height: 1.6;
+  margin: 8px 0 16px;
+}
+.setup-choice {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.setup-choice + .setup-choice {
+  margin-bottom: 16px;
+}
 
 /* primitives */
 .btn {
@@ -1238,6 +1256,18 @@ select {
 }
 .token-secret .code-block {
   margin-bottom: 10px;
+}
+
+.worker-join {
+  max-width: 780px;
+}
+.worker-join-help {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.worker-join-help p {
+  margin: 0;
+  line-height: 1.5;
 }
 
 @media (max-width: 900px) {

@@ -1,19 +1,101 @@
+# Dependencies and local caches
 node_modules/
-dist/
+.pnpm-store/
+.npm/
+.cache/
+.eslintcache
 *.tsbuildinfo
-coverage/
-.gridstator-dev/
+__pycache__/
+*.py[cod]
+
+# Compiled output and release packages; keep pnpm-lock.yaml and Cargo.lock
+dist/
+target/
+/distro/
+/release/
+/apps/cli/release/
+/native/release/
+/native/self-build/
 *.vsix
 *.tgz
+*.rs.bk
+
+# Local environment and credentials; keep shareable examples/templates
 .env
 .env.*
 !.env.example
-apps/cli/release/
+!.env.*.example
+!.env.sample
+!.env.*.sample
+!.env.template
+!.env.*.template
+.secrets/
+.credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_ed25519
 
-# VS Code extension build and test output
-apps/vscode/media/dashboard.*
-apps/vscode/media/codicons/
-apps/vscode/.vscode-test/
-apps/vscode/test-results/
-apps/vscode/test/ui/screenshots/
-apps/vscode/test/ui/.fixture.html
+# Local Gridstator state, databases and runtime logs
+.gridstator/
+.gridstator-v2/
+.gridstator-dev/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Recorded validation logs are release evidence referenced by the parity ledger
+!/native/contracts/evidence/**/*.log
+!/native/contracts/evidence/**/*.log.*
+
+# Test runners and generated captures
+coverage/
+.nyc_output/
+.vitest/
+.vscode-test/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+/native/evidence/
+/apps/vscode/test/ui/screenshots/
+/apps/vscode/test/ui/.fixture.html
+/apps/desktop/test/screenshots/
+
+# Generated VS Code webview assets (source icons remain versioned)
+/apps/vscode/media/dashboard.*
+/apps/vscode/media/codicons/
+
+# Desktop resources are staged from source/release artifacts during packaging
+/apps/desktop/src-tauri/gen/
+/apps/desktop/src-tauri/resources/
+
+# Scratch outputs from local release/update rehearsals
+/native/dev-*
+/native/native-preview-*
+/native/buildx-fallback-*
+/native/candidate-recovery
+
+# OS and editor clutter; shared VS Code configuration can be committed
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+.idea/
+.history/
+*.swp
+*.swo
+*~

@@ -1,0 +1,16 @@
+{
+  "linux-arm64": {
+    "binary": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-arm64/gridstator",
+    "metadata": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-arm64/build-info.json",
+    "sha256": "18e2c8464d912ede9021b88d203fae4b69da584321517875500569b008748314",
+    "size": 26568520,
+    "runtime": "not executed"
+  },
+  "linux-amd64": {
+    "binary": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-amd64/gridstator",
+    "metadata": "native/self-build/proof-01M71WTMJG104TA719VT67QRY3/linux-amd64/build-info.json",
+    "sha256": "85564631a2c3ca785401da53ab13cc27fcf47da84796f91b7aa785392e9e9577",
+    "size": 27608144,
+    "runtime": "passed --version, build-info, private controller init, actual TLS controller status and graceful stop in read-only network-disabled Alpine without Node/npm/Rust/Cargo/Zig"
+  }
+}

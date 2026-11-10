@@ -1,0 +1,445 @@
+{
+  "scope": "actual standalone managed worker, separate install/supervisor from controller; host runtime only; non-host archive entries are parsing fixtures",
+  "target": "darwin/arm64",
+  "baseline": {
+    "schemaVersion": 1,
+    "buildId": "m4-fixed-base-b99b913ff83a",
+    "version": "2.0.0-dev.1",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-b99b913ff83a",
+    "protocol": {
+      "api": 1,
+      "agent": 1,
+      "update": 1
+    },
+    "artifacts": {
+      "darwin/amd64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-base-b99b913ff83a-darwin-amd64.tar.gz",
+          "size": 210,
+          "sha256": "e19298f3d31dce754753bb1a32135e63ebb9491640344b6bb7672ae8c043005f"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "92903f1dba8f0e4e9fb2a4e6cd87db561c6ce1627af9d59347f4d32501f3be1d"
+        }
+      },
+      "darwin/arm64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-base-b99b913ff83a-darwin-arm64.tar.gz",
+          "size": 16714012,
+          "sha256": "b4ff1d3e098e21a553323515fdd9753e06537989b89f612d5abd5b5dd9822650"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 56972096,
+          "sha256": "4197948eb7940714b06a4ebce34f88524899315de8047ef8b6bb124e88cdb7d4"
+        }
+      },
+      "linux/amd64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-base-b99b913ff83a-linux-amd64.tar.gz",
+          "size": 210,
+          "sha256": "8a0a457c865fba629a3be67c2138cb12295102d407adba3de3fdf2baeea3b5de"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "175f7c04d8aba899227b47bb38b83e24dff845172c703589e27b398b6d4989f6"
+        }
+      },
+      "linux/arm64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-base-b99b913ff83a-linux-arm64.tar.gz",
+          "size": 211,
+          "sha256": "366e91e06510cea22c7b7e45c08ee2f59799cebe2e607ae11592a76773471d37"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "6c86bf9edbe9ca8986850357a936a45855a98b64425cd8f864a896fcd6bacc88"
+        }
+      }
+    }
+  },
+  "targetManifest": {
+    "schemaVersion": 1,
+    "buildId": "m4-fixed-target-b99b913ff83a",
+    "version": "2.0.0-dev.1",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-b99b913ff83a",
+    "protocol": {
+      "api": 1,
+      "agent": 1,
+      "update": 1
+    },
+    "artifacts": {
+      "darwin/amd64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-target-b99b913ff83a-darwin-amd64.tar.gz",
+          "size": 212,
+          "sha256": "566cc037587ef74f3d548cef1e00935df4fd0002b8922797edcc1d2fa953b313"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "92903f1dba8f0e4e9fb2a4e6cd87db561c6ce1627af9d59347f4d32501f3be1d"
+        }
+      },
+      "darwin/arm64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-target-b99b913ff83a-darwin-arm64.tar.gz",
+          "size": 16714008,
+          "sha256": "c02160697132f551746c0f6a62e43dad71616f22ffbe4520ae631bc437cb0bb9"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 56972096,
+          "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26"
+        }
+      },
+      "linux/amd64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-target-b99b913ff83a-linux-amd64.tar.gz",
+          "size": 212,
+          "sha256": "e75826779e14700826efb919f8d12d400493c2faf35a0eb6c4020bb9359e7e8c"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "175f7c04d8aba899227b47bb38b83e24dff845172c703589e27b398b6d4989f6"
+        }
+      },
+      "linux/arm64": {
+        "archive": {
+          "file": "gridstator-m4-fixed-target-b99b913ff83a-linux-arm64.tar.gz",
+          "size": 213,
+          "sha256": "5fbb664e9efb2e35af82d6afacbfc886336781092c512ceb3d02b29364dd4462"
+        },
+        "executable": {
+          "file": "gridstator",
+          "size": 64,
+          "sha256": "6c86bf9edbe9ca8986850357a936a45855a98b64425cd8f864a896fcd6bacc88"
+        }
+      }
+    }
+  },
+  "sourcePackages": "/Users/philjepsen/gridstator-validation.I50ONpwm/worker-update-fixed-packages",
+  "pendingObserved": {
+    "schemaVersion": 1,
+    "current": "m4-fixed-target-b99b913ff83a",
+    "previous": "m4-fixed-base-b99b913ff83a",
+    "pending": {
+      "buildId": "m4-fixed-target-b99b913ff83a",
+      "previous": "m4-fixed-base-b99b913ff83a",
+      "attempts": 0,
+      "confirmWithinMs": 600000,
+      "firstLaunchAt": null,
+      "deadline": null
+    },
+    "lastRollback": null
+  },
+  "finalInstall": {
+    "schemaVersion": 1,
+    "current": "m4-fixed-target-b99b913ff83a",
+    "previous": "m4-fixed-base-b99b913ff83a",
+    "pending": null,
+    "lastRollback": null
+  },
+  "updatedNode": {
+    "id": "01M71JSBB0B64Q9WYAW927AAFF",
+    "name": "managed-standalone",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-contract-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "m4-fixed-target-b99b913ff83a",
+        "version": "2.0.0-dev.1",
+        "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26",
+        "target": "darwin/arm64",
+        "managed": true,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:58062",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 0
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": null,
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794275854418,
+    "connectedAt": 1794275854416,
+    "createdAt": 1794275847520,
+    "update": {
+      "state": "current",
+      "build": "m4-fixed-target-b99b913ff83a",
+      "detail": null,
+      "autoUpdate": "follow",
+      "canUpdate": true
+    }
+  },
+  "updates": {
+    "controller": {
+      "id": "m4-fixed-target-b99b913ff83a",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "darwin/arm64",
+      "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": false,
+        "reason": "Install this controller as a verified native managed service to enable self-update"
+      }
+    },
+    "autoUpdate": "follow",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71JSGKVG47MTZ23R0ZHA77X",
+      "target": {
+        "id": "m4-fixed-target-b99b913ff83a",
+        "version": "2.0.0-dev.1",
+        "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26"
+      },
+      "state": "finished",
+      "haltReason": null,
+      "startedBy": "auto-update",
+      "startedAt": 1794275852922,
+      "finishedAt": 1794275854920,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71JSBB0B64Q9WYAW927AAFF",
+          "name": "managed-standalone",
+          "state": "done",
+          "detail": null,
+          "auto": true,
+          "startedAt": 1794275852922,
+          "finishedAt": 1794275854920
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  "forcedUnmanaged": {
+    "controller": {
+      "id": "m4-fixed-target-b99b913ff83a",
+      "version": "2.0.0-dev.1",
+      "runtime": "rust",
+      "target": "darwin/arm64",
+      "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26",
+      "updatable": true,
+      "reason": null,
+      "lastRollback": null,
+      "selfUpdate": {
+        "available": false,
+        "reason": "Install this controller as a verified native managed service to enable self-update"
+      }
+    },
+    "autoUpdate": "off",
+    "updateWindow": null,
+    "rollout": {
+      "id": "01M71JSEP03V2J99HE52YNRE0D",
+      "target": {
+        "id": "m4-fixed-target-b99b913ff83a",
+        "version": "2.0.0-dev.1",
+        "sha256": "d860352d9715453232c9419104f778e54ebea0e9b1ce01e33b211663b9f7ed26"
+      },
+      "state": "finished",
+      "haltReason": null,
+      "startedBy": "local-admin",
+      "startedAt": 1794275850944,
+      "finishedAt": 1794275850946,
+      "now": false,
+      "drainTimeoutSeconds": null,
+      "nodes": [
+        {
+          "nodeId": "01M71JSBF9GS8HSX73MJDQF6W1",
+          "name": "unmanaged-standalone",
+          "state": "skipped",
+          "detail": "not a managed install",
+          "auto": false,
+          "startedAt": null,
+          "finishedAt": 1794275850946
+        }
+      ]
+    },
+    "toolchain": [
+      {
+        "name": "act",
+        "version": null,
+        "source": "off",
+        "platforms": []
+      }
+    ],
+    "controllerUpdate": null,
+    "mirrorPreparation": null
+  },
+  "unmanagedNode": {
+    "id": "01M71JSBF9GS8HSX73MJDQF6W1",
+    "name": "unmanaged-standalone",
+    "status": "online",
+    "health": "degraded",
+    "healthIssues": [
+      "Docker unavailable: /nonexistent/gridstator-contract-docker unavailable or timed out"
+    ],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-docker unavailable or timed out"
+      },
+      "buildx": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-docker unavailable or timed out"
+      },
+      "act": {
+        "available": false,
+        "error": "/nonexistent/gridstator-contract-act unavailable or timed out"
+      },
+      "executors": [],
+      "build": {
+        "id": "m4-fixed-base-b99b913ff83a",
+        "version": "2.0.0-dev.1",
+        "sha256": "4197948eb7940714b06a4ebce34f88524899315de8047ef8b6bb124e88cdb7d4",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": null,
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:58062",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 0
+      },
+      "executionCapacity": null,
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794275853441,
+      "cpuPercent": 5.587921619415283,
+      "memoryAvailableMb": 0,
+      "diskFreeMb": 321459,
+      "diskTotalMb": 471482,
+      "load1": 1.65234375,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 14746
+    },
+    "lastSeenAt": 1794275853442,
+    "connectedAt": 1794275848417,
+    "createdAt": 1794275847657,
+    "update": {
+      "state": "behind",
+      "build": "m4-fixed-base-b99b913ff83a",
+      "detail": "not a managed install; install this worker as a verified native managed service to enable updates",
+      "autoUpdate": "follow",
+      "canUpdate": false
+    }
+  }
+}

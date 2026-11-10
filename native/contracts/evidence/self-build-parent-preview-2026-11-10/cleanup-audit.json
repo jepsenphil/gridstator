@@ -1,0 +1,18 @@
+{
+  "ownedProcessesRemaining": [],
+  "ownedDockerResources": [
+    {
+      "nodeId": "01M724A78GA2MK41MCKF3ZPACN",
+      "kind": "containers",
+      "remainingIds": []
+    },
+    {
+      "nodeId": "01M724A78GA2MK41MCKF3ZPACN",
+      "kind": "volumes",
+      "remainingIds": []
+    }
+  ],
+  "existingServicesTouched": false,
+  "privateCredentialsRemovedAfterEvidenceCopy": true,
+  "sharedBuildCacheRetained": true
+}

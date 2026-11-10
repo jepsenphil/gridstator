@@ -1,0 +1,39 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.46s
+     Running tests/release_workflow_contract.rs (native/target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 1 test
+test source_controller_self_update_003_refuses_unmanaged_and_bad_checksums ... FAILED
+
+failures:
+
+---- source_controller_self_update_003_refuses_unmanaged_and_bad_checksums stdout ----
+
+thread 'source_controller_self_update_003_refuses_unmanaged_and_bad_checksums' (1424379) panicked at tests/release_workflow_contract.rs:68:5:
+scenarioself003-checksum:
+
+running 1 test
+test release_scenario_child ... FAILED
+
+failures:
+
+failures:
+    release_scenario_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 2.10s
+
+
+
+thread 'release_scenario_child' (1424980) panicked at tests/release_workflow_contract.rs:387:23:
+BAD_REQUEST: native bundle SHA-256 mismatch
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_controller_self_update_003_refuses_unmanaged_and_bad_checksums
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 13.63s
+
+error: test failed, to rerun pass `--test release_workflow_contract`

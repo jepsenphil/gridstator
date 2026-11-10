@@ -1,0 +1,11 @@
+{
+  "expectedBuildId": "native-preview-20261110-95cfa7161440",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "uncommitted working-tree snapshot; later shared edits not covered",
+  "jobId": "01M71RTC1RCA4FHFE8BZBF8G94",
+  "snapshotId": "sha256:dd2b1ed35bad1b4d85a57b70f65b7c50d15ba068664e32670db93b7189bee54b",
+  "result": "succeeded",
+  "archiveSha256": "d436551e0aed887331a261377c2fb323d104e1253254ed9376c68980bfa746d0",
+  "orchestratorSha256": "2adbb107493217eedb94767cc9c7d2753866f1d82ea11f754a55277784b5ae02",
+  "controllerScope": "disposable foreground controller with embedded worker; no services"
+}

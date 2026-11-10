@@ -1,0 +1,83 @@
+{
+  "recordedDate": "2026-11-10",
+  "classification": "historical unpublished native development preview; superseded before final delivery",
+  "stableRelease": false,
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "version": "2.0.0-dev.1",
+  "parentSourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted native working-tree preview. Embedded sourceRevision is the parent reference commit; the native production/build checkpoint and supplemental inputs identify actual sources. No clean-release provenance claim.",
+  "productionCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "sourceCheckpoint": "SOURCE_CHECKPOINT.json",
+  "supplementalBuildInputs": "SUPPLEMENTAL_BUILD_INPUTS.json",
+  "historicalPreviews": [
+    "native-preview-20261110-95cfa7161440",
+    "native-preview-20261110-e3e5fae51c8e",
+    "native-preview-20261110-1fd6e3d425b3"
+  ],
+  "corrections": [
+    "Percent-encoded blob digest GET is decoded once before strict digest validation.",
+    "Local BuildKit load/tar metadata falls back from absent config digest to manifest/index digest; existing config priority and push/none behavior remain.",
+    "Darwin native host-available memory is free+inactive kernel pages, bounded to physical memory, with the actual host page size. This approved native estimate is deliberately distinct from legacy Node os.freemem free-only semantics; Docker VM capacity remains an independent bound."
+  ],
+  "linuxBuild": {
+    "jobId": "01M71Y4MXHK68CVPM8DM1VTXYA",
+    "snapshotId": "sha256:f2fe505a2e561009cc08c7d7126ec3fde200aa248f6a9ae667d5bee3e0d66946",
+    "mode": "Actual isolated Gridstator Docker self-build; both ELF targets statically linked. ARM64 compile was cross-target and its execution was validated separately on M4 ARM Linux VM."
+  },
+  "editor": {
+    "file": "gridstator-native.vsix",
+    "sha256": "d0cafff141d2ca5e318a0bc0633150f2ce896e356a399bea92b44dec7ba35eb6",
+    "mode": "native-only preview extension; VS Code still requires its Node extension host"
+  },
+  "platformEvidence": {
+    "linux/amd64": {
+      "format": "ELF64 x86-64 static",
+      "runtime": "Exact final bytes passed private init, TLS status and graceful stop in clean read-only, network-disabled Alpine without Node/npm/Rust/Cargo/Zig; additional assembled-archive installer/manual verification plus native snapshot and encoded-digest TLS read-back on Linux build host.",
+      "evidence": [
+        "provenance/linux/artifact-validation.json",
+        "verification/installer-runtime-smoke.json"
+      ]
+    },
+    "linux/arm64": {
+      "format": "ELF64 AArch64 static",
+      "runtime": "Exact final bytes executed as unprivileged ARM64 Linux userspace in the native ARM M4 Docker Linux VM: offline/read-only Alpine3.21, private init, TLS status and graceful stop, with Node/npm/Rust/Python/Zig/SQLite/OpenSSL executables absent.",
+      "limits": [
+        "No ARM worker/executor workload from this controller-only runtime proof.",
+        "No ARM host boot, systemd or reboot proof."
+      ],
+      "evidence": [
+        "provenance/linux-arm64-runtime/evidence.json",
+        "provenance/linux-arm64-runtime/runtime.log"
+      ]
+    },
+    "darwin/arm64": {
+      "format": "thin Mach-O arm64",
+      "runtime": "Final bytes executed natively on M4/macOS15.6 build24G84: foreground and private user LaunchAgent roles; actual Docker Desktop command/snapshot/exact artifact/cancel/local build-ID+size and encoded-digest read-back.",
+      "signing": "Linker ad-hoc only; no Developer ID signing or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json",
+        "provenance/mac/docker/proof.json"
+      ]
+    },
+    "darwin/amd64": {
+      "format": "thin Mach-O x86_64",
+      "runtime": "Final bytes executed under Rosetta on M4/macOS15.6: foreground and private user LaunchAgent roles; targeted sampler and BuildKit tests plus strict all-target Clippy.",
+      "limits": [
+        "No physical Intel hardware or Intel Docker-positive claim."
+      ],
+      "signing": "Unsigned; no Developer ID signing or notarization.",
+      "evidence": [
+        "provenance/mac/summary.json"
+      ]
+    }
+  },
+  "buildMetadataPolicy": "target-build-info files are preserved as build-time records. Any original runtimeValidated:false records precede runtime testing; execution scope is documented by the separate runtime evidence above.",
+  "openStableReleaseGates": [
+    "Developer ID signing/notarization and final signed-byte hashes remain unestablished.",
+    "Physical Intel Mac validation and untested boot/service/workload environments remain outside the recorded proofs.",
+    "Clean release provenance, stable approval and publication remain outstanding. Additional WSL/mixed-host evidence is tracked separately rather than inferred."
+  ],
+  "archiveBundle": "gridstator-2.0.0-dev.1-native-bundle.tar.gz contains the manifest and four archives. Adjacent VSIX, metadata and verification records are covered recursively by SHA256SUMS.",
+  "operations": "Only private prefixes and disposable cluster state were used for the installer smoke; owned HTTP/controller processes stopped and private credentials/data were removed. No global prefix, live service or publication was changed.",
+  "knownLimitation": "With older Buildx0.30.1 against modern containerd, a present config digest may not be locally inspectable even when manifest/index digest is. A further resolver fallback is pending; this historical build is not the latest delivery."
+}

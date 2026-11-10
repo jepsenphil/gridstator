@@ -1,0 +1,102 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.87s
+     Running tests/client_errors.rs (native/target/debug/deps/client_errors-9728a916a9f92805)
+
+running 3 tests
+test source_error_bodies_retain_codes_optional_hints_and_details ... ok
+test response_size_limits_match_the_source_client ... ok
+test untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.63s
+
+     Running tests/client_urls.rs (native/target/debug/deps/client_urls-a365c14becf87d15)
+
+running 1 test
+test controller_origins_match_the_frozen_source_url_normalizer ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/install_contract.rs (native/target/debug/deps/install_contract-e1be5cd5c9083584)
+
+running 20 tests
+test checksum_selection_rejects_missing_and_ambiguous_entries ... ok
+test corrupt_and_wrong_target_artifacts_never_become_visible ... ok
+test release_identity_is_independent_of_digest_and_protocol_names_are_explicit ... ok
+test mirror_bootstrap_verifies_another_target_without_executing_it ... ok
+test official_discovery_filters_legacy_releases_and_bootstraps_the_verified_mirror ... ok
+test archive_extraction_verifies_inner_executable_and_rejects_links_traversal_duplicates ... ok
+test interrupted_staging_does_not_change_the_active_payload ... ok
+
+running 1 test
+test dropping_supervisor_stops_its_separate_executor_groups ... ok
+Terminated
+test supervisor_cli_forwards_shutdown_to_its_owned_payload_group ... ok
+test simultaneous_installs_are_idempotent_and_cannot_overwrite_pending_activation ... ok
+test supervisor_session_process_helper ... ok
+test invalid_pending_payload_rolls_back_before_it_can_execute ... ok
+
+running 1 test
+test tampered_installed_payload_cannot_be_activated ... ok
+test verified_install_is_staged_private_immutable_and_does_not_activate ... ok
+
+running 1 test
+test supervisor_session_process_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+test launch_based_deadline_allows_prelaunch_wait_and_healthy_confirmation ... ok
+test supervisor_retries_crashes_three_times_then_launches_previous_payload ... ok
+
+running 1 test
+
+running 1 test
+test supervisor_session_process_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+test supervisor_reaps_separate_executor_groups_before_replacement ... ok
+test supervisor_kills_hung_candidate_and_rolls_back_on_deadline ... ok
+test shell_installer_checksum_and_symlink_failures_preserve_the_existing_cli ... ok
+test shell_installer_uses_verified_native_helper_without_language_runtime_or_service_changes ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.71s
+
+     Running tests/release_workflow_contract.rs (native/target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 8 tests
+test release_scenario_child ... ok
+test reference_controller_releases_007_invalid_identifiers_never_leave_controller ... ok
+test reference_controller_releases_006_discovery_failure_is_not_cached_or_mutating ... ok
+test reference_controller_releases_001_cached_stable_and_prerelease_identity ... ok
+test reference_controller_releases_005_operator_lists_but_cannot_install ... ok
+test reference_controller_releases_004_bad_checksums_do_not_download_payloads ... ok
+test reference_controller_releases_003_corruption_cannot_change_active_install ... ok
+test reference_controller_releases_002_verified_download_order_and_activation ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.27s
+
+     Running tests/update_compatibility_contract.rs (native/target/debug/deps/update_compatibility_contract-76aca163706b819a)
+
+running 1 test
+test seven_frozen_update_requests_preserve_indefinite_draining_without_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/updates_contract.rs (native/target/debug/deps/updates_contract-03ae217a70592815)
+
+running 10 tests
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+/tmp/.tmpjspB4y/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmpjspB4y/controller/install/versions/dev-4b8f13ccf1b2-1794276127064884647/gridstator: 1: ELF: not found
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.31s
+

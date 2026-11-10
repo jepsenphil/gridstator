@@ -1,0 +1,5 @@
+{
+  "result": "clean",
+  "removedPrivateLocalRoot": "/tmp/gst-real-windows-1mr4ts9n",
+  "scope": "Only own private client/plugin/profile state removed; frozen packages/payloads and user settings/key untouched."
+}

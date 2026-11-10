@@ -1,0 +1,114 @@
+name: Native development
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'native/**'
+      - '.github/workflows/native.yml'
+      - 'docs/V2_*.md'
+  pull_request:
+    paths:
+      - 'native/**'
+      - '.github/workflows/native.yml'
+      - 'docs/V2_*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-${{ github.ref }}
+  cancel-in-progress: true
+
+# Development evidence only. No installation into a live cluster or release publishing.
+# Each job runs on its target architecture; cross-compilation is not runtime proof.
+jobs:
+  reference-contracts:
+    name: Frozen TypeScript reference integrity
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Read the immutable accepted revision
+        id: baseline
+        run: echo "revision=$(node -p "require('./native/contracts/accepted-v1/baseline.json').revision")" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.baseline.outputs.revision }}
+          path: .v1-reference
+      - name: Copy the current capture harness without changing frozen source
+        run: |
+          mkdir -p .v1-reference/native
+          cp -R native/scripts native/contracts .v1-reference/native/
+          mkdir -p .v1-reference/native/src/cli
+          cp native/src/cli/commands.json .v1-reference/native/src/cli/
+      - name: Rebuild and verify the immutable TypeScript reference
+        working-directory: .v1-reference
+        run: |
+          pnpm install --frozen-lockfile
+          node native/scripts/capture-v1.mjs --check
+          node native/scripts/capture-scheduler.mjs
+          node native/scripts/capture-cancel-race.mjs .
+          node native/scripts/check-cli-protocol-fixtures.mjs .
+          node native/scripts/check-source-inventory.mjs .
+      - run: node native/scripts/check-ledger.mjs
+
+  native:
+    name: Actual host ${{ matrix.release-key }} build, tests and CLI smoke
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            release-key: linux/amd64
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            release-key: linux/arm64
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+            release-key: darwin/amd64
+          - runner: macos-15
+            target: aarch64-apple-darwin
+            release-key: darwin/arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: native
+        shell: bash
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install pinned Rust from native/rust-toolchain.toml
+        run: |
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' rust-toolchain.toml)
+          test -n "$toolchain"
+          rustup toolchain install "$toolchain" --profile minimal --component rustfmt --component clippy
+          rustup target add --toolchain "$toolchain" "$CARGO_BUILD_TARGET"
+          rustc -vV
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Native unit and contract tests (no Node or pnpm dependency)
+        run: cargo test --locked --all-targets
+      - name: Build tested development binary
+        run: cargo build --locked --release
+      - name: Record actual host and audit runtime linkage
+        run: bash scripts/audit-native.sh "target/$CARGO_BUILD_TARGET/release/gridstator" '${{ matrix.release-key }}' evidence
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-development-${{ matrix.target }}
+          path: |
+            native/target/${{ matrix.target }}/release/gridstator
+            native/evidence/
+          if-no-files-found: error
+          retention-days: 14

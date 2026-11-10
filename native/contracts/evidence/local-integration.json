@@ -1,0 +1,557 @@
+{
+  "formatVersion": 1,
+  "recordedAtUTC": "2026-11-10T00:24:54.376362+00:00",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted development working tree. Digests are an end-of-session source snapshot, not a signed or immutable release candidate. Earlier proofs can predate later source changes; their scopes are explicit.",
+  "environment": {
+    "os": "Ubuntu 24.04.3 Linux",
+    "arch": "x86_64",
+    "rust": "1.99.1",
+    "node": "v24.15.0",
+    "pnpm": "10.33.2",
+    "docker": "29.0.2",
+    "act": "0.2.97"
+  },
+  "proofs": [
+    {
+      "id": "rust-default-suite",
+      "command": "cd native && cargo test --locked --all-targets",
+      "result": "passed",
+      "passed": 134,
+      "ignored": 20,
+      "log": "local-final-all-targets.log",
+      "scope": "Real-tool/service cases are explicitly ignored here; their separate executions are recorded below. A later test-only edit adds stage context to the drain test."
+    },
+    {
+      "id": "rust-quality",
+      "command": "cd native && cargo fmt --check && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "local-final-clippy.log"
+    },
+    {
+      "id": "real-executors",
+      "command": "cd native && cargo test --locked --test executor_contract --test worker_contract -- --ignored --test-threads=1",
+      "result": "passed-for-executor-section",
+      "passed": 9,
+      "log": "local-executor-tool-tests.log",
+      "scope": "Executor section extracted verbatim from the combined run. The following worker phase exposed the update-admission bug and is superseded by the final worker proof."
+    },
+    {
+      "id": "real-workers",
+      "command": "cd native && cargo test --locked --test worker_contract -- --ignored --test-threads=1",
+      "result": "passed",
+      "passed": 8,
+      "log": "local-final-worker-tests.log"
+    },
+    {
+      "id": "cli-processes",
+      "command": "cd native && cargo test --locked --test cluster_e2e -- --ignored --test-threads=1",
+      "result": "passed",
+      "passed": 2,
+      "log": "local-cli-process-tests.log",
+      "scope": "The log also contains an earlier passing systemd run. The latest service proof is recorded separately."
+    },
+    {
+      "id": "actual-systemd-user-service",
+      "command": "cd native && cargo test --locked --test systemd_e2e -- --ignored --nocapture",
+      "result": "passed",
+      "passed": 1,
+      "log": "local-final-systemd-tests.log",
+      "scope": "Unique private user unit, supervisor/controller/embedded worker, actual Docker job, restart, graceful inactive stop and unit/state removal. No system-service or reboot inference."
+    },
+    {
+      "id": "retained-node-quality",
+      "command": "pnpm check",
+      "result": "quality-stages-passed-test-phase-failed",
+      "log": "local-concurrent-node-red.log",
+      "scope": "Typecheck, lint and Prettier passed. Concurrent test execution failed four existing controller/Docker cases; the serial full-suite rerun below passed. Contention was observed but the original timeout cause is not proven."
+    },
+    {
+      "id": "retained-node-suite",
+      "command": "pnpm exec vitest run --no-file-parallelism",
+      "result": "passed",
+      "passed": 191,
+      "skipped": 1,
+      "log": "local-final-node-tests.log",
+      "scope": "Only the opt-in real-native helper case is skipped; its explicit execution is recorded below."
+    },
+    {
+      "id": "editor-to-native",
+      "command": "GRIDSTATOR_NATIVE_CLI_E2E=/repos/gridstator/native/target/debug/gridstator pnpm exec vitest run apps/vscode/src/native.integration.test.ts",
+      "result": "passed",
+      "passed": 1,
+      "log": "local-final-editor-tests.log",
+      "scope": "Actual retained Node client and editor adapter against real Rust CLI/controller/worker registration. No actual editor host, SSH or WSL claim."
+    },
+    {
+      "id": "worker-concurrent-attempt",
+      "command": "cd native && cargo test --locked --test worker_contract -- --ignored --test-threads=1",
+      "result": "failed-then-rerun-passed",
+      "log": "local-concurrent-worker-red.log",
+      "scope": "Drain timed out during concurrent checks, while seven other cases passed. Isolated drain and the full eight-case suite subsequently passed without production changes or deadline increases. The test now reports stage context."
+    },
+    {
+      "id": "vsix-packaging",
+      "command": "pnpm package:vscode",
+      "result": "passed",
+      "log": "local-vsix-package.log",
+      "scope": "Development package only; no publication."
+    }
+  ],
+  "sourceDigests": [
+    {
+      "path": ".github/workflows/native-candidate.yml",
+      "sha256": "d2694cd7f900728b240a9bc739658d115abe84a322b5f346e0ffa9e88ca16418"
+    },
+    {
+      "path": ".github/workflows/native.yml",
+      "sha256": "5ae5c68966ea2518914867b7845cb892a7438c9b3c411250de5705f618811eb7"
+    },
+    {
+      "path": "apps/vscode/package.json",
+      "sha256": "1fe37cb0a03702a06294ce72ded38759a316a806868dedd664026a4b6bb0b3f3"
+    },
+    {
+      "path": "apps/vscode/scripts/build.mjs",
+      "sha256": "144218b485c5afc978e040fd0a54877613e6d67f4a1f8829409b31381d1c9aa8"
+    },
+    {
+      "path": "apps/vscode/src/dashboard.ts",
+      "sha256": "cfc8a929dea49947d3cb558e8be56fadc6323317d91898b043b9554842c6d377"
+    },
+    {
+      "path": "apps/vscode/src/extension.ts",
+      "sha256": "b45889dfb0808789bc4a3f2795b06dff2412f5a2af3a27de11a9ad342bba2e97"
+    },
+    {
+      "path": "apps/vscode/src/launcher.ts",
+      "sha256": "8bd48b1bed5fb5436b094ee318ff2a7b22ef7e7db265e55ea237faf86813ace2"
+    },
+    {
+      "path": "apps/vscode/src/local-controller.ts",
+      "sha256": "1d2a49efa21c98caa245be6599299b95c073658717ae8c7c46da44750cbf168e"
+    },
+    {
+      "path": "apps/vscode/src/messages.ts",
+      "sha256": "f0857cfabee666d61f7149e307b9731db393d583037322301e3f546734168958"
+    },
+    {
+      "path": "apps/vscode/src/native.integration.test.ts",
+      "sha256": "eb0b0f990119435709b971d56d27150e662c1f62298073050140438adc67ad96"
+    },
+    {
+      "path": "apps/vscode/src/native.test.ts",
+      "sha256": "5e760924a28e9510dc34f79f17c5963a40d6c0d35d3dd5738ce3dddaf1e40292"
+    },
+    {
+      "path": "apps/vscode/src/native.ts",
+      "sha256": "e69402ae025b20889a3a367f3a68b1fbe1df6d3776af558e7c47d45f1b7a47aa"
+    },
+    {
+      "path": "apps/vscode/src/problems.test.ts",
+      "sha256": "034e50c8146b39a49363d5002674b887934ef1b2c529e0175b2658a486c8b591"
+    },
+    {
+      "path": "apps/vscode/src/problems.ts",
+      "sha256": "efd77f95f0d9824803cdf8b7fc405f5a5920264f7a2b47cfd1a54d78ae077de8"
+    },
+    {
+      "path": "apps/vscode/src/results.ts",
+      "sha256": "cae199d0c04fc65c927389ed68389bff8c523b8a8d608a4aa57c63d0a0aefda7"
+    },
+    {
+      "path": "apps/vscode/src/settings.test.ts",
+      "sha256": "ed4a8a733719e7fd954b6ddc0ccd749bfe515944f9325b36143b60bcf32217d7"
+    },
+    {
+      "path": "apps/vscode/src/settings.ts",
+      "sha256": "ed0bae9cd2c5df2b8f13eac76c4ec87871d55333ffe9ad76d6a5ba58615b0832"
+    },
+    {
+      "path": "apps/vscode/src/state.test.ts",
+      "sha256": "1fa9c1ba20008289340144ec8fcfbc3ee5b27755c6ed2f8dc1f99d0b93348c09"
+    },
+    {
+      "path": "apps/vscode/src/state.ts",
+      "sha256": "a94e06df5be1bde9f48ca060a09b716b3c2e0272fcb7981979c0c96997c50c9b"
+    },
+    {
+      "path": "apps/vscode/src/test-vscode.ts",
+      "sha256": "c02853627f585df126236360c5c7638ef79fbcd7459578762d38108e5fe5c7e9"
+    },
+    {
+      "path": "apps/vscode/src/tree-cache.ts",
+      "sha256": "811cf3760ca602585057bc87065e063f0c2d1e2e29c74ae9468bd8b652ae1de1"
+    },
+    {
+      "path": "apps/vscode/src/views.test.ts",
+      "sha256": "ac0efff68656e8be2b7d2ecaf24668bb084235b4190e14b588d77c0db2351a67"
+    },
+    {
+      "path": "apps/vscode/src/views.ts",
+      "sha256": "628c0b2d13294f97c63c7cb81a8eb8030bc9a458558eb00f9b8388a37f8c0744"
+    },
+    {
+      "path": "apps/vscode/test/ui/dashboard.spec.ts",
+      "sha256": "44a618053ec5f7cda353e28e0830e72b2574b886c507b16121643e4003a9b657"
+    },
+    {
+      "path": "apps/vscode/test/ui/fixtures.ts",
+      "sha256": "a37d510fd60489f402e7ecd3a0a9267cb6af7d758bca9404330ad1baeaf0e831"
+    },
+    {
+      "path": "apps/vscode/webview/App.tsx",
+      "sha256": "83bcf29b2bfaf0731cc3fa10b90cad827529d8258e64831361c67ef4d6e44ad0"
+    },
+    {
+      "path": "apps/vscode/webview/components/GroupDetail.tsx",
+      "sha256": "c6dc6e0cfe2a54e81627dd142b77ecbde8273989c9f41e6fd9136fb23404e6ee"
+    },
+    {
+      "path": "apps/vscode/webview/components/JobDetail.tsx",
+      "sha256": "cf7a998aea369be224c6d24eb1402a77c6cf5c8d20d0735bfbf69273632b302b"
+    },
+    {
+      "path": "apps/vscode/webview/components/Jobs.tsx",
+      "sha256": "04cabb0cfe6bac8e30d59956c8a7da867b74f551cca1f0ccc3e3cd823010b4f4"
+    },
+    {
+      "path": "apps/vscode/webview/components/LogViewer.tsx",
+      "sha256": "a25fd670f0b1c87dc4a711cd41a2bbebddc0581068f8840181a7fcf1c962fbe3"
+    },
+    {
+      "path": "apps/vscode/webview/components/Nodes.tsx",
+      "sha256": "faff5104b9e334cc61a8fc718bf6c6ed90ad6c87f62d949c9f23f25638bc4606"
+    },
+    {
+      "path": "apps/vscode/webview/components/Overview.tsx",
+      "sha256": "780ee0affdb985e0ca0b2296c3d19044394b7daef88389c17f616f731158a26f"
+    },
+    {
+      "path": "apps/vscode/webview/components/Run.tsx",
+      "sha256": "3f923345bd45a626696950e659c1708cae20f75d8007c4a2d3f8accacfaa50ba"
+    },
+    {
+      "path": "apps/vscode/webview/components/Settings.tsx",
+      "sha256": "d95e0bc817e800510906082f95be90fee2121d3faad91b4b5ad1a5ddc6886d7d"
+    },
+    {
+      "path": "apps/vscode/webview/components/common.tsx",
+      "sha256": "c5e0b21776dbc7bc3709a2c25032f2efab80432423ddd2fb85cc008d5e08616f"
+    },
+    {
+      "path": "apps/vscode/webview/env.d.ts",
+      "sha256": "da5bf71d48cf909584a01c80b445f730507068f5b34c920f352e2bfcf0315e4c"
+    },
+    {
+      "path": "apps/vscode/webview/main.tsx",
+      "sha256": "fe62b21169eee8f870b7ef27f8f208805356dc11bffdac0fc5df01d92f7dffe5"
+    },
+    {
+      "path": "apps/vscode/webview/store.ts",
+      "sha256": "adbbb793722ee3e66e80bacea20cbc1f1e89dff03acf9c7fd760fec59c4ffca3"
+    },
+    {
+      "path": "apps/vscode/webview/util.ts",
+      "sha256": "0280a097ab4d7e09ae55266fa987ec1c33d12cc0a133c5b44142d2ea6a6fb8fc"
+    },
+    {
+      "path": "native/Cargo.lock",
+      "sha256": "91d539a29b8fc1559882203d105c8465b83163a696805f85be06564d7c616ac9"
+    },
+    {
+      "path": "native/Cargo.toml",
+      "sha256": "c9ae745384095da7d544f6091bade8d866acdf90d9ca3d4caa34c217086aab12"
+    },
+    {
+      "path": "native/build.rs",
+      "sha256": "7ee07516bf1b8d622fc7ce36650041d0f7901e6f60b9f402cdac6165256da0f0"
+    },
+    {
+      "path": "native/contracts/workspace-globs-v1.json",
+      "sha256": "fd87ca93b667ebbbc03620123f995def431dd168fabacf0b9664eb83f79cf9ac"
+    },
+    {
+      "path": "native/examples/assemble_release.rs",
+      "sha256": "bd9c53764243ac3754335639ff84cf192abceae9002648b8e468483bbbb6595e"
+    },
+    {
+      "path": "native/rust-toolchain.toml",
+      "sha256": "d13306be0ecda81ce779baa290ffb417380d525928477f16200884b5169cca33"
+    },
+    {
+      "path": "native/scripts/audit-native.sh",
+      "sha256": "5d6133878f44a265e7fb8b334b4ea286dc50f41813570152a762c61eed46278d"
+    },
+    {
+      "path": "native/scripts/capture-v1.mjs",
+      "sha256": "cc6fd7f150036ae668c3ecdd3f68eacf06b7aff099883eb37b9b8f18d8783a41"
+    },
+    {
+      "path": "native/scripts/capture-workspace-globs.mjs",
+      "sha256": "479909ca5c8bafe939edc32c690d76e10f143e9684cbfff3d3358b25591ddaaa"
+    },
+    {
+      "path": "native/scripts/check-ledger.mjs",
+      "sha256": "2838809d62d893251bdfd25d65565a2ac1330aa3d813074e846505397170bec2"
+    },
+    {
+      "path": "native/scripts/reference-hostname.cjs",
+      "sha256": "445333ac79f9e7978f14b5855bc701dab3a6c66d529321a91960ffa0ff30ca88"
+    },
+    {
+      "path": "native/scripts/set-version.mjs",
+      "sha256": "02e4b5cafbc01c264e40a26c3ae88eefa025169af8e5c2410ac57d36002406cf"
+    },
+    {
+      "path": "native/src/bridge.rs",
+      "sha256": "07d1aeef8bf9fe6dc5bec27d2db5b5d97f33b59495a37a740c11d8a2e63842c8"
+    },
+    {
+      "path": "native/src/cli.rs",
+      "sha256": "4329d21dd016824de56fc41d49654df24773a6f4b9d0b9adf6f8c841c4554cba"
+    },
+    {
+      "path": "native/src/client.rs",
+      "sha256": "ab1f752303735f9f2e070f676bd15579a0eb5c87500faef40093c45ba25a65b9"
+    },
+    {
+      "path": "native/src/controller.rs",
+      "sha256": "e3b07542c3d30356d86b399dcfa63d3872f40217ae2bc79f23645b266f2ce589"
+    },
+    {
+      "path": "native/src/db.rs",
+      "sha256": "cf83f676531445ba764b46c59f24b283dac03e0c3926b90a004ce38447a73a2b"
+    },
+    {
+      "path": "native/src/discovery.rs",
+      "sha256": "676e8c41b839b7561a96ccece0fb0a6f71291810464d93b9ec68631875ccf0ff"
+    },
+    {
+      "path": "native/src/executor/actions.rs",
+      "sha256": "8e7bdbee0d199c2d7c25cbb761ba6ddc4a5e728a5ec6ad0927132175d8fd8068"
+    },
+    {
+      "path": "native/src/executor/build.rs",
+      "sha256": "8737474bcee5cd08d595090d178e03ca0aa0c6cbda476e3447d910050883c351"
+    },
+    {
+      "path": "native/src/executor/command.rs",
+      "sha256": "2739455aa37e97aa4e2a3ceb2d6f351a77c2630ed80754e5ad9c49cccd8083d5"
+    },
+    {
+      "path": "native/src/executor/process.rs",
+      "sha256": "5d47d46a151d6340e44ae1d25bc22a198f939dad9357fca6246df45cb446ffd2"
+    },
+    {
+      "path": "native/src/executor.rs",
+      "sha256": "8b26c678464979d6ccb1755f2acebc238cdf5a1a20c1eeaa72214d2016764801"
+    },
+    {
+      "path": "native/src/install.rs",
+      "sha256": "c9ce13027e87faea0059793a28061eb590a4b00a8f40a9cf8ae640df8217a176"
+    },
+    {
+      "path": "native/src/lib.rs",
+      "sha256": "4f8ba1051c4d888f7aedb1a931ff160ef26e1cebc2db8494a5f27e6843df82cf"
+    },
+    {
+      "path": "native/src/main.rs",
+      "sha256": "e8e4fbacb25f4aaf46c0b3cfbac0df45e9aec147b8f2f358db3962b8c88ae538"
+    },
+    {
+      "path": "native/src/packaging.rs",
+      "sha256": "55817688fadd3be16676a0898410c984f3e570ddc38e701f20e7e7e681eb418d"
+    },
+    {
+      "path": "native/src/pki.rs",
+      "sha256": "3513094f15dbdf5d616bb87b93fda9b56e090b986ec2d4f56d8598db18e59fb2"
+    },
+    {
+      "path": "native/src/protocol.rs",
+      "sha256": "8b5befdc1144d61aed13380132ace3d0f74d4a4a6ff894ab8b9a73489e5ec2f6"
+    },
+    {
+      "path": "native/src/release.rs",
+      "sha256": "d74a8d132a4854d8b4bbee373f5f3de1a8853c6b2f54e9bb07b697752390707b"
+    },
+    {
+      "path": "native/src/reports.rs",
+      "sha256": "a3710d1a610f3f55384e974d685f411392ef830bd79996cc8fd39cb9933447dd"
+    },
+    {
+      "path": "native/src/scheduler.rs",
+      "sha256": "61efd2b23580825807aa96b270a0e369eb20e2e97267ca2ffeed38da19016cdb"
+    },
+    {
+      "path": "native/src/services.rs",
+      "sha256": "22e4a76e5d40f8a5be795bf73a05c6c86e5606dba0c944fd74e0020eff449875"
+    },
+    {
+      "path": "native/src/state.rs",
+      "sha256": "7f406a9b5a2a6eba65474b4440a421af1dd27f40837314e2be97a870586cd21e"
+    },
+    {
+      "path": "native/src/transfer.rs",
+      "sha256": "839f6d00d648f936bac0e493093407935d7bb59b68372cc88ce44e71db4445f6"
+    },
+    {
+      "path": "native/src/updates/act.rs",
+      "sha256": "12b34fc8258b23e64006442b82eb4df40bd052bf63223ef7f0a363bfa957a128"
+    },
+    {
+      "path": "native/src/updates.rs",
+      "sha256": "8bc9adce103ea0a4208c021cf333da78d07913fd9c56d9c6692efcd1c91c70d6"
+    },
+    {
+      "path": "native/src/worker.rs",
+      "sha256": "ab6b1d27bbd6a14b3ad3053063432eb8b900576a41af9a38eaa6217a99a0dfeb"
+    },
+    {
+      "path": "native/src/workspace/capture.rs",
+      "sha256": "ea53c3b9c32b7d6ecf656bff2b9a041c9149f8d21f5861764eb102441619dae4"
+    },
+    {
+      "path": "native/src/workspace/pattern.rs",
+      "sha256": "9457873304048c6b6a57203df687b94fabc4761678f1947c765e68cfa8866296"
+    },
+    {
+      "path": "native/src/workspace/store.rs",
+      "sha256": "3e421dacb028f3f2062b5c99e0fd186f8b34bb405473e66febebcbe27d8a6ff0"
+    },
+    {
+      "path": "native/src/workspace.rs",
+      "sha256": "712a30f341d07588f2cd5ac0c8a17ae396846b5a5cb6ca6063f54a3a6d61fdc0"
+    },
+    {
+      "path": "native/tests/cli_contract.rs",
+      "sha256": "35304144009dc9a5b8765305f25797024296561de7c71a3a356e82f254aa5938"
+    },
+    {
+      "path": "native/tests/cluster_e2e.rs",
+      "sha256": "6549725957a15402103348b916b37327cf85dd3d7bf5b97644149515b6187771"
+    },
+    {
+      "path": "native/tests/contract_fixtures.rs",
+      "sha256": "a39c0628d5043f603f24ef75335dd6b9c445e683018523159785b98582fc417d"
+    },
+    {
+      "path": "native/tests/controller_contract.rs",
+      "sha256": "9bc933fd9f3e2b533d8aecc92aec289faea15d07fd2d6a59d921c2864aca7432"
+    },
+    {
+      "path": "native/tests/controller_lifecycle.rs",
+      "sha256": "6d7f96251755e928afdcd893c79a8ee48052853c206c5d92d52cb898185f0e58"
+    },
+    {
+      "path": "native/tests/controller_retention.rs",
+      "sha256": "ac15a0b202c468041c60d291f864f7b9836e4ca389b1dbf009b58aaad03a7496"
+    },
+    {
+      "path": "native/tests/db_contract.rs",
+      "sha256": "4f250cb18aa521cad27074df8da9249431d6d29d9d4b28ac0ffabb6462963a53"
+    },
+    {
+      "path": "native/tests/discovery_contract.rs",
+      "sha256": "2ea5507f5ecb718a342fa753365b41e45126c1be4acdd90b035fcb1955086e47"
+    },
+    {
+      "path": "native/tests/executor_contract.rs",
+      "sha256": "5e469aea6ba84a6366586fca3647113e21bdf7cea926fa1307479682b11cb399"
+    },
+    {
+      "path": "native/tests/install_contract.rs",
+      "sha256": "410756eec7ce59b6ddc317e213712f930b6cbb624a12a364edd0997f78a92b22"
+    },
+    {
+      "path": "native/tests/packaging_contract.rs",
+      "sha256": "d0050fd5b2cbb2285ff9693080eb2504d4ec81599455ea4cf74ca492fe97e738"
+    },
+    {
+      "path": "native/tests/pki_contract.rs",
+      "sha256": "5bd5f603f794cffd6a95bfd440a19129672df3ff73a957019409e28a4e9224f4"
+    },
+    {
+      "path": "native/tests/protocol_validation.rs",
+      "sha256": "29ecd6b233ee06ae2845a6ea49ad5a26434c1a044789b627e7fdcf495c7c1326"
+    },
+    {
+      "path": "native/tests/reports_contract.rs",
+      "sha256": "a942d27c87770a94bbe9207b1f29d786ff34c37ad95c33ae47a35394c3b7ba40"
+    },
+    {
+      "path": "native/tests/scheduler_contract.rs",
+      "sha256": "90dc96d3092f8eaeeeec8d933df4c017af5ca67326e710447ca8eead2fd0b319"
+    },
+    {
+      "path": "native/tests/service_contract.rs",
+      "sha256": "6eebbc824f3ef379a245b0e53e583f11ab9fd63cbd93c12dca12bf44d970c88d"
+    },
+    {
+      "path": "native/tests/systemd_e2e.rs",
+      "sha256": "ded26576e242d99d47112b2f22a7e677d9642c1b9081121177497c96bbb65052"
+    },
+    {
+      "path": "native/tests/transfer_contract.rs",
+      "sha256": "c70e79148d7403e4da79ead12a373414c0cc6264e59d2082c43f0b927c42ada8"
+    },
+    {
+      "path": "native/tests/updates_contract.rs",
+      "sha256": "1056554ec4a2817043b9580bcc5b234af12bf04263c5c4cda126cc9c9226b262"
+    },
+    {
+      "path": "native/tests/worker_contract.rs",
+      "sha256": "5ea0bd21b4f60dc6eb2363abf12027d1126d4251cc557ccd563f212af11bc5fb"
+    },
+    {
+      "path": "native/tests/workspace_contract.rs",
+      "sha256": "7ca8d772eca720971839c06868629da5eba2e8478fb174fb5198bfb4bf965fcf"
+    },
+    {
+      "path": "packages/client/src/client.ts",
+      "sha256": "bf685af3b98b36b90279a3a6b2628c4f3bd54270b209dafcce8b2051a8028aa1"
+    },
+    {
+      "path": "packages/client/src/config-watch.test.ts",
+      "sha256": "6fa3595975602ffa5dda496e2795774ebea467ce1e1e8765b8885efd0255dccc"
+    },
+    {
+      "path": "packages/client/src/config.ts",
+      "sha256": "6fc0dd0a1544d11157cd08e8c511c10c2ed3a7c11143f2395672473d1b83e227"
+    },
+    {
+      "path": "packages/client/src/http.ts",
+      "sha256": "a48e8c800104f32a933d5281d0a7b58dc25408cb392dc33b41a92272e87df39d"
+    },
+    {
+      "path": "packages/client/src/index.ts",
+      "sha256": "35db483e75634c4d1fe2a28779b2a4fe5fc94ff9b597aa084d3cef4ee0e3c1b0"
+    },
+    {
+      "path": "packages/client/src/pki.test.ts",
+      "sha256": "d2d5c038c9e64666d01c4277696243d522b5c84f4aaccb924530e3a1ff86a5b4"
+    },
+    {
+      "path": "packages/client/src/pki.ts",
+      "sha256": "f1e9a1ee4963896c060b80097e06c2bdb73a7e0207d4bee4e4edfb0cc417e616"
+    },
+    {
+      "path": "packages/protocol/src/toolchain.ts",
+      "sha256": "750eb257ef1ad6efb2de0f6cb4d269cab652e8341a4a4880b67554310b472523"
+    },
+    {
+      "path": "packages/protocol/src/update.ts",
+      "sha256": "2acbe2c29d94a99c7b67ea8967325bfc45b261890f3180f26735a3c70f17690d"
+    },
+    {
+      "path": "scripts/install-native.sh",
+      "sha256": "453f9196f15906da09a55c0dd26209a69afd53749b71ff7a330363ccb0cc9975"
+    }
+  ],
+  "limits": [
+    "No actual macOS, ARM64 or WSL2 runtime/service acceptance is inferred from local Linux tests or cross compilation.",
+    "Stable signing/notarization credentials, suitable Mac Docker hosts and clean-install/cutover rehearsals remain prerequisites.",
+    "Full help-byte and wire/error/JSON differential acceptance, raw picomatch regex syntax and every parity-ledger acceptance remain open.",
+    "No release publication, deployment, live v1 migration or production update was performed."
+  ]
+}

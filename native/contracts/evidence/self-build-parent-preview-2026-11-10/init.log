@@ -1,0 +1,5 @@
+Cluster initialized in /tmp/gridstator-parent-self-build-texesszt/controller
+Controller: https://127.0.0.1:0
+CA fingerprint: sha256:e36b8094476edca6f30c00c321461d48f27384d3a820481fb2ad1044c057fcc7
+Admin token: <redacted-token>
+Saved local credentials to /tmp/gridstator-parent-self-build-texesszt/client.json

@@ -47,7 +47,7 @@ import {
   type LogEntry,
   type LogsResponse,
   type Node,
-  type NodeSettingsPatch,
+  type PatchNodeRequest,
   type RegisterAgentRequest,
   type RegisterAgentResponse,
   type ServerEventMessage,
@@ -234,11 +234,17 @@ export class GridstatorClient {
     return this.request('GET', `/v1/nodes/${encodeURIComponent(idOrName)}`, { schema: NodeSchema });
   }
 
-  updateNode(idOrName: string, patch: NodeSettingsPatch): Promise<Node> {
-    return this.request('PATCH', `/v1/nodes/${encodeURIComponent(idOrName)}`, {
+  async updateNode(idOrName: string, patch: PatchNodeRequest): Promise<Node> {
+    const node = await this.request('PATCH', `/v1/nodes/${encodeURIComponent(idOrName)}`, {
       json: patch,
       schema: NodeSchema,
     });
+    if (patch.name !== undefined && node.name !== patch.name)
+      throw new GridstatorError(
+        'UNAVAILABLE',
+        'This controller did not apply the worker name. Update the controller and retry renaming the worker.',
+      );
+    return node;
   }
 
   async removeNode(idOrName: string): Promise<void> {

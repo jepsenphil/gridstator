@@ -37,7 +37,7 @@ import {
 import { BlobStore } from '@gridstator/snapshot';
 import { readSpool, removeSpool } from './log-pipeline.js';
 import { JobRunner } from './runner.js';
-import type { AgentState } from './state.js';
+import { updateAgentState, type AgentState } from './state.js';
 import { MetricsSampler, actBinary, collectNodeInfo } from './system.js';
 import { AgentToolchain } from './toolchain.js';
 import { Updater } from './updater.js';
@@ -98,6 +98,7 @@ export class Agent {
   private reconnectTimer: NodeJS.Timeout | undefined;
   private heartbeatTimer: NodeJS.Timeout | undefined;
   private statusListeners = new Set<(s: AgentStatus, detail?: string) => void>();
+  private incomingMessages: Promise<void> = Promise.resolve();
   settings: NodeSettings | undefined;
 
   constructor(opts: AgentOptions) {
@@ -280,11 +281,11 @@ export class Agent {
         this.log.warn({ issues: msg.error.issues.slice(0, 3) }, 'invalid message from controller');
         return;
       }
-      try {
-        this.handle(msg.data);
-      } catch (err) {
-        this.log.error({ err, type: msg.data.type }, 'failed to handle controller message');
-      }
+      this.incomingMessages = this.incomingMessages
+        .then(() => this.handle(msg.data, ws))
+        .catch((err: unknown) => {
+          this.log.error({ err, type: msg.data.type }, 'failed to handle controller message');
+        });
     });
     ws.on('unexpected-response', (_req, res) => {
       const status = res.statusCode ?? 0;
@@ -361,9 +362,16 @@ export class Agent {
     return true;
   }
 
-  private handle(msg: ControllerMessage): void {
+  private currentConnection(socket: WebSocket): boolean {
+    return this.ws === socket && socket.readyState === 1 && !this.stopping;
+  }
+
+  private async handle(msg: ControllerMessage, socket: WebSocket): Promise<void> {
+    if (!this.currentConnection(socket)) return;
     switch (msg.type) {
       case 'welcome':
+        await this.adoptName(msg.nodeId, msg.name);
+        if (!this.currentConnection(socket)) return;
         this.onWelcome(msg.settings, msg.resume);
         this.desiredControllerUrl = msg.controllerUrl;
         if (msg.controllerUrl) void this.moveController(msg.controllerUrl);
@@ -376,6 +384,8 @@ export class Agent {
       case 'job.ack':
         return this.onAck(msg.jobId);
       case 'node.settings':
+        await this.adoptName(this.nodeId, msg.name);
+        if (!this.currentConnection(socket)) return;
         this.settings = msg.settings;
         this.log.info({ settings: msg.settings }, 'node settings changed');
         return;
@@ -397,6 +407,13 @@ export class Agent {
         }
         return;
     }
+  }
+
+  private async adoptName(nodeId: string, name: string | undefined): Promise<void> {
+    if (nodeId !== this.nodeId)
+      throw new GridstatorError('FORBIDDEN', 'The controller returned another worker identity');
+    if (name === undefined || name === this.opts.state.name) return;
+    await updateAgentState(this.opts.dataDir, this.opts.state, (current) => ({ ...current, name }));
   }
 
   /** Updates the build, then (on a current build) the toolchain; restarts once if needed. */
@@ -597,6 +614,7 @@ export class Agent {
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     this.updater?.stop();
     this.ws?.close(1001, 'agent shutting down');
+    await this.incomingMessages;
     this.client.close();
     this.setStatus('stopped');
   }

@@ -1,0 +1,9 @@
+{
+  "scope": "harness failed pre-activation effective config assertion; portable user-data location was corrected, not production behavior",
+  "rendererFailures": [
+    {
+      "file": "user-data/logs/20261109T214542/window1/renderer.log",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ ''\n- '/home/pj/gridstator-validation-v00jpyv0/gui-proof/client.json'\n\n\tat exports.run (/home/pj/gridstator-validation-v00jpyv0/gui-proof/tests/smoke.cjs:10:71)\n"
+    }
+  ]
+}

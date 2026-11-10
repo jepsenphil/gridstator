@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "argv": ["--version"],
+      "exitCode": 0,
+      "stdout": "0.1.0\n",
+      "stderr": ""
+    },
+    {
+      "argv": ["__unknown_command__"],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown command '__unknown_command__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": ["run", "--__unknown_flag__"],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: unknown option '--__unknown_flag__'\n(run with --help for usage)\n"
+    },
+    {
+      "argv": ["login"],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "error: required option '--fingerprint <sha256>' not specified\n(run with --help for usage)\n"
+    }
+  ]
+}

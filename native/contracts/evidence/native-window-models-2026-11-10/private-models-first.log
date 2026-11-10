@@ -1,0 +1,9 @@
+
+ RUN  v5.1.0 /repos/gridstator
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed | 3 skipped (10)
+   Start at  15:51:06
+   Duration  12.79s (tests 98%, import 1%)
+

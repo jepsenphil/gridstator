@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "current": "m4-confirmed-cd056d87b2da",
+  "previous": "m4-validation-5d2c4f81f396",
+  "pending": {
+    "buildId": "m4-confirmed-cd056d87b2da",
+    "previous": "m4-validation-5d2c4f81f396",
+    "attempts": 0,
+    "confirmWithinMs": 600000,
+    "firstLaunchAt": null,
+    "deadline": null
+  },
+  "lastRollback": null
+}

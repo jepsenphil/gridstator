@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-11-10T07:25:32.552988+00:00",
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "classification": "Unpublished, uncommitted working-tree development preview; stable release remains gated",
+  "independentFinalVerification": {
+    "result": "passed",
+    "deliveryChecksumEntries": 195,
+    "deliveryChecksumFileSha256": "7752cc111158603ac71220ae331a9873db3ceb4d9fe610e14979a6bd556b8c5d",
+    "nativeManifestSha256": "c5e83996dac1776178bc2494021c718dfe97e96f4c5149dd8958c8a101d8d131",
+    "nativeBundleSha256": "b22052eaeabfd7d8a498c2958638c22e44c960e1e689e27c847cf4d43b6a350c",
+    "nativePayloadAndManifestUnchanged": true,
+    "additionalVerifiedReceiptSets": {
+      "assembly": 15,
+      "armCleanRuntime": 5,
+      "quality": 10,
+      "linuxSelfBuild": 41,
+      "armWorkflow": 108,
+      "macFinal": 39,
+      "configParentRegression": 16
+    },
+    "documentationFilesChecked": 9,
+    "existingLocalLinksChecked": 135,
+    "privateKeyBlockScan": "No PEM private-key blocks in final delivery or this parent evidence tree",
+    "gitDiffCheck": "passed after final documentation edits"
+  },
+  "acceptance": {
+    "verified": 223,
+    "total": 228,
+    "open": [
+      "mac-signing",
+      "four-target-linkage",
+      "mac-docker-capacity",
+      "launchd-live",
+      "systemd-live"
+    ]
+  },
+  "nativeSuite": {
+    "passed": 250,
+    "failed": 0,
+    "ignored": 32,
+    "targets": 43,
+    "evidence": "quality/summary.json"
+  },
+  "distribution": "../../../release/native-preview-20261110-6994d2cc804b/README-preview.md",
+  "scope": "Receipts preserve exact source checkpoints and historical failures. No CI execution, stable provenance, physical Intel, Apple signing, ARM systemd/boot or public publication is inferred. Runtime credentials and owned test actors were cleaned. Historical editor and mixed-LAN results are not relabelled final6994 core-byte tests.",
+  "independentHandoffReview": {
+    "result": "One wording correction applied: production v1 cluster was not upgraded; private validation clusters did upgrade.",
+    "progressAndNativeReadmeLocalPathsChecked": 48,
+    "otherConcreteCorrections": 0
+  }
+}

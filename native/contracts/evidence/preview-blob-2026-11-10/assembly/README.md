@@ -1,0 +1,11 @@
+# Replacement four-target preview and installed encoded-blob read-back
+
+Historical preview: a subsequent real Mac Docker BuildKit0.34.2 run found a separate local load/tar image-ID extraction gap before delivery. These e3 artifacts remain byte-frozen and are not the latest delivery. The successful installed encoded-blob checks below retain their scope.
+
+The final replacement directory is `native/release/native-preview-20261110-e3e5fae51c8e`. All four real executables pass independent archive/member, digest, header, shared identity and Linux static-linkage checks. All40 source checkpoint inputs and3 supplemental inputs match. Only `native/src/controller.rs` differs from the prior40-file checkpoint. The exact native VSIX is unchanged. `release-SHA256SUMS` is the final37-file list; `summary.json` records its digest and final manifest/bundle digests.
+
+`installer-runtime-smoke.json` and `installer.log` retain actual manual native release verification, loopback installation/reinstallation, installed build-info, private initialization, authenticated pinned TLS status, native snapshot upload, exact uploaded-byte read-back through `/v1/blobs/sha256%3A...` and graceful stop. Target processes ran with only ordinary OS tools in PATH; Node/npm/Rust/Python/jq were absent. The private HTTP/TLS orchestrator ran outside that restricted PATH. Both helper sources are copied; init tokens were discarded and never copied here. The final installer ran once more against the completed37-file checksum list. `final-installer.log` and `final-checksums.log` retain that result.
+
+`mac-actual-sdk-encoded-get.json` additionally records four exact-byte reads by the frozen packaged SDK in a real SSH extension host against the final replacement ARM64 controller. Mac role/TLS/signature records are adjacent to the artifacts under `provenance/mac/`; Linux self-build/Alpine records are under `provenance/linux/`. Linux ARM64 is build/header/static-only, Intel Mac execution is Rosetta on M4, and Mac artifacts lack Developer ID signing/notarization.
+
+Private HTTP/controller processes stopped; private credentials/data were removed. No global prefix, live service or publication changed. The historical95 preview is unchanged: all35 files and its original checksum-file digest were reverified (`historical-95-checksums.log`). See PREVIEW.json for exact platform/source limits.

@@ -5,6 +5,8 @@ import { defaultClientConfigPath, errorMessage, GridstatorError } from '@gridsta
 import { readClientConfig } from '@gridstator/client';
 import { resolve } from 'node:path';
 import type { LocalControllerHost } from './messages';
+import { nativeClientConfigPath, type NativeCli } from './native';
+import { nativeExtensionBuild } from './build-flavor';
 
 const execFileAsync = promisify(execFile);
 
@@ -21,13 +23,32 @@ export class LocalController {
   private prepared = false;
   private preparing: Promise<void> | undefined;
 
+  get canStart(): boolean {
+    return Boolean(
+      this.matchesLocal &&
+      this.host?.available &&
+      this.host.service.canManage &&
+      ['inactive', 'failed'].includes(this.host.service.state),
+    );
+  }
+
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly configPath: () => string | undefined,
     private readonly log: vscode.OutputChannel,
+    private readonly native?: NativeCli,
   ) {}
 
   private async run<T>(args: string[]): Promise<T> {
+    if (this.native?.enabled) {
+      return this.native.execute<T>({
+        operation: 'local',
+        args,
+        configPath: this.configPath() || nativeClientConfigPath(),
+      });
+    }
+    if (nativeExtensionBuild())
+      throw new GridstatorError('CONFIG', 'Native v2 host administration requires the Rust CLI');
     const helper = vscode.Uri.joinPath(this.context.extensionUri, 'dist/local-cli.mjs').fsPath;
     try {
       const { stdout } = await execFileAsync(
@@ -49,12 +70,13 @@ export class LocalController {
   }
 
   async refresh(): Promise<LocalControllerHost | null> {
-    if (process.platform !== 'linux') return null;
+    if (process.platform !== 'linux' && !(this.native?.enabled && process.platform === 'darwin'))
+      return null;
     try {
       this.host = await this.run<LocalControllerHost>([
         'status',
         '--config',
-        this.configPath() || defaultClientConfigPath(),
+        this.configPath() || this.defaultConfigPath(),
       ]);
     } catch (err) {
       this.log.appendLine(`Local controller: ${errorMessage(err)}`);
@@ -65,6 +87,13 @@ export class LocalController {
 
   reset(): void {
     this.prepared = false;
+    this.host = null;
+    this.canRestore = false;
+    this.matchesLocal = false;
+  }
+
+  private defaultConfigPath(): string {
+    return this.native?.enabled ? nativeClientConfigPath() : defaultClientConfigPath();
   }
 
   async prepare(): Promise<void> {
@@ -85,14 +114,14 @@ export class LocalController {
     if (['GRIDSTATOR_URL', 'GRIDSTATOR_TOKEN', 'GRIDSTATOR_CA_FILE'].some((k) => process.env[k]))
       return;
     const configured = this.configPath();
-    if (configured && resolve(configured) !== resolve(defaultClientConfigPath())) {
+    if (configured && resolve(configured) !== resolve(this.defaultConfigPath())) {
       const saved = await readClientConfig(configured).catch(() => undefined);
       if (!saved || saved.caFingerprint !== this.host.caFingerprint) return;
     }
     const result = await this.run<LoginResult>([
       'ensure-login',
       '--config',
-      this.configPath() || defaultClientConfigPath(),
+      this.configPath() || this.defaultConfigPath(),
     ]);
     this.matchesLocal = result.status === 'connected' || result.status === 'revoked';
     this.canRestore = result.status === 'revoked';
@@ -109,7 +138,7 @@ export class LocalController {
     const result = await this.run<LoginResult>([
       'ensure-login',
       '--config',
-      this.configPath() || defaultClientConfigPath(),
+      this.configPath() || this.defaultConfigPath(),
       '--restore',
     ]);
     if (result.status !== 'connected')
@@ -120,7 +149,7 @@ export class LocalController {
   }
 
   async service(action: 'start' | 'stop' | 'restart'): Promise<void> {
-    await this.run(['service', action, '--config', this.configPath() || defaultClientConfigPath()]);
+    await this.run(['service', action, '--config', this.configPath() || this.defaultConfigPath()]);
     await this.refresh();
   }
 
@@ -134,7 +163,7 @@ export class LocalController {
       '--url',
       url,
       '--config',
-      this.configPath() || defaultClientConfigPath(),
+      this.configPath() || this.defaultConfigPath(),
     ]);
     await this.refresh();
   }

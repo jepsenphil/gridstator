@@ -1,0 +1,39 @@
+
+> gridstator-monorepo@0.1.0 package:vscode /repos/gridstator
+> pnpm build && pnpm --filter gridstator-vscode package
+
+
+> gridstator-monorepo@0.1.0 build /repos/gridstator
+> tsc -b && pnpm --filter gridstator-vscode build
+
+
+> gridstator-vscode@0.1.0 build /repos/gridstator/apps/vscode
+> node scripts/build.mjs
+
+Built extension and dashboard
+
+> gridstator-vscode@0.1.0 package /repos/gridstator/apps/vscode
+> node scripts/build.mjs --production && vsce package --no-dependencies --out dist/gridstator.vsix
+
+Built extension and dashboard (production)
+ INFO  Files included in the VSIX:
+gridstator.vsix
+├─ [Content_Types].xml 
+├─ extension.vsixmanifest 
+└─ extension/
+   ├─ LICENSE.md [0.08 KB]
+   ├─ package.json [14.42 KB]
+   ├─ readme.md 
+   ├─ dist/
+   │  ├─ extension.js [873.7 KB]
+   │  └─ local-cli.mjs [1.96 MB]
+   └─ media/
+      ├─ dashboard.css [18.82 KB]
+      ├─ dashboard.js [299.5 KB]
+      ├─ gridstator.svg [0.38 KB]
+      ├─ icon.png [0.4 KB]
+      └─ codicons/
+         ├─ codicon.css [37.96 KB]
+         └─ codicon.ttf [146 KB]
+
+ DONE  Packaged: dist/gridstator.vsix (13 files, 972.69 KB)

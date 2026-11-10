@@ -1,0 +1,2 @@
+29.0.2 / 29.0.2
+github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e

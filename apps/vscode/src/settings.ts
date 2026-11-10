@@ -15,6 +15,8 @@ import type { PublishBuildResponse } from '@gridstator/protocol';
 import type { ClusterState } from './state';
 import type { LocalController } from './local-controller';
 import type { EditorPreferences, FromWebview, SettingsView, ToWebview } from './messages';
+import { effectiveClientConfigPath, nativeClientConfigPath, nativeEnabled } from './native';
+import { formatConnectionCommand, workerControllerUrlError } from './connection-command';
 
 function preferences(): EditorPreferences {
   const c = vscode.workspace.getConfiguration('gridstator');
@@ -105,11 +107,13 @@ export class DashboardSettings implements vscode.Disposable {
     const clusterId = this.state.connection.clusterId;
     const host = await this.local.refresh();
     if (host?.available) {
-      const path = preferences().configPath || defaultClientConfigPath();
+      const path = effectiveClientConfigPath();
       const saved = await readClientConfig(path).catch(() => undefined);
       if (
         (host.clusterId && clusterId && host.clusterId !== clusterId) ||
-        (resolve(path) !== resolve(defaultClientConfigPath()) && !saved) ||
+        (resolve(path) !==
+          resolve(nativeEnabled() ? nativeClientConfigPath() : defaultClientConfigPath()) &&
+          !saved) ||
         (host.caFingerprint &&
           saved?.caFingerprint &&
           host.caFingerprint !== saved.caFingerprint) ||
@@ -206,15 +210,61 @@ export class DashboardSettings implements vscode.Disposable {
         this.changed();
         return true;
       }
-      case 'saveClusterSettings':
+      case 'saveClusterSettings': {
         this.requireAdmin();
-        await this.state.requireClient().updateSettings(m.patch);
+        if (nativeEnabled() && m.patch.toolchain) {
+          await this.state.requireClient().request('PATCH', '/v1/settings', {
+            json: { ...m.patch, toolchain: { act: m.patch.toolchain.act } },
+          });
+        } else await this.state.requireClient().updateSettings(m.patch);
         await this.refresh();
         return true;
+      }
       case 'createToken': {
         this.requireAdmin();
         const result = await this.state.requireClient().createToken(m.request);
         this.post({ type: 'tokenCreated', token: result.token, info: result.info });
+        await this.refresh();
+        return true;
+      }
+      case 'createWorkerJoinCommand': {
+        this.requireAdmin();
+        const client = this.state.requireClient();
+        const { clusterId, caFingerprint } = this.state.connection;
+        if (!clusterId || !caFingerprint)
+          throw new GridstatorError('CONFIG', 'Reconnect to the controller before adding a worker');
+        const urlError = workerControllerUrlError(m.url);
+        if (urlError) throw new GridstatorError('BAD_REQUEST', urlError);
+        const name = m.name.trim();
+        if (!name || name.length > 64)
+          throw new GridstatorError('BAD_REQUEST', 'Enter a token name from 1 to 64 characters');
+        const url = new URL(m.url.trim()).origin;
+        const result = await client.createToken({
+          kind: 'join',
+          name,
+          role: 'operator',
+          ttlSeconds: 24 * 3600,
+          maxUses: 1,
+        });
+        if (
+          !this.state.connected ||
+          client !== this.state.client ||
+          clusterId !== this.state.connection.clusterId ||
+          caFingerprint !== this.state.connection.caFingerprint
+        )
+          throw new GridstatorError(
+            'CONFIG',
+            'The selected controller changed while generating the join command. Generate a new command for the current controller.',
+          );
+        this.post({
+          type: 'workerJoinCommandCreated',
+          result: {
+            command: formatConnectionCommand('join', url, caFingerprint, result.token),
+            name: result.info.name,
+            clusterId,
+            expiresAt: result.info.expiresAt,
+          },
+        });
         await this.refresh();
         return true;
       }
@@ -259,15 +309,19 @@ export class DashboardSettings implements vscode.Disposable {
         const targetClusterId = this.state.connection.clusterId;
         const selected = await vscode.window.showOpenDialog({
           canSelectMany: false,
-          filters: { 'Gridstator package': ['tgz'] },
-          openLabel: 'Select Controller Package',
+          filters: nativeEnabled()
+            ? { 'Native release bundle': ['gz', 'tgz'] }
+            : { 'Gridstator package': ['tgz'] },
+          openLabel: nativeEnabled() ? 'Select Native Release Bundle' : 'Select Controller Package',
         });
         if (!selected?.[0]) return true;
         const file = selected[0].fsPath;
         if (
           !(await this.confirm(
-            'Install this controller package? The controller will restart after its running jobs finish.',
-            'Install Package',
+            nativeEnabled()
+              ? 'Install this native release bundle? It must contain the release manifest and all four target archives. The controller restarts after running jobs finish.'
+              : 'Install this controller package? The controller will restart after its running jobs finish.',
+            nativeEnabled() ? 'Install Native Bundle' : 'Install Package',
           ))
         )
           return true;
@@ -347,7 +401,7 @@ export class DashboardSettings implements vscode.Disposable {
     if (this.controllerInstall)
       throw new GridstatorError('CONFLICT', 'A controller update is already in progress');
     this.state.requireClient();
-    const connection = await resolveConnection(preferences().configPath || undefined);
+    const connection = await resolveConnection(effectiveClientConfigPath());
     if (this.controllerInstall)
       throw new GridstatorError('CONFLICT', 'A controller update is already in progress');
     const probe = new GridstatorClient(connection);
@@ -588,6 +642,7 @@ export function settingsBusyKey(message: FromWebview): string | undefined {
     savePreferences: 'settings:preferences',
     saveClusterSettings: 'settings:cluster',
     createToken: 'settings:tokens',
+    createWorkerJoinCommand: 'settings:tokens',
     revokeToken: 'settings:tokens',
     requestReleases: 'settings:releases',
     installRelease: 'settings:install',

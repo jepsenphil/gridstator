@@ -1,0 +1,224 @@
+[
+  {
+    "id": "01M71PK8S013YQM6ZG4BSJHX8G",
+    "name": "alpha",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.0.2"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794279674294205494",
+        "version": "2.0.0-dev.1",
+        "sha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be",
+        "target": "linux/amd64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:42681",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 17111
+      },
+      "executionCapacity": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794279887672,
+      "cpuPercent": 9.858083724975586,
+      "memoryAvailableMb": 17030,
+      "diskFreeMb": 19756,
+      "diskTotalMb": 479118,
+      "load1": 7.51,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [
+        "fast"
+      ],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "docker",
+      "buildx",
+      "act",
+      "fast"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794279889258,
+    "connectedAt": 1794279847670,
+    "createdAt": 1794279842592,
+    "update": {
+      "state": "current",
+      "build": "dev-4b8f13ccf1b2-1794279674294205494",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  {
+    "id": "01M71PKCZAF3PCS5FG9YTDX2HH",
+    "name": "beta",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "pj-Precision-5520",
+      "machineId": "2eef8c25f130441b84e8f5bee835cf46",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "24.04",
+      "cpus": 8,
+      "memoryTotalMb": 31946,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.0.2"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.30.0 124418cd66f056c2b1111f173c3f48fa695a089e"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "dev-4b8f13ccf1b2-1794279674294205494",
+        "version": "2.0.0-dev.1",
+        "sha256": "c37d006eb084ac63eccb52117049895100b514fea445e86ac3d6f096e14ea9be",
+        "target": "linux/amd64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": []
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:42681",
+      "host": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": 17153
+      },
+      "executionCapacity": {
+        "cpus": 8,
+        "memoryTotalMb": 31946,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794279888597,
+      "cpuPercent": 10.027854919433594,
+      "memoryAvailableMb": 17025,
+      "diskFreeMb": 19756,
+      "diskTotalMb": 479118,
+      "load1": 7.51,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3194
+      },
+      "labels": [
+        "slow"
+      ],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=linux",
+      "arch=x64",
+      "docker",
+      "buildx",
+      "act",
+      "slow"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 7.0,
+      "memoryMb": 28752
+    },
+    "lastSeenAt": 1794279889268,
+    "connectedAt": 1794279873595,
+    "createdAt": 1794279846891,
+    "update": {
+      "state": "current",
+      "build": "dev-4b8f13ccf1b2-1794279674294205494",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  }
+]

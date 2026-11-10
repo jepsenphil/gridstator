@@ -1,0 +1,23 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running tests/bridge_source_scenarios.rs (target/debug/deps/bridge_source_scenarios-5e5da42cc96baf98)
+
+running 2 tests
+test source_snapshot_014_invalid_configuration_names_the_configuration_file ... FAILED
+test source_snapshot_013_git_root_relative_workdir_and_nearest_configuration ... ok
+
+failures:
+
+---- source_snapshot_014_invalid_configuration_names_the_configuration_file stdout ----
+
+thread 'source_snapshot_014_invalid_configuration_names_the_configuration_file' (1311291) panicked at tests/bridge_source_scenarios.rs:35:5:
+Invalid project configuration: project: unknown field bogus
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_snapshot_014_invalid_configuration_names_the_configuration_file
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `--test bridge_source_scenarios`

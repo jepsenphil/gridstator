@@ -1,0 +1,8 @@
+HEAD:apps/agent/src/updater.test.ts:232:  it.skipIf(!linux)(
+HEAD:apps/controller/src/controller.test.ts:684:  it.each([1200, -1])('records steps and artifacts (%i ms)', async (durationMs) => {
+HEAD:apps/vscode/src/settings.test.ts:251:  it.each(['ready', 'expired'] as const)(
+HEAD:packages/executors/src/actions.test.ts:175:describe.skipIf(!available)('ActionsExecutor (real act)', { timeout: 180_000 }, () => {
+HEAD:packages/executors/src/build.test.ts:63:describe.skipIf(!available)('DockerBuildExecutor (real BuildKit)', { timeout: 180_000 }, () => {
+HEAD:packages/executors/src/container.test.ts:76:describe.skipIf(!available)('ContainerExecutor (real Docker)', () => {
+HEAD:tests/integration/e2e.test.ts:167:describe.skipIf(!enabled)('Gridstator end to end', () => {
+HEAD:tests/integration/e2e.test.ts:475:  it.skipIf(!actAvailable)(

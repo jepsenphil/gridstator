@@ -1,0 +1,40 @@
+
+Elf file type is EXEC (Executable file)
+Entry point 0x638240
+There are 9 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000200040 0x0000000000200040
+                 0x00000000000001f8 0x00000000000001f8  R      0x8
+  LOAD           0x0000000000000000 0x0000000000200000 0x0000000000200000
+                 0x0000000000428238 0x0000000000428238  R      0x10000
+  LOAD           0x0000000000428240 0x0000000000638240 0x0000000000638240
+                 0x0000000000c6c4d8 0x0000000000c6c4d8  R E    0x10000
+  LOAD           0x0000000001094718 0x00000000012b4718 0x00000000012b4718
+                 0x00000000000ada98 0x00000000000ae8e8  RW     0x10000
+  LOAD           0x00000000011421b0 0x00000000013721b0 0x00000000013721b0
+                 0x0000000000006510 0x0000000000008329  RW     0x10000
+  TLS            0x0000000001094718 0x00000000012b4718 0x00000000012b4718
+                 0x00000000000000c8 0x00000000000002e0  R      0x8
+  GNU_RELRO      0x0000000001094718 0x00000000012b4718 0x00000000012b4718
+                 0x00000000000ada98 0x00000000000ae8e8  R      0x1
+  GNU_EH_FRAME   0x0000000000270ccc 0x0000000000470ccc 0x0000000000470ccc
+                 0x0000000000032274 0x0000000000032274  R      0x4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     0x0
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     .rodata .gcc_except_table .eh_frame_hdr .eh_frame 
+   02     .text .init .fini 
+   03     .tdata .fini_array .init_array .data.rel.ro .got .relro_padding 
+   04     .data .bss 
+   05     .tdata .tbss 
+   06     .tdata .fini_array .init_array .data.rel.ro .got .relro_padding 
+   07     .eh_frame_hdr 
+   08     
+
+There is no dynamic section in this file.

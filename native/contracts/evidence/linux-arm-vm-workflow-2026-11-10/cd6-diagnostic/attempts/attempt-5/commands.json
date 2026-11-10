@@ -1,0 +1,79 @@
+[
+  {
+    "argv": [
+      "gridstator",
+      "run",
+      "--node",
+      "arm-embedded",
+      "--image",
+      "alpine:3.21",
+      "--cpus",
+      "1",
+      "--memory",
+      "128m",
+      "--artifact",
+      "results",
+      "--json",
+      "--",
+      "sh",
+      "-c",
+      "set -eu; test \"$(uname -m)\" = aarch64; test \"$(cat proof.txt)\" = arm-snapshot; test ! -e .env; mkdir -p results; printf \"aarch64 artifact\\n\" > results/proof.txt; cat results/proof.txt; echo embedded-arm"
+    ],
+    "cwd": "/proof/project",
+    "exitCode": 0,
+    "seconds": 0.051,
+    "stdout": "{\n  \"id\": \"01M720GZ2H2GYMCQGTC7C27BP5\",\n  \"name\": \"set -eu; test \\\"$(uname -m)\\\" = aarch64; test \\\"$(cat proof.txt)\\\" = arm-snapshot...\",\n  \"kind\": \"command\",\n  \"state\": \"queued\",\n  \"stateReason\": \"waiting for scheduler\",\n  \"priority\": 0,\n  \"owner\": \"local-admin\",\n  \"snapshotId\": \"sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a\",\n  \"spec\": {\n    \"kind\": \"command\",\n    \"env\": {},\n    \"secretEnv\": {},\n    \"snapshot\": \"sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a\",\n    \"workdir\": \".\",\n    \"resources\": {\n      \"cpus\": 1,\n      \"memoryMb\": 128\n    },\n    \"target\": {\n      \"labels\": [],\n      \"prefer\": [],\n      \"node\": \"arm-embedded\"\n    },\n    \"retry\": {\n      \"max\": 0,\n      \"on\": [\n        \"lost\"\n      ]\n    },\n    \"priority\": 0,\n    \"project\": \"linux-arm-vm-proof\",\n    \"image\": \"alpine:3.21\",\n    \"command\": [\n      \"sh\",\n      \"-c\",\n      \"set -eu; test \\\"$(uname -m)\\\" = aarch64; test \\\"$(cat proof.txt)\\\" = arm-snapshot; test ! -e .env; mkdir -p results; printf \\\"aarch64 artifact\\\\n\\\" > results/proof.txt; cat results/proof.txt; echo embedded-arm\"\n    ],\n    \"artifacts\": [\n      \"results\"\n    ]\n  },\n  \"nodeId\": null,\n  \"nodeName\": null,\n  \"assignmentId\": null,\n  \"attempt\": 1,\n  \"retryOf\": null,\n  \"cancelRequestedAt\": null,\n  \"exitCode\": null,\n  \"error\": null,\n  \"queuePosition\": null,\n  \"logSeq\": 0,\n  \"outputs\": null,\n  \"artifacts\": [],\n  \"groupId\": null,\n  \"shardIndex\": null,\n  \"shardTotal\": null,\n  \"createdAt\": 1794290252881,\n  \"queuedAt\": 1794290252881,\n  \"assignedAt\": null,\n  \"startedAt\": null,\n  \"finishedAt\": null\n}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "gridstator",
+      "artifacts",
+      "01M720GZ2H2GYMCQGTC7C27BP5",
+      "--json"
+    ],
+    "cwd": "/proof/project",
+    "exitCode": 0,
+    "seconds": 0.056,
+    "stdout": "[\n  {\n    \"name\": \"results.tar\",\n    \"digest\": \"sha256:cfe2d2d5fd22996e29af357d763e2df361611805e8d07e1ec9cc668562519b93\",\n    \"size\": 2560\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "gridstator",
+      "artifacts",
+      "01M720GZ2H2GYMCQGTC7C27BP5",
+      "--download",
+      "results.tar",
+      "--out",
+      "/proof/result.tar"
+    ],
+    "cwd": "/proof/project",
+    "exitCode": 0,
+    "seconds": 0.085,
+    "stdout": "",
+    "stderr": "Saved artifact to /proof/result.tar\n"
+  },
+  {
+    "argv": [
+      "gridstator",
+      "build",
+      "--node",
+      "arm-standalone",
+      "--cpus",
+      "1",
+      "--memory",
+      "128m",
+      "--tag",
+      "gridstator-linux-arm-proof:cd6-6c82",
+      "--output",
+      "load",
+      "--json"
+    ],
+    "cwd": "/proof/project",
+    "exitCode": 0,
+    "seconds": 0.044,
+    "stdout": "{\n  \"id\": \"01M720GZKZ4WE14HWF80FVYH3F\",\n  \"name\": \"build Dockerfile\",\n  \"kind\": \"docker-build\",\n  \"state\": \"queued\",\n  \"stateReason\": \"waiting for scheduler\",\n  \"priority\": 0,\n  \"owner\": \"local-admin\",\n  \"snapshotId\": \"sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a\",\n  \"spec\": {\n    \"kind\": \"docker-build\",\n    \"secretEnv\": {},\n    \"snapshot\": \"sha256:a8c7e9061c5dded499ebbd0a00e4deccb984af63eb4644b19a030279337e126a\",\n    \"resources\": {\n      \"cpus\": 1,\n      \"memoryMb\": 128\n    },\n    \"target\": {\n      \"labels\": [],\n      \"prefer\": [],\n      \"node\": \"arm-standalone\"\n    },\n    \"priority\": 0,\n    \"project\": \"linux-arm-vm-proof\",\n    \"context\": \".\",\n    \"buildArgs\": {},\n    \"tags\": [\n      \"gridstator-linux-arm-proof:cd6-6c82\"\n    ],\n    \"platforms\": [],\n    \"noCache\": false,\n    \"pull\": false,\n    \"output\": \"load\",\n    \"cacheFrom\": [],\n    \"cacheTo\": [],\n    \"env\": {},\n    \"workdir\": \".\",\n    \"retry\": {\n      \"max\": 0,\n      \"on\": [\n        \"lost\"\n      ]\n    }\n  },\n  \"nodeId\": null,\n  \"nodeName\": null,\n  \"assignmentId\": null,\n  \"attempt\": 1,\n  \"retryOf\": null,\n  \"cancelRequestedAt\": null,\n  \"exitCode\": null,\n  \"error\": null,\n  \"queuePosition\": null,\n  \"logSeq\": 0,\n  \"outputs\": null,\n  \"artifacts\": [],\n  \"groupId\": null,\n  \"shardIndex\": null,\n  \"shardTotal\": null,\n  \"createdAt\": 1794290253439,\n  \"queuedAt\": 1794290253439,\n  \"assignedAt\": null,\n  \"startedAt\": null,\n  \"finishedAt\": null\n}\n",
+    "stderr": ""
+  }
+]

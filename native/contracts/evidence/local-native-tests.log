@@ -1,0 +1,67 @@
+    Blocking waiting for file lock on build directory
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.21s
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-1cf98379990e2ab8)
+
+running 6 tests
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.90s
+
+     Running tests/contract_fixtures.rs (native/target/debug/deps/contract_fixtures-2da4b1281c53d9cb)
+
+running 6 tests
+test complete_job_transition_matrix_and_terminal_states_match_v1 ... ok
+test manifest_structural_rejections_match_v1 ... ok
+test manifest_canonical_bytes_and_ids_match_v1 ... ok
+test frozen_fixture_bytes_match_recorded_reference_hashes ... ok
+test timestamp_and_step_telemetry_match_v1 ... ok
+test job_spec_defaults_validation_and_unknown_fields_match_v1 ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/discovery_contract.rs (native/target/debug/deps/discovery_contract-2661f37d7ac126b4)
+
+running 4 tests
+test local_lockfiles_override_root_fallback_and_symlinks_are_not_walked ... ok
+test frozen_project_defaults_and_strictness_match ... ok
+test walk_order_exclusions_managers_stages_and_tasks_are_preserved ... ok
+test workflow_events_inputs_and_warnings_match_reference ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/reports_contract.rs (native/target/debug/deps/reports_contract-4294bbb8e511ab4f)
+
+running 6 tests
+test failure_precedence_cdata_and_negative_rounding_are_preserved ... ok
+test candidates_and_shard_summaries_match_reference ... ok
+test direct_cases_precede_suites_and_use_file_names ... ok
+test nested_suites_failures_entities_files_and_durations_match_reference ... ok
+test raw_tar_zip_extraction_and_collection_use_xml_files ... ok
+test malformed_and_expansion_prone_inputs_are_rejected ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/updates_contract.rs (native/target/debug/deps/updates_contract-032870d8114c5df5)
+
+running 10 tests
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+/tmp/.tmpvu1BS5/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmpvu1BS5/controller/install/versions/dev-4b8f13ccf1b2-1794266095245503750/gridstator: 1: ELF: not found
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.76s
+

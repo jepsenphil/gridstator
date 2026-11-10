@@ -1,0 +1,575 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 19s
+     Running unittests src/lib.rs (target/debug/deps/gridstator-d8a36458b157b87e)
+
+running 38 tests
+test bridge::tests::project_discovery_stops_at_git_root ... ok
+test bridge::tests::snapshot_limits_use_project_units_and_explicit_overrides ... ok
+test cli::tests::command_workflows_units_settings_and_job_exits_match_frozen_source ... ok
+test cli::tests::completed_build_and_actions_outputs_preserve_source_image_and_artifact_guidance ... ok
+test cli::tests::errors_preserve_frozen_code_and_http_status_exit_mappings ... ok
+test cli::tests::remote_error_presentation_preserves_source_hint_and_omission ... ok
+test cli::tests::scalar_flags_take_the_last_value_and_collection_flags_append ... ok
+test cli::tests::service_identity_uses_explicit_or_verified_environment_paths_and_refuses_wrappers ... ok
+test cli::tests::service_preserves_same_account_docker_connection_and_excludes_foreign_credentials ... ok
+test controller::api_error_tests::actual_filesystem_and_sqlite_failures_are_internal_server_errors ... ok
+test controller::api_error_tests::explicit_http_codes_match_the_frozen_v1_status_table ... ok
+test controller::api_error_tests::input_validation_remains_bad_request_and_illegal_transition_is_conflict ... ok
+test controller::shutdown_tests::active_controller_lease_blocks_recovery_before_it_reads_switch_marker ... ok
+test controller::shutdown_tests::shutdown_joins_update_mutation_and_abort_keeps_startup_lease ... ok
+test executor::actions::tests::source_act_arguments_lock_defaults_and_keep_secret_values_out_of_argv ... ok
+test executor::actions::tests::source_act_log_console_steps_failures_and_change_tracking ... ok
+test executor::actions::tests::source_act_log_passthrough_post_stage_finish_and_cancelled_failure ... ok
+test executor::actions::tests::source_checkout_remote_formats_and_exact_rewrite_contract ... ok
+test executor::actions::tests::source_private_workflow_copies_preserve_originals_redirect_calls_and_invalid_yaml ... ok
+test executor::actions::tests::source_workflow_preparation_writes_nothing_without_rewrites_or_directory ... ok
+test executor::build::tests::captured_containerd_metadata_identifies_local_images_without_config_digest ... ok
+test executor::build::tests::local_image_resolution_preserves_config_preference_and_deduplicates_candidates ... ok
+test executor::build::tests::local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable ... ok
+test executor::build::tests::remote_image_resolution_and_absent_metadata_never_inspect_local_docker ... ok
+test executor::build::tests::source_buildx_flags_map_spec_without_exposing_secrets ... ok
+test executor::path_tests::build_and_workflow_path_resolution_rejects_symlink_escape ... ok
+test executor::process::tests::line_pump_reassembles_split_utf8_and_flushes_partial_at_eof ... ok
+test install::termination_tests::exited_owned_child_is_reaped_before_group_shutdown ... ok
+test release::transport_shutdown_tests::official_transport_cancels_stalled_headers_and_body ... ok
+test release::transport_shutdown_tests::successful_release_cache_expires_after_five_minutes_and_clones_share_install_guard ... ok
+test state::tests::atomic_config_writes_create_private_missing_parents ... ok
+test state::tests::atomic_config_writes_preserve_existing_parent_permissions ... ok
+test updates::tests::queued_bundle_import_owns_its_source_after_handler_unlinks_the_upload ... ok
+test updates::tests::shutdown_interrupts_stalled_update_headers_and_bodies ... ok
+test worker::admission_tests::host_available_memory_counts_reclaimable_pages_without_compressor_subtraction ... ok
+test worker::admission_tests::refresh_tracks_the_sent_hello_when_update_starts_during_outbox_scan ... ok
+test workspace::pattern::tests::cached_result_copies_are_charged_before_allocation ... ok
+test workspace::pattern::tests::large_duplicate_character_class_is_merged_before_matching ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.90s
+
+     Running unittests src/main.rs (target/debug/deps/gridstator-f9a55642b093bb79)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/bridge_source_scenarios.rs (target/debug/deps/bridge_source_scenarios-5e5da42cc96baf98)
+
+running 2 tests
+test source_snapshot_013_git_root_relative_workdir_and_nearest_configuration ... ok
+test source_snapshot_014_invalid_configuration_names_the_configuration_file ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/cli_acceptance.rs (target/debug/deps/cli_acceptance-e0d34ee2097bdce3)
+
+running 3 tests
+test all_fifty_six_help_paths_match_source_commander_bytes ... ok
+test all_source_parser_boundaries_preserve_bytes_streams_and_exit_codes ... ok
+test production_registry_retains_the_frozen_workflow_flags_and_arities ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.29s
+
+     Running tests/cli_contract.rs (target/debug/deps/cli_contract-283459ea04c477c9)
+
+running 10 tests
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test custom_absolute_and_relative_config_paths_preserve_parent_permissions ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+test frozen_local_service_inspection_ownership_and_invalid_configuration_are_read_only ... ok
+test local_bootstrap_preserves_an_explicit_foreign_cluster_connection ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test local_operator_promotion_preserves_the_saved_public_cluster_url ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.63s
+
+     Running tests/cli_local_coordination.rs (target/debug/deps/cli_local_coordination-3b3e673a280702cc)
+
+running 6 tests
+test source_local_010_active_embedded_job_blocks_restart_and_restores_scheduling ... ok
+test source_local_011_retains_old_listener_for_offline_or_unadvertised_workers ... ok
+test source_local_012_apply_and_restart_starts_a_previously_stopped_controller ... ok
+test source_local_013_requires_fresh_worker_connection_even_at_unchanged_public_endpoint ... ok
+test source_local_014_busy_new_listener_restores_previous_configuration_and_service ... ok
+test source_self_update_004_offline_cli_credential_authenticates_on_running_controller ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 59.62s
+
+     Running tests/client_errors.rs (target/debug/deps/client_errors-9728a916a9f92805)
+
+running 3 tests
+test response_size_limits_match_the_source_client ... ok
+test source_error_bodies_retain_codes_optional_hints_and_details ... ok
+test untrusted_controller_certificate_is_an_auth_failure_before_bearer_delivery ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/client_urls.rs (target/debug/deps/client_urls-a365c14becf87d15)
+
+running 1 test
+test controller_origins_match_the_frozen_source_url_normalizer ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cluster_e2e.rs (target/debug/deps/cluster_e2e-d50994f4b9df58ea)
+
+running 2 tests
+test actual_cli_build_and_actions_preserve_snapshot_outputs_and_reports ... ignored, requires Docker/buildx/act/git; run cargo test --test cluster_e2e -- --ignored --nocapture
+test actual_cli_snapshot_shards_exit_codes_artifacts_and_cancel ... ignored, requires a ready Docker daemon; run cargo test --test cluster_e2e -- --ignored --nocapture
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/contract_fixtures.rs (target/debug/deps/contract_fixtures-3127c4ae8af964c8)
+
+running 6 tests
+test complete_job_transition_matrix_and_terminal_states_match_v1 ... ok
+test frozen_fixture_bytes_match_recorded_reference_hashes ... ok
+test job_spec_defaults_validation_and_unknown_fields_match_v1 ... ok
+test manifest_canonical_bytes_and_ids_match_v1 ... ok
+test manifest_structural_rejections_match_v1 ... ok
+test timestamp_and_step_telemetry_match_v1 ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/controller_contract.rs (target/debug/deps/controller_contract-c111060ea6994e93)
+
+running 6 tests
+test native_blob_upload_checks_content_and_snapshot_manifest ... ok
+test native_tls_pairing_authority_and_job_lifecycle ... ok
+test retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes ... ok
+test source_controller_publish_checksum_error_reports_expected_and_actual ... ok
+test source_http_integer_fields_accept_whole_number_json_literals ... ok
+test source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.80s
+
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 18 tests
+test assigned_rejection_expires_and_stale_results_are_acknowledged ... ok
+test both_worker_and_assignment_identity_fence_every_report_and_release_once ... ok
+test cancellation_intent_is_idempotent_success_wins_and_timeout_clears_error ... ok
+test controller_alias_listener_advertises_public_url_and_preserves_identity ... ok
+test groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates ... ok
+test historical_log_subscription_pages_beyond_ten_thousand_before_end ... ok
+test large_archives_apply_backpressure_without_starving_heartbeats_or_cancellation ... ok
+test late_starting_rejection_is_diagnostic_noop_and_force_removal_cancels ... ok
+test live_steps_agent_artifacts_and_stale_output_match_source_contract ... ok
+test newer_socket_fences_old_generation_and_revocation_closes_both_channels ... ok
+test preferred_nodes_rejection_and_draining_preserve_source_placement ... ok
+test protocol_mismatch_flushes_fatal_frame_and_v1_registration_is_rejected ... ok
+test reconnect_lost_and_failed_results_share_retry_budget ... ok
+test source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries ... ok
+test source_group_spreading_placeholders_and_cancellation_are_observable ... ok
+test temporary_native_update_admission_does_not_trigger_long_executor_exclusion ... ok
+test timeout_reassigns_unacknowledged_assignment_and_heartbeat_loss_retries_running ... ok
+test unknown_snapshot_and_target_are_rejected_before_queuing ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.87s
+
+     Running tests/controller_reconnect_races.rs (target/debug/deps/controller_reconnect_races-3dd885cb9ddbab3f)
+
+running 3 tests
+test empty_refresh_keeps_running_work_and_pending_operator_cancellation ... ok
+test empty_refresh_keeps_same_generation_running_work ... ok
+test refresh_before_reading_assignment_keeps_identity_resources_and_success ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.32s
+
+     Running tests/controller_retention.rs (target/debug/deps/controller_retention-de92e78886ca40bb)
+
+running 4 tests
+test initialize_brackets_ipv6_listener_urls ... ok
+test retention_keeps_active_inputs_and_artifacts_graces_uploads_and_sweeps_old_orphans ... ok
+test startup_grace_preserves_inflight_then_requeues_assigned_and_retries_lost ... ok
+test unreadable_snapshot_is_removed_without_following_cas_symlinks ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+     Running tests/controller_source_scenarios.rs (target/debug/deps/controller_source_scenarios-10a73c810d46e2c1)
+
+running 6 tests
+test source_006_queued_cancel_and_failed_143_result_become_cancelled ... ok
+test source_008_retry_budget_manual_attempt_three_and_active_conflict ... ok
+test source_012_disappearance_loses_running_and_requeues_assigned ... ok
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... ok
+test source_014_disconnected_pending_result_resumes_and_is_acknowledged ... ok
+test source_018_two_node_shards_aggregate_and_retry_only_failed_lineage ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.77s
+
+     Running tests/db_contract.rs (target/debug/deps/db_contract-43c489f5d38c4942)
+
+running 2 tests
+test independent_database_owners_serialize_read_modify_write_transactions ... ok
+test instance_lease_survives_cancelled_caller_until_queued_mutation_finishes ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+     Running tests/discovery_contract.rs (target/debug/deps/discovery_contract-62a576b31b08b983)
+
+running 6 tests
+test frozen_project_defaults_and_strictness_match ... ok
+test local_lockfiles_override_root_fallback_and_symlinks_are_not_walked ... ok
+test project_environment_limits_count_source_unicode_code_points ... ok
+test project_yaml_whole_numbers_match_javascript_normalization ... ok
+test walk_order_exclusions_managers_stages_and_tasks_are_preserved ... ok
+test workflow_events_inputs_and_warnings_match_reference ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/executor_contract.rs (target/debug/deps/executor_contract-d71a623940f94f5d)
+
+running 17 tests
+test act_log_parser_tracks_steps_formats_output_and_clamps_negative_duration ... ok
+test checkout_rewrite_changes_only_same_repository_and_preserves_foreign_refs ... ok
+test cleanup_respects_owned_node_and_keeps_explicit_active_jobs ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test environment_plan_keeps_multiline_secrets_out_of_argument_values ... ok
+test keep_failed_preserves_command_resources_until_explicit_owned_cleanup ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_cancellation_cleans_labelled_workflow_containers ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_failed_job_and_missing_workflow_preserve_source_errors ... ignored, requires real Docker/act; run the explicit tool suite in TESTING.md
+test real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_act_socket_opt_in_shares_runner_files_with_nested_container ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_buildx_cancellation_interrupts_running_build ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_failure_and_missing_dockerfile_return_terminal_results ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_load_describes_image_and_preserves_stage_args_and_labels ... ignored, requires real Docker/buildx; run the explicit tool suite in TESTING.md
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_cancellation_and_timeout_stop_actual_container ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test real_docker_success_streams_env_cache_and_missing_image_is_clear ... ignored, requires real Docker; run the explicit tool suite in TESTING.md
+
+test result: ok. 3 passed; 0 failed; 14 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/install_contract.rs (target/debug/deps/install_contract-e1be5cd5c9083584)
+
+running 20 tests
+test archive_extraction_verifies_inner_executable_and_rejects_links_traversal_duplicates ... ok
+test checksum_selection_rejects_missing_and_ambiguous_entries ... ok
+test corrupt_and_wrong_target_artifacts_never_become_visible ... ok
+test dropping_supervisor_stops_its_separate_executor_groups ... 
+running 1 test
+ok
+test interrupted_staging_does_not_change_the_active_payload ... ok
+test invalid_pending_payload_rolls_back_before_it_can_execute ... ok
+test launch_based_deadline_allows_prelaunch_wait_and_healthy_confirmation ... ok
+test mirror_bootstrap_verifies_another_target_without_executing_it ... ok
+test official_discovery_filters_legacy_releases_and_bootstraps_the_verified_mirror ... ok
+test release_identity_is_independent_of_digest_and_protocol_names_are_explicit ... ok
+test shell_installer_checksum_and_symlink_failures_preserve_the_existing_cli ... ok
+test shell_installer_uses_verified_native_helper_without_language_runtime_or_service_changes ... ok
+test simultaneous_installs_are_idempotent_and_cannot_overwrite_pending_activation ... ok
+test supervisor_cli_forwards_shutdown_to_its_owned_payload_group ... Terminated
+ok
+test supervisor_kills_hung_candidate_and_rolls_back_on_deadline ... ok
+test supervisor_reaps_separate_executor_groups_before_replacement ... 
+running 1 test
+
+running 1 test
+test supervisor_session_process_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+
+running 1 test
+
+running 1 test
+test supervisor_session_process_helper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+ok
+test supervisor_retries_crashes_three_times_then_launches_previous_payload ... ok
+test supervisor_session_process_helper ... ok
+test tampered_installed_payload_cannot_be_activated ... ok
+test verified_install_is_staged_private_immutable_and_does_not_activate ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 35.59s
+
+     Running tests/install_source_contract.rs (target/debug/deps/install_source_contract-b231de4dfacde950)
+
+running 10 tests
+test source_install_001_and_004_native_identity_is_embedded_and_digest_describes_current_bytes ... ok
+test source_install_002_and_005_native_executable_and_archive_install_identically_and_idempotently ... ok
+test source_install_003_rejects_unverified_launcher_identity_child ... ok
+test source_install_006_forwards_exact_arguments_and_verified_launcher_environment ... ok
+test source_install_007_crash_rollback_preserves_state_and_explains_attempt_limit ... ok
+test source_install_008_expired_started_trial_rolls_back_with_clear_diagnostic ... ok
+test source_install_009_and_011_confirmed_native_version_keeps_arguments_and_single_trial_attempt ... ok
+test source_install_010_missing_active_version_has_actionable_identity ... ok
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... 
+running 1 test
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 10.04s
+
+
+running 1 test
+test source_install_013_healthy_confirmation_refreshes_verified_supervisor_child ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 6.13s
+
+ok
+test source_install_013_refreshes_older_native_launcher_then_runs_active_version ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 88.14s
+
+     Running tests/integration_source_scenarios.rs (target/debug/deps/integration_source_scenarios-888724d87c103afe)
+
+running 2 tests
+test all_eleven_source_scenarios_with_two_real_native_workers ... ignored, requires real Docker/buildx/git/act; runs the eleven frozen integration scenarios serially
+test conditional_actions_source_012_runs_dirty_tree_and_downloads_exact_artifact ... ignored, requires real Docker/buildx/git/act; frozen conditional Actions source scenario
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/launchd_e2e.rs (target/debug/deps/launchd_e2e-b74b212750498e13)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/managed_role_contract.rs (target/debug/deps/managed_role_contract-3e3bb70692f04581)
+
+running 1 test
+test actual_managed_controller_and_worker_refresh_the_verified_stable_supervisor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 47.40s
+
+     Running tests/packaging_contract.rs (target/debug/deps/packaging_contract-e168774cea41fe15)
+
+running 3 tests
+test deterministic_four_target_archives_and_bundle_are_consumable ... ok
+test mixed_build_identity_or_architecture_cannot_produce_a_manifest ... ok
+test stable_release_requires_both_mac_receipts_and_final_signed_hashes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/pki_contract.rs (target/debug/deps/pki_contract-450303c06323db84)
+
+running 2 tests
+test bootstrap_cannot_append_an_unpinned_certificate_authority ... ok
+test fingerprint_input_forms_match_the_existing_workflow ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/protocol_boundaries.rs (target/debug/deps/protocol_boundaries-e407f0819b85bf8b)
+
+running 3 tests
+test every_source_boundary_matches_native_acceptance_and_normalization ... ok
+test source_accepted_nul_paths_are_rejected_before_filesystem_or_tool_use ... ok
+test whole_json_numbers_survive_downstream_integer_accessors ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/protocol_validation.rs (target/debug/deps/protocol_validation-63ec4c4f564a3a04)
+
+running 3 tests
+test build_and_actions_collection_bounds_match_the_protocol ... ok
+test error_clipping_preserves_utf16_limit_and_utf8_boundaries ... ok
+test negative_step_telemetry_is_normalized_without_rejecting_a_valid_result ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/recovery_e2e.rs (target/debug/deps/recovery_e2e-98dedbbe82bc2be7)
+
+running 1 test
+test verified_install_fresh_cutover_successful_upgrade_and_schema_rollback ... ignored, builds real static candidates and starts only disposable loopback clusters; requires Rust musl tools and an existing built v1 CLI
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/release_workflow_contract.rs (target/debug/deps/release_workflow_contract-d6800d054464e423)
+
+running 11 tests
+test reference_controller_releases_001_cached_stable_and_prerelease_identity ... ok
+test reference_controller_releases_002_verified_download_order_and_activation ... ok
+test reference_controller_releases_003_corruption_cannot_change_active_install ... ok
+test reference_controller_releases_004_bad_checksums_do_not_download_payloads ... ok
+test reference_controller_releases_005_operator_lists_but_cannot_install ... ok
+test reference_controller_releases_006_discovery_failure_is_not_cached_or_mutating ... ok
+test reference_controller_releases_007_invalid_identifiers_never_leave_controller ... ok
+test release_scenario_child ... ok
+test same_active_build_id_bootstrap_and_official_install_cannot_poison_mirror ... ok
+test same_active_build_id_cannot_rebind_the_controller_mirror ... ok
+test source_controller_self_update_003_refuses_unmanaged_and_bad_checksums ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.63s
+
+     Running tests/reports_contract.rs (target/debug/deps/reports_contract-16545561a205d55e)
+
+running 6 tests
+test candidates_and_shard_summaries_match_reference ... ok
+test direct_cases_precede_suites_and_use_file_names ... ok
+test failure_precedence_cdata_and_negative_rounding_are_preserved ... ok
+test malformed_and_expansion_prone_inputs_are_rejected ... ok
+test nested_suites_failures_entities_files_and_durations_match_reference ... ok
+test raw_tar_zip_extraction_and_collection_use_xml_files ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/scheduler_contract.rs (target/debug/deps/scheduler_contract-a672e5e85ab56f09)
+
+running 9 tests
+test capabilities_labels_and_explicit_name_or_id_are_enforced ... ok
+test concurrency_and_scheduling_modes_are_hard_constraints ... ok
+test docker_execution_capacity_bounds_host_capacity_without_changing_host_info ... ok
+test pending_reasons_explain_closest_candidate ... ok
+test preferences_and_affinity_are_soft_with_deterministic_ties ... ok
+test priority_fifo_backfill_and_same_pass_reservations ... ok
+test rejected_workers_are_excluded_and_public_records_are_supported ... ok
+test reservations_fractional_cpus_and_live_memory_protect_host ... ok
+test shards_spread_count_running_siblings_and_fall_back_to_one_worker ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/scheduler_differential.rs (target/debug/deps/scheduler_differential-0613c3759c882dd0)
+
+running 1 test
+test frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/service_contract.rs (target/debug/deps/service_contract-f62eb80c96d6c53d)
+
+running 8 tests
+test actual_systemd_parser_accepts_working_directory_with_spaces ... ok
+test controls_are_argument_vectors_and_mac_stop_boots_out_instead_of_triggering_keepalive ... ok
+test launchd_uses_argument_array_account_home_docker_context_and_separate_logs ... ok
+test service_definitions_reject_control_injection_relative_paths_and_ambiguous_names ... ok
+test source_001_controller_user_unit_preserves_payload_arguments_and_deduplicates_path ... ok
+test source_002_agent_system_unit_keeps_account_docker_access_home_and_data_directory ... ok
+test system_scope_requires_an_explicit_account_and_renders_boot_start_configuration ... ok
+test systemd_user_definition_runs_the_native_supervisor_and_escapes_service_arguments ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/system_scope_e2e.rs (target/debug/deps/system_scope_e2e-c9227f0aa00e9191)
+
+running 1 test
+test actual_root_system_service_drains_and_restores_database_after_schema_crash ... ignored, explicit root-only authorized host fixture; installs one unique system unit, no reboot
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/systemd_e2e.rs (target/debug/deps/systemd_e2e-5d88278ebf4ed5f1)
+
+running 1 test
+test actual_systemd_supervisor_controller_and_embedded_worker_lifecycle ... ignored, installs a unique temporary user systemd unit; requires running user manager and Docker
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/transfer_contract.rs (target/debug/deps/transfer_contract-10972c1e4bc07c07)
+
+running 1 test
+test cancelling_a_stalled_download_releases_the_blocking_reader ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/update_compatibility_contract.rs (target/debug/deps/update_compatibility_contract-76aca163706b819a)
+
+running 1 test
+test seven_frozen_update_requests_preserve_indefinite_draining_without_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/updates_contract.rs (target/debug/deps/updates_contract-03ae217a70592815)
+
+running 10 tests
+test auto_window_offline_update_only_and_unmanaged_skips_are_distinct ... ok
+test default_drain_never_cancels_and_progress_is_sequential ... ok
+test development_controller_reports_manual_update_reason_and_enforces_roles ... ok
+test managed_act_pin_override_off_and_safe_atomic_extraction_are_distinct ... ok
+test native_bundle_verifies_every_target_and_rejects_corrupt_or_link_members ... ok
+test only_explicit_deadline_or_now_cancels_once ... ok
+test rollback_halts_all_automatic_progress_and_restores_reservations ... ok
+test rollback_restores_consistent_database_and_keeps_failed_candidate_copy ... /tmp/.tmpeTtO5J/controller/install/versions/candidate-recovery/gridstator: 1: ELF: not found
+/tmp/.tmpeTtO5J/controller/install/versions/native-preview-20261110-6994d2cc804b/gridstator: 1: ELF: not found
+ok
+test tool_only_drift_updates_without_reinstalling_the_same_native_build ... ok
+test windows_wrap_midnight_and_exclude_the_end_boundary ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+
+     Running tests/updates_source_scenarios.rs (target/debug/deps/updates_source_scenarios-f029d82918c7744b)
+
+running 21 tests
+test source_001_current_behind_missing_metadata_unmanaged_and_offline_status ... ok
+test source_002_native_unbundled_replacement_rejects_admin_update ... ok
+test source_003_default_drain_preserves_jobs_beyond_eight_days_and_nudges_once ... ok
+test source_004_native_offers_wait_for_drain_and_only_one_worker_gets_a_candidate ... ok
+test source_004_sequential_drain_holds_placements_and_finishes_both_returned_workers ... ok
+test source_005_actual_api_now_cancels_the_job_before_nudging_its_worker ... ok
+test source_005_now_cancels_once_then_checks_after_jobs_finish ... ok
+test source_006_a_report_from_a_pending_worker_does_not_halt_the_active_worker ... ok
+test source_006_report_halts_with_node_prefix_projects_failure_and_allows_explicit_retry ... ok
+test source_007_launcher_rollback_halts_with_source_diagnostic ... ok
+test source_008_update_deadline_halts_and_does_not_advance_the_next_worker ... ok
+test source_009_cancel_rollout_restores_worker_and_projects_behind_immediately ... ok
+test source_010_follow_is_the_default_and_marks_the_rollout_automatic ... ok
+test source_011_api_rejects_window_mode_without_a_window ... ok
+test source_011_node_override_bypasses_a_closed_window ... ok
+test source_012_update_only_bootstraps_each_native_target_without_agent_socket ... ok
+test source_013_normal_and_wrapping_window_boundaries_match_source ... ok
+test source_014_native_act_only_drift_verified_archives_and_four_target_offers ... ok
+test source_015_act_override_view_drift_and_off_restore_current ... ok
+test source_015_actual_act_override_is_checked_against_upstream_checksums ... ignored, downloads the actual act override/checksums from upstream; no services or workloads
+test source_016_unmanaged_same_build_ignores_managed_act_drift ... ok
+
+test result: ok. 20 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.97s
+
+     Running tests/worker_contract.rs (target/debug/deps/worker_contract-4d34f7263bb198b9)
+
+running 14 tests
+test aborting_the_coordinator_cancels_owned_work_and_preserves_lost_outbox ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test actual_agent_cli_sigterm_drain_finishes_work_and_exits_cleanly ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test artifact_upload_failure_still_delivers_durable_command_result ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test disconnect_through_completion_replays_durable_logs_before_result_ack ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test drain_keeps_heartbeat_and_finishes_running_job_without_accepting_more ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test independent_managed_worker_installs_restarts_rejoins_and_unmanaged_worker_stays_put ... ignored, requires two real native release packages; set GRIDSTATOR_WORKER_UPDATE_FIXTURES to the recovery rehearsal directory
+test missing_snapshot_blob_yields_terminal_result_instead_of_stranding_job ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test ordinary_shutdown_stops_work_and_persists_lost_result ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+test pinned_relocation_persists_before_retarget_and_rejects_other_cluster ... ok
+test process_recovery_preserves_torn_log_high_water_and_existing_results ... ok
+test secret_masking_preserves_utf8_across_chunks_and_separates_streams ... ok
+test shutdown_retains_worker_ownership_until_started_update_finishes ... ok
+test spool_is_durable_sequenced_masked_and_bounded_after_truncation ... ok
+test update_probe_releases_admission_and_restart_handoff_is_explicit ... ignored, requires real Docker/buildx/act; run the explicit tool suite in TESTING.md
+
+test result: ok. 5 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 5.13s
+
+     Running tests/worker_toolchain_source.rs (target/debug/deps/worker_toolchain_source-9aaeaf83774c6682)
+
+running 1 test
+test source_003_real_managed_act_reprobes_and_invalid_candidate_reports_without_restart_loop ... ignored, requires upstream act release access; actual verified managed native worker; no Docker/services
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/workspace_contract.rs (target/debug/deps/workspace_contract-f59aac5f098b4ebe)
+
+running 19 tests
+test actual_snapshot_transport_uploads_only_missing_blobs ... ok
+test canonical_bytes_preserve_javascript_field_order_and_utf8_path_order ... ok
+test cas_roundtrip_and_workspace_archive_preserve_source_acceptance ... ok
+test git_capture_uses_working_tree_and_applies_secret_and_include_precedence ... ok
+test include_scan_bases_never_follow_symlink_components_outside_the_project ... ok
+test manifest_rejects_traversal_duplicates_leaf_descendants_and_escaping_links ... ok
+test manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules ... ok
+test materialization_rejects_frozen_unsafe_manifests_before_writing ... ok
+test max_size_warnings_and_lru_pinning_are_enforced ... ok
+test no_git_walk_obeys_nested_ignores_and_includes_hidden_files ... ok
+test raw_regex_backtracking_budget_accounts_for_capture_and_program_work ... ok
+test snapshot_pattern_depth_and_work_are_bounded_and_capture_reports_exhaustion ... ok
+test snapshot_patterns_match_frozen_picomatch_and_source_capture_fixtures ... ok
+test snapshot_raw_regex_compilation_and_backtracking_are_bounded ... ok
+test stat_cache_keeps_ids_stable_and_detects_same_size_rewrite ... ok
+test store_rejects_bad_digests_unsafe_archives_and_upload_limits ... ok
+test submodules_are_recursed_using_their_uncommitted_content ... ok
+test unsafe_source_and_destination_symlinks_do_not_escape_the_root ... ok
+test upload_tar_verifies_blobs_deduplicates_and_materializes_exact_tree ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running unittests examples/assemble_release.rs (target/debug/examples/assemble_release-818178f1f31a15d4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

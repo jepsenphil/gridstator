@@ -1,0 +1,11 @@
+{
+  "expectedBuildId": "buildx-fallback-dev-8e696aa15b2e",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "uncommitted working-tree snapshot; later shared edits not covered",
+  "jobId": "01M721B3N1R7ABBPWW0PSSBJRC",
+  "snapshotId": "sha256:de18c8cb8da1393d6463054e5bce13672c4411c826165bb73fca704baf874b91",
+  "result": "succeeded",
+  "archiveSha256": "61fc3fd2533d6548cbbd688ac6e9e991d2358a6b95952b52d54bd63d18372cc3",
+  "orchestratorSha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380",
+  "controllerScope": "disposable foreground controller with embedded worker; no services"
+}

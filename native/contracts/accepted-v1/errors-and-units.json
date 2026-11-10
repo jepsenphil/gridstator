@@ -1,0 +1,107 @@
+{
+  "errors": {
+    "BAD_REQUEST": {
+      "status": 400,
+      "exitCode": 2
+    },
+    "UNAUTHORIZED": {
+      "status": 401,
+      "exitCode": 4
+    },
+    "FORBIDDEN": {
+      "status": 403,
+      "exitCode": 4
+    },
+    "NOT_FOUND": {
+      "status": 404,
+      "exitCode": 5
+    },
+    "CONFLICT": {
+      "status": 409,
+      "exitCode": 1
+    },
+    "PAYLOAD_TOO_LARGE": {
+      "status": 413,
+      "exitCode": 1
+    },
+    "UNAVAILABLE": {
+      "status": 503,
+      "exitCode": 3
+    },
+    "TLS_PIN_MISMATCH": {
+      "status": 495,
+      "exitCode": 4
+    },
+    "CONFIG": {
+      "status": 500,
+      "exitCode": 2
+    },
+    "INTERNAL": {
+      "status": 500,
+      "exitCode": 1
+    }
+  },
+  "bodies": [
+    {
+      "body": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "invalid input"
+        }
+      },
+      "status": 400,
+      "exitCode": 2
+    },
+    {
+      "body": {
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "missing",
+          "hint": "check id",
+          "details": {
+            "id": "example"
+          }
+        }
+      },
+      "status": 404,
+      "exitCode": 5
+    }
+  ],
+  "units": [
+    {
+      "fn": "parseBytes",
+      "input": "1.5GiB",
+      "output": 1610612736
+    },
+    {
+      "fn": "parseBytes",
+      "input": "512m",
+      "output": 536870912
+    },
+    {
+      "fn": "parseBytes",
+      "input": "0.5",
+      "output": 1
+    },
+    {
+      "fn": "parseMegabytes",
+      "input": "512",
+      "output": 512
+    },
+    {
+      "fn": "parseMegabytes",
+      "input": "1g",
+      "output": 1024
+    },
+    {
+      "fn": "parseDuration",
+      "input": "1h30m",
+      "output": 5400000
+    },
+    {
+      "fn": "parseDuration",
+      "input": "0.5s",
+      "output": 500
+    }
+  ]
+}

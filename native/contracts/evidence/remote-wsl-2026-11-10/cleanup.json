@@ -1,0 +1,53 @@
+{
+  "result": "passed",
+  "ownNativeActorsExited": [
+    813386,
+    813249
+  ],
+  "ownLinuxServerProcessesStopped": [],
+  "windows": {
+    "stoppedOwnedIds": [],
+    "stockIds": [
+      2052,
+      3032,
+      5648,
+      10044,
+      10868,
+      13096,
+      14256,
+      14832,
+      18124,
+      19804,
+      20128,
+      20816,
+      27840,
+      28560,
+      28784,
+      30884,
+      31536,
+      31928,
+      34912,
+      41776,
+      42048,
+      44936,
+      47516
+    ],
+    "resolverPipes": []
+  },
+  "stock23DesktopPidSetUnchanged": true,
+  "stockCodeExeSha256Unchanged": true,
+  "legacySystemAgent": {
+    "status": "MainPID=618566\nActiveState=active\nSubState=running\n",
+    "unitSha256": "c2450846820fd06a0e4199995fe1ea9735b7c3ffe2ff2a34e44dadd0dcf1658c"
+  },
+  "ownedDockerContainersAndVolumesAbsent": true,
+  "noDefaultWslServerCreated": true,
+  "removedWindowsPrivateRoot": "/mnt/c/Users/User/AppData/Local/Temp/gridstator-wsl-v00jpyv0",
+  "removedWslGuiRoot": "/home/pj/gridstator-validation-v00jpyv0",
+  "globalSharedStorageWasNotReset": true,
+  "historicalDiagnosticWritesNotRuledOut": true,
+  "scope": "only owned fixture processes/paths; no global service, WSL restart, engine restart, global editor settings or global storage reset",
+  "privateWindowsRootAbsent": true,
+  "privateWslRootAbsent": true,
+  "stockProductJsonSha256Unchanged": true
+}

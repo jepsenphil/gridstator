@@ -1,0 +1,8 @@
+{
+  "controllerObservedExitCode": 0,
+  "ownedControllerProcessAbsent": true,
+  "ownedJobContainerAbsent": true,
+  "ownedWorkspaceVolumeAbsent": true,
+  "sharedBuildCacheRetained": true,
+  "installedOrChangedServices": false
+}

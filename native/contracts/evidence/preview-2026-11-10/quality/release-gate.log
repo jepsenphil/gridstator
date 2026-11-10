@@ -1,0 +1,10 @@
+Validated 226 parity rows; 218 verified
+Stable v2 acceptance is incomplete: 8 open rows.
+  vscode-native-helper: implemented
+  mixed-target-update: implemented
+  mac-signing: not started
+  four-target-linkage: implemented
+  linux-wsl2: not started
+  mac-docker-capacity: implemented
+  launchd-live: implemented
+  systemd-live: implemented

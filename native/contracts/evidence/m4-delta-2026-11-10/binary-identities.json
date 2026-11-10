@@ -1,0 +1,32 @@
+{
+  "arm64": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-c36d79523a20",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 67774440,
+    "sha256": "38e1be16df6fe895a794506d9dc613ebf6e63e0c3f11a90776a4c44968bfea86"
+  },
+  "x86_64": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-c36d79523a20",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-c36d79523a20",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/amd64",
+    "size": 65418256,
+    "sha256": "61e47efccb4865795c92c4b82a266c730bf0464973aaaccbd946715cc9d69227"
+  }
+}

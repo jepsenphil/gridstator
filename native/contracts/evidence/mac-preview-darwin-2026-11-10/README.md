@@ -1,0 +1,13 @@
+# Final Darwin preview evidence
+
+Both actual Mac executables embed `native-preview-20261110-cd6b769ebe6e`, version `2.0.0-dev.1`. All 40 production/build inputs and both separately embedded files (`LICENSE`, installer script) matched the common checkpoint before building. `source-checkpoint.json` also records transferred tests and fixtures. The embedded source revision is the parent commit of the uncommitted preview; exact file hashes identify the actual inputs.
+
+ARM64 ran natively on the macOS 15.6 M4. The amd64 executable ran under Rosetta on that same host, not on physical Intel hardware. Each target passed two sampler tests, the captured BuildKit metadata regression, strict all-target Clippy, a release build, and two actual final-byte foreground/user-LaunchAgent cases. The role cases exercised controller and standalone worker start, restart, stop and uninstall with unique private labels. They intentionally selected missing Docker/act paths to retain native-role checks independent of external tools.
+
+The final ARM executable additionally ran an actual private CLI/controller/worker against Docker Desktop Engine 29.9.3: snapshot paths with spaces, command output, exact downloaded artifact bytes, running-job cancellation and Docker build load output. Image ID and 9,430-byte size matched actual Docker inspection. An authenticated TLS GET using an encoded `sha256%3A` digest returned the exact captured file bytes. Physical host capacity was 10 CPUs / 16,384 MiB, Docker VM capacity was independently 10 CPUs / 7,934 MiB; initial host available was 4,618 MiB. `docker/proof.json` records those assertions and the actual executable SHA.
+
+The same worker source's full engine stop/start proof and independent native/Rosetta numeric review are in `../m4-memory-docker-2026-11-10`. Those used the explicitly identified temporary memory-overlay executable; this directory does not relabel them as final-byte runs. Historical 95/e3/1fd payloads and evidence remain frozen.
+
+`cleanup.json` confirms exact private actors exited, all unique labels were absent, credentials/state/workspaces were removed, no owned containers/volumes remained and Docker was left running. Existing desktop state and unrelated services were untouched. Immutable final payloads were copied to the local assembly input directory `/tmp/gridstator-mac-preview-artifacts-cd6b769ebe6e`; `summary.json` records their exact hashes and sizes.
+
+These are unsigned development previews. ARM has the linker's ad-hoc signature, with no Team Identifier; amd64 has no signature. Neither has Developer ID signing or notarization. No stable release publication or physical Intel validation is claimed.

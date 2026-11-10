@@ -1,0 +1,6 @@
+{"cliPluginsExtraDirs":["/Applications/Docker.app/Contents/Resources/cli-plugins"]}
+-rwxr-xr-x  1 philjepsen  staff  43017632 Nov  5 10:15 /Applications/Docker.app/Contents/Resources/bin/docker
+3.21: Pulling from library/alpine
+Digest: sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab
+Status: Image is up to date for alpine:3.21
+docker.io/library/alpine:3.21

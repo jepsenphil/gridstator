@@ -1,0 +1,134 @@
+{
+  "recordedAt": "2026-11-10T04:57:22.667120+00:00",
+  "classification": "Development evidence; stable release gates remain open",
+  "buildId": "native-preview-20261110-1fd6e3d425b3",
+  "productionCheckpointSha256": "1fd6e3d425b3af82e194eb3168de55d4fe90ffadc4feb7c86d8def60a8b4ed9c",
+  "checks": [
+    {
+      "name": "Final full default native suite",
+      "command": "cd native && cargo test --locked --all-targets",
+      "result": "passed",
+      "exitCode": 0,
+      "passed": 243,
+      "failed": 0,
+      "ignored": 31,
+      "targets": 42,
+      "log": "native-defaults.log",
+      "counting": "Last summary per Cargo target excludes nested child summaries. Ignored external-tool/service cases require separate actual host execution evidence."
+    },
+    {
+      "name": "Final Linux actual Buildx compatibility",
+      "command": "cd native && cargo test --locked --test executor_contract real_buildx_ -- --ignored --nocapture --test-threads=1",
+      "result": "passed",
+      "passed": 4,
+      "log": "linux-buildx.log"
+    },
+    {
+      "name": "Strict all-target Clippy",
+      "command": "cd native && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "clippy.log"
+    },
+    {
+      "name": "TypeScript types",
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "log": "typecheck.log",
+      "scope": "Final TypeScript source; subsequent production delta is Rust-only."
+    },
+    {
+      "name": "Full ESLint",
+      "command": "pnpm lint",
+      "result": "passed",
+      "log": "lint.log",
+      "scope": "Final linted TypeScript source; subsequent production delta is Rust-only."
+    },
+    {
+      "name": "Full formatting",
+      "command": "pnpm format:check",
+      "result": "passed",
+      "log": "format.log"
+    },
+    {
+      "name": "Frozen source AST inventory",
+      "command": "node native/scripts/check-source-inventory.mjs FROZEN_CHECKOUT",
+      "result": "passed",
+      "sourceDeclarations": 203,
+      "ledgerRows": 227,
+      "log": "source-inventory.log"
+    },
+    {
+      "name": "Actual M4 Docker executor",
+      "result": "passed",
+      "passed": 14,
+      "evidenceLocation": "native/contracts/evidence/buildkit-desktop-m4-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Actual retained TypeScript SDK encoded blob GET",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/blob-client-encoding-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Prior unchanged editor/Node acceptance",
+      "result": "passed",
+      "scope": "194 retained Node tests with ten opt-in skips and20 Playwright cases passed; actual SDK/three-window/unsaved cases run separately. Subsequent core-only fixes do not modify packaged VSIX d0. Overlapping results are not added.",
+      "evidenceLocation": "native/contracts/evidence/preview-2026-11-10/quality/summary.json"
+    },
+    {
+      "name": "Ledger structure",
+      "command": "node native/scripts/check-ledger.mjs",
+      "result": "passed",
+      "verified": 219,
+      "total": 227,
+      "log": "ledger.log"
+    },
+    {
+      "name": "Stable release gate",
+      "command": "node native/scripts/check-ledger.mjs --release",
+      "result": "rejected as required",
+      "exitCode": 1,
+      "openRows": 8,
+      "log": "release-gate.log"
+    }
+  ],
+  "parity": {
+    "verified": 219,
+    "total": 227,
+    "open": [
+      {
+        "id": "vscode-native-helper",
+        "status": "implemented"
+      },
+      {
+        "id": "mixed-target-update",
+        "status": "implemented"
+      },
+      {
+        "id": "mac-signing",
+        "status": "not started"
+      },
+      {
+        "id": "four-target-linkage",
+        "status": "implemented"
+      },
+      {
+        "id": "linux-wsl2",
+        "status": "not started"
+      },
+      {
+        "id": "mac-docker-capacity",
+        "status": "implemented"
+      },
+      {
+        "id": "launchd-live",
+        "status": "implemented"
+      },
+      {
+        "id": "systemd-live",
+        "status": "implemented"
+      }
+    ]
+  },
+  "releaseGate": "Stable verification must fail until the eight aggregate platform/release gates are satisfied.",
+  "provenance": "Uncommitted working-tree native source checkpoint; embedded sourceRevision is parent reference. No clean native release provenance or signed/notarized stable publication claim."
+}

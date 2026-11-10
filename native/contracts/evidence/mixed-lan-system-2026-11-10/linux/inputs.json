@@ -1,0 +1,14 @@
+{
+  "root": "/tmp/gridstator-system-proof-cd6-20261110-31df",
+  "unit": "gridstator-native-systemproof-cd6-20261110-31df",
+  "releaseDirectory": "/tmp/gridstator-system-proof-cd6-20261110-31df/baseline",
+  "badBundle": "/tmp/gridstator-system-proof-cd6-20261110-31df/negative/gridstator-2.0.0-rehearsal.3-native-bundle.tar.gz",
+  "badBuildId": "rehearsal-schema-crash",
+  "controllerHost": "192.168.1.162",
+  "positiveReleaseDirectory": "/tmp/gridstator-system-proof-cd6-20261110-31df/positive",
+  "positiveBundle": "/tmp/gridstator-system-proof-cd6-20261110-31df/positive/gridstator-2.0.0-dev.1-native-bundle.tar.gz",
+  "externalWorkerNames": [
+    "mixed-cd6-31df-linux",
+    "mixed-cd6-31df-mac"
+  ]
+}

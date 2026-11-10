@@ -1,0 +1,2190 @@
+{
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "cases": [
+    {
+      "id": "argv",
+      "argv": ["run", "--", "echo", "hello"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["echo", "hello"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "shell-options-after-deferred-flags",
+      "argv": [
+        "run",
+        "--no-snapshot",
+        "--image",
+        "alpine:3.20",
+        "--node",
+        "beta",
+        "--",
+        "sh",
+        "-c",
+        "printf literal"
+      ],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "alpine:3.20",
+        "command": ["sh", "-c", "printf literal"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "node": "beta",
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "literal-help-after-deferred-flags",
+      "argv": ["run", "--image", "alpine:3.20", "--", "echo", "--help", "-h", "--version"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "alpine:3.20",
+        "command": ["echo", "--help", "-h", "--version"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "single-shell",
+      "argv": ["run", "--", "echo hello"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "echo hello"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "forced-shell",
+      "argv": ["run", "--shell", "--", "echo", "hello"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "echo hello"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "options-after-argv",
+      "argv": ["run", "echo", "hello", "--image", "alpine:3.20"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "alpine:3.20",
+        "command": ["echo", "hello"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "repeat-scalar-last",
+      "argv": ["run", "--image", "first", "--image", "last", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "last",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "repeat-env-last",
+      "argv": ["run", "-e", "A=first", "--env", "A=last", "--env", "CLI_FIXTURE_ENV", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {
+          "A": "last",
+          "CLI_FIXTURE_ENV": "from-shell"
+        },
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "task-defaults",
+      "argv": ["run", "--task", "test"],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "task-image",
+        "command": ["sh", "-c", "npm test"],
+        "artifacts": ["output/report", "output/junit.xml"],
+        "name": "task:test",
+        "env": {
+          "FROM_TASK": "task",
+          "OVERRIDE": "task"
+        },
+        "secretEnv": {
+          "CLI_FIXTURE_SECRET": "fixture-secret"
+        },
+        "workdir": "packages/test",
+        "resources": {
+          "cpus": 0.5,
+          "memoryMb": 512
+        },
+        "target": {
+          "node": "task-node",
+          "labels": ["default", "shared", "task"],
+          "prefer": ["default-node", "shared", "task-node"]
+        },
+        "timeoutSeconds": 30,
+        "retry": {
+          "max": 2,
+          "on": ["failed"]
+        },
+        "priority": 3,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "task-command-override",
+      "argv": ["run", "--task", "test", "--", "printf", "override"],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "task-image",
+        "command": ["printf", "override"],
+        "artifacts": ["output/report", "output/junit.xml"],
+        "name": "task:test",
+        "env": {
+          "FROM_TASK": "task",
+          "OVERRIDE": "task"
+        },
+        "secretEnv": {
+          "CLI_FIXTURE_SECRET": "fixture-secret"
+        },
+        "workdir": "packages/test",
+        "resources": {
+          "cpus": 0.5,
+          "memoryMb": 512
+        },
+        "target": {
+          "node": "task-node",
+          "labels": ["default", "shared", "task"],
+          "prefer": ["default-node", "shared", "task-node"]
+        },
+        "timeoutSeconds": 30,
+        "retry": {
+          "max": 2,
+          "on": ["failed"]
+        },
+        "priority": 3,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "flags-override-task",
+      "argv": [
+        "run",
+        "--task",
+        "test",
+        "--image",
+        "flag-image",
+        "--cpus",
+        "0.25",
+        "--memory",
+        "1.5g",
+        "--priority",
+        "-10",
+        "--retries",
+        "3",
+        "--timeout",
+        "1h30m",
+        "--node",
+        "flag-node",
+        "--label",
+        " shared, extra , ,last",
+        "--prefer",
+        "flag-node",
+        "--env",
+        "OVERRIDE=flag",
+        "--artifact",
+        "./more"
+      ],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": "packages/web",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "flag-image",
+        "command": ["sh", "-c", "npm test"],
+        "artifacts": ["output/report", "output/junit.xml", "packages/web/more"],
+        "name": "task:test",
+        "env": {
+          "FROM_TASK": "task",
+          "OVERRIDE": "flag"
+        },
+        "secretEnv": {
+          "CLI_FIXTURE_SECRET": "fixture-secret"
+        },
+        "workdir": "packages/test",
+        "resources": {
+          "cpus": 0.25,
+          "memoryMb": 1536
+        },
+        "target": {
+          "node": "flag-node",
+          "labels": ["default", "shared", "task", "extra", "last"],
+          "prefer": ["default-node", "shared", "task-node", "flag-node"]
+        },
+        "timeoutSeconds": 5400,
+        "retry": {
+          "max": 3,
+          "on": ["failed"]
+        },
+        "priority": -10,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "artifact-relative",
+      "argv": ["run", "--artifact", "../reports/../result", "--", "true"],
+      "config": {},
+      "workdir": "packages/web",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": ["packages/result"],
+        "env": {},
+        "secretEnv": {},
+        "workdir": "packages/web",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "artifact-absolute-looking",
+      "argv": ["run", "--artifact", "/report", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": ["report"],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "snapshot-identity",
+      "argv": ["run", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "snapshot": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "snapshot": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "empty-task-clears",
+      "argv": ["run", "--task", "", "--", "true"],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "default-image",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 3,
+          "memoryMb": 2048
+        },
+        "target": {
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"]
+        },
+        "timeoutSeconds": 60,
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "empty-name-clears",
+      "argv": ["run", "--name", "", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "empty-name-task-fallback",
+      "argv": ["run", "--name", "", "--task", "test"],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "task-image",
+        "command": ["sh", "-c", "npm test"],
+        "artifacts": ["output/report", "output/junit.xml"],
+        "name": "task:test",
+        "env": {
+          "FROM_TASK": "task",
+          "OVERRIDE": "task"
+        },
+        "secretEnv": {
+          "CLI_FIXTURE_SECRET": "fixture-secret"
+        },
+        "workdir": "packages/test",
+        "resources": {
+          "cpus": 0.5,
+          "memoryMb": 512
+        },
+        "target": {
+          "node": "task-node",
+          "labels": ["default", "shared", "task"],
+          "prefer": ["default-node", "shared", "task-node"]
+        },
+        "timeoutSeconds": 30,
+        "retry": {
+          "max": 2,
+          "on": ["failed"]
+        },
+        "priority": 3,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "empty-node-clears",
+      "argv": ["run", "--task", "test", "--node", ""],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "task-image",
+        "command": ["sh", "-c", "npm test"],
+        "artifacts": ["output/report", "output/junit.xml"],
+        "name": "task:test",
+        "env": {
+          "FROM_TASK": "task",
+          "OVERRIDE": "task"
+        },
+        "secretEnv": {
+          "CLI_FIXTURE_SECRET": "fixture-secret"
+        },
+        "workdir": "packages/test",
+        "resources": {
+          "cpus": 0.5,
+          "memoryMb": 512
+        },
+        "target": {
+          "labels": ["default", "shared", "task"],
+          "prefer": ["default-node", "shared", "task-node"]
+        },
+        "timeoutSeconds": 30,
+        "retry": {
+          "max": 2,
+          "on": ["failed"]
+        },
+        "priority": 3,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "task-hidden-workdir",
+      "argv": ["run", "--task", "test"],
+      "config": {
+        "tasks": {
+          "test": {
+            "command": "true",
+            "workdir": ".config"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "name": "task:test",
+        "env": {},
+        "secretEnv": {},
+        "workdir": "config",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "task-absolute-workdir",
+      "argv": ["run", "--task", "test"],
+      "config": {
+        "tasks": {
+          "test": {
+            "command": "true",
+            "workdir": "/absolute"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "invalid job spec"
+    },
+    {
+      "id": "missing-task",
+      "argv": ["run", "--task", "missing"],
+      "config": {
+        "defaults": {
+          "image": "default-image",
+          "resources": {
+            "cpus": 3,
+            "memory": "2g"
+          },
+          "labels": ["default", "shared"],
+          "prefer": ["default-node", "shared"],
+          "timeout": "1m"
+        },
+        "tasks": {
+          "test": {
+            "command": "npm test",
+            "image": "task-image",
+            "env": {
+              "FROM_TASK": "task",
+              "OVERRIDE": "task"
+            },
+            "secretEnv": ["CLI_FIXTURE_SECRET"],
+            "resources": {
+              "cpus": 0.5,
+              "memory": "512m"
+            },
+            "workdir": "./packages/test",
+            "labels": ["task", "shared"],
+            "prefer": ["task-node", "shared"],
+            "priority": 3,
+            "retry": {
+              "max": 2,
+              "on": ["failed"]
+            },
+            "timeout": "30s",
+            "artifacts": ["output/report"],
+            "junit": "output/junit.xml",
+            "node": "task-node"
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "No task named \"missing\" in gridstator.yml"
+    },
+    {
+      "id": "missing-command",
+      "argv": ["run"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "Nothing to run"
+    },
+    {
+      "id": "invalid-label",
+      "argv": ["run", "--label", "bad label", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "Invalid label \"bad label\""
+    },
+    {
+      "id": "invalid-shards",
+      "argv": ["run", "--shards", "65", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "invalid shards"
+    },
+    {
+      "id": "numeric-\" 2 \"",
+      "argv": ["run", "--cpus", " 2 ", "--priority", " 2 ", "--retries", " 2 ", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "numeric-\"0x2\"",
+      "argv": ["run", "--cpus", "0x2", "--priority", "0x2", "--retries", "0x2", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "numeric-\"0o2\"",
+      "argv": ["run", "--cpus", "0o2", "--priority", "0o2", "--retries", "0o2", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "numeric-\"0b10\"",
+      "argv": ["run", "--cpus", "0b10", "--priority", "0b10", "--retries", "0b10", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "numeric-\"2e0\"",
+      "argv": ["run", "--cpus", "2e0", "--priority", "2e0", "--retries", "2e0", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "numeric-\"﻿2﻿\"",
+      "argv": ["run", "--cpus", "﻿2﻿", "--priority", "﻿2﻿", "--retries", "﻿2﻿", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 2,
+          "on": ["lost"]
+        },
+        "priority": 2,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "empty-numeric-zero",
+      "argv": ["run", "--priority", "", "--retries", "", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 2,
+          "memoryMb": 4096
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": 0,
+        "project": "project-fixture"
+      },
+      "shards": 1
+    },
+    {
+      "id": "invalid-number",
+      "argv": ["run", "--cpus", "nope", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 2,
+      "message": "invalid job spec"
+    },
+    {
+      "id": "invalid-memory",
+      "argv": ["run", "--memory", "invalid", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 1,
+      "message": "Invalid size \"invalid\" (expected e.g. 512m, 8g)"
+    },
+    {
+      "id": "invalid-timeout",
+      "argv": ["run", "--timeout", "invalid", "--", "true"],
+      "config": {},
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": false,
+      "exitCode": 1,
+      "message": "Invalid duration \"invalid\" (expected e.g. 30s, 15m, 24h)"
+    },
+    {
+      "id": "fractional-resources",
+      "argv": ["run", "--task", "test"],
+      "config": {
+        "tasks": {
+          "test": {
+            "command": "true",
+            "resources": {
+              "cpus": 0.125,
+              "memory": 16
+            },
+            "priority": -100,
+            "shards": 64
+          }
+        }
+      },
+      "workdir": ".",
+      "environment": {
+        "CLI_FIXTURE_SECRET": "fixture-secret",
+        "CLI_FIXTURE_ENV": "from-shell"
+      },
+      "success": true,
+      "output": {
+        "kind": "command",
+        "image": "node:24-bookworm",
+        "command": ["sh", "-c", "true"],
+        "artifacts": [],
+        "name": "task:test",
+        "env": {},
+        "secretEnv": {},
+        "workdir": ".",
+        "resources": {
+          "cpus": 0.125,
+          "memoryMb": 16
+        },
+        "target": {
+          "labels": [],
+          "prefer": []
+        },
+        "retry": {
+          "max": 0,
+          "on": ["lost"]
+        },
+        "priority": -100,
+        "project": "project-fixture"
+      },
+      "shards": 64
+    }
+  ],
+  "units": [
+    {
+      "fn": "bytes",
+      "input": "0",
+      "success": true,
+      "output": 0
+    },
+    {
+      "fn": "bytes",
+      "input": "0.5",
+      "success": true,
+      "output": 1
+    },
+    {
+      "fn": "bytes",
+      "input": "1.5GiB",
+      "success": true,
+      "output": 1610612736
+    },
+    {
+      "fn": "bytes",
+      "input": "512m",
+      "success": true,
+      "output": 536870912
+    },
+    {
+      "fn": "bytes",
+      "input": "1KiB",
+      "success": true,
+      "output": 1024
+    },
+    {
+      "fn": "bytes",
+      "input": "1 MB",
+      "success": true,
+      "output": 1048576
+    },
+    {
+      "fn": "bytes",
+      "input": "﻿512m﻿",
+      "success": true,
+      "output": 536870912
+    },
+    {
+      "fn": "bytes",
+      "input": "512m",
+      "success": false
+    },
+    {
+      "fn": "bytes",
+      "input": "-1",
+      "success": false
+    },
+    {
+      "fn": "bytes",
+      "input": "1e3",
+      "success": false
+    },
+    {
+      "fn": "bytes",
+      "input": "1unknown",
+      "success": false
+    },
+    {
+      "fn": "megabytes",
+      "input": "512",
+      "success": true,
+      "output": 512
+    },
+    {
+      "fn": "megabytes",
+      "input": " 512 ",
+      "success": true,
+      "output": 512
+    },
+    {
+      "fn": "megabytes",
+      "input": "1g",
+      "success": true,
+      "output": 1024
+    },
+    {
+      "fn": "megabytes",
+      "input": "1.5g",
+      "success": true,
+      "output": 1536
+    },
+    {
+      "fn": "megabytes",
+      "input": "0.5",
+      "success": true,
+      "output": 0
+    },
+    {
+      "fn": "megabytes",
+      "input": "﻿512﻿",
+      "success": true,
+      "output": 512
+    },
+    {
+      "fn": "megabytes",
+      "input": "512",
+      "success": false
+    },
+    {
+      "fn": "megabytes",
+      "input": "invalid",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "1h30m",
+      "success": true,
+      "output": 5400000
+    },
+    {
+      "fn": "duration",
+      "input": "0.5s",
+      "success": true,
+      "output": 500
+    },
+    {
+      "fn": "duration",
+      "input": "1ms",
+      "success": true,
+      "output": 1
+    },
+    {
+      "fn": "duration",
+      "input": "1d",
+      "success": true,
+      "output": 86400000
+    },
+    {
+      "fn": "duration",
+      "input": " 1s ",
+      "success": true,
+      "output": 1000
+    },
+    {
+      "fn": "duration",
+      "input": "﻿1s﻿",
+      "success": true,
+      "output": 1000
+    },
+    {
+      "fn": "duration",
+      "input": "1s",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "1s 2m",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "1.",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "-1s",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "1e3s",
+      "success": false
+    },
+    {
+      "fn": "duration",
+      "input": "invalid",
+      "success": false
+    }
+  ],
+  "settings": [
+    {
+      "flags": {
+        "reserveCpus": " 1 "
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 1
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": " 1 "
+      },
+      "success": true,
+      "output": {
+        "maxConcurrency": 1
+      }
+    },
+    {
+      "flags": {
+        "reserveCpus": "0x2"
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 2
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": "0x2"
+      },
+      "success": true,
+      "output": {
+        "maxConcurrency": 2
+      }
+    },
+    {
+      "flags": {
+        "reserveCpus": "0o2"
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 2
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": "0o2"
+      },
+      "success": true,
+      "output": {
+        "maxConcurrency": 2
+      }
+    },
+    {
+      "flags": {
+        "reserveCpus": "0b10"
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 2
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": "0b10"
+      },
+      "success": true,
+      "output": {
+        "maxConcurrency": 2
+      }
+    },
+    {
+      "flags": {
+        "reserveCpus": "﻿2﻿"
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 2
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": "﻿2﻿"
+      },
+      "success": true,
+      "output": {
+        "maxConcurrency": 2
+      }
+    },
+    {
+      "flags": {
+        "reserveCpus": "-1"
+      },
+      "success": false
+    },
+    {
+      "flags": {
+        "maxConcurrency": "-1"
+      },
+      "success": false
+    },
+    {
+      "flags": {
+        "reserveCpus": "1.5"
+      },
+      "success": true,
+      "output": {
+        "reserved": {
+          "cpus": 1.5
+        }
+      }
+    },
+    {
+      "flags": {
+        "maxConcurrency": "1.5"
+      },
+      "success": false
+    },
+    {
+      "flags": {
+        "reserveCpus": "invalid"
+      },
+      "success": false
+    },
+    {
+      "flags": {
+        "maxConcurrency": "invalid"
+      },
+      "success": false
+    },
+    {
+      "flags": {
+        "labels": "fast, ssd"
+      },
+      "success": true,
+      "output": {
+        "labels": ["fast", "ssd"]
+      }
+    },
+    {
+      "flags": {
+        "labels": "fast, ,ssd"
+      },
+      "success": true,
+      "output": {
+        "labels": ["fast", "ssd"]
+      }
+    },
+    {
+      "flags": {
+        "labels": "﻿fast﻿,ssd"
+      },
+      "success": true,
+      "output": {
+        "labels": ["fast", "ssd"]
+      }
+    },
+    {
+      "flags": {
+        "labels": "bad label"
+      },
+      "success": false
+    }
+  ],
+  "exits": [
+    {
+      "state": "created",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 7,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 75,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 130,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 255,
+      "output": 1
+    },
+    {
+      "state": "created",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 7,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 75,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 130,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 255,
+      "output": 1
+    },
+    {
+      "state": "queued",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 7,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 75,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 130,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 255,
+      "output": 1
+    },
+    {
+      "state": "assigned",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 7,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 75,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 130,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 255,
+      "output": 1
+    },
+    {
+      "state": "starting",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 7,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 75,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 130,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 255,
+      "output": 1
+    },
+    {
+      "state": "running",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "succeeded",
+      "exitCode": null,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": -1,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 0,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 1,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 7,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 75,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 130,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 255,
+      "output": 0
+    },
+    {
+      "state": "succeeded",
+      "exitCode": 256,
+      "output": 0
+    },
+    {
+      "state": "failed",
+      "exitCode": null,
+      "output": 1
+    },
+    {
+      "state": "failed",
+      "exitCode": -1,
+      "output": 1
+    },
+    {
+      "state": "failed",
+      "exitCode": 0,
+      "output": 1
+    },
+    {
+      "state": "failed",
+      "exitCode": 1,
+      "output": 1
+    },
+    {
+      "state": "failed",
+      "exitCode": 7,
+      "output": 7
+    },
+    {
+      "state": "failed",
+      "exitCode": 75,
+      "output": 75
+    },
+    {
+      "state": "failed",
+      "exitCode": 130,
+      "output": 130
+    },
+    {
+      "state": "failed",
+      "exitCode": 255,
+      "output": 255
+    },
+    {
+      "state": "failed",
+      "exitCode": 256,
+      "output": 1
+    },
+    {
+      "state": "cancelled",
+      "exitCode": null,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": -1,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 0,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 1,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 7,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 75,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 130,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 255,
+      "output": 130
+    },
+    {
+      "state": "cancelled",
+      "exitCode": 256,
+      "output": 130
+    },
+    {
+      "state": "lost",
+      "exitCode": null,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": -1,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 0,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 1,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 7,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 75,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 130,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 255,
+      "output": 75
+    },
+    {
+      "state": "lost",
+      "exitCode": 256,
+      "output": 75
+    }
+  ]
+}

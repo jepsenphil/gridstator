@@ -1,0 +1,42 @@
+{
+  "arm64": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-99e85b47269b",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-99e85b47269b",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/arm64",
+    "size": 57001552,
+    "sha256": "d1fbfcd726676dc14d90bb29cbc1312a4a3766fb35552f18e8df48b1a5791908",
+    "file": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-arm64: Mach-O 64-bit executable arm64\n",
+    "lipoArchitectures": "arm64",
+    "linkage": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-arm64:\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+    "codesignDisplay": "Executable=/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-arm64\nIdentifier=gridstator-f3cbbedc1d687979\nFormat=Mach-O thin (arm64)\nCodeDirectory v=20400 size=442008 flags=0x20002(adhoc,linker-signed) hashes=13809+0 location=embedded\nSignature=adhoc\nInfo.plist=not bound\nTeamIdentifier=not set\nSealed Resources=none\nInternal requirements=none\n",
+    "signingScope": "locally linked/ad-hoc development executable; no DeveloperID/notarization/Gatekeeper-release claim"
+  },
+  "x86_64": {
+    "version": "2.0.0-dev.1",
+    "buildId": "m4-final-99e85b47269b",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216-worktree-99e85b47269b",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "darwin/amd64",
+    "size": 54504792,
+    "sha256": "7b2f35ce27020473bf9cc35859a7a92acbfccd3c2b507439c8c660aa86d7def4",
+    "file": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-x86_64: Mach-O 64-bit executable x86_64\n",
+    "lipoArchitectures": "x86_64",
+    "linkage": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-x86_64:\n\t/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)\n\t/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)\n\t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)\n\t/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)\n",
+    "codesignDisplay": "/Users/philjepsen/gridstator-validation.I50ONpwm/payloads/m4-final-x86_64: code object is not signed at all\n",
+    "signingScope": "locally linked/ad-hoc development executable; no DeveloperID/notarization/Gatekeeper-release claim"
+  }
+}

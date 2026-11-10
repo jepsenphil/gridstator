@@ -1,0 +1,13 @@
+{
+  "result": "clean",
+  "uniqueLabelsAbsent": [
+    "org.gridstator.native.validation.agent.01m71rwc9ejmh38dpx18t226bd",
+    "org.gridstator.native.validation.agent.01m71s2e42x4rnj88ajb668nas",
+    "org.gridstator.native.validation.controller.01m71rwb3sexy0wkpdrqjv952t",
+    "org.gridstator.native.validation.controller.01m71s27t9pzvvxxpy7nc41bxr"
+  ],
+  "roleCredentialRootRemoved": "/Users/philjepsen/gridstator-validation.I50ONpwm/preview-roles-95cfa7161440",
+  "noOwnedProcesses": true,
+  "defaultServerAbsent": true,
+  "existingDesktopPid31833Live": true
+}

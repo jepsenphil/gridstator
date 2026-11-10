@@ -1,6 +1,6 @@
 # Gridstator v2: native Rust upgrade plan
 
-Date: 2026-11-09. Status: review draft; scope decisions are settled, final plan confirmation is pending.
+Date: 2026-11-09. Status: confirmed implementation baseline (Q18).
 
 ## 1. Outcome and scope
 
@@ -24,17 +24,18 @@ In this document, **v1** means the current Node-based generation, whose package 
 | Q1–Q2 | Native executable, with no JavaScript runtime inside the standalone core. The goal is simpler installation and updates. Worker tools remain external. |
 | Q3, Q6 | Linux/WSL2 x64 and ARM64; macOS Intel and Apple Silicon. All targets support CLI, controller, embedded worker, standalone worker, and automatic services. |
 | Q4 | Preserve all current features, including managed updates and rollback. |
-| Q5, Q9 | Rust for the CLI, worker, and controller, following the owner's explicit revision of the earlier Go choice. Maintained mainly by the owner with coding agents; prioritize straightforward maintenance. |
+| Q5, Q9 | Rust for the CLI, worker, and controller. Maintained mainly by the owner with coding agents; prioritize straightforward maintenance. |
 | Q7 | Fresh cluster installation is acceptable. Recreate credentials, rejoin workers, and archive old history separately. No old-state migration or mixed Node/native cluster support is required. |
 | Q8 | Keep Node in VS Code's supplied extension runtime. Thin TypeScript extension: native CLI owns snapshots and local administration; extension owns editor UI and live API views. |
 | Q10 | A Mac worker may wait for Docker to become ready, potentially after user login. |
-| Q11 | The native scope and initial release gate were confirmed; the subsequent explicit Rust instruction supersedes the original language choice. |
+| Q11 | The native scope and initial release gate were confirmed. |
 | Q12 | Develop Rust alongside TypeScript in the same repository; keep v1 as a behavioral reference until cutover. |
 | Q13 | Preserve CLI commands/flags, exit codes, project YAML, and JSON outputs. Explicitly document native update/runtime metadata exceptions. |
 | Q14 | No fixed deadline. Release stable only after the acceptance gates pass. |
 | Q15 | Provide a small verified installer and manual downloads. Retain explicit init/join/install-service commands and detect missing worker tools. |
 | Q16 | Developer ID sign and notarize stable macOS releases. Credentials and the pipeline are release prerequisites; unsigned development builds are acceptable. |
 | Q17 | Arrange suitable Intel and Apple Silicon Mac validation access. No Mac hardware is assumed available. |
+| Q18 | The owner confirmed this written Rust plan, milestones M0–M9, and release gates as the implementation baseline. Implementation remains a separate task. |
 
 ### Deployment contract
 
@@ -558,5 +559,8 @@ reopen settled product decisions only when new evidence makes the agreed require
 
 ## 9. Plan confirmation
 
-Scope decisions Q1–Q17 are recorded above. Q18 confirms this concrete plan and its release gates.
+The owner confirmed this plan and its release gates in Q18 on 2026-11-09. Scope decisions Q1–Q18
+are settled, with Rust for the standalone CLI/controller/worker and Node in VS Code's extension
+runtime. This document is the confirmed implementation baseline.
+
 Software implementation, publishing, and changing a live cluster are separate tasks.

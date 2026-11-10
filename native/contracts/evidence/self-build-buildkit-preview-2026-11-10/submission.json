@@ -1,0 +1,67 @@
+{
+  "id": "01M71WTMJG104TA719VT67QRY3",
+  "name": "task:native-linux",
+  "kind": "command",
+  "state": "queued",
+  "stateReason": "waiting for scheduler",
+  "priority": 0,
+  "owner": "local-admin",
+  "snapshotId": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+  "spec": {
+    "kind": "command",
+    "name": "task:native-linux",
+    "env": {
+      "GRIDSTATOR_SOURCE_REVISION": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "GRIDSTATOR_BUILD_ID": "native-preview-20261110-1fd6e3d425b3"
+    },
+    "secretEnv": {},
+    "snapshot": "sha256:e6a4bc94454017ec988ccdeffcdd901fe049be8b820f5f8ba4f7b7bfcd1d8856",
+    "workdir": ".",
+    "resources": {
+      "cpus": 2,
+      "memoryMb": 4096
+    },
+    "target": {
+      "labels": [],
+      "prefer": []
+    },
+    "timeoutSeconds": 3600,
+    "retry": {
+      "max": 0,
+      "on": [
+        "lost"
+      ]
+    },
+    "priority": 0,
+    "project": "gridstator-native-v2",
+    "image": "rust:1.99.1-bookworm@sha256:e6f2cff35d0f309acf8433b4f05878ed77092602c5065cc81801177da0bb3a9c",
+    "command": [
+      "sh",
+      "-c",
+      "bash native/scripts/build-linux.sh both"
+    ],
+    "artifacts": [
+      "native/self-build"
+    ]
+  },
+  "nodeId": null,
+  "nodeName": null,
+  "assignmentId": null,
+  "attempt": 1,
+  "retryOf": null,
+  "cancelRequestedAt": null,
+  "exitCode": null,
+  "error": null,
+  "queuePosition": null,
+  "logSeq": 0,
+  "outputs": null,
+  "artifacts": [],
+  "groupId": null,
+  "shardIndex": null,
+  "shardTotal": null,
+  "createdAt": 1794286375504,
+  "queuedAt": 1794286375504,
+  "assignedAt": null,
+  "startedAt": null,
+  "finishedAt": null
+}

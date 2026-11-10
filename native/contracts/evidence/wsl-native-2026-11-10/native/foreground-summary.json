@@ -1,0 +1,268 @@
+{
+  "result": "passed",
+  "recordedAt": "2026-11-10T05:41:40Z",
+  "buildInfo": {
+    "version": "2.0.0-dev.1",
+    "buildId": "native-preview-20261110-cd6b769ebe6e",
+    "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "capabilities": [
+      "bridge-v1",
+      "native-controller",
+      "native-worker",
+      "snapshots",
+      "release-verification"
+    ],
+    "target": "linux/amd64",
+    "size": 27550072,
+    "sha256": "eecbbc71e3c5a2234302fd637d5d668fc641935b32e878124f1b628a59473380"
+  },
+  "clusterId": "01M71ZKNMQVKAJDC15N9QWVH0J",
+  "nodeId": "01M71ZKPC69PVJ9ZA6CT2DPSHR",
+  "checks": {
+    "nativeSnapshotBytesAndEnvExclusion": true,
+    "secretMaskingAndPublicSpecRedaction": true,
+    "artifactBinaryBytesExact": true,
+    "runExit7": true,
+    "runningCancellation": true,
+    "buildImageIdMatchesDockerInspect": true,
+    "buildImageSizePositive": true,
+    "workerRestartReusesNodeIdentity": true,
+    "controllerRestartReconnectsWorker": true,
+    "windowsNativeLoopbackTlsBeforeAndAfterRestarts": true
+  },
+  "windowsHealthChecks": [
+    {
+      "stage": "initial-controller-and-worker-ready",
+      "exitCode": 0,
+      "url": "https://127.0.0.1:46661/v1/health",
+      "caTrust": "Explicit private CA through owned WSL UNC path and hostname verification. Per-invocation revocation check disabled for this ephemeral private CA; global Windows trust unchanged.",
+      "health": {
+        "ok": true,
+        "service": "gridstator-controller",
+        "version": "2.0.0-dev.1",
+        "apiVersion": "v1",
+        "native": true
+      }
+    },
+    {
+      "stage": "after-worker-process-restart",
+      "exitCode": 0,
+      "url": "https://127.0.0.1:46661/v1/health",
+      "caTrust": "Explicit private CA through owned WSL UNC path and hostname verification. Per-invocation revocation check disabled for this ephemeral private CA; global Windows trust unchanged.",
+      "health": {
+        "ok": true,
+        "service": "gridstator-controller",
+        "version": "2.0.0-dev.1",
+        "apiVersion": "v1",
+        "native": true
+      }
+    },
+    {
+      "stage": "after-controller-process-restart",
+      "exitCode": 0,
+      "url": "https://127.0.0.1:46661/v1/health",
+      "caTrust": "Explicit private CA through owned WSL UNC path and hostname verification. Per-invocation revocation check disabled for this ephemeral private CA; global Windows trust unchanged.",
+      "health": {
+        "ok": true,
+        "service": "gridstator-controller",
+        "version": "2.0.0-dev.1",
+        "apiVersion": "v1",
+        "native": true
+      }
+    }
+  ],
+  "imageId": "sha256:c78a6864918d94d38fca2bbe15079f24fd49e0eb2e0309a20e5d14a910993922",
+  "jobIds": [
+    "01M71ZKPZ71HX1H2JG0VVJ3AYY",
+    "01M71ZKQTKX7R9Z38406V1FD7P",
+    "01M71ZKRSZHQJYC6YSN0T70M6Q"
+  ],
+  "commands": [
+    {
+      "args": [
+        "build-info",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "controller",
+        "init",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "46661"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "token",
+        "create",
+        "--join",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "agent",
+        "join",
+        "https://127.0.0.1:46661",
+        "--token",
+        "<redacted>",
+        "--fingerprint",
+        "sha256:92c4cf2229750097f45bb673921614c6dfd45d18c2b0b4a233024eac7084917f",
+        "--name",
+        "wsl-native-private-v00jpyv0"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "run",
+        "--image",
+        "alpine:3.20",
+        "--cpus",
+        "1",
+        "--memory",
+        "128m",
+        "--artifact",
+        "result.txt",
+        "--secret-env",
+        "GRIDSTATOR_WSL_SECRET",
+        "--json",
+        "--",
+        "sh",
+        "-c",
+        "cat source.txt; test ! -e .env; printf \"secret=%s\\n\" \"$GRIDSTATOR_WSL_SECRET\"; printf \"wsl-artifact\\000\\377\\n\" > result.txt"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "logs",
+        "01M71ZKPZ71HX1H2JG0VVJ3AYY"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "artifacts",
+        "01M71ZKPZ71HX1H2JG0VVJ3AYY",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "artifacts",
+        "01M71ZKPZ71HX1H2JG0VVJ3AYY",
+        "--download",
+        "result.txt.tar",
+        "--out",
+        "/home/pj/gridstator-native-validation-v00jpyv0/runtime/downloaded-artifact.tar"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "run",
+        "--no-snapshot",
+        "--image",
+        "alpine:3.20",
+        "--cpus",
+        "1",
+        "--memory",
+        "64m",
+        "--",
+        "sh",
+        "-c",
+        "exit 7"
+      ],
+      "exitCode": 7
+    },
+    {
+      "args": [
+        "run",
+        "--no-snapshot",
+        "--image",
+        "alpine:3.20",
+        "--memory",
+        "64m",
+        "--json",
+        "--",
+        "sleep",
+        "60"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "cancel",
+        "01M71ZKQTKX7R9Z38406V1FD7P"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "build",
+        "--tag",
+        "gridstator-wsl-validation:v00jpyv0",
+        "--output",
+        "load",
+        "--cpus",
+        "1",
+        "--memory",
+        "128m",
+        "--json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "run",
+        "--no-snapshot",
+        "--image",
+        "alpine:3.20",
+        "--memory",
+        "64m",
+        "--",
+        "echo",
+        "after-worker-restart"
+      ],
+      "exitCode": 0
+    },
+    {
+      "args": [
+        "run",
+        "--no-snapshot",
+        "--image",
+        "alpine:3.20",
+        "--memory",
+        "64m",
+        "--",
+        "echo",
+        "after-controller-restart"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "runtimePathAbsent": [
+    "node",
+    "npm",
+    "cargo",
+    "rustc",
+    "python3",
+    "jq"
+  ],
+  "limits": "Actual WSL2 x64 foreground CLI/controller/worker and Docker workflows. No WSL reboot/termination or host boot behavior tested; existing system v1 agent and Windows Code are separate.",
+  "cleanup": {
+    "privateRolesStopped": true,
+    "privateCredentialsAndDataRemoved": true,
+    "uniqueBuildTagRemoved": true,
+    "ownedContainerLeftoversRemoved": 0,
+    "globalPrefixOrExistingServiceChanged": false
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "buildId": "native-preview-20261110-7c41b2f3c79d",
+  "binarySha256": "8cf0f97be1fcfae1b9d1a6a601ccb7f600298bb9ca59f862c6369351f4c6aa60",
+  "source": {
+    "nativeStateSha256": "7f406a9b5a2a6eba65474b4440a421af1dd27f40837314e2be97a870586cd21e",
+    "frozenV1Revision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+    "frozenV1FsSha256": "0f73cc2686ec82d460ffbe09e7f487098bceb9a532490e93b8de099b5b6067df",
+    "compiledReferenceHelperSha256": "059e57c060bdc86a2047efa8ef2d5882e51b0014d6515d2e4e1fd9fae283b698"
+  },
+  "uid": 1000,
+  "umask": "0022",
+  "nodeVersion": "v24.15.0",
+  "scope": "Every config/data/home/cache/runtime/temp write is inside a fresh owned TemporaryDirectory. No actual /tmp or user-directory permission target. No services/network listeners started.",
+  "cases": [
+    {
+      "case": "absolute-custom-config",
+      "nativeCommand": [
+        "/repos/gridstator/native/self-build/proof-01M72202QV3TGHQEHTC67VN3HJ/linux-amd64/gridstator",
+        "controller",
+        "init",
+        "--data-dir",
+        "/tmp/gridstator-config-parent-baseline-1a29f20y/controller",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "0"
+      ],
+      "nativeWorkingDirectory": "/tmp/gridstator-config-parent-baseline-1a29f20y/existing-shared-native",
+      "isolatedEnvironment": {
+        "PATH": "/home/pj/.local/bin:/home/pj/.codex/tmp/arg0-linux/codex-arg0RGUgBx:/home/pj/.vscode-server/cli/servers/Stable-a717861c07586a53d83b80d742cd3f59b20a6273/server/bin/remote-cli:/home/pj/.local/bin:/home/pj/.nvm/versions/node/v24.15.0/bin:/home/pj/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/pj/Android/Sdk/platform-tools:/home/pj/Android/Sdk/emulator:/home/pj/Android/Sdk/cmdline-tools/latest/bin:/home/pj/.vscode-server/extensions/openai.chatgpt-26.51021.22027-linux-x64/bin/linux-x86_64",
+        "LANG": "C.UTF-8",
+        "HOME": "/tmp/gridstator-config-parent-baseline-1a29f20y/home",
+        "XDG_CONFIG_HOME": "/tmp/gridstator-config-parent-baseline-1a29f20y/config",
+        "XDG_DATA_HOME": "/tmp/gridstator-config-parent-baseline-1a29f20y/data",
+        "XDG_CACHE_HOME": "/tmp/gridstator-config-parent-baseline-1a29f20y/cache",
+        "XDG_RUNTIME_DIR": "/tmp/gridstator-config-parent-baseline-1a29f20y/run",
+        "TMPDIR": "/tmp/gridstator-config-parent-baseline-1a29f20y/scratch",
+        "TMP": "/tmp/gridstator-config-parent-baseline-1a29f20y/scratch",
+        "TEMP": "/tmp/gridstator-config-parent-baseline-1a29f20y/scratch",
+        "GRIDSTATOR_CONFIG": "/tmp/gridstator-config-parent-baseline-1a29f20y/existing-shared-native/client.json",
+        "GRIDSTATOR_CONTROLLER_DATA": "/tmp/gridstator-config-parent-baseline-1a29f20y/controller",
+        "GRIDSTATOR_AGENT_DATA": "/tmp/gridstator-config-parent-baseline-1a29f20y/agent",
+        "GRIDSTATOR_CACHE": "/tmp/gridstator-config-parent-baseline-1a29f20y/cache"
+      },
+      "native": {
+        "exitCode": 0,
+        "parentBefore": "0775",
+        "parentAfter": "0700",
+        "clientFileExists": true,
+        "clientFileMode": "0600",
+        "dedicatedDataMode": "0700",
+        "rawConfigAndSuccessOutputOmitted": true
+      },
+      "referenceCommand": [
+        "node",
+        "--input-type=module",
+        "--eval",
+        "import {writeFileAtomic} from \"file:///repos/gridstator/native/contracts/evidence/config-parent-permissions-2026-11-10/baseline/frozen-v1-fs.mjs\"; await writeFileAtomic(process.argv[1], JSON.stringify({marker:\"reference-v1\"}));",
+        "/tmp/gridstator-config-parent-baseline-1a29f20y/existing-shared-reference/client.json"
+      ],
+      "referenceWorkingDirectory": "/tmp/gridstator-config-parent-baseline-1a29f20y/existing-shared-reference",
+      "reference": {
+        "exitCode": 0,
+        "parentBefore": "0775",
+        "parentAfter": "0775",
+        "fileMode": "0600"
+      },
+      "temporaryDirectoryRemoved": true
+    },
+    {
+      "case": "relative-leaf-config",
+      "nativeCommand": [
+        "/repos/gridstator/native/self-build/proof-01M72202QV3TGHQEHTC67VN3HJ/linux-amd64/gridstator",
+        "controller",
+        "init",
+        "--data-dir",
+        "/tmp/gridstator-config-parent-baseline-0fyest51/controller",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "0"
+      ],
+      "nativeWorkingDirectory": "/tmp/gridstator-config-parent-baseline-0fyest51/existing-shared-native",
+      "isolatedEnvironment": {
+        "PATH": "/home/pj/.local/bin:/home/pj/.codex/tmp/arg0-linux/codex-arg0RGUgBx:/home/pj/.vscode-server/cli/servers/Stable-a717861c07586a53d83b80d742cd3f59b20a6273/server/bin/remote-cli:/home/pj/.local/bin:/home/pj/.nvm/versions/node/v24.15.0/bin:/home/pj/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/pj/Android/Sdk/platform-tools:/home/pj/Android/Sdk/emulator:/home/pj/Android/Sdk/cmdline-tools/latest/bin:/home/pj/.vscode-server/extensions/openai.chatgpt-26.51021.22027-linux-x64/bin/linux-x86_64",
+        "LANG": "C.UTF-8",
+        "HOME": "/tmp/gridstator-config-parent-baseline-0fyest51/home",
+        "XDG_CONFIG_HOME": "/tmp/gridstator-config-parent-baseline-0fyest51/config",
+        "XDG_DATA_HOME": "/tmp/gridstator-config-parent-baseline-0fyest51/data",
+        "XDG_CACHE_HOME": "/tmp/gridstator-config-parent-baseline-0fyest51/cache",
+        "XDG_RUNTIME_DIR": "/tmp/gridstator-config-parent-baseline-0fyest51/run",
+        "TMPDIR": "/tmp/gridstator-config-parent-baseline-0fyest51/scratch",
+        "TMP": "/tmp/gridstator-config-parent-baseline-0fyest51/scratch",
+        "TEMP": "/tmp/gridstator-config-parent-baseline-0fyest51/scratch",
+        "GRIDSTATOR_CONFIG": "client.json",
+        "GRIDSTATOR_CONTROLLER_DATA": "/tmp/gridstator-config-parent-baseline-0fyest51/controller",
+        "GRIDSTATOR_AGENT_DATA": "/tmp/gridstator-config-parent-baseline-0fyest51/agent",
+        "GRIDSTATOR_CACHE": "/tmp/gridstator-config-parent-baseline-0fyest51/cache"
+      },
+      "native": {
+        "exitCode": 1,
+        "parentBefore": "0775",
+        "parentAfter": "0775",
+        "clientFileExists": false,
+        "clientFileMode": null,
+        "dedicatedDataMode": "0700",
+        "rawConfigAndSuccessOutputOmitted": true,
+        "error": "error: No such file or directory (os error 2)\n"
+      },
+      "referenceCommand": [
+        "node",
+        "--input-type=module",
+        "--eval",
+        "import {writeFileAtomic} from \"file:///repos/gridstator/native/contracts/evidence/config-parent-permissions-2026-11-10/baseline/frozen-v1-fs.mjs\"; await writeFileAtomic(process.argv[1], JSON.stringify({marker:\"reference-v1\"}));",
+        "reference.json"
+      ],
+      "referenceWorkingDirectory": "/tmp/gridstator-config-parent-baseline-0fyest51/existing-shared-native",
+      "reference": {
+        "exitCode": 0,
+        "parentBefore": "0775",
+        "parentAfter": "0775",
+        "fileMode": "0600"
+      },
+      "temporaryDirectoryRemoved": true
+    }
+  ],
+  "productionEdits": false,
+  "artifactsRebuiltOrModified": false,
+  "result": "Both historical defects reproduced against immutable7c; frozenv1 preserves parent mode and accepts relative leaf"
+}

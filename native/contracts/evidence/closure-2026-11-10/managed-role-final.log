@@ -1,0 +1,10 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.89s
+     Running tests/managed_role_contract.rs (target/debug/deps/managed_role_contract-3e3bb70692f04581)
+
+running 1 test
+actual native controller and worker refreshed both verified stable launchers after health/welcome; worker correctly waits for Docker
+test actual_managed_controller_and_worker_refresh_the_verified_stable_supervisor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.00s
+

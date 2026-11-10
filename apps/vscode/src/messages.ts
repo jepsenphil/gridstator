@@ -11,7 +11,7 @@ import type {
   JobState,
   LogEntry,
   Node,
-  NodeSettingsPatch,
+  PatchNodeRequest,
   ClusterSettings,
   ClusterSettingsPatch,
   ControllerBuild,
@@ -40,6 +40,9 @@ export interface ConnectionInfo {
   source?: string;
   extensionVersion?: string;
   canRestoreLocalAccess?: boolean;
+  canStartLocalController?: boolean;
+  canSetUpController?: boolean;
+  setupPending?: boolean;
 }
 
 export interface EditorPreferences {
@@ -55,6 +58,7 @@ export interface EditorPreferences {
 
 export interface LocalControllerHost {
   available: boolean;
+  setupPending?: boolean;
   dataDir: string;
   hostname: string;
   host: string;
@@ -66,6 +70,7 @@ export interface LocalControllerHost {
     scope: 'user';
     canManage?: boolean;
     reason?: string | null;
+    persistenceWarning?: string;
   };
   aliases: Array<{ host: string; port: number }>;
   clusterId?: string | null;
@@ -171,10 +176,20 @@ export interface DashboardState {
   settings?: SettingsView;
 }
 
-export type View = 'overview' | 'jobs' | 'run' | 'nodes' | 'job' | 'group' | 'settings';
+export type View =
+  'overview' | 'jobs' | 'run' | 'nodes' | 'addWorker' | 'job' | 'group' | 'settings';
+
+/** Contains a one-time secret; only held in memory, never in persisted webview state. */
+export interface WorkerJoinCommand {
+  command: string;
+  name: string;
+  clusterId: string;
+  expiresAt: number | null;
+}
 
 export type ToWebview =
   | { type: 'tokenCreated'; token: string; info: TokenView }
+  | { type: 'workerJoinCommandCreated'; result: WorkerJoinCommand }
   | { type: 'state'; state: DashboardState }
   | {
       type: 'navigate';
@@ -196,6 +211,7 @@ export type FromWebview =
   | { type: 'savePreferences'; patch: Partial<EditorPreferences> }
   | { type: 'saveClusterSettings'; patch: ClusterSettingsPatch }
   | { type: 'createToken'; request: CreateTokenRequest }
+  | { type: 'createWorkerJoinCommand'; name: string; url: string }
   | { type: 'revokeToken'; id: string }
   | { type: 'requestReleases'; includePrereleases: boolean }
   | { type: 'installRelease'; tag: string }
@@ -216,10 +232,11 @@ export type FromWebview =
   | { type: 'retryGroup'; groupId: string }
   | { type: 'requestGroupTests'; groupId: string }
   | { type: 'downloadArtifact'; jobId: string; name: string }
-  | { type: 'updateNode'; nodeId: string; patch: NodeSettingsPatch }
+  | { type: 'updateNode'; nodeId: string; patch: PatchNodeRequest }
   | { type: 'launch'; request: LaunchRequest }
   | { type: 'setDefaultNode'; node: string }
   | { type: 'refresh' }
   | { type: 'signIn' }
+  | { type: 'setupController' }
   | { type: 'openFile'; jobId: string; path: string; line?: number; column?: number }
   | { type: 'copy'; text: string };

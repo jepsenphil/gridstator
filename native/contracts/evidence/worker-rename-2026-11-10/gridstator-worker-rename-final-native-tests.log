@@ -1,0 +1,46 @@
+   Compiling gridstator v2.0.0-dev.2 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.77s
+     Running tests/cli_contract.rs (native/target/debug/deps/cli_contract-25ea81a8c0437641)
+
+running 10 tests
+test controller_init_no_login_keeps_client_configuration_untouched ... ok
+test custom_absolute_and_relative_config_paths_preserve_parent_permissions ... ok
+test local_operator_promotion_preserves_the_saved_public_cluster_url ... ok
+test parser_errors_use_exit_two_and_stdout_stderr_are_separate ... ok
+test local_login_is_shared_and_revoked_access_needs_explicit_restore ... ok
+test local_bootstrap_preserves_an_explicit_foreign_cluster_connection ... ok
+test snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels ... ok
+test frozen_local_service_inspection_ownership_and_invalid_configuration_are_read_only ... ok
+test build_identity_and_bridge_paths_are_machine_readable ... ok
+test every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.50s
+
+     Running tests/controller_contract.rs (native/target/debug/deps/controller_contract-571741b9b4541e7d)
+
+running 6 tests
+test source_controller_publish_checksum_error_reports_expected_and_actual ... ok
+test source_http_integer_fields_accept_whole_number_json_literals ... ok
+test retained_sdk_blob_get_decodes_digest_once_and_returns_exact_bytes ... ok
+test source_snapshot_http_rejects_missing_incomplete_corrupt_and_unsafe_manifests ... ok
+test native_blob_upload_checks_content_and_snapshot_manifest ... ok
+test native_tls_pairing_authority_and_job_lifecycle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running tests/controller_source_scenarios.rs (native/target/debug/deps/controller_source_scenarios-95ce4e73a647a0cf)
+
+running 10 tests
+test native_nodes_set_name_renames_a_registered_worker ... ok
+test source_006_queued_cancel_and_failed_143_result_become_cancelled ... ok
+test rename_preserves_worker_identity_jobs_and_controller_name_on_reconnect ... ok
+test rename_validates_unique_names_and_commits_atomically_with_settings ... ok
+test source_013_restart_resumes_known_job_cancels_unknown_and_replays_logs ... ok
+test source_008_retry_budget_manual_attempt_three_and_active_conflict ... ok
+test source_014_disconnected_pending_result_resumes_and_is_acknowledged ... ok
+test rename_preserves_queued_targets_preferences_and_completed_job_retries ... ok
+test source_018_two_node_shards_aggregate_and_retry_only_failed_lineage ... ok
+test source_012_disappearance_loses_running_and_requeues_assigned ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.89s
+

@@ -1,0 +1,265 @@
+--- before/native/src/executor/build.rs
++++ after/native/src/executor/build.rs
+@@ -167,25 +167,7 @@
+         .ok()
+         .and_then(|bytes| serde_json::from_slice(&bytes).ok())
+         .unwrap_or_else(|| json!({}));
+-    let id = image_id(&metadata, output_mode);
+-    let mut size = Value::Null;
+-    if let Some(id) = id
+-        && ["load", "tar"].contains(&output_mode)
+-        && let Ok(description) = docker_output(&[
+-            "image".into(),
+-            "inspect".into(),
+-            "--format".into(),
+-            "{{.Size}}".into(),
+-            id.into(),
+-        ])
+-        .await
+-        && description.status.success()
+-        && let Ok(value) = String::from_utf8_lossy(&description.stdout)
+-            .trim()
+-            .parse::<u64>()
+-    {
+-        size = json!(value);
+-    }
++    let (id, size) = resolve_image(&metadata, output_mode, inspect_image_size).await;
+     result.outputs = json!({"image":{"id":id,"digest":metadata["containerimage.digest"].as_str(),"tags":tags,"sizeBytes":size,"output":output_mode}});
+     emit(logs, "outputs", result.outputs.to_string()).await;
+     if output_mode == "tar" {
+@@ -233,8 +215,56 @@
+     Ok(result)
+ }
+ 
+-// The containerd image store identifies loaded images by manifest/index digest. Newer
+-// BuildKit omits the config digest in that case; classic Docker metadata retains it.
++async fn inspect_image_size(id: &str) -> Option<u64> {
++    if let Ok(description) = docker_output(&[
++        "image".into(),
++        "inspect".into(),
++        "--format".into(),
++        "{{.Size}}".into(),
++        id.into(),
++    ])
++    .await
++        && description.status.success()
++        && let Ok(value) = String::from_utf8_lossy(&description.stdout)
++            .trim()
++            .parse::<u64>()
++    {
++        return Some(value);
++    }
++    None
++}
++
++async fn resolve_image<'a, F, Fut>(
++    metadata: &'a Value,
++    output_mode: &str,
++    mut inspect: F,
++) -> (Option<&'a str>, Option<u64>)
++where
++    F: FnMut(&'a str) -> Fut,
++    Fut: std::future::Future<Output = Option<u64>>,
++{
++    let id = image_id(metadata, output_mode);
++    if matches!(output_mode, "load" | "tar") {
++        let mut previous = None;
++        for candidate in [id, metadata["containerimage.digest"].as_str()]
++            .into_iter()
++            .flatten()
++        {
++            if previous == Some(candidate) {
++                continue;
++            }
++            previous = Some(candidate);
++            if let Some(size) = inspect(candidate).await {
++                return (Some(candidate), Some(size));
++            }
++        }
++    }
++    // External image removal must not turn a successful build into an executor failure.
++    (id, None)
++}
++
++// Containerd can address loaded images only by manifest/index digest, even when Buildx
++// metadata also includes a config digest. Prefer config when it is locally inspectable.
+ // A remote/cache-only build does not establish a locally inspectable image ID.
+ fn image_id<'a>(metadata: &'a Value, output_mode: &str) -> Option<&'a str> {
+     metadata["containerimage.config.digest"]
+@@ -251,6 +281,135 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++
++    #[tokio::test]
++    async fn local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable() {
++        let capture: Value = serde_json::from_str(include_str!(
++            "../../contracts/buildx-containerd-linux-arm-inspect.json"
++        ))
++        .unwrap();
++        let metadata = &capture["metadata"];
++        assert_eq!(
++            capture["candidateInspections"]["containerimage.config.digest"]["exitCode"],
++            1
++        );
++        assert_eq!(
++            capture["candidateInspections"]["containerimage.digest"]["exitCode"],
++            0
++        );
++        for mode in ["load", "tar"] {
++            let mut calls = Vec::new();
++            let (id, size) = resolve_image(metadata, mode, |candidate| {
++                calls.push(candidate.to_owned());
++                let key = if Some(candidate) == metadata["containerimage.config.digest"].as_str() {
++                    "containerimage.config.digest"
++                } else {
++                    assert_eq!(Some(candidate), metadata["containerimage.digest"].as_str());
++                    "containerimage.digest"
++                };
++                let response = &capture["candidateInspections"][key];
++                let size = if response["exitCode"] == 0 {
++                    let image: Value =
++                        serde_json::from_str(response["stdout"].as_str().unwrap()).unwrap();
++                    image[0]["Size"].as_u64()
++                } else {
++                    None
++                };
++                std::future::ready(size)
++            })
++            .await;
++            assert_eq!(id, capture["tagImage"]["Id"].as_str());
++            assert_eq!(size, capture["tagImage"]["Size"].as_u64());
++            assert_eq!(calls.len(), 2);
++            assert_eq!(calls[0], metadata["containerimage.config.digest"]);
++            assert_eq!(calls[1], metadata["containerimage.digest"]);
++        }
++    }
++
++    #[tokio::test]
++    async fn local_image_resolution_preserves_config_preference_and_deduplicates_candidates() {
++        let classic = json!({
++            "containerimage.config.digest": "sha256:configuration",
++            "containerimage.digest": "sha256:manifest"
++        });
++        for mode in ["load", "tar"] {
++            let mut calls = Vec::new();
++            let (id, size) = resolve_image(&classic, mode, |candidate| {
++                calls.push(candidate.to_owned());
++                // Zero is a valid size and must not cause a fallback.
++                std::future::ready(Some(0))
++            })
++            .await;
++            assert_eq!(id, Some("sha256:configuration"));
++            assert_eq!(size, Some(0));
++            assert_eq!(calls, ["sha256:configuration"]);
++
++            let mut calls = Vec::new();
++            let (id, size) = resolve_image(&classic, mode, |candidate| {
++                calls.push(candidate.to_owned());
++                std::future::ready(None)
++            })
++            .await;
++            assert_eq!(id, Some("sha256:configuration"));
++            assert_eq!(size, None);
++            assert_eq!(calls, ["sha256:configuration", "sha256:manifest"]);
++
++            let same = json!({
++                "containerimage.config.digest": "sha256:same",
++                "containerimage.digest": "sha256:same"
++            });
++            let mut calls = 0;
++            let (id, size) = resolve_image(&same, mode, |_| {
++                calls += 1;
++                std::future::ready(None)
++            })
++            .await;
++            assert_eq!((id, size), (Some("sha256:same"), None));
++            assert_eq!(calls, 1);
++
++            let m4: Value =
++                serde_json::from_str(include_str!("../../contracts/buildx-containerd-m4.json"))
++                    .unwrap();
++            let mut calls = 0;
++            let (id, size) = resolve_image(&m4, mode, |_| {
++                calls += 1;
++                std::future::ready(Some(123))
++            })
++            .await;
++            assert_eq!(id, m4["containerimage.digest"].as_str());
++            assert_eq!(size, Some(123));
++            assert_eq!(calls, 1);
++        }
++    }
++
++    #[tokio::test]
++    async fn remote_image_resolution_and_absent_metadata_never_inspect_local_docker() {
++        for metadata in [
++            json!({}),
++            json!({"containerimage.digest":"sha256:manifest"}),
++            json!({"containerimage.config.digest":"sha256:configuration","containerimage.digest":"sha256:manifest"}),
++        ] {
++            for mode in ["push", "none"] {
++                let mut calls = 0;
++                let resolved = resolve_image(&metadata, mode, |_| {
++                    calls += 1;
++                    std::future::ready(Some(123))
++                })
++                .await;
++                assert_eq!(resolved, (image_id(&metadata, mode), None));
++                assert_eq!(calls, 0);
++            }
++        }
++        let mut calls = 0;
++        let empty = json!({});
++        let resolved = resolve_image(&empty, "load", |_| {
++            calls += 1;
++            std::future::ready(Some(123))
++        })
++        .await;
++        assert_eq!(resolved, (None, None));
++        assert_eq!(calls, 0);
++    }
+ 
+     #[test]
+     fn captured_containerd_metadata_identifies_local_images_without_config_digest() {
+--- before/native/tests/executor_contract.rs
++++ after/native/tests/executor_contract.rs
+@@ -260,6 +260,7 @@
+     );
+     assert_eq!(result.artifacts[0].name, "image.tar");
+     assert!(std::fs::metadata(&result.artifacts[0].path).unwrap().len() > 1000);
++    assert!(result.outputs["image"]["sizeBytes"].as_u64().unwrap() > 0);
+     let tag = format!("gridstator-export/{}:latest", context.job_id.to_lowercase());
+     assert!(
+         !Command::new("docker")
+@@ -607,6 +608,12 @@
+         .args(["image", "inspect", &tag])
+         .output()
+         .unwrap();
++    let reported_inspect = result.outputs["image"]["id"].as_str().map(|id| {
++        Command::new("docker")
++            .args(["image", "inspect", id])
++            .output()
++            .unwrap()
++    });
+     let version = Command::new("docker")
+         .args(["run", "--rm", "--entrypoint", "cat", &tag, "/version"])
+         .output()
+@@ -630,7 +637,16 @@
+     assert!(!text.contains("private-value"));
+     assert!(inspect.status.success());
+     let image: Value = serde_json::from_slice(&inspect.stdout).unwrap();
+-    assert_eq!(result.outputs["image"]["id"], image[0]["Id"]);
++    let reported_inspect = reported_inspect.expect("local output must report an image reference");
++    assert!(
++        reported_inspect.status.success(),
++        "reported image reference is not addressable: {}",
++        String::from_utf8_lossy(&reported_inspect.stderr)
++    );
++    let reported: Value = serde_json::from_slice(&reported_inspect.stdout).unwrap();
++    assert_eq!(reported[0]["Id"], image[0]["Id"]);
++    assert_eq!(result.outputs["image"]["sizeBytes"], image[0]["Size"]);
++    assert_eq!(reported[0]["Size"], image[0]["Size"]);
+     assert_eq!(
+         image[0]["Config"]["Labels"]["io.gridstator.job"],
+         context.job_id

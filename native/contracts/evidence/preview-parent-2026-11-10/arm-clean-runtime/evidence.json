@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-11-10T07:19:47.168913+00:00",
+  "classification": "Actual final development-preview bytes; clean Linux ARM64 foreground runtime, not systemd/boot or physical Intel acceptance",
+  "buildId": "native-preview-20261110-6994d2cc804b",
+  "version": "2.0.0-dev.1",
+  "productionCheckpointSha256": "6994d2cc804b876d34375a633f0f0dbf60cdacf261ca78bf02c5245e5ec11b65",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "sourceState": "Uncommitted working-tree preview; embedded revision is the parent reference, not clean native-release provenance.",
+  "target": "linux/arm64",
+  "binarySha256": "0668296c0f7a8711ac5654385ea00a7e69600f411d63c5f2effcb2e53c675f88",
+  "binarySize": 26580488,
+  "host": "M4 Mac Docker Desktop ARM64 Linux VM, actual aarch64 kernel 7.0.14-linuxkit, no x86 emulation",
+  "runtimeImage": "alpine:3.21",
+  "runtimeImageDigest": "sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab",
+  "execution": {
+    "exitCode": 0,
+    "user": "65534:65534",
+    "rootfs": "read-only",
+    "network": "none",
+    "capabilities": "ALL dropped",
+    "security": "no-new-privileges",
+    "cpus": 1,
+    "memory": "256 MiB",
+    "tmpfs": "/tmp rw,nosuid,nodev,64 MiB",
+    "executableMount": "read-only"
+  },
+  "checks": [
+    "Exact artifact SHA before launch and matching build-info/version/target",
+    "No Node/npm/Rust/Python/Zig/SQLite/OpenSSL executables in runtime PATH",
+    "Actual native controller init and authenticated private-CA TLS status",
+    "Custom config inside disposable shared tmpfs preserves existing parent mode; config0600 and dedicated data0700",
+    "SIGTERM graceful exit0 and removal of owned runtime.json"
+  ],
+  "cleanup": "Docker --rm removes this owned container and its in-memory config/CA/private keys/data; controller explicitly terminated and waited. No actual host /tmp or user-directory modes changed. Outer Docker uses anonymous private DOCKER_CONFIG and OS-only PATH; no user keychain or global Docker configuration modification.",
+  "limits": [
+    "Foreground CLI/controller only; full worker/build/Actions/sharding workflow has separate receipt",
+    "No systemd manager, boot, minimum-OS matrix, physical Intel, Developer ID or notarization claim"
+  ]
+}

@@ -1,0 +1,351 @@
+[
+  {
+    "id": "reference-integration-e2e-008",
+    "result": "passed",
+    "elapsedMs": 24128,
+    "observations": {
+      "lost": {
+        "id": "01M71PM43YSNQA0KTMPEBZCS1C",
+        "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+        "kind": "command",
+        "state": "lost",
+        "stateReason": null,
+        "priority": 0,
+        "owner": "local-admin",
+        "snapshotId": null,
+        "spec": {
+          "kind": "command",
+          "env": {},
+          "secretEnv": {},
+          "workdir": ".",
+          "resources": {
+            "cpus": 2,
+            "memoryMb": 4096
+          },
+          "target": {
+            "labels": [],
+            "prefer": [],
+            "node": "beta"
+          },
+          "retry": {
+            "max": 1,
+            "on": [
+              "lost"
+            ]
+          },
+          "priority": 0,
+          "project": "gridstator-integration-source-26VFB9",
+          "image": "alpine:3.20",
+          "command": [
+            "sh",
+            "-c",
+            "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3"
+          ],
+          "artifacts": []
+        },
+        "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+        "nodeName": "beta",
+        "assignmentId": "01M71PM448KMESAYNBX345ZXRW",
+        "attempt": 1,
+        "retryOf": null,
+        "oomKilled": false,
+        "exitCode": null,
+        "error": "agent restarted or lost track of the job",
+        "queuePosition": null,
+        "logSeq": 3,
+        "outputs": null,
+        "artifacts": [],
+        "groupId": null,
+        "shardIndex": null,
+        "shardTotal": null,
+        "createdAt": 1794279870590,
+        "queuedAt": 1794279870590,
+        "assignedAt": 1794279870598,
+        "startedAt": 1794279870953,
+        "finishedAt": 1794279871440,
+        "cancelRequestedAt": null
+      },
+      "retry": {
+        "id": "01M71PM72DRVBBD158H1FGGET9",
+        "name": "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3",
+        "kind": "command",
+        "state": "succeeded",
+        "stateReason": null,
+        "priority": 0,
+        "owner": "local-admin",
+        "snapshotId": null,
+        "spec": {
+          "kind": "command",
+          "env": {},
+          "secretEnv": {},
+          "workdir": ".",
+          "resources": {
+            "cpus": 2,
+            "memoryMb": 4096
+          },
+          "target": {
+            "labels": [],
+            "prefer": [],
+            "node": "beta"
+          },
+          "retry": {
+            "max": 1,
+            "on": [
+              "lost"
+            ]
+          },
+          "priority": 0,
+          "project": "gridstator-integration-source-26VFB9",
+          "image": "alpine:3.20",
+          "command": [
+            "sh",
+            "-c",
+            "echo \"attempt $GRIDSTATOR_ATTEMPT\"; sleep 3"
+          ],
+          "artifacts": []
+        },
+        "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+        "nodeName": "beta",
+        "assignmentId": "01M71PM72R3WE08SVKDE6D7C8A",
+        "attempt": 2,
+        "retryOf": "01M71PM43YSNQA0KTMPEBZCS1C",
+        "oomKilled": false,
+        "exitCode": 0,
+        "error": null,
+        "queuePosition": null,
+        "logSeq": 4,
+        "outputs": null,
+        "artifacts": [],
+        "groupId": null,
+        "shardIndex": null,
+        "shardTotal": null,
+        "createdAt": 1794279873613,
+        "queuedAt": 1794279873613,
+        "assignedAt": 1794279873621,
+        "startedAt": 1794279873835,
+        "finishedAt": 1794279877370,
+        "cancelRequestedAt": null
+      },
+      "stdout": "attempt 2\n",
+      "ownedContainerBeforeKill": "5756cad0a338",
+      "ownedVolumeBeforeKill": "gridstator-ws-01m71pm43ysnqa0ktmpebzcs1c",
+      "ownedContainerAndVolumeRemoved": true,
+      "foreignNode": "unrelated-node-01m71pkkk6d2eb0c3265gmyhqn",
+      "foreignContainerSurvived": "gridstator-source-foreign-01m71pkkk6d2eb0c3265gmyhqn",
+      "foreignVolumeSurvived": "gridstator-source-foreign-volume-01m71pkkk6d2eb0c3265gmyhqn"
+    }
+  },
+  {
+    "id": "reference-integration-e2e-009",
+    "result": "passed",
+    "elapsedMs": 3207,
+    "observations": {
+      "jobId": "01M71PMBAKS1FMQP70G293XP91",
+      "node": "beta",
+      "image": {
+        "id": "sha256:aa17c0aad4db6035ad9255802458df55d6d15463c5e4faab609356be7cfa0d51",
+        "digest": "sha256:aa17c0aad4db6035ad9255802458df55d6d15463c5e4faab609356be7cfa0d51",
+        "tags": [
+          "gridstator-native-source:01m71pmb5kn2c5n6vbfhkjnn60"
+        ],
+        "sizeBytes": 230374370,
+        "output": "load"
+      },
+      "ownershipLabel": "01M71PMBAKS1FMQP70G293XP91",
+      "imageTagRemoved": "gridstator-native-source:01m71pmb5kn2c5n6vbfhkjnn60",
+      "stderr": "Snapshot of /tmp/gridstator-integration-source-26VFB9/docker-build: 7 files, 2732 bytes\nUploading 8 new blob(s), 3.7 KiB...\nJob 01M71PMBAKS1FMQP70G293XP91 submitted\n[gridstator] Job 01M71PMBAKS1FMQP70G293XP91 accepted by worker\n[gridstator] Staging build context from the snapshot\n#0 building with \"default\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 779B done\n#1 DONE 0.1s\n\n#2 resolve image config for docker-image://docker.io/docker/dockerfile:1\n#2 DONE 0.7s\n\n#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e\n#3 CACHED\n\n#4 [internal] load metadata for docker.io/library/node:24-bookworm-slim\n#4 DONE 0.0s\n\n#5 [internal] load .dockerignore\n#5 transferring context: 58B done\n#5 DONE 0.1s\n\n#6 [base 1/2] FROM docker.io/library/node:24-bookworm-slim\n#6 DONE 0.0s\n\n#7 [internal] load build context\n#7 transferring context: 1.13kB done\n#7 DONE 0.1s\n\n#8 [build 1/5] COPY package.json ./\n#8 CACHED\n\n#9 [build 2/5] COPY scripts ./scripts\n#9 CACHED\n\n#10 [runner 1/2] COPY --from=build /app/dist ./dist\n#10 CACHED\n\n#11 [build 3/5] COPY src ./src\n#11 CACHED\n\n#12 [build 4/5] RUN --mount=type=secret,id=NPM_TOKEN     if [ -f /run/secrets/NPM_TOKEN ]; then echo \"build secret present\"; else echo \"no build secret\"; fi\n#12 CACHED\n\n#13 [base 2/2] WORKDIR /app\n#13 CACHED\n\n#14 [build 5/5] RUN APP_VERSION=7.7.7 npm run build\n#14 CACHED\n\n#15 [runner 2/2] COPY package.json ./\n#15 CACHED\n\n#16 exporting to image\n#16 exporting layers done\n#16 writing image sha256:aa17c0aad4db6035ad9255802458df55d6d15463c5e4faab609356be7cfa0d51 done\n#16 naming to docker.io/library/gridstator-native-source:01m71pmb5kn2c5n6vbfhkjnn60 0.0s done\n#16 DONE 0.1s\n\n#17 resolving provenance for metadata file\n#17 DONE 0.2s\n[gridstator] Job succeeded\nJob 01M71PMBAKS1FMQP70G293XP91 succeeded on beta in 2.2s\nImage sha256:aa17c0aad4db6035ad9255802458df55d6d15463c5e4faab609356be7cfa0d51 (gridstator-native-source:01m71pmb5kn2c5n6vbfhkjnn60), 220 MiB on beta\n"
+    }
+  },
+  {
+    "id": "reference-integration-e2e-010",
+    "result": "passed",
+    "elapsedMs": 8734,
+    "observations": {
+      "group": {
+        "id": "01M71PMEG8VWVDGWZA8Y1HZJ76",
+        "name": "task:test",
+        "owner": "local-admin",
+        "shardTotal": 2,
+        "createdAt": 1794279881225,
+        "state": "succeeded",
+        "counts": {
+          "succeeded": 2
+        },
+        "nodes": [
+          "alpha",
+          "beta"
+        ],
+        "startedAt": 1794279881852,
+        "finishedAt": 1794279889162,
+        "jobs": [
+          {
+            "id": "01M71PMEGAADNE1JWFV5TWD8JJ",
+            "name": "task:test [1/2]",
+            "kind": "command",
+            "state": "succeeded",
+            "stateReason": null,
+            "priority": 0,
+            "owner": "local-admin",
+            "snapshotId": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+            "spec": {
+              "kind": "command",
+              "name": "task:test [1/2]",
+              "env": {
+                "GRIDSTATOR_SHARD_INDEX": "1",
+                "GRIDSTATOR_SHARD_TOTAL": "2"
+              },
+              "secretEnv": {},
+              "snapshot": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+              "workdir": ".",
+              "resources": {
+                "cpus": 1,
+                "memoryMb": 1024
+              },
+              "target": {
+                "labels": [],
+                "prefer": []
+              },
+              "retry": {
+                "max": 0,
+                "on": [
+                  "lost"
+                ]
+              },
+              "priority": 0,
+              "project": "example-sharded-tests",
+              "image": "node:24-bookworm",
+              "command": [
+                "sh",
+                "-c",
+                "mkdir -p reports && node --test --test-shard=1/2 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/junit.xml"
+              ],
+              "artifacts": [
+                "reports/junit.xml"
+              ]
+            },
+            "nodeId": "01M71PK8S013YQM6ZG4BSJHX8G",
+            "nodeName": "alpha",
+            "assignmentId": "01M71PMEHC5V0KYEH50Y7JC3RV",
+            "attempt": 1,
+            "retryOf": null,
+            "oomKilled": false,
+            "exitCode": 0,
+            "error": null,
+            "queuePosition": null,
+            "logSeq": 16,
+            "outputs": null,
+            "artifacts": [
+              {
+                "name": "reports/junit.xml.tar",
+                "digest": "sha256:092a5aa1b5eba34dd36398b99e38678362bb0888bff56df2df02de3fc4fafab5",
+                "size": 2560
+              }
+            ],
+            "groupId": "01M71PMEG8VWVDGWZA8Y1HZJ76",
+            "shardIndex": 1,
+            "shardTotal": 2,
+            "createdAt": 1794279881226,
+            "queuedAt": 1794279881226,
+            "assignedAt": 1794279881240,
+            "startedAt": 1794279881877,
+            "finishedAt": 1794279889120,
+            "cancelRequestedAt": null
+          },
+          {
+            "id": "01M71PMEGDG3F63WP867G68DHY",
+            "name": "task:test [2/2]",
+            "kind": "command",
+            "state": "succeeded",
+            "stateReason": null,
+            "priority": 0,
+            "owner": "local-admin",
+            "snapshotId": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+            "spec": {
+              "kind": "command",
+              "name": "task:test [2/2]",
+              "env": {
+                "GRIDSTATOR_SHARD_INDEX": "2",
+                "GRIDSTATOR_SHARD_TOTAL": "2"
+              },
+              "secretEnv": {},
+              "snapshot": "sha256:f0c29ccca4dfd136b3b7b7525ba6c0f302ccad20028304d7a75632b4c7511bae",
+              "workdir": ".",
+              "resources": {
+                "cpus": 1,
+                "memoryMb": 1024
+              },
+              "target": {
+                "labels": [],
+                "prefer": []
+              },
+              "retry": {
+                "max": 0,
+                "on": [
+                  "lost"
+                ]
+              },
+              "priority": 0,
+              "project": "example-sharded-tests",
+              "image": "node:24-bookworm",
+              "command": [
+                "sh",
+                "-c",
+                "mkdir -p reports && node --test --test-shard=2/2 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=reports/junit.xml"
+              ],
+              "artifacts": [
+                "reports/junit.xml"
+              ]
+            },
+            "nodeId": "01M71PKCZAF3PCS5FG9YTDX2HH",
+            "nodeName": "beta",
+            "assignmentId": "01M71PMEHFEE5A3B7MWWK69351",
+            "attempt": 1,
+            "retryOf": null,
+            "oomKilled": false,
+            "exitCode": 0,
+            "error": null,
+            "queuePosition": null,
+            "logSeq": 16,
+            "outputs": null,
+            "artifacts": [
+              {
+                "name": "reports/junit.xml.tar",
+                "digest": "sha256:f03c48873daed5dfe579bf247c93c45417ed94baec0c327e1c8d742611cdb569",
+                "size": 2560
+              }
+            ],
+            "groupId": "01M71PMEG8VWVDGWZA8Y1HZJ76",
+            "shardIndex": 2,
+            "shardTotal": 2,
+            "createdAt": 1794279881229,
+            "queuedAt": 1794279881229,
+            "assignedAt": 1794279881240,
+            "startedAt": 1794279881852,
+            "finishedAt": 1794279889162,
+            "cancelRequestedAt": null
+          }
+        ]
+      },
+      "tests": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "timeMs": 12030,
+        "failures": []
+      },
+      "stdout": "[1/2] ✔ suite 1: checksum is stable (1505.020744ms)\n[2/2] ✔ suite 2: checksum is stable (1505.280248ms)\n[1/2] ✔ suite 1: checksum differs between inputs (1502.904752ms)\n[2/2] ✔ suite 2: checksum differs between inputs (1502.522094ms)\n[1/2] ✔ suite 3: checksum is stable (1504.830188ms)\n[2/2] ✔ suite 4: checksum is stable (1504.51069ms)\n[1/2] ✔ suite 3: checksum differs between inputs (1502.266081ms)\n[1/2] ℹ tests 4\n[1/2] ℹ suites 0\n[1/2] ℹ pass 4\n[1/2] ℹ fail 0\n[2/2] ✔ suite 4: checksum differs between inputs (1502.137775ms)\n[2/2] ℹ tests 4\n[2/2] ℹ suites 0\n[2/2] ℹ pass 4\n[2/2] ℹ fail 0\n[1/2] ℹ cancelled 0\n[1/2] ℹ skipped 0\n[1/2] ℹ todo 0\n[1/2] ℹ duration_ms 6202.943436\n[2/2] ℹ cancelled 0\n[2/2] ℹ skipped 0\n[2/2] ℹ todo 0\n[2/2] ℹ duration_ms 6211.363609\n",
+      "overlapped": true
+    }
+  },
+  {
+    "id": "reference-integration-e2e-011",
+    "result": "passed",
+    "elapsedMs": 1698,
+    "observations": {
+      "exitCode": 0,
+      "stdout": "✓ native executable      v2.0.0-dev.1 (linux/amd64)\n✓ git                    git version 2.43.0\n✓ client config          /tmp/gridstator-integration-source-26VFB9/client.json\n✓ controller             https://127.0.0.1:42681 (v2.0.0-dev.1, TLS verified against pinned CA)\n✓ authentication         signed in as local-admin (admin)\n✓ nodes                  2/2 online\n✓ worker versions        0 reachable worker(s) differ from controller build dev-4b8f13ccf1b2-1794279674294205494\n✓ node alpha             scheduling enabled; 0 active job(s)\n✓ node beta              scheduling enabled; 0 active job(s)\n✓ local docker           29.0.2\n✓ local controller data  /tmp/gridstator-integration-source-26VFB9/controller\ni project                /tmp/gridstator-integration-source-26VFB9\n",
+      "stderr": ""
+    }
+  }
+]

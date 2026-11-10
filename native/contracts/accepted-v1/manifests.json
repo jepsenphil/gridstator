@@ -1,0 +1,381 @@
+{
+  "formatVersion": 1,
+  "canonicalEncoding": "UTF-8, fixed key order, JSON.stringify escaping, no BOM/newline",
+  "cases": [
+    {
+      "id": "empty",
+      "input": {
+        "version": 1,
+        "entries": []
+      },
+      "canonical": "{\"version\":1,\"entries\":[]}",
+      "canonicalUtf8Hex": "7b2276657273696f6e223a312c22656e7472696573223a5b5d7d",
+      "sha256": "sha256:8bcae181d21321b79e1cee4976a6c9759a0f03769dde64b6f821ab5d22a33921"
+    },
+    {
+      "id": "ascii-files-and-link",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "README.md",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "bin/run",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": true
+          },
+          {
+            "path": "link",
+            "type": "symlink",
+            "target": "bin/run"
+          }
+        ]
+      },
+      "canonical": "{\"version\":1,\"entries\":[{\"path\":\"README.md\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"bin/run\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":true},{\"path\":\"link\",\"type\":\"symlink\",\"target\":\"bin/run\"}]}",
+      "canonicalUtf8Hex": "7b2276657273696f6e223a312c22656e7472696573223a5b7b2270617468223a22524541444d452e6d64222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a2262696e2f72756e222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a747275657d2c7b2270617468223a226c696e6b222c2274797065223a2273796d6c696e6b222c22746172676574223a2262696e2f72756e227d5d7d",
+      "sha256": "sha256:cc8f620bccdfc5df20d7a8c35f3d52b5d5b6eb0fe69548965a1c743880f8f294"
+    },
+    {
+      "id": "unicode-utf8-order",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "a",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "é.txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": ".txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "𐀀.txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "💾.txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "canonical": "{\"version\":1,\"entries\":[{\"path\":\"a\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"é.txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\".txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"𐀀.txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"💾.txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false}]}",
+      "canonicalUtf8Hex": "7b2276657273696f6e223a312c22656e7472696573223a5b7b2270617468223a2261222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a22c3a92e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a22ee80802e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a22f09080802e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a22f09f92be2e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d5d7d",
+      "sha256": "sha256:5151a7808e71d2ce499192a3655f0d62a92cfd6ad4b3783d5354824bb56475b4"
+    },
+    {
+      "id": "json-escaping",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "control\t\n\r\b\f\u0001.txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "html<&>\".txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "line paragraph .txt",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "canonical": "{\"version\":1,\"entries\":[{\"path\":\"control\\t\\n\\r\\b\\f\\u0001.txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"html<&>\\\".txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false},{\"path\":\"line paragraph .txt\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false}]}",
+      "canonicalUtf8Hex": "7b2276657273696f6e223a312c22656e7472696573223a5b7b2270617468223a22636f6e74726f6c5c745c6e5c725c625c665c75303030312e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a2268746d6c3c263e5c222e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d2c7b2270617468223a226c696e65e280a8706172616772617068e280a92e747874222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d5d7d",
+      "sha256": "sha256:7e8e940cf1bd97bb65da9696458f27827e630fa92bd3f122701e810c7afd46e6"
+    },
+    {
+      "id": "link-parent-stays-inside",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "dir/link",
+            "type": "symlink",
+            "target": "../target"
+          },
+          {
+            "path": "target",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "canonical": "{\"version\":1,\"entries\":[{\"path\":\"dir/link\",\"type\":\"symlink\",\"target\":\"../target\"},{\"path\":\"target\",\"type\":\"file\",\"size\":0,\"digest\":\"sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"executable\":false}]}",
+      "canonicalUtf8Hex": "7b2276657273696f6e223a312c22656e7472696573223a5b7b2270617468223a226469722f6c696e6b222c2274797065223a2273796d6c696e6b222c22746172676574223a222e2e2f746172676574227d2c7b2270617468223a22746172676574222c2274797065223a2266696c65222c2273697a65223a302c22646967657374223a227368613235363a65336230633434323938666331633134396166626634633839393666623932343237616534316534363439623933346361343935393931623738353262383535222c2265786563757461626c65223a66616c73657d5d7d",
+      "sha256": "sha256:b2ecb3825930f9095ffd2b41b43512a735bab4ada3034d2559b521cf8d1f06d3"
+    }
+  ],
+  "invalid": [
+    {
+      "id": "empty-path",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"\": empty path"
+    },
+    {
+      "id": "parent",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "../escape",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"../escape\": \"..\" path segment"
+    },
+    {
+      "id": "absolute",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "/escape",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"/escape\": absolute path"
+    },
+    {
+      "id": "drive",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "C:escape",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"C:escape\": drive-letter path"
+    },
+    {
+      "id": "backslash",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "dir\\file",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"dir\\file\": path contains a backslash"
+    },
+    {
+      "id": "nul",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "bad\u0000file",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"bad\u0000file\": path contains NUL"
+    },
+    {
+      "id": "dot-segment",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "dir/./file",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"dir/./file\": \".\" path segment"
+    },
+    {
+      "id": "empty-segment",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "dir//file",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Invalid manifest path \"dir//file\": empty path segment"
+    },
+    {
+      "id": "duplicates",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "a",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "a",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Manifest entries are not strictly sorted at \"a\""
+    },
+    {
+      "id": "unsorted",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "b",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "a",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Manifest entries are not strictly sorted at \"a\""
+    },
+    {
+      "id": "nested-file",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "a",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          },
+          {
+            "path": "a/b",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Manifest path \"a/b\" is nested under non-directory \"a\""
+    },
+    {
+      "id": "escaping-link",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "link",
+            "type": "symlink",
+            "target": "../outside"
+          }
+        ]
+      },
+      "error": "Symlink \"link\" points outside the snapshot"
+    },
+    {
+      "id": "nested-link",
+      "input": {
+        "version": 1,
+        "entries": [
+          {
+            "path": "a",
+            "type": "symlink",
+            "target": "x"
+          },
+          {
+            "path": "a/b",
+            "type": "file",
+            "size": 0,
+            "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "executable": false
+          }
+        ]
+      },
+      "error": "Manifest path \"a/b\" is nested under non-directory \"a\""
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.69s
+     Running tests/controller_lifecycle.rs (target/debug/deps/controller_lifecycle-e3ae15e1b0540f42)
+
+running 18 tests
+test controller_alias_listener_advertises_public_url_and_preserves_identity ... ok
+test late_starting_rejection_is_diagnostic_noop_and_force_removal_cancels ... ok
+test groups_wait_for_all_shards_retry_only_failed_and_emit_live_updates ... ok
+test both_worker_and_assignment_identity_fence_every_report_and_release_once ... ok
+test historical_log_subscription_pages_beyond_ten_thousand_before_end ... ok
+test newer_socket_fences_old_generation_and_revocation_closes_both_channels ... ok
+test assigned_rejection_expires_and_stale_results_are_acknowledged ... ok
+test protocol_mismatch_flushes_fatal_frame_and_v1_registration_is_rejected ... ok
+test live_steps_agent_artifacts_and_stale_output_match_source_contract ... ok
+test preferred_nodes_rejection_and_draining_preserve_source_placement ... ok
+test cancellation_intent_is_idempotent_success_wins_and_timeout_clears_error ... ok
+test reconnect_lost_and_failed_results_share_retry_budget ... ok
+test unknown_snapshot_and_target_are_rejected_before_queuing ... ok
+test source_group_spreading_placeholders_and_cancellation_are_observable ... ok
+test source_followers_receive_live_logs_then_terminal_end_without_duplicate_entries ... ok
+test temporary_native_update_admission_does_not_trigger_long_executor_exclusion ... ok
+test large_archives_apply_backpressure_without_starving_heartbeats_or_cancellation ... ok
+test timeout_reassigns_unacknowledged_assignment_and_heartbeat_loss_retries_running ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.32s
+

@@ -1,0 +1,420 @@
+{
+  "window-0-rotated.json": {
+    "id": 0,
+    "pid": 87788,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284518948,
+    "status": "connected",
+    "user": "shared-after-rotation"
+  },
+  "window-2-ready.json": {
+    "id": 2,
+    "pid": 87975,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284516302,
+    "status": "signedOut",
+    "user": null,
+    "native": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+    }
+  },
+  "window-1-rotated.json": {
+    "id": 1,
+    "pid": 87912,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284519035,
+    "status": "connected",
+    "user": "shared-after-rotation"
+  },
+  "window-2-deleted.json": {
+    "id": 2,
+    "pid": 87975,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284520468,
+    "status": "signedOut",
+    "user": null
+  },
+  "dirty-prompt-run-saved.json": {
+    "id": "dirty",
+    "pid": 88955,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284711039,
+    "status": "connected"
+  },
+  "window-2-first-login.json": {
+    "id": 2,
+    "pid": 87975,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284517515,
+    "status": "connected",
+    "user": "local-admin",
+    "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+  },
+  "normal2-dirty-finished.json": {
+    "id": "dirty",
+    "pid": 89529,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794285019112,
+    "status": "connected",
+    "dirty": [
+      {
+        "mode": "ignore",
+        "id": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+        "snapshot": "sha256:7332a8f679853f813864204738b810cb4114601cc659a28847b3ca0171a39907",
+        "content": "disk-original\n"
+      },
+      {
+        "mode": "saveAll",
+        "id": "01M71VH59AKW3TG9DYGX301C14",
+        "snapshot": "sha256:9ad162f9700091c649f41a0c292d28e0e2d6add3b3a7425f312325fe2584785a",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-run-saved",
+        "id": "01M71VH652AX87Z2DJGVPE0N5T",
+        "snapshot": "sha256:19d61734f828803022bdbbecd162adaf327fd4aa152f3a68303edd5f76ff44df",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-save",
+        "id": "01M71VH75A3FFW25MD7MJA145J",
+        "snapshot": "sha256:33e16e66a5d1cb1279e80b5eabf6d41f504a68ef3252fa7afe860f56176fc797",
+        "content": "prompt-saved\n"
+      },
+      {
+        "mode": "prompt-cancel",
+        "noJobSubmitted": true,
+        "dirtyPreserved": true
+      }
+    ]
+  },
+  "window-1-finished.json": {
+    "id": 1,
+    "pid": 87912,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284520563,
+    "status": "signedOut",
+    "user": null
+  },
+  "window-0-ready.json": {
+    "id": 0,
+    "pid": 87788,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284508138,
+    "status": "signedOut",
+    "user": null,
+    "native": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+    }
+  },
+  "window-2-finished.json": {
+    "id": 2,
+    "pid": 87975,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284520468,
+    "status": "signedOut",
+    "user": null
+  },
+  "normal2-dirty-prompt-save.json": {
+    "id": "dirty",
+    "pid": 89529,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794285017325,
+    "status": "connected"
+  },
+  "normal-dirty-prompt-save.json": {
+    "id": "dirty",
+    "pid": 89234,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284897235,
+    "status": "connected"
+  },
+  "normal-dirty-prompt-cancel.json": {
+    "id": "dirty",
+    "pid": 89234,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284898388,
+    "status": "connected"
+  },
+  "normal2-dirty-prompt-run-saved.json": {
+    "id": "dirty",
+    "pid": 89529,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794285016643,
+    "status": "connected"
+  },
+  "normal-dirty-prompt-run-saved.json": {
+    "id": "dirty",
+    "pid": 89234,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284895993,
+    "status": "connected"
+  },
+  "window-1-first-login.json": {
+    "id": 1,
+    "pid": 87912,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284517607,
+    "status": "connected",
+    "user": "local-admin",
+    "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+  },
+  "normal2-driver-done.json": {
+    "result": "passed"
+  },
+  "normal2-dirty-buffer-proof.json": {
+    "id": "dirty",
+    "pid": 89529,
+    "stages": [
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285016643,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285017325,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285018321,
+        "status": "connected"
+      },
+      {
+        "id": "dirty",
+        "pid": 89529,
+        "remoteName": "ssh-remote",
+        "platform": "darwin",
+        "arch": "arm64",
+        "at": 1794285019112,
+        "status": "connected",
+        "dirty": [
+          {
+            "mode": "ignore",
+            "id": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+            "snapshot": "sha256:7332a8f679853f813864204738b810cb4114601cc659a28847b3ca0171a39907",
+            "content": "disk-original\n"
+          },
+          {
+            "mode": "saveAll",
+            "id": "01M71VH59AKW3TG9DYGX301C14",
+            "snapshot": "sha256:9ad162f9700091c649f41a0c292d28e0e2d6add3b3a7425f312325fe2584785a",
+            "content": "saved-buffer\n"
+          },
+          {
+            "mode": "prompt-run-saved",
+            "id": "01M71VH652AX87Z2DJGVPE0N5T",
+            "snapshot": "sha256:19d61734f828803022bdbbecd162adaf327fd4aa152f3a68303edd5f76ff44df",
+            "content": "saved-buffer\n"
+          },
+          {
+            "mode": "prompt-save",
+            "id": "01M71VH75A3FFW25MD7MJA145J",
+            "snapshot": "sha256:33e16e66a5d1cb1279e80b5eabf6d41f504a68ef3252fa7afe860f56176fc797",
+            "content": "prompt-saved\n"
+          },
+          {
+            "mode": "prompt-cancel",
+            "noJobSubmitted": true,
+            "dirtyPreserved": true
+          }
+        ]
+      }
+    ],
+    "dirty": [
+      {
+        "mode": "ignore",
+        "id": "01M71VH4PRPQMAHNGMZQZMHKJJ",
+        "snapshot": "sha256:7332a8f679853f813864204738b810cb4114601cc659a28847b3ca0171a39907",
+        "content": "disk-original\n"
+      },
+      {
+        "mode": "saveAll",
+        "id": "01M71VH59AKW3TG9DYGX301C14",
+        "snapshot": "sha256:9ad162f9700091c649f41a0c292d28e0e2d6add3b3a7425f312325fe2584785a",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-run-saved",
+        "id": "01M71VH652AX87Z2DJGVPE0N5T",
+        "snapshot": "sha256:19d61734f828803022bdbbecd162adaf327fd4aa152f3a68303edd5f76ff44df",
+        "content": "saved-buffer\n"
+      },
+      {
+        "mode": "prompt-save",
+        "id": "01M71VH75A3FFW25MD7MJA145J",
+        "snapshot": "sha256:33e16e66a5d1cb1279e80b5eabf6d41f504a68ef3252fa7afe860f56176fc797",
+        "content": "prompt-saved\n"
+      },
+      {
+        "mode": "prompt-cancel",
+        "noJobSubmitted": true,
+        "dirtyPreserved": true
+      }
+    ],
+    "native": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+    },
+    "scope": "actual remote VSCode extension host and native snapshot/submission; jobs intentionally queued then cancelled without a worker"
+  },
+  "window-1-ready.json": {
+    "id": 1,
+    "pid": 87912,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284515363,
+    "status": "signedOut",
+    "user": null,
+    "native": {
+      "version": "2.0.0-dev.1",
+      "buildId": "native-preview-20261110-95cfa7161440",
+      "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification"
+      ],
+      "target": "darwin/arm64",
+      "size": 23173504,
+      "sha256": "20ac491fef39889fb10d8db6834b741863164e5462ba4baeeafcb82b08a6d7ff"
+    }
+  },
+  "normal2-dirty-prompt-cancel.json": {
+    "id": "dirty",
+    "pid": 89529,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794285018321,
+    "status": "connected"
+  },
+  "window-0-first-login.json": {
+    "id": 0,
+    "pid": 87788,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284517415,
+    "status": "connected",
+    "user": "local-admin",
+    "clusterId": "01M71TTQPNFQ9Z36N0RKKEEA05"
+  },
+  "window-0-deleted.json": {
+    "id": 0,
+    "pid": 87788,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284520473,
+    "status": "signedOut",
+    "user": null
+  },
+  "normal-driver-error.json": {
+    "message": "The input did not match the regular expression /Cancelled/. Input:\n\n'Canceled: Canceled'\n",
+    "stack": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Cancelled/. Input:\n\n'Canceled: Canceled'\n\n\tat async exports.run (/Users/philjepsen/gridstator-validation.I50ONpwm/windows-proof-1mr4ts9n/driver/dirty.cjs:9:130)"
+  },
+  "window-1-deleted.json": {
+    "id": 1,
+    "pid": 87912,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284520562,
+    "status": "signedOut",
+    "user": null
+  },
+  "window-2-rotated.json": {
+    "id": 2,
+    "pid": 87975,
+    "remoteName": "ssh-remote",
+    "platform": "darwin",
+    "arch": "arm64",
+    "at": 1794284519046,
+    "status": "connected",
+    "user": "shared-after-rotation"
+  }
+}

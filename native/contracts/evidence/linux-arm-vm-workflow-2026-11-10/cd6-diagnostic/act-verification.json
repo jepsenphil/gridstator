@@ -1,0 +1,11 @@
+{
+  "version": "0.2.96",
+  "target": "linux/arm64",
+  "archiveSha256": "158a16eee7394c266ee87dee9f15ca5f219d47193f7a1df9bad9093774e340c4",
+  "executableSha256": "aa958a689fc887427065d264e9be496ec2fd57f728256435636c4c9c5f69d75d",
+  "checksumDocumentSha256": "2f9d9cfdbefbae62cc08f22ae3db0d6efaac924dc8b369e11914c7215a327160",
+  "urls": [
+    "https://github.com/nektos/act/releases/download/v0.2.96/checksums.txt",
+    "https://github.com/nektos/act/releases/download/v0.2.96/act_Linux_arm64.tar.gz"
+  ]
+}

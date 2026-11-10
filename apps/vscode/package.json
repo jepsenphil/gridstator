@@ -66,17 +66,27 @@
     "viewsWelcome": [
       {
         "view": "gridstator.cluster",
-        "contents": "Connect VS Code to your Gridstator controller to run builds and tests on the machines in your network.\n[Sign In](command:gridstator.signIn)\nThe extension uses the same connection as the `gridstator` CLI, so `gridstator login` on this machine also works.\n[Learn more](https://github.com/jepsenphil/gridstator#quick-start)",
-        "when": "gridstator.connection == 'signedOut'"
+        "contents": "Run builds and tests on this machine or across your network.\n[Set up a controller here](command:gridstator.setupController)\n[Connect to an existing controller](command:gridstator.signIn)\nIn SSH and WSL windows, setup runs on the workspace host. Local setup signs you in automatically.",
+        "when": "gridstator.connection == 'signedOut' && gridstator.canSetUpController"
+      },
+      {
+        "view": "gridstator.cluster",
+        "contents": "Connect to your Gridstator controller.\n[Connect to an existing controller](command:gridstator.signIn)\nPaste a login command, enter connection details, or use the CLI’s shared login.",
+        "when": "gridstator.connection == 'signedOut' && !gridstator.canSetUpController"
       },
       {
         "view": "gridstator.cluster",
         "contents": "Cannot reach the Gridstator controller.\n[Retry](command:gridstator.refresh)\n[Sign In Again](command:gridstator.signIn)",
-        "when": "gridstator.connection == 'error'"
+        "when": "gridstator.connection == 'error' && !gridstator.canStartController"
       },
       {
         "view": "gridstator.cluster",
-        "contents": "No worker nodes yet. Create a join token with `gridstator token create --join` and run `gridstator agent join` on a worker.",
+        "contents": "Your local controller service is stopped.\n[Start Controller](command:gridstator.startController)\nIt stays stopped until you start it.",
+        "when": "gridstator.connection == 'error' && gridstator.canStartController"
+      },
+      {
+        "view": "gridstator.cluster",
+        "contents": "No worker nodes yet.\n[Add a worker](command:gridstator.generateJoinCommand)\nGenerate a join command to paste into Gridstator on another computer.",
         "when": "gridstator.connection == 'connected' && gridstator.nodeCount == 0"
       },
       {
@@ -91,6 +101,24 @@
       }
     ],
     "commands": [
+      {
+        "command": "gridstator.generateJoinCommand",
+        "title": "Generate Worker Join Command",
+        "category": "Gridstator",
+        "icon": "$(add)"
+      },
+      {
+        "command": "gridstator.setupController",
+        "title": "Set Up a Controller Here",
+        "category": "Gridstator",
+        "icon": "$(server)"
+      },
+      {
+        "command": "gridstator.startController",
+        "title": "Start Controller",
+        "category": "Gridstator",
+        "icon": "$(play)"
+      },
       {
         "command": "gridstator.openDashboard",
         "title": "Open Dashboard",
@@ -202,6 +230,12 @@
         "category": "Gridstator"
       },
       {
+        "command": "gridstator.node.rename",
+        "title": "Rename Worker\u2026",
+        "category": "Gridstator",
+        "icon": "$(edit)"
+      },
+      {
         "command": "gridstator.node.setReservation",
         "title": "Set Reserved Resources\u2026",
         "category": "Gridstator"
@@ -226,6 +260,11 @@
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "gridstator.generateJoinCommand",
+          "when": "view == gridstator.cluster && gridstator.connection == 'connected'",
+          "group": "navigation@0"
+        },
         {
           "command": "gridstator.openDashboard",
           "when": "view == gridstator.cluster",
@@ -268,6 +307,11 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "gridstator.node.rename",
+          "when": "view == gridstator.cluster && viewItem =~ /^node/",
+          "group": "0_identity@1"
+        },
         {
           "command": "gridstator.launch",
           "when": "view == gridstator.launcher && viewItem =~ /^launch/",
@@ -321,6 +365,10 @@
       ],
       "commandPalette": [
         {
+          "command": "gridstator.node.rename",
+          "when": "false"
+        },
+        {
           "command": "gridstator.launch",
           "when": "false"
         },
@@ -365,6 +413,18 @@
     "configuration": {
       "title": "Gridstator",
       "properties": {
+        "gridstator.nativeCli.enabled": {
+          "type": "boolean",
+          "default": false,
+          "scope": "machine",
+          "markdownDescription": "Use the native Rust CLI preview on this workspace host for discovery, snapshots, submissions and local administration. Requires a trusted workspace and a CLI with `bridge-v1` support. Uses the separate `gridstator-v2` login by default; the existing Node mode remains available when disabled."
+        },
+        "gridstator.nativeCli.path": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Absolute path to the native `gridstator` executable on the workspace host (the remote machine for SSH/WSL windows). Empty searches the host PATH, excluding workspace-provided executables."
+        },
         "gridstator.configPath": {
           "type": "string",
           "default": "",
@@ -431,6 +491,7 @@
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
     "package": "node scripts/build.mjs --production && vsce package --no-dependencies --out dist/gridstator.vsix",
+    "package:native": "node scripts/package-native.mjs",
     "test:integration": "node test/run-integration.mjs"
   },
   "dependencies": {

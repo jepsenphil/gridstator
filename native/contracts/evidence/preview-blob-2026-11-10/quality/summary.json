@@ -1,0 +1,109 @@
+{
+  "recordedAt": "2026-11-10T04:43:56.357425+00:00",
+  "classification": "Development evidence; not stable release approval",
+  "buildId": "native-preview-20261110-e3e5fae51c8e",
+  "productionCheckpointSha256": "e3e5fae51c8e12f26935ab2d8aabaef85175c5fe81d9fe0fd843ffc6ea8b4b5c",
+  "checks": [
+    {
+      "name": "Full Linux default native suite on replacement source",
+      "command": "cd native && cargo test --locked --all-targets",
+      "result": "passed",
+      "exitCode": 0,
+      "passed": 242,
+      "failed": 0,
+      "ignored": 31,
+      "targets": 42,
+      "log": "native-defaults.log",
+      "counting": "Last summary per Cargo target excludes nested child summaries. All 42 targets completed, including final mirror guards and encoded-blob regression. Ignored Docker/service/toolchain cases require their explicit host evidence."
+    },
+    {
+      "name": "Strict all-target Clippy",
+      "command": "cd native && cargo clippy --locked --all-targets -- -D warnings",
+      "result": "passed",
+      "log": "clippy.log"
+    },
+    {
+      "name": "Rust formatting",
+      "command": "cd native && cargo fmt --all -- --check",
+      "result": "passed",
+      "log": "rust-format.log"
+    },
+    {
+      "name": "TypeScript types",
+      "command": "pnpm typecheck",
+      "result": "passed",
+      "log": "typecheck.log"
+    },
+    {
+      "name": "Changed TypeScript test lint",
+      "command": "pnpm exec eslint apps/vscode/src/native.integration.test.ts",
+      "result": "passed",
+      "log": "scoped-lint.log"
+    },
+    {
+      "name": "Full formatting",
+      "command": "pnpm format:check",
+      "result": "passed",
+      "log": "format.log"
+    },
+    {
+      "name": "Frozen AST source inventory",
+      "command": "node native/scripts/check-source-inventory.mjs FROZEN_CHECKOUT",
+      "result": "passed",
+      "sourceDeclarations": 203,
+      "ledgerRows": 227,
+      "log": "source-inventory.log"
+    },
+    {
+      "name": "Actual retained SDK encoded GET",
+      "result": "passed",
+      "evidenceLocation": "native/contracts/evidence/blob-client-encoding-2026-11-10/evidence.json"
+    },
+    {
+      "name": "Historical retained Node/default editor checkpoint",
+      "result": "passed",
+      "scope": "194 Node tests passed with ten explicit opt-in skips; complete 20 Playwright checks passed before the native-only encoded GET delta. No editor production change in that delta. The new actual SDK assertion passed separately. Counts from overlapping runs are not added.",
+      "evidenceLocation": "native/contracts/evidence/preview-2026-11-10/quality/summary.json"
+    }
+  ],
+  "parity": {
+    "verified": 219,
+    "total": 227,
+    "open": [
+      {
+        "id": "vscode-native-helper",
+        "status": "implemented"
+      },
+      {
+        "id": "mixed-target-update",
+        "status": "implemented"
+      },
+      {
+        "id": "mac-signing",
+        "status": "not started"
+      },
+      {
+        "id": "four-target-linkage",
+        "status": "implemented"
+      },
+      {
+        "id": "linux-wsl2",
+        "status": "not started"
+      },
+      {
+        "id": "mac-docker-capacity",
+        "status": "implemented"
+      },
+      {
+        "id": "launchd-live",
+        "status": "implemented"
+      },
+      {
+        "id": "systemd-live",
+        "status": "implemented"
+      }
+    ]
+  },
+  "releaseGate": "Expected to fail while eight aggregate gates remain; release-gate command output will be preserved at final verification.",
+  "provenance": "Uncommitted development checkpoint; embedded sourceRevision is parent reference, not clean native release provenance. Artifacts are private unsigned previews."
+}

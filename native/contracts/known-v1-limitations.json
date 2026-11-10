@@ -1,0 +1,61 @@
+{
+  "formatVersion": 1,
+  "recordedDate": "2026-11-09",
+  "policy": "Record baseline limitations separately from native defects. A broader guarantee requires explicit design review and dedicated acceptance.",
+  "limitations": [
+    {
+      "id": "capture-not-filesystem-atomic",
+      "source": ["packages/snapshot/src/capture.ts", "docs/V2_UPGRADE_PLAN.md"],
+      "behavior": "Capture detects changes per file; the whole working tree is not an atomic filesystem snapshot.",
+      "nativeRequirement": "Preserve per-file change detection and upload digest checks; do not advertise global atomicity."
+    },
+    {
+      "id": "capture-include-base-symlink",
+      "source": ["packages/snapshot/src/capture.ts"],
+      "behavior": "Frozen v1 include scan roots follow symlink components: linked/** and linked/subdir/** can capture controlled files outside the project when linked points outside. Confirmed against the rebuilt frozen captureSnapshot implementation.",
+      "nativeRequirement": "Preserve snapshot path safety by refusing symlink components in include scan roots. Focused native coverage checks both a symlink root and a symlink parent of the final scan directory. This source safety bug is separate from open native picomatch syntax gaps."
+    },
+    {
+      "id": "build-resources-reservations",
+      "source": ["packages/executors/src/build.ts", "docs/V2_UPGRADE_PLAN.md"],
+      "behavior": "Build resource requests are scheduler reservations where the build executor cannot enforce cgroup limits.",
+      "nativeRequirement": "Preserve documented reservation behavior and current executor limitations."
+    },
+    {
+      "id": "workdir-drive-relative",
+      "source": ["packages/protocol/src/job.ts", "native/contracts/accepted-v1/schema-cases.json"],
+      "behavior": "WorkdirSchema accepts C:relative while RelPathSchema rejects it; a parsed job spec alone does not establish safe materialization.",
+      "nativeRequirement": "Capture parser behavior accurately and keep execution/materialization path validation independently safe; any workflow-visible tightening requires a recorded compatibility decision."
+    },
+    {
+      "id": "no-native-mac-executor",
+      "source": ["docs/V2_UPGRADE_PLAN.md"],
+      "behavior": "Jobs use existing container-based kinds; Mac worker support does not imply native macOS/Xcode jobs.",
+      "nativeRequirement": "Keep worker tool requirements explicit and do not claim a host-process execution backend."
+    },
+    {
+      "id": "group-latest-same-millisecond-order",
+      "source": [
+        "packages/shared/src/ids.ts",
+        "apps/controller/src/cluster.ts",
+        "native/src/state.rs",
+        "native/src/controller.rs"
+      ],
+      "behavior": "IDs order creations only to the millisecond; random suffixes within a millisecond are not monotonic. Group latest-attempt selection uses the lexicographically greatest job ID, so a same-millisecond retry can sort before its parent. FIFO ordering among same-millisecond jobs is also unspecified.",
+      "nativeRequirement": "Preserve the frozen latest-ID rule and avoid claiming strict within-millisecond creation ordering. Monotonic generation or an attempt-based selection rule requires a separate compatibility decision.",
+      "sourceLocations": [
+        "packages/shared/src/ids.ts:9",
+        "apps/controller/src/cluster.ts:559",
+        "native/src/state.rs:26",
+        "native/src/controller.rs"
+      ]
+    },
+    {
+      "id": "late-starting-rejection-transition",
+      "source": ["apps/controller/src/cluster.ts", "packages/protocol/src/states.ts"],
+      "behavior": "The rejection handler attempts starting to queued, but the canonical transition table forbids it. A late rejection after starting does not requeue or fail the job.",
+      "nativeRequirement": "Keep the canonical transition table; retain starting state and record a rejection diagnostic rather than inventing a new terminal outcome.",
+      "sourceLocations": ["apps/controller/src/cluster.ts:1105", "packages/protocol/src/states.ts"]
+    }
+  ]
+}

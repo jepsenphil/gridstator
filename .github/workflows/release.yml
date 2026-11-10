@@ -3,7 +3,8 @@ name: Release
 # Push a tag like v0.2.0 to publish. The version in the tag is stamped into every package.
 on:
   push:
-    tags: ['v*.*.*']
+    # v2 uses the separately gated native candidate pipeline; never publish an npm v2 CLI.
+    tags: ['v0.*.*', 'v1.*.*']
 
 permissions:
   contents: write # create the GitHub release

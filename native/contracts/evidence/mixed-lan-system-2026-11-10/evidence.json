@@ -1,0 +1,148 @@
+{
+  "recordedAtUTC": "2026-11-10T05:45:41.915031+00:00",
+  "result": "passed",
+  "test": "actual_root_system_service_drains_and_restores_database_after_schema_crash",
+  "testFile": "native/tests/system_scope_e2e.rs",
+  "testSourceSha256": "55fd4cd0f335e6efff332b97e8c359778149957993d89265979320b2025f773b",
+  "testHelperSha256": "99e24eac9acf39134cb0f9eef58adc1c045f9e83a98b455e1e63ce06f65a1b8a",
+  "runSeconds": 345.51,
+  "sourceState": "Uncommitted preview; embedded sourceRevision is parent commit, actual production identity is final-production-checkpoint.json and exact archived target bytes.",
+  "baselineBuildId": "native-preview-20261110-e3e5fae51c8e",
+  "finalBuildId": "native-preview-20261110-cd6b769ebe6e",
+  "clusterId": "01M71Z9GD9R204VRB0NN3BKWHD",
+  "caFingerprint": "sha256:171bce1f8fb206994adc7502fe0fa8c3e5a15f97ba83ffd08b109f7d19828e89",
+  "transport": "Actual native TLS LAN .162 controller, standalone Linux x64 worker and actual Apple M4 DarwinARM64 worker. Mac native supervisor held open under SSH responsibility. No tunnel.",
+  "command": {
+    "compiledLocal": "cargo +1.99.1 test --manifest-path native/Cargo.toml --locked --test system_scope_e2e --no-run --message-format=json",
+    "executedRemote": "GRIDSTATOR_SYSTEM_PROOF_INPUT=/tmp/gridstator-system-proof-cd6-20261110-31df/inputs.json ./system_scope_e2e --ignored --exact actual_root_system_service_drains_and_restores_database_after_schema_crash --nocapture",
+    "macForeground": "foreground-ssh command in README.md; secret credentials transferred as private agent.json, never argv"
+  },
+  "positive": {
+    "allFourPackageMembersReal": true,
+    "controller": {
+      "from": "native-preview-20261110-e3e5fae51c8e",
+      "to": "native-preview-20261110-cd6b769ebe6e",
+      "oldPayloadPid": 8629,
+      "confirmedPayloadPid": 12180,
+      "restartedFinalPayloadPid": 13269,
+      "published": {
+        "action": "restarting",
+        "from": "native-preview-20261110-e3e5fae51c8e",
+        "to": "native-preview-20261110-cd6b769ebe6e"
+      },
+      "stableSupervisorMatchesFinal": true,
+      "linuxWorkerInstall": {
+        "schemaVersion": 1,
+        "current": "native-preview-20261110-cd6b769ebe6e",
+        "previous": "native-preview-20261110-e3e5fae51c8e",
+        "pending": null,
+        "lastRollback": null
+      }
+    },
+    "workerTargets": [
+      "linux/amd64",
+      "darwin/arm64"
+    ],
+    "observedMaxSimultaneousUpdatingOrDraining": 1,
+    "rolloutNodes": [
+      {
+        "nodeId": "01M71Z9NYVWY9F8D5J83X2P4XP",
+        "name": "mixed-cd6-31df-linux",
+        "state": "done",
+        "detail": null,
+        "auto": false,
+        "startedAt": 1794289212220,
+        "finishedAt": 1794289213221
+      },
+      {
+        "nodeId": "01M71Z9NYXSFYHG6G4E0QKB6QX",
+        "name": "mixed-cd6-31df-mac",
+        "state": "done",
+        "detail": null,
+        "auto": false,
+        "startedAt": 1794289213221,
+        "finishedAt": 1794289215220
+      }
+    ],
+    "exactTargetJobs": [
+      {
+        "jobId": "01M71ZH9R7D2CQEXSP38JPR139",
+        "target": "linux/amd64",
+        "stdout": "x86_64\nmixed-rollout\n",
+        "state": "succeeded"
+      },
+      {
+        "jobId": "01M71ZHA8C6373JF23JFM5D3SM",
+        "target": "darwin/arm64",
+        "stdout": "aarch64\nmixed-rollout\n",
+        "state": "succeeded"
+      }
+    ],
+    "macFinalInstall": "mac/final-install-proof.json"
+  },
+  "negative": {
+    "candidate": {
+      "buildId": "rehearsal-schema-crash",
+      "bundleSha256": "7c560410194ddbbef18d5f519e75fcb3ff6c2e19e3389a4ed13144348d0885f1",
+      "bundleSize": 23895957,
+      "scope": "actual Linux schema-fault executable; non-host members are header fixtures and workers remain pinned/off"
+    },
+    "drainedActualEmbeddedJob": "01M71ZJ5QF2S4XV6CZ995A5RWN",
+    "before": {
+      "userVersion": 0,
+      "jobs": 4,
+      "candidateTable": false,
+      "candidateColumn": false
+    },
+    "failedCandidate": {
+      "userVersion": 999,
+      "jobs": 0,
+      "candidateTable": true,
+      "candidateColumn": true
+    },
+    "restored": {
+      "userVersion": 0,
+      "jobs": 4,
+      "candidateTable": false,
+      "candidateColumn": false
+    },
+    "rollback": {
+      "from": "rehearsal-schema-crash",
+      "to": "native-preview-20261110-cd6b769ebe6e",
+      "at": 1794289260285,
+      "reason": "crashed"
+    },
+    "sameCAClusterAndCompletedHistory": true,
+    "sameSystemdSupervisorDuringRollback": "13260",
+    "threeCrashDiagnostic": "linux/owned-journal.log"
+  },
+  "service": {
+    "system": "Actual root-owned system scope on Ubuntu25.04 x64 KVM with PID1systemd; active/enabled, Docker execution, restart, managed update/stablelauncher refresh, drain, schema rollback, stop and uninstall.",
+    "user": "Separate earlier Linux cutover proof; not repeated here.",
+    "existingServiceUnchanged": true,
+    "rebootPerformed": false,
+    "linuxARM64SystemdLifecycle": false
+  },
+  "cleanup": {
+    "linux": "linux/cleanup-audit.json",
+    "mac": "mac/cleanup.json",
+    "credentialFilesRemoved": true,
+    "uniqueUnitRemoved": true,
+    "ownedProcessesAndDockerResourcesAbsent": true
+  },
+  "acceptance": {
+    "mixed-target-update": "Verified exact requested one-cluster LAN mixed-target rollout plus actual schema-changing candidate executable failure and old confirmed executable/database restoration.",
+    "systemd-live": "Adds privileged Linux x64 actual system scope. Aggregate remains partial until actual Linux ARM64 service lifecycle; no boot/reboot claim."
+  },
+  "harnessFinding": {
+    "failure": "Detached Mac PythonPopen supervisor/parentexit reported EHOSTUNREACH even though samephysicalpayload CLI/nativeforeground worker and systemcurl could connect.",
+    "successfulBoundedSetup": "Held-open foreground SSH session for native supervisor immediately connected directLAN and completed managed update. No production, global OS permission, Desktop or Docker config changes.",
+    "productConclusion": "Launch-environment limitation reproduced for detached harness; no established native transport defect or global LocalNetwork permission claim."
+  },
+  "limits": [
+    "Only actual Linuxx64 and DarwinARM64 workers are asserted in mixed rollout; all four actual archive members were supplied, but physical IntelMac and LinuxARM runtime/service tests are independent.",
+    "Negative bundle has one actual Linuxx64 schema-fault executable and three declared header-only fixtures. Workers remained pinned/off and were not offered this negative fixture.",
+    "Unsigned development preview; no signing/notarization/publication/stable-release provenance claim.",
+    "This VM is UbuntuKVM, not WSL2. No reboot, global package install, Desktop restart or existing-service restart occurred."
+  ]
+}

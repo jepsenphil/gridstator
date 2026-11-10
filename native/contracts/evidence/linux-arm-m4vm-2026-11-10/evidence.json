@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-11-10T05:36:40.047460+00:00",
+  "classification": "Actual Linux ARM64 userspace/kernel container on the native ARM64 M4 Docker VM; not a boot/systemd/standalone physical Linux host claim",
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "target": "linux/arm64",
+  "sha256": "eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+  "size": 26556128,
+  "productionCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "environment": {
+    "host": "M4 macOS15.6",
+    "DockerDesktop": "4.99.0",
+    "engine": "29.9.3",
+    "kernel": "Linux7.0.14-linuxkit aarch64",
+    "imageId": "sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab",
+    "repoDigests": [
+      "alpine@sha256:bc21487101ae47172509130ee1092cc273a831968d64b617776d1f69c81e42ab"
+    ],
+    "image": "alpine:3.21",
+    "architecture": "arm64",
+    "runtimeUser": "65534:65534",
+    "network": "none; private loopback TLS only",
+    "filesystem": "read-only root, read-only native payload bind,64MiB temporary /tmp",
+    "resources": {
+      "cpus": 1,
+      "memoryMiB": 256
+    },
+    "capabilities": "all dropped; no-new-privileges"
+  },
+  "command": "runtime.sh native-preview-20261110-cd6b769ebe6e eb5c26efcd358a4f591f321059136a4551650b8b6e54c380a20e09e9207040bd",
+  "result": "passed",
+  "checks": [
+    "Actual aarch64 kernel/ELF execution and exact payload checksum",
+    "build-info/version/current target/common ID",
+    "Node/npm/Rust/Python/Zig/SQLite/OpenSSL executables absent from runtime PATH",
+    "Native private cluster initialization without installed runtime packages",
+    "Actual TLS status reads matching common build/target",
+    "SIGTERM, successful process exit and removed controller runtime file"
+  ],
+  "harnessCorrection": {
+    "issue": "Mac Docker auto-detected a locked native credential helper even with empty private config when the helper directory was in PATH",
+    "fix": "Private anonymous Docker config, absolute Docker CLI and OS-only PATH keep credential helpers out of anonymous public-image pulls",
+    "scope": "No global Docker config, login keychain, credentials or desktop settings changed. Two failures and passing preflight preserved."
+  },
+  "cleanup": "docker run --rm; controller exits cleanly; private credentials/data live only in disposable tmpfs; named container removed",
+  "limits": [
+    "No Linux ARM64 worker/executor workload claimed by this controller-only clean-runtime proof",
+    "No Linux ARM64 systemd/boot/reboot proof",
+    "No physical Intel Mac or Windows proof from this run"
+  ]
+}

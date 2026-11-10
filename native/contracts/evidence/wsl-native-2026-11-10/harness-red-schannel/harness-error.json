@@ -1,0 +1,5 @@
+{
+  "result": "expected harness correction",
+  "error": "Windows curl Schannel revocation status unknown for ephemeral private CA",
+  "correction": "Per-invocation --ssl-no-revoke, retaining exact --cacert and hostname verification; no global CA policy changed."
+}

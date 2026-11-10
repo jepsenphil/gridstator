@@ -1,0 +1,12 @@
+{
+  "result": "passed",
+  "uniqueUserLabelsAbsent": [
+    "org.gridstator.native.validation.controller.01m71wxcdqkmtb9q7ppw9vzh5q",
+    "org.gridstator.native.validation.agent.01m71wxjrnm6w8n85bvcgfscx3",
+    "org.gridstator.native.validation.controller.01m71wt6dghye4n66fzkc12rm0",
+    "org.gridstator.native.validation.agent.01m71wt7ewya3tcbrfrjz0k8t8"
+  ],
+  "ownedRoleActorsAbsent": true,
+  "privateRoleStateAndCredentialsRemoved": "/Users/philjepsen/gridstator-validation.I50ONpwm/preview-roles-1fd6e3d425b3",
+  "immutablePayloadsRetained": true
+}

@@ -1,0 +1,8 @@
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/mach_init.h
+.3))
+extern boolean_t mach_task_is_self(task_name_t task);
+extern kern_return_t host_page_size(host_t, vm_size_t *);
+
+extern __swift_nonisolated_unsafe mach_port_t      mach_task_self_;
+#define mach_task_self() mach_task_self_
+#define current_task()  mach_task

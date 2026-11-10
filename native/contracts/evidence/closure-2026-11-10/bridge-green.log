@@ -1,0 +1,22 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.09s
+     Running tests/bridge_source_scenarios.rs (target/debug/deps/bridge_source_scenarios-5e5da42cc96baf98)
+
+running 2 tests
+test source_snapshot_014_invalid_configuration_names_the_configuration_file ... ok
+test source_snapshot_013_git_root_relative_workdir_and_nearest_configuration ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/discovery_contract.rs (target/debug/deps/discovery_contract-62a576b31b08b983)
+
+running 6 tests
+test local_lockfiles_override_root_fallback_and_symlinks_are_not_walked ... ok
+test project_environment_limits_count_source_unicode_code_points ... ok
+test frozen_project_defaults_and_strictness_match ... ok
+test project_yaml_whole_numbers_match_javascript_normalization ... ok
+test walk_order_exclusions_managers_stages_and_tasks_are_preserved ... ok
+test workflow_events_inputs_and_warnings_match_reference ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

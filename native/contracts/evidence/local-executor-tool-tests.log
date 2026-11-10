@@ -1,0 +1,17 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.98s
+     Running tests/executor_contract.rs (target/debug/deps/executor_contract-c29ffe3e791a677a)
+
+running 9 tests
+test cleanup_respects_owned_node_and_keeps_explicit_active_jobs ... ok
+test keep_failed_preserves_command_resources_until_explicit_owned_cleanup ... ok
+test real_act_cancellation_cleans_labelled_workflow_containers ... ok
+test real_act_local_reusable_workflow_keeps_snapshot_and_collects_artifact ... ok
+test real_act_sees_exact_snapshot_private_checkout_copies_inputs_and_steps ... ok
+test real_act_socket_opt_in_shares_runner_files_with_nested_container ... ok
+test real_buildx_uses_stage_secret_outputs_and_removes_temporary_export_tag ... ok
+test real_docker_cancellation_and_timeout_stop_actual_container ... ok
+test real_docker_command_stages_snapshot_reports_exit_artifacts_and_cleans ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 92.60s
+

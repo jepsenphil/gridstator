@@ -421,8 +421,10 @@ export class Store {
 
   updateNode(
     id: string,
-    patch: { info?: NodeInfo; settings?: NodeSettings; last_seen_at?: number },
+    patch: { name?: string; info?: NodeInfo; settings?: NodeSettings; last_seen_at?: number },
   ): void {
+    if (patch.name !== undefined)
+      this.db.prepare('UPDATE nodes SET name = ? WHERE id = ?').run(patch.name, id);
     if (patch.info !== undefined)
       this.db.prepare('UPDATE nodes SET info = ? WHERE id = ?').run(JSON.stringify(patch.info), id);
     if (patch.settings !== undefined) {
@@ -432,6 +434,26 @@ export class Store {
     }
     if (patch.last_seen_at !== undefined)
       this.db.prepare('UPDATE nodes SET last_seen_at = ? WHERE id = ?').run(patch.last_seen_at, id);
+  }
+
+  /** Keep named job targets bound to the same worker when its display name changes. */
+  rebindNodeTargets(previousName: string, nodeId: string): void {
+    const write = this.db.prepare('UPDATE jobs SET spec = ? WHERE id = ?');
+    for (const row of this.db.prepare('SELECT id, spec FROM jobs').iterate()) {
+      const spec = JSON.parse(row['spec'] as string) as JobSpec;
+      const hardTarget = spec.target.node === previousName;
+      const preferences = spec.target.prefer ?? [];
+      const preferred = preferences.includes(previousName);
+      if (!hardTarget && !preferred) continue;
+      spec.target = {
+        ...spec.target,
+        ...(hardTarget ? { node: nodeId } : {}),
+        ...(preferred
+          ? { prefer: preferences.map((name) => (name === previousName ? nodeId : name)) }
+          : {}),
+      };
+      write.run(JSON.stringify(spec), row['id'] as string);
+    }
   }
 
   nodeById(id: string): NodeRow | undefined {

@@ -1,0 +1,58 @@
+{
+  "buildId": "native-preview-20261110-cd6b769ebe6e",
+  "version": "2.0.0-dev.1",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "productionCheckpointSha256": "cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5",
+  "result": "passed",
+  "targets": [
+    {
+      "target": "darwin/arm64",
+      "runtime": "native M4",
+      "buildInfo": {
+        "version": "2.0.0-dev.1",
+        "buildId": "native-preview-20261110-cd6b769ebe6e",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "darwin/arm64",
+        "size": 23188896,
+        "sha256": "111f031b1b659137d9f36dd549f6234f7d44974f25e28bf8777e1d593a977663"
+      },
+      "samplerTests": 2,
+      "buildkitMetadataTests": 1,
+      "strictAllTargetsClippy": "passed",
+      "actualFinalByteForegroundAndUserRoleTests": 2
+    },
+    {
+      "target": "darwin/amd64",
+      "runtime": "Rosetta on M4",
+      "buildInfo": {
+        "version": "2.0.0-dev.1",
+        "buildId": "native-preview-20261110-cd6b769ebe6e",
+        "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+        "capabilities": [
+          "bridge-v1",
+          "native-controller",
+          "native-worker",
+          "snapshots",
+          "release-verification"
+        ],
+        "target": "darwin/amd64",
+        "size": 23810344,
+        "sha256": "18f670e3126301f38424ede04cadd65e5fa15a26a21b467e1456c96c6472e7a4"
+      },
+      "samplerTests": 2,
+      "buildkitMetadataTests": 1,
+      "strictAllTargetsClippy": "passed",
+      "actualFinalByteForegroundAndUserRoleTests": 2
+    }
+  ],
+  "finalArmDockerProof": "docker/proof.json",
+  "cleanup": "cleanup.json",
+  "scope": "actual final common release bytes; M4-native ARM and Rosetta amd64, no physical Intel or Developer ID signing/notarization claim"
+}

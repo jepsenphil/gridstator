@@ -1,0 +1,12 @@
+{
+  "version": "0.2.96",
+  "target": "linux/amd64",
+  "source": "override",
+  "checksumsUrl": "https://github.com/nektos/act/releases/download/v0.2.96/checksums.txt",
+  "archiveName": "act_Linux_x86_64.tar.gz",
+  "archiveSha256": "b861e901c9062d841c6e8ecd36cdf27e0ce39ea0124cfd93de6efcebea0e16e7",
+  "archiveSize": 8484270,
+  "executableSha256": "4778494a4f0128828958bdc92828e7bac2ddeb003b640b19ac41b103a4ca433f",
+  "reportedVersion": "act version 0.2.96",
+  "scope": "Actual controller managed mirror download, independent upstream checksum comparison, safe native extraction and host act --version; no Docker workload or Mac tool readiness claim"
+}

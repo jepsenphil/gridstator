@@ -1,0 +1,198 @@
+[
+  {
+    "id": "reference-integration-e2e-012",
+    "result": "passed",
+    "elapsedMs": 37099,
+    "observations": {
+      "job": {
+        "id": "01M71PQQPRHV0285KWEK4XRRQQ",
+        "name": "actions ci.yml (test) on push",
+        "kind": "actions",
+        "state": "succeeded",
+        "stateReason": null,
+        "priority": 0,
+        "owner": "local-admin",
+        "snapshotId": "sha256:f58b5ab59601a192336b8ff3da5f0134240666d2513f8cb86683c529b70b0c99",
+        "spec": {
+          "kind": "actions",
+          "env": {},
+          "secretEnv": {},
+          "snapshot": "sha256:f58b5ab59601a192336b8ff3da5f0134240666d2513f8cb86683c529b70b0c99",
+          "resources": {
+            "cpus": 2,
+            "memoryMb": 4096
+          },
+          "target": {
+            "labels": [],
+            "prefer": [],
+            "node": "alpha"
+          },
+          "priority": 0,
+          "project": "example-github-actions",
+          "workflow": ".github/workflows/ci.yml",
+          "job": "test",
+          "event": "push",
+          "inputs": {},
+          "vars": {},
+          "platforms": {
+            "ubuntu-latest": "node:24-bookworm-slim"
+          },
+          "matrix": [],
+          "dockerSocket": false,
+          "git": {
+            "branch": "main",
+            "headSha": "a604563b59dc173d05b21c27ef44bc5fe6c73f67"
+          },
+          "workdir": ".",
+          "retry": {
+            "max": 0,
+            "on": [
+              "lost"
+            ]
+          }
+        },
+        "nodeId": "01M71PQJSGV9Z3ENXGAWMA0EKJ",
+        "nodeName": "alpha",
+        "assignmentId": "01M71PQQQ0NPBCTX81GFQQA3VE",
+        "attempt": 1,
+        "retryOf": null,
+        "oomKilled": false,
+        "exitCode": 0,
+        "error": null,
+        "queuePosition": null,
+        "logSeq": 55,
+        "outputs": {
+          "steps": [
+            {
+              "id": "CI/test##--setup-job",
+              "group": "CI/test",
+              "name": "Set up job",
+              "status": "success",
+              "startedAt": 1794279989441,
+              "durationMs": 14588
+            },
+            {
+              "id": "CI/test#Pre#3",
+              "group": "CI/test",
+              "name": "Pre actions/upload-artifact@v4",
+              "status": "skipped",
+              "startedAt": null,
+              "durationMs": null
+            },
+            {
+              "id": "CI/test#Main#0",
+              "group": "CI/test",
+              "name": "actions/checkout@v4",
+              "status": "success",
+              "startedAt": 1794280022590,
+              "durationMs": 19
+            },
+            {
+              "id": "CI/test#Main#1",
+              "group": "CI/test",
+              "name": "Run tests",
+              "status": "success",
+              "startedAt": 1794280022643,
+              "durationMs": 240
+            },
+            {
+              "id": "CI/test#Main#2",
+              "group": "CI/test",
+              "name": "Write report",
+              "status": "success",
+              "startedAt": 1794280022917,
+              "durationMs": 89
+            },
+            {
+              "id": "CI/test#Main#3",
+              "group": "CI/test",
+              "name": "actions/upload-artifact@v4",
+              "status": "success",
+              "startedAt": 1794280023039,
+              "durationMs": 516
+            },
+            {
+              "id": "CI/test##--complete-job",
+              "group": "CI/test",
+              "name": "Complete job",
+              "status": "success",
+              "startedAt": 1794280023566,
+              "durationMs": 1819
+            }
+          ]
+        },
+        "artifacts": [
+          {
+            "name": "test-report/test-report.zip",
+            "digest": "sha256:a6754c4016658d3fd1fe278fa276ca8e9d64027def7fdc814bae7620f3e745df",
+            "size": 530
+          }
+        ],
+        "groupId": null,
+        "shardIndex": null,
+        "shardTotal": null,
+        "createdAt": 1794279988952,
+        "queuedAt": 1794279988952,
+        "assignedAt": 1794279988958,
+        "startedAt": 1794279989197,
+        "finishedAt": 1794280025485,
+        "cancelRequestedAt": null
+      },
+      "workflows": [
+        {
+          "file": ".github/workflows/ci.yml",
+          "name": "CI",
+          "events": [
+            "push",
+            "pull_request",
+            "workflow_dispatch"
+          ],
+          "defaultEvent": "push",
+          "dispatchInputs": [
+            {
+              "name": "greeting",
+              "required": false,
+              "description": "Who to greet in the report",
+              "default": "world"
+            }
+          ],
+          "jobs": [
+            {
+              "id": "test",
+              "name": "test",
+              "runsOn": [
+                "ubuntu-latest"
+              ],
+              "needs": [],
+              "matrix": false,
+              "runnable": true,
+              "warnings": []
+            },
+            {
+              "id": "lint",
+              "name": "lint",
+              "runsOn": [
+                "ubuntu-latest"
+              ],
+              "needs": [
+                "test"
+              ],
+              "matrix": false,
+              "runnable": true,
+              "warnings": []
+            }
+          ],
+          "warnings": []
+        }
+      ],
+      "stdout": "[CI/test] ⭐ Run Set up job\n[CI/test] 🚀  Start image=node:24-bookworm-slim\n[CI/test] 🐳  docker pull image=node:24-bookworm-slim platform= username= forcePull=false\n[CI/test] 🐳  docker create image=node:24-bookworm-slim platform= entrypoint=[\"tail\" \"-f\" \"/dev/null\"] cmd=[] network=\"host\"\n[CI/test] 🐳  docker run image=node:24-bookworm-slim platform= entrypoint=[\"tail\" \"-f\" \"/dev/null\"] cmd=[] network=\"host\"\n[CI/test] 🐳  docker exec cmd=[node --no-warnings -e console.log(process.execPath)] user= workdir=\n[CI/test] ✅  Success - Set up job\n[CI/test] ☁  git clone 'https://github.com/actions/upload-artifact' # ref=v4\n[CI/test] ⭐ Run Main actions/checkout@v4\n[CI/test] 🐳  docker cp src=/tmp/gridstator-integration-source-tNv421/alpha/jobs/01M71PQQPRHV0285KWEK4XRRQQ/src/. dst=/tmp/gridstator-integration-source-tNv421/alpha/jobs/01M71PQQPRHV0285KWEK4XRRQQ/src\n[CI/test] ✅  Success - Main actions/checkout@v4 [18.643325ms]\n[CI/test] ⭐ Run Main Run tests\n[CI/test] 🐳  docker exec cmd=[bash -e /var/run/act/workflow/1] user= workdir=\n[CI/test]   | ✔ greet (1.23986ms)\n[CI/test]   | ℹ tests 1\n[CI/test]   | ℹ suites 0\n[CI/test]   | ℹ pass 1\n[CI/test]   | ℹ fail 0\n[CI/test]   | ℹ cancelled 0\n[CI/test]   | ℹ skipped 0\n[CI/test]   | ℹ todo 0\n[CI/test]   | ℹ duration_ms 101.103299\n[CI/test] ✅  Success - Main Run tests [239.59714ms]\n[CI/test] ⭐ Run Main Write report\n[CI/test] 🐳  docker exec cmd=[bash -e /var/run/act/workflow/2] user= workdir=\n[CI/test] ✅  Success - Main Write report [89.175335ms]\n[CI/test] ⭐ Run Main actions/upload-artifact@v4\n[CI/test] 🐳  docker cp src=/tmp/gridstator-integration-source-tNv421/alpha/act-home/.cache/act/actions-upload-artifact@v4/ dst=/var/run/act/actions/actions-upload-artifact@v4/\n[CI/test] 🐳  docker exec cmd=[/usr/local/bin/node /var/run/act/actions/actions-upload-artifact@v4/dist/upload/index.js] user= workdir=\n[CI/test]   | (node:62) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n[CI/test]   | (Use `node --trace-deprecation ...` to show where the warning was created)\n[CI/test]   | With the provided path, there will be 2 files uploaded\n[CI/test]   | Artifact name is valid!\n[CI/test]   | Root directory input is valid!\n[CI/test]   | Beginning upload of artifact content to blob storage\n[CI/test]   | (node:62) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n[CI/test]   | Uploaded bytes 530\n[CI/test]   | Finished uploading artifact content to blob storage!\n[CI/test]   | SHA256 digest of uploaded artifact zip is a6754c4016658d3fd1fe278fa276ca8e9d64027def7fdc814bae7620f3e745df\n[CI/test]   | Finalizing artifact upload\n[CI/test]   | Artifact test-report.zip successfully finalized. Artifact ID 3137584898\n[CI/test]   | Artifact test-report has been successfully uploaded! Final size is 530 bytes. Artifact ID is 3137584898\n[CI/test]   | Artifact download URL: https://github.com/nektos/act/actions/runs/1/artifacts/3137584898\n[CI/test] ✅  Success - Main actions/upload-artifact@v4 [516.157484ms]\n[CI/test] ⚙  ::set-output:: artifact-id=3137584898\n[CI/test] ⚙  ::set-output:: artifact-digest=a6754c4016658d3fd1fe278fa276ca8e9d64027def7fdc814bae7620f3e745df\n[CI/test] ⚙  ::set-output:: artifact-url=https://github.com/nektos/act/actions/runs/1/artifacts/3137584898\n[CI/test] ⭐ Run Complete job\n[CI/test] Cleaning up container for job test\n[CI/test] ✅  Success - Complete job\n[CI/test] 🏁  Job succeeded\n",
+      "stderr": "Snapshot of /tmp/gridstator-integration-source-tNv421/gha: 6 files, 2253 bytes\nUploading 7 new blob(s), 3.1 KiB...\nJob 01M71PQQPRHV0285KWEK4XRRQQ submitted\n[gridstator] Job 01M71PQQPRHV0285KWEK4XRRQQ accepted by worker\n[gridstator] act: Using docker host 'unix:///var/run/docker.sock', and daemon socket '-'\n[gridstator] act: Start server on http://127.0.0.1:37575\n[gridstator] Job succeeded\nJob 01M71PQQPRHV0285KWEK4XRRQQ succeeded on alpha in 36s\nArtifact test-report/test-report.zip (530 B): gridstator artifacts 01M71PQQPRHV0285KWEK4XRRQQ --download test-report/test-report.zip\n",
+      "artifactZipSignature": "PK",
+      "artifactBytes": 530,
+      "dirtyTrackedFiles": [
+        "src/greet.js",
+        "test/greet.test.js"
+      ]
+    }
+  }
+]

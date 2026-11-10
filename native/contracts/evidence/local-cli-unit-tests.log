@@ -1,0 +1,11 @@
+   Compiling gridstator v2.0.0-dev.1 (/repos/gridstator/native)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.97s
+     Running unittests src/lib.rs (native/target/debug/deps/gridstator-19c1ceb4a39629b3)
+
+running 3 tests
+test cli::tests::service_identity_uses_explicit_or_verified_environment_paths_and_refuses_wrappers ... ok
+test cli::tests::service_preserves_same_account_docker_connection_and_excludes_foreign_credentials ... ok
+test cli::tests::scalar_flags_take_the_last_value_and_collection_flags_append ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.01s
+

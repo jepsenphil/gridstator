@@ -1,0 +1,114 @@
+{
+  "node": {
+    "id": "01M71XTNERAE630F9RDHFF5P7W",
+    "name": "docker-proof-0d0cb012380c",
+    "status": "online",
+    "health": "ok",
+    "healthIssues": [],
+    "info": {
+      "hostname": "Mac.localdomain",
+      "machineId": "sha256:df68c5274265bf864332dacd0869b321d9c126dee0eef65a68a0796c2820b573",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "15.6",
+      "cpus": 10,
+      "memoryTotalMb": 16384,
+      "agentVersion": "2.0.0-dev.1",
+      "docker": {
+        "available": true,
+        "version": "29.9.3"
+      },
+      "buildx": {
+        "available": true,
+        "version": "github.com/docker/buildx v0.38.1 0dbe87f36ed472fe36b6796c3f70b4210a731fc5"
+      },
+      "act": {
+        "available": true,
+        "version": "act version 0.2.97"
+      },
+      "executors": [
+        "command",
+        "docker-build",
+        "actions"
+      ],
+      "build": {
+        "id": "m4-memory-dev-181bd9221ed7",
+        "version": "2.0.0-dev.1",
+        "sha256": "730cb5b17c8300d5113c98155fdb8246dd432080eea9ab6ede8665ba5c8777b8",
+        "target": "darwin/arm64",
+        "managed": false,
+        "lastRollback": null,
+        "runtime": "rust",
+        "tools": {
+          "act": "0.2.97",
+          "managed": [],
+          "overrides": [
+            "act"
+          ]
+        }
+      },
+      "controllerUrl": "https://127.0.0.1:61779",
+      "host": {
+        "cpus": 10,
+        "memoryTotalMb": 16384,
+        "memoryAvailableMb": 4343
+      },
+      "executionCapacity": {
+        "cpus": 10,
+        "memoryTotalMb": 7934,
+        "memoryAvailableMb": null,
+        "diskFreeMb": null,
+        "diskTotalMb": null
+      },
+      "acceptingWork": true
+    },
+    "metrics": {
+      "ts": 1794287481528,
+      "cpuPercent": 1.9647362232208252,
+      "memoryAvailableMb": 4663,
+      "diskFreeMb": 303998,
+      "diskTotalMb": 471482,
+      "load1": 1.88818359375,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 1638
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "effectiveLabels": [
+      "os=darwin",
+      "arch=arm64",
+      "docker",
+      "buildx",
+      "act"
+    ],
+    "activeJobs": [],
+    "allocated": {
+      "cpus": -0.0,
+      "memoryMb": 0
+    },
+    "allocatable": {
+      "cpus": 9.0,
+      "memoryMb": 6296
+    },
+    "lastSeenAt": 1794287481529,
+    "connectedAt": 1794287426486,
+    "createdAt": 1794287424984,
+    "update": {
+      "state": "current",
+      "build": "m4-memory-dev-181bd9221ed7",
+      "detail": null,
+      "autoUpdate": "off",
+      "canUpdate": false
+    }
+  },
+  "workerPid": 94746,
+  "noContainers": true
+}

@@ -227,6 +227,103 @@ test('node management posts scheduling and capacity changes', async ({ page }) =
   await page.screenshot({ path: `${shots}nodes.png`, fullPage: true });
 });
 
+test('worker rename preserves unsaved input during polling and sends no settings changes', async ({
+  page,
+}) => {
+  await open(page);
+  await page.getByRole('tab', { name: /Nodes/ }).click();
+  const card = page.locator('.node-card', { has: page.getByRole('heading', { name: /big-box/ }) });
+  const name = card.getByLabel('Worker name');
+  await name.fill('bad name');
+  await expect(card.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
+  await name.press('Enter');
+  expect((await sent(page)).filter((m) => m.type === 'updateNode')).toEqual([]);
+  await name.fill('laptop');
+  await expect(card.getByText('Another worker already uses this name.')).toBeVisible();
+  await name.fill('big-box-renamed');
+  await push(page, { type: 'state', state: state() });
+  await expect(name).toHaveValue('big-box-renamed');
+  await card.getByRole('button', { name: 'Save', exact: true }).click();
+  expect((await sent(page)).filter((m) => m.type === 'updateNode')).toEqual([
+    {
+      type: 'updateNode',
+      nodeId: '01NODEBIGBOX00000000000000',
+      patch: { name: 'big-box-renamed' },
+    },
+  ]);
+  const updated = state();
+  updated.nodes[0]!.name = 'big-box-renamed';
+  await push(page, { type: 'state', state: updated });
+  await expect(page.locator('.node-card').first().getByRole('heading')).toContainText(
+    'big-box-renamed',
+  );
+  await expect(
+    page.locator('.node-card').first().getByRole('button', { name: 'Save', exact: true }),
+  ).toBeDisabled();
+});
+
+test('worker rename form fits wide and narrow panels in both themes', async ({ page }) => {
+  for (const [theme, css] of [
+    ['dark', THEME],
+    ['light', LIGHT_THEME],
+  ] as const) {
+    for (const width of [1280, 520]) {
+      await page.setViewportSize({ width, height: 1000 });
+      const initial = state();
+      initial.nodes = initial.nodes.slice(0, 1);
+      initial.nodes[0]!.name = 'DESKTOP-JEL';
+      await open(page, initial, css);
+      await page.getByRole('tab', { name: /Nodes/ }).click();
+      await page.getByLabel('Worker name').fill('big-box');
+      await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeEnabled();
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      ).toBe(true);
+      await page.screenshot({
+        path: `${shots}worker-rename-${theme}-${width}.png`,
+        fullPage: true,
+      });
+    }
+  }
+});
+
+test('native workers show Rust targets and native settings retain act management', async ({
+  page,
+}) => {
+  const initial = state();
+  initial.connection.version = '2.0.0-dev.1';
+  initial.connection.build = {
+    ...initial.connection.build!,
+    runtime: 'rust',
+    target: 'linux/amd64',
+  };
+  initial.settings!.updates!.controller = {
+    ...initial.settings!.updates!.controller,
+    version: '2.0.0-dev.1',
+    runtime: 'rust',
+    target: 'linux/amd64',
+  };
+  initial.nodes[0]!.info!.build = {
+    id: 'native-fixture',
+    version: '2.0.0-dev.1',
+    sha256: null,
+    managed: true,
+    runtime: 'rust',
+    target: 'linux/amd64',
+    lastRollback: null,
+  };
+  await open(page, initial);
+  await page.getByRole('tab', { name: /Nodes/ }).click();
+  await expect(page.locator('.node-card', { hasText: 'big-box' })).toContainText(
+    'Rust · linux/amd64',
+  );
+  await page.screenshot({ path: `${shots}native-nodes.png`, fullPage: true });
+  await page.getByRole('tab', { name: 'Settings', exact: true }).click();
+  await expect(page.getByLabel('act version override')).toBeVisible();
+  await expect(page.getByLabel('Node.js version override')).toHaveCount(0);
+  await page.screenshot({ path: `${shots}native-settings.png`, fullPage: true });
+});
+
 test('sharded runs show shards, a timeline and combined test results', async ({ page }) => {
   await open(page);
   await page.getByRole('tab', { name: /Jobs/ }).click();
@@ -387,6 +484,126 @@ test('settings create usable worker tokens from loopback connections and keep se
   expect(await sent(page)).toContainEqual({ type: 'revokeToken', id: 'fixture-token' });
 });
 
+for (const appearance of [
+  { name: 'dark', theme: THEME, width: 1280 },
+  { name: 'light-narrow', theme: LIGHT_THEME, width: 390 },
+]) {
+  test(`add worker generates a desktop-compatible command and keeps it private (${appearance.name})`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: appearance.width, height: 900 });
+    const initial = state();
+    initial.connection.url = 'https://127.0.0.1:7400';
+    initial.connection.publicUrl = 'https://192.168.1.77:7400';
+    await open(page, initial, appearance.theme);
+    await page.getByRole('tab', { name: 'Nodes', exact: true }).click();
+    await page.getByRole('button', { name: 'Add worker', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Add a worker', exact: true })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Nodes', exact: true })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(page.getByLabel('Controller URL for the worker')).toHaveValue(
+      'https://192.168.1.77:7400',
+    );
+    await page.getByLabel('Command name', { exact: true }).fill('office-pc');
+    await page.screenshot({
+      path: `${shots}add-worker-form-${appearance.name}.png`,
+      fullPage: true,
+    });
+    await page.getByRole('button', { name: 'Generate join command', exact: true }).click();
+    expect(await sent(page)).toContainEqual({
+      type: 'createWorkerJoinCommand',
+      name: 'office-pc',
+      url: 'https://192.168.1.77:7400',
+    });
+    await push(page, { type: 'busy', key: 'settings:tokens', busy: true });
+    await expect(
+      page.getByRole('button', { name: 'Generate join command', exact: true }),
+    ).toBeDisabled();
+    const command = `gridstator agent join 'https://192.168.1.77:7400' --fingerprint 'sha256:${'0'.repeat(64)}' --token 'gsj_private_join_secret'`;
+    const result = {
+      command,
+      name: 'office-pc',
+      clusterId: initial.connection.clusterId!,
+      expiresAt: Date.now() + 86_400_000,
+    };
+    await push(page, { type: 'workerJoinCommandCreated', result });
+    await push(page, { type: 'busy', key: 'settings:tokens', busy: false });
+    const secret = page.getByRole('region', { name: 'Worker join command', exact: true });
+    await expect(secret).toContainText(command);
+    await expect(page.getByRole('heading', { name: 'Join command for office-pc' })).toBeFocused();
+    await expect(page.getByText(/On Windows, select the WSL2 distribution/)).toBeVisible();
+    await page.getByRole('button', { name: 'Copy join command', exact: true }).click();
+    expect(await sent(page)).toContainEqual({ type: 'copy', text: command });
+    expect(
+      await page.evaluate(() =>
+        JSON.stringify((window as unknown as { __saved: unknown }).__saved),
+      ),
+    ).not.toContain('gsj_private_join_secret');
+    await page.screenshot({
+      path: `${shots}add-worker-command-${appearance.name}.png`,
+      fullPage: true,
+    });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    await push(page, { type: 'state', state: { ...initial, jobs: [] } });
+    await expect(secret).toContainText(command);
+    await page.getByRole('button', { name: 'Generate another command', exact: true }).click();
+    await expect(secret).toHaveCount(0);
+    await expect(page.getByLabel('Command name', { exact: true })).toHaveValue('office-pc');
+    await expect(page.getByLabel('Command name', { exact: true })).toBeFocused();
+    await push(page, { type: 'workerJoinCommandCreated', result });
+    await push(page, {
+      type: 'state',
+      state: { ...initial, connection: { ...initial.connection, clusterId: 'another-cluster' } },
+    });
+    await expect(secret).toHaveCount(0);
+    await push(page, { type: 'workerJoinCommandCreated', result });
+    await expect(secret).toHaveCount(0);
+  });
+}
+
+test('add worker requires a reachable controller URL, a fingerprint and an admin connection', async ({
+  page,
+}) => {
+  const initial = state();
+  initial.connection.url = 'https://127.0.0.1:7300';
+  delete initial.connection.publicUrl;
+  await open(page, initial);
+  // This is also the navigation used by the command palette and Cluster toolbar.
+  await push(page, { type: 'navigate', view: 'addWorker' });
+  await page.getByLabel('Command name', { exact: true }).fill('office-pc');
+  const generate = page.getByRole('button', { name: 'Generate join command', exact: true });
+  await expect(generate).toBeDisabled();
+  await expect(page.getByLabel('Controller URL for the worker')).toHaveAttribute(
+    'aria-invalid',
+    'true',
+  );
+  await page.getByLabel('Controller URL for the worker').fill('https://build-server.local:7300');
+  await expect(generate).toBeEnabled();
+  await push(page, {
+    type: 'state',
+    state: { ...initial, connection: { ...initial.connection, caFingerprint: undefined } },
+  });
+  await expect(generate).toBeDisabled();
+  await expect(page.getByText(/Reconnect to load the controller fingerprint/)).toBeVisible();
+  await push(page, {
+    type: 'state',
+    state: { ...initial, connection: { ...initial.connection, role: 'operator' } },
+  });
+  await expect(generate).toBeDisabled();
+  await expect(
+    page.getByText('Sign in with admin access to generate a worker join command.'),
+  ).toBeVisible();
+  expect(
+    (await sent(page)).filter((message) => message.type === 'createWorkerJoinCommand'),
+  ).toHaveLength(0);
+  await page.getByRole('button', { name: 'Back to nodes', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Add worker', exact: true })).toBeDisabled();
+});
+
 test('settings post release, safe rollout and local host actions', async ({ page }) => {
   await open(page);
   await page.getByRole('tab', { name: 'Settings', exact: true }).click();
@@ -496,3 +713,122 @@ for (const theme of ['dark', 'light'] as const) {
     });
   }
 }
+
+test('first run offers local setup and an existing controller without an error banner', async ({
+  page,
+}) => {
+  const initial = state();
+  await open(page, {
+    ...initial,
+    connection: {
+      ...initial.connection,
+      status: 'signedOut',
+      controller: undefined,
+      user: null,
+      role: null,
+      clusterId: null,
+      version: null,
+      url: null,
+      error: null,
+      canSetUpController: true,
+    },
+    nodes: [],
+    jobs: [],
+    groups: [],
+  });
+  await expect(page.getByRole('heading', { name: 'Connect your machines' })).toBeVisible();
+  await expect(page.locator('.banner-error')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Set up a controller here' }).click();
+  await page.getByRole('button', { name: 'Connect to an existing controller' }).click();
+  expect(await sent(page)).toContainEqual({ type: 'setupController' });
+  expect(await sent(page)).toContainEqual({ type: 'signIn' });
+  await page.screenshot({ path: `${shots}first-run-dark.png`, fullPage: true });
+  await push(page, { type: 'busy', key: 'setup', busy: true });
+  await expect(page.getByRole('button', { name: 'Setting up controller…' })).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Connect to an existing controller' }),
+  ).toBeDisabled();
+  await page.setViewportSize({ width: 620, height: 860 });
+  await page.screenshot({ path: `${shots}first-run-busy-narrow.png`, fullPage: true });
+  await open(
+    page,
+    {
+      ...initial,
+      connection: {
+        ...initial.connection,
+        status: 'signedOut',
+        controller: undefined,
+        user: null,
+        role: null,
+        clusterId: null,
+        version: null,
+        url: null,
+        error: null,
+        canSetUpController: true,
+      },
+      nodes: [],
+      jobs: [],
+      groups: [],
+    },
+    LIGHT_THEME,
+  );
+  await page.screenshot({ path: `${shots}first-run-light-narrow.png`, fullPage: true });
+});
+
+test('stopped local controller offers Start without recreating it', async ({ page }) => {
+  const initial = state();
+  await open(page, {
+    ...initial,
+    connection: {
+      ...initial.connection,
+      status: 'error',
+      error: 'Controller is stopped',
+      canStartLocalController: true,
+    },
+  });
+  await page.locator('.banner').getByRole('button', { name: 'Start controller' }).click();
+  expect(await sent(page)).toContainEqual({ type: 'hostService', action: 'start' });
+  await expect(page.getByRole('button', { name: 'Set up a controller here' })).toHaveCount(0);
+});
+
+test('interrupted setup offers a resumable action instead of another login', async ({ page }) => {
+  const initial = state();
+  await open(page, {
+    ...initial,
+    connection: {
+      ...initial.connection,
+      status: 'error',
+      canSetUpController: true,
+      setupPending: true,
+      error: 'Service installation did not finish',
+    },
+    nodes: [],
+    jobs: [],
+    groups: [],
+  });
+  await expect(page.getByRole('status').filter({ hasText: 'setup hasn’t finished' })).toBeVisible();
+  await page.getByRole('button', { name: 'Finish controller setup' }).click();
+  expect(await sent(page)).toContainEqual({ type: 'setupController' });
+  await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toHaveCount(0);
+});
+
+test('a controller stays usable while its worker waits for Docker', async ({ page }) => {
+  const initial = state();
+  const worker = initial.nodes[0]!;
+  await open(page, {
+    ...initial,
+    nodes: [
+      {
+        ...worker,
+        info: {
+          ...worker.info!,
+          machineId: initial.connection.controller!.machineId,
+          docker: { available: false },
+          executors: [],
+        },
+      },
+    ],
+  });
+  await expect(page.getByRole('status').filter({ hasText: 'waiting for Docker' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Settings', exact: true })).toBeEnabled();
+});

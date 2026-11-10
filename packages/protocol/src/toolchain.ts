@@ -14,6 +14,13 @@ export const TOOL_NAMES: readonly ToolName[] = ToolNameSchema.options;
 export const ToolPlatformSchema = z.enum(['linux-x64', 'linux-arm64']);
 export type ToolPlatform = z.infer<typeof ToolPlatformSchema>;
 
+/** Read-only update metadata also describes native Rust mirrors. Keep the v1 tool pin/download
+ * platform set above Linux-only; accepting reported native targets does not enable Mac Node updates. */
+export const ReportedToolPlatformSchema = z.union([
+  ToolPlatformSchema,
+  z.enum(['linux/amd64', 'linux/arm64', 'darwin/amd64', 'darwin/arm64']),
+]);
+
 export function toolPlatform(platform: string, arch: string): ToolPlatform | null {
   const p = ToolPlatformSchema.safeParse(`${platform}-${arch}`);
   return p.success ? p.data : null;
@@ -92,14 +99,14 @@ export type ToolOverride = z.infer<typeof ToolOverrideSchema>;
 
 export const ToolchainSettingsSchema = z.object({
   act: ToolOverrideSchema,
-  node: ToolOverrideSchema,
+  node: ToolOverrideSchema.default(null),
 });
 export type ToolchainSettings = z.infer<typeof ToolchainSettingsSchema>;
 
 /** Tool versions an agent runs (null: act is not installed). */
 export const AgentToolsSchema = z.object({
   act: z.string().max(32).nullable(),
-  node: z.string().max(32),
+  node: z.string().max(32).optional(),
   /** Tools the agent runs from its managed toolchain rather than the system. */
   managed: z.array(ToolNameSchema).max(8),
 });

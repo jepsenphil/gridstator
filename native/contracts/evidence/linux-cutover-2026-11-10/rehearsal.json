@@ -1,0 +1,39 @@
+{
+  "scope": "actual Linux host installer/manual/fresh-cutover/controller update+schema rollback; other target entries are parsing fixtures only",
+  "target": "linux/amd64",
+  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
+  "nativeUserService": "gridstator-native-cutover-01m71fcww1bwjksd93kjsam2ge.service",
+  "payloadSourceDirectory": "/tmp/gridstator-recovery-sxVNiw/source/native",
+  "prebuiltPayloads": true,
+  "baseline": "rehearsal-baseline",
+  "confirmed": "rehearsal-confirmed",
+  "failed": "rehearsal-schema-crash",
+  "before": {
+    "userVersion": 0,
+    "candidateColumn": false,
+    "candidateTable": false,
+    "jobs": 1
+  },
+  "restored": {
+    "userVersion": 0,
+    "candidateColumn": false,
+    "candidateTable": false,
+    "jobs": 1
+  },
+  "failedDatabase": {
+    "userVersion": 999,
+    "candidateColumn": true,
+    "candidateTable": true,
+    "jobs": 0
+  },
+  "rollback": {
+    "from": "rehearsal-schema-crash",
+    "to": "rehearsal-confirmed",
+    "at": 1794272328754,
+    "reason": "crashed"
+  },
+  "v1ClusterId": "01M71FCNATAVMXT54PNCJQ5GJP",
+  "freshV2ClusterId": "01M71FCPFF0NRY82S3BNKX7SCZ",
+  "restoredV1ClusterId": "01M71FCNATAVMXT54PNCJQ5GJP",
+  "archiveSha256": "82fcf54dce094bce04552e95cd9938daac57b2ef6f4420b99121b6167f49271e"
+}

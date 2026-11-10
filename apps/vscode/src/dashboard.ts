@@ -254,6 +254,11 @@ export class Dashboard implements vscode.Disposable {
       case 'signIn':
         await vscode.commands.executeCommand('gridstator.signIn');
         return;
+      case 'setupController':
+        return this.guarded('setup', async () => {
+          await vscode.commands.executeCommand('gridstator.setupController');
+          await this.settings.refresh();
+        });
       case 'openFile': {
         const origin = this.launcher.origins.get(m.jobId);
         const root = origin?.root ?? vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
