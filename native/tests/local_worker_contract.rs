@@ -36,6 +36,7 @@ fn command() -> tokio::process::Command {
 }
 
 async fn bridge(request: Value) -> Result<Value> {
+    let action = request["action"].as_str().unwrap_or("unknown").to_owned();
     let mut child = command()
         .arg("bridge")
         .stdin(Stdio::piped())
@@ -48,7 +49,9 @@ async fn bridge(request: Value) -> Result<Value> {
         .unwrap()
         .write_all(&serde_json::to_vec(&request)?)
         .await?;
-    let output = tokio::time::timeout(Duration::from_secs(15), child.wait_with_output()).await??;
+    let output = tokio::time::timeout(Duration::from_secs(15), child.wait_with_output())
+        .await
+        .with_context(|| format!("bridge {action} timed out after 15 seconds"))??;
     ensure!(
         output.status.success(),
         "{}",
@@ -69,7 +72,8 @@ async fn wait_worker(dir: &Path) -> Result<Value> {
             tokio::time::sleep(Duration::from_millis(40)).await;
         }
     })
-    .await?
+    .await
+    .context("worker did not become running within 15 seconds")?
 }
 
 async fn offline_worker(root: &Path) -> Result<PathBuf> {
@@ -132,7 +136,7 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     let root = tempfile::tempdir()?;
     let dir = offline_worker(root.path()).await?;
     let mut actor = run_worker(&dir)?;
-    let initial = wait_worker(&dir).await?;
+    let initial = wait_worker(&dir).await.context("initial worker startup")?;
     let request = |action: &str| json!({"version":1,"operation":"worker","action":action,"dataDir":dir,"nodeId":initial["nodeId"],"caFingerprint":initial["caFingerprint"]});
     let paused = bridge(request("pause")).await?;
     assert_eq!(paused["workers"][0]["paused"], true);
@@ -168,7 +172,9 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     assert_eq!(saved["workers"][0]["running"], false);
     assert_eq!(saved["workers"][0]["paused"], true);
     let mut again = run_worker(&dir)?;
-    let after = wait_worker(&dir).await?;
+    let after = wait_worker(&dir)
+        .await
+        .context("restarted worker startup")?;
     assert_eq!(after["paused"], true);
     assert_eq!(after["budget"]["memoryMb"], 768);
     bridge(request("stop")).await?;
