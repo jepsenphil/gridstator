@@ -74,7 +74,7 @@ reboot/login behavior, WSL2 or another architecture. `GRIDSTATOR_TEST_BINARY=/ab
 can select an already built native candidate; otherwise it uses Cargo's native CLI executable.
 
 Service lifecycle, signed/notarized download, Mac Docker readiness/VM limits, mixed-target updates,
-and rollback still require their separate evidence in [the v2 plan](../docs/V2_UPGRADE_PLAN.md).
+and rollback still require their separate evidence in [the native release plan](../docs/NATIVE_RELEASE_PLAN.md).
 Cross-compilation and an ignored test do not replace those runs.
 
 From the repository root, the editor adapter can exercise an actual built Rust helper/controller
@@ -103,7 +103,7 @@ GRIDSTATOR_NATIVE_CLI_E2E="$PWD/../../native/target/debug/gridstator" \
 
 This extracts and runs the packaged VSIX, copies the selected executable to private immutable test
 state, creates a private Rust cluster/worker and checks discovery, JUnit/Problems/Testing, shards,
-live group completion, cancel/retry and node controls. It deliberately retains a false v1 native-mode
+live group completion, cancel/retry and node controls. It deliberately retains a false native-mode
 preference to verify that the v2 package always uses Rust. A successful Linux run does not close
 Remote SSH, WSL2, Mac or concurrent-window acceptance. The script's existing optional external-cluster
 mode is explicit; omit `GRIDSTATOR_IT_CONFIG` for isolated local validation.

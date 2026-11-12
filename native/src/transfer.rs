@@ -30,7 +30,7 @@ pub struct UploadSummary {
 }
 
 /// Report verified source bytes sent by the existing missing-blob transfer, without
-/// another capture or controller query. Tar framing is excluded, matching v1.
+/// another capture or controller query. Tar framing is excluded, matching the wire contract.
 pub async fn upload_capture_with_summary(
     client: &Client,
     captured: Arc<Capture>,

@@ -63,7 +63,7 @@ Windows launch and lifecycle qualification remain pending.
 ## Offline Windows setup correction
 
 The Windows installer previously shipped only the download script. Fresh setup consequently failed
-with “No matching native release is published yet” because GitHub only had the older v0.1.0 release.
+with “No matching native release is published yet” because no native release was published.
 The existing local native previews also lacked `local-setup-v1` and `worker-control-v1`.
 
 The rebuilt Windows x64 installer now carries both Linux WSL architectures from native build
@@ -94,12 +94,12 @@ and trusted digest. Windows builds reject missing payloads unless a published re
 explicitly pinned. Desktop CI first assembles the matching native candidate and bundles its
 platform payload; this workflow configuration has not been run here.
 
-## Windows legacy host routing correction
+## Windows host routing correction
 
 A real Windows process inventory showed an installed GUI at `C:\Gridstator` connected to a
 `--worker-host` process from an older Downloads portable preview. The previous endpoint contained
 only the account SID, so the new companion accepted the old host and ran its release-download
-setup code. Stopping that specific legacy host and reopening the installed application allowed
+setup code. Stopping that specific previous host and reopening the installed application allowed
 setup to proceed, as confirmed by the user.
 
 Desktop `2.0.0-dev.2` derives its host endpoint from the account, canonical executable path and

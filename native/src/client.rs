@@ -287,9 +287,7 @@ impl Client {
     pub async fn post(&self, path: &str, value: Value) -> Result<Value> {
         self.request(reqwest::Method::POST, path, Some(value)).await
     }
-    /// Keep indefinite draining explicit. Omitting it on older controllers can
-    /// silently enable cancellation after one hour, so incompatibility is never
-    /// retried with a different request.
+    /// Keep indefinite draining explicit so the controller cannot apply a timeout.
     pub async fn start_update(&self, mut input: Value) -> Result<Value> {
         let object = input
             .as_object_mut()
@@ -301,28 +299,7 @@ impl Client {
                 object.insert("drainTimeoutSeconds".into(), Value::Null);
             }
         }
-        let indefinite =
-            input["drainTimeoutSeconds"].is_null() && input.get("drainTimeoutSeconds").is_some();
-        match self.post("/v1/updates", input).await {
-            Err(error)
-                if indefinite
-                    && error.downcast_ref::<ControllerError>().is_some_and(|error| {
-                        error.code.as_deref() == Some("BAD_REQUEST")
-                            && error.message == "Invalid update request: drainTimeoutSeconds: Invalid input: expected number, received null"
-                    }) =>
-            {
-                let cause = error.downcast::<ControllerError>().unwrap();
-                Err(ControllerError {
-                    status: 409,
-                    code: Some("CONFLICT".into()),
-                    message: "This controller cannot wait indefinitely for running jobs during worker updates. Update the controller first, then retry the worker update.".into(),
-                    hint: Some("Install a current controller native release bundle with `gridstator controller publish-build <bundle.tar.gz>`.".into()),
-                    details: None,
-                    cause: Some(Box::new(cause)),
-                }.into())
-            }
-            result => result,
-        }
+        self.post("/v1/updates", input).await
     }
     pub async fn login(url: &str, pin: &str, token: &str, path: &Path) -> Result<Self> {
         let url = normalize_url(url)?;

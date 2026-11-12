@@ -21,7 +21,7 @@
 3. Open a trusted project folder and the Gridstator Activity Bar. Choose **Set up a controller here** or **Connect to an existing controller**. Local setup uses a verified published native release; until one exists, install the CLI manually and set `gridstator.nativeCli.path` if needed.
 4. Select a task, script, Dockerfile or workflow in **Run**. Jobs use files saved on disk; the extension asks about unsaved editors before submission.
 
-The native VSIX delegates discovery, snapshot capture, submission and local administration to Rust. It uses a separate native v2 login and does not bundle the legacy Node CLI. VS Code supplies the extension's Node runtime.
+The native VSIX delegates discovery, snapshot capture, submission and local administration to Rust. It uses a native login and does not bundle a CLI. VS Code supplies the extension's Node runtime.
 
 ## Secrets and remote workspaces
 

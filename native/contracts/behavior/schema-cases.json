@@ -767,7 +767,7 @@
       ]
     },
     {
-      "id": "workdir-drive-v1-accepted",
+      "id": "workdir-drive-accepted",
       "schema": "JobSpec",
       "input": {
         "kind": "command",

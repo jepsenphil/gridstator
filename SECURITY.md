@@ -4,13 +4,8 @@ Gridstator runs developer code on worker machines and stores source snapshots an
 
 ## Supported versions
 
-| Line | Status |
-| --- | --- |
-| Native v2 | Development preview; no public stable release yet |
-| Node v0.1.x | Current published release; deprecated in favor of native v2 and supported until stable v2 launches |
-
-At stable v2 launch, v1 support ends. Its [tagged release](https://github.com/jepsenphil/gridstator/releases/tag/v0.1.0) and [recovery guides](docs/legacy/v1/README.md) remain available.
+Gridstator 2.0.0 is a development preview and is planned as the first public native release. Security fixes are made on the current development line.
 
 ## Scope
 
-Gridstator is designed for a trusted personal or small-team network. It is not a multi-tenant sandbox or an internet-facing service. The [native security guide](docs/SECURITY.md) documents credentials, trust boundaries, source and job-secret handling, CI scans and limits. The [v1 guide](docs/legacy/v1/SECURITY.md) covers the older implementation.
+Gridstator is designed for a trusted personal or small-team network. It is not a multi-tenant sandbox or an internet-facing service. The [native security guide](docs/SECURITY.md) documents credentials, trust boundaries, source and job-secret handling, CI scans and limits.

@@ -12,9 +12,6 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  ACT_VERSION: 0.2.97
-
 jobs:
   check:
     name: Typecheck, lint, unit tests (Node ${{ matrix.node }})
@@ -31,34 +28,13 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Validate native release acceptance record
+        run: node native/scripts/check-release-acceptance.mjs
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm test
-
-  e2e:
-    name: End-to-end (Docker, BuildKit, act)
-    runs-on: ubuntu-latest
-    needs: check
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-      - name: Install act (checksum verified)
-        run: |
-          cd "$RUNNER_TEMP"
-          curl -fsSLO "https://github.com/nektos/act/releases/download/v${ACT_VERSION}/act_Linux_x86_64.tar.gz"
-          curl -fsSLO "https://github.com/nektos/act/releases/download/v${ACT_VERSION}/checksums.txt"
-          grep " act_Linux_x86_64.tar.gz$" checksums.txt | sha256sum -c -
-          tar -xzf act_Linux_x86_64.tar.gz act
-          sudo install -m 0755 act /usr/local/bin/act
-          act --version
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm test:e2e
 
   vscode:
     name: VS Code extension (webview UI + integration)
@@ -74,10 +50,19 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ./apps/vscode exec playwright install --with-deps chromium
       - run: pnpm test:ui
+      - name: Install pinned Rust toolchain
+        working-directory: native
+        run: |
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' rust-toolchain.toml)
+          test -n "$toolchain"
+          rustup toolchain install "$toolchain" --profile minimal
+      - name: Build native CLI for isolated editor integration
+        working-directory: native
+        run: cargo build --locked
       - run: pnpm test:vscode
 
   package:
-    name: Legacy CLI smoke and native VSIX package
+    name: Native VSIX package
     runs-on: ubuntu-latest
     needs: check
     steps:
@@ -88,16 +73,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm pack:release
-      - name: Smoke-test the packed CLI
-        run: |
-          npm install -g --prefix "$RUNNER_TEMP/gst" apps/cli/release/gridstator-*.tgz
-          "$RUNNER_TEMP/gst/bin/gridstator" --version
-          "$RUNNER_TEMP/gst/bin/gridstator" --help
       - run: pnpm --filter ./apps/vscode package:native
       - uses: actions/upload-artifact@v7
         with:
           name: gridstator-packages
           path: |
-            apps/cli/release/gridstator-*.tgz
             apps/vscode/dist/gridstator-native.vsix

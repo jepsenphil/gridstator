@@ -118,7 +118,7 @@ The reported target must be `darwin/arm64`, with the expected version/build ID. 
 manifest under that prefix allows the explicit service installer to adopt this executable into
 the verified managed version store. The release's small installer is an alternative once there is
 an actual selected HTTPS release origin; its commands and checksum verification are in
-[CUTOVER.md](CUTOVER.md). This CI artifact procedure needs no download server or target Node runtime.
+[release procedure](RELEASING.md). This CI artifact procedure needs no download server or target Node runtime.
 
 ## Prepare Docker and measure its execution pool
 
@@ -159,7 +159,7 @@ Docker is ready.
 ## Attach to a disposable native controller
 
 On Ubuntu, install the **same verified candidate's** `linux/amd64` archive using
-[CUTOVER.md](CUTOVER.md). Use a new private directory, a free validation port and an address that
+[release procedure](RELEASING.md). Use a new private directory, a free validation port and an address that
 the M4 can reach. These commands start a foreground controller without an embedded worker:
 
 ```sh
@@ -278,5 +278,5 @@ For each host keep: run/source/build identity, manifest/archive/executable hashe
 service scope/account, Docker/buildx/act versions and connection, host/VM/reservation measurements,
 commands and exit codes, job IDs/results, sanitized logs, restart/login/reboot observations and
 update/rollback facts. Record unsupported or unrun cases explicitly. Stable publication requires
-the outstanding [parity ledger](contracts/parity-ledger.json) gates and review, including signed
+the outstanding [release acceptance record](contracts/release-acceptance.json) gates and review, including signed
 downloaded Mac artifacts on both actual Mac architectures.

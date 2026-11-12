@@ -1,4 +1,4 @@
-//! Actual Linux replacement for the conditional v1 managed act/Node-switch scenario.
+//! Actual Linux managed act and Node tool scenario.
 //! Node runtime management is removed; native core/launcher identity and failed candidate safety
 //! are asserted explicitly alongside a real controller-mirrored act installation.
 #![cfg(target_os = "linux")]

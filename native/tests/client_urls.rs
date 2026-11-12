@@ -4,7 +4,7 @@ use serde_json::Value;
 #[test]
 fn controller_origins_match_the_frozen_source_url_normalizer() {
     let fixture: Value =
-        serde_json::from_str(include_str!("../contracts/client-urls-v1.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/client-urls.json")).unwrap();
     for case in fixture["cases"].as_array().unwrap() {
         let result = normalize_url(case["input"].as_str().unwrap());
         if let Some(expected) = case.get("value") {

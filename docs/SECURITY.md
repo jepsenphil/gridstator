@@ -6,7 +6,7 @@ Gridstator executes developer-supplied code on trusted worker machines. A contro
 
 Native v2 targets a trusted personal or small-team LAN. It is not a multi-tenant execution service or an internet-facing controller. Anyone who can submit a job can cause code to run on workers, subject to the permissions of the worker account and Docker engine. Container limits reduce accidental resource exhaustion; Docker is not a security boundary for hostile users.
 
-The [native release ledger](../native/contracts/parity-ledger.json) records platform and security evidence. Until its required gates pass, v2 is a development preview. The [v1 security model](legacy/v1/SECURITY.md) describes the separate Node release.
+The [native release acceptance record](../native/contracts/release-acceptance.json) tracks platform and security evidence. Until its required gates pass, the product is a development preview.
 
 ## Boundaries and controls
 
@@ -30,7 +30,7 @@ Once submitted, job secrets are retained by the controller so retries can reprod
 
 ## Supply chain and pull requests
 
-[CI](../.github/workflows/ci.yml) builds and tests the extension and legacy reference; [native CI](../.github/workflows/native.yml) covers four actual build hosts. [Security CI](../.github/workflows/security.yml) scans Rust, JavaScript/TypeScript and Actions with CodeQL, reviews changed dependencies, and audits the Node and Rust lockfiles. High and critical dependency findings fail PR checks. Scanner failures also fail. Any exception must identify the advisory, affected version, exposure analysis, owner and expiry in the PR or a tracked issue; do not silently suppress a scanner. [Dependabot](../.github/dependabot.yml) covers npm, Cargo and Actions.
+[CI](../.github/workflows/ci.yml) builds and tests the extension; [native CI](../.github/workflows/native.yml) covers four actual build hosts. [Security CI](../.github/workflows/security.yml) scans Rust, JavaScript/TypeScript and Actions with CodeQL, reviews changed dependencies, and audits the Node and Rust lockfiles. High and critical dependency findings fail PR checks. Scanner failures also fail. Any exception must identify the advisory, affected version, exposure analysis, owner and expiry in the PR or a tracked issue; do not silently suppress a scanner. [Dependabot](../.github/dependabot.yml) covers npm, Cargo and Actions.
 
 The 2026-11-12 lockfile triage upgraded direct `quick-xml` and `zip` dependencies to clear high/critical RustSec findings. The remaining advisory is a moderate `minimatch` issue in the development-only ESLint dependency; the configured high/critical threshold does not suppress its report. RustSec also warns that `rustls-pemfile` and `unsafe-libyaml` are unmaintained. Review these findings at each dependency update and before the stable release.
 

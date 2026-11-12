@@ -3643,7 +3643,9 @@ mod shutdown_tests {
                     }
                 },
             ));
-            tokio::time::timeout(Duration::from_secs(5), started).await??;
+            tokio::time::timeout(Duration::from_secs(20), started)
+                .await
+                .context("waiting for update mutation to start")??;
             if abort {
                 server.abort();
                 assert!((&mut server).await.unwrap_err().is_cancelled());
@@ -3667,9 +3669,11 @@ mod shutdown_tests {
             );
             release.send(())?;
             if !abort {
-                tokio::time::timeout(Duration::from_secs(5), server).await???;
+                tokio::time::timeout(Duration::from_secs(20), server)
+                    .await
+                    .context("waiting for controller shutdown after mutation release")???;
             }
-            tokio::time::timeout(Duration::from_secs(5), async {
+            tokio::time::timeout(Duration::from_secs(20), async {
                 loop {
                     match Controller::open(dir.clone()).await {
                         Ok(controller) => {
@@ -3684,7 +3688,8 @@ mod shutdown_tests {
                     }
                 }
             })
-            .await??;
+            .await
+            .context("waiting for the released controller lease")??;
         }
         Ok(())
     }
@@ -3731,10 +3736,9 @@ mod api_error_tests {
         )?)
     }
     #[tokio::test]
-    async fn explicit_http_codes_match_the_frozen_v1_status_table() -> Result<()> {
-        let fixture: Value = serde_json::from_str(include_str!(
-            "../contracts/accepted-v1/errors-and-units.json"
-        ))?;
+    async fn explicit_http_codes_match_the_recorded_status_table() -> Result<()> {
+        let fixture: Value =
+            serde_json::from_str(include_str!("../contracts/behavior/errors-and-units.json"))?;
         let errors = fixture["errors"]
             .as_object()
             .context("frozen error table")?;

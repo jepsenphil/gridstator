@@ -47,7 +47,7 @@ fn paths(manifest: &Manifest) -> Vec<&str> {
 #[test]
 fn snapshot_patterns_match_frozen_picomatch_and_source_capture_fixtures() {
     let fixture: serde_json::Value =
-        serde_json::from_str(include_str!("../contracts/workspace-globs-v1.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/workspace-globs.json")).unwrap();
     let mut mismatches = Vec::new();
     for case in fixture["cases"]
         .as_array()
@@ -105,7 +105,7 @@ fn snapshot_patterns_match_frozen_picomatch_and_source_capture_fixtures() {
 #[test]
 fn manifest_unicode_limits_match_frozen_zod_and_explicit_path_rules() {
     let fixture: serde_json::Value =
-        serde_json::from_str(include_str!("../contracts/workspace-globs-v1.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/workspace-globs.json")).unwrap();
     for case in fixture["manifestUnicodeCases"].as_array().unwrap() {
         let text = "💾".repeat(case["count"].as_u64().unwrap() as usize);
         let (path, target) = if case["field"] == "path" {

@@ -1,15 +1,6 @@
-import { execFile } from 'node:child_process';
 import { basename, relative, sep } from 'node:path';
-import { promisify } from 'node:util';
 import * as vscode from 'vscode';
-import {
-  GridstatorError,
-  defaultCacheDir,
-  formatBytes,
-  parseBytes,
-  parseDuration,
-  parseMegabytes,
-} from '@gridstator/shared';
+import { GridstatorError, parseBytes, parseDuration, parseMegabytes } from '@gridstator/shared';
 import {
   DEFAULT_IMAGE,
   DEFAULT_RESOURCES,
@@ -21,28 +12,17 @@ import {
   type ProjectConfig,
 } from '@gridstator/protocol';
 import {
-  discoverDockerfiles,
-  discoverPackageScripts,
-  discoverWorkflows,
   scriptCommand,
   type PackageManager,
   type DockerfileInfo,
   type PackageScripts,
   type WorkflowInfo,
 } from '@gridstator/discovery';
-import {
-  captureSnapshot,
-  findProject,
-  loadProjectConfig,
-  uploadSnapshot,
-} from '@gridstator/snapshot';
 import type { LaunchItem, LaunchOptions, LaunchRequest } from './messages';
 import type { ClusterState } from './state';
 import type { JobSecrets } from './job-secrets';
 import { effectiveClientConfigPath, NativeCancelledError, type NativeCli } from './native';
 import { assertWorkflowLaunch, launcherWorkflows } from './workflow-launcher';
-
-const execFileAsync = promisify(execFile);
 
 interface Project {
   folder: vscode.WorkspaceFolder;
@@ -95,7 +75,7 @@ export class Launcher implements vscode.Disposable {
   constructor(
     private readonly state: ClusterState,
     private readonly log: vscode.OutputChannel,
-    private readonly native: NativeCli | undefined,
+    private readonly native: NativeCli,
     private readonly secrets: JobSecrets,
   ) {
     for (const pattern of [
@@ -164,38 +144,31 @@ export class Launcher implements vscode.Disposable {
     for (const folder of vscode.workspace.workspaceFolders ?? []) {
       if (folder.uri.scheme !== 'file') continue;
       try {
-        if (this.native?.enabled) {
-          const discovered = await this.native.execute<NativeDiscovery>({
-            operation: 'discover',
-            root: folder.uri.fsPath,
-            configPath: effectiveClientConfigPath(),
-          });
-          const config = ProjectConfigSchema.parse(discovered.config);
-          if (
-            typeof discovered.root !== 'string' ||
-            typeof discovered.workdir !== 'string' ||
-            !Array.isArray(discovered.workflows) ||
-            !Array.isArray(discovered.packages) ||
-            !Array.isArray(discovered.dockerfiles)
-          ) {
-            throw new GridstatorError(
-              'CONFIG',
-              'Native CLI discovery returned an incompatible response',
-            );
-          }
-          projects.set(folder.name, {
-            folder,
-            root: discovered.root,
-            workdir: discovered.workdir,
-            config,
-          });
-          items.push(...(await discoverItems(folder.name, discovered.root, config, discovered)));
-          continue;
+        const discovered = await this.native.execute<NativeDiscovery>({
+          operation: 'discover',
+          root: folder.uri.fsPath,
+          configPath: effectiveClientConfigPath(),
+        });
+        const config = ProjectConfigSchema.parse(discovered.config);
+        if (
+          typeof discovered.root !== 'string' ||
+          typeof discovered.workdir !== 'string' ||
+          !Array.isArray(discovered.workflows) ||
+          !Array.isArray(discovered.packages) ||
+          !Array.isArray(discovered.dockerfiles)
+        ) {
+          throw new GridstatorError(
+            'CONFIG',
+            'Native CLI discovery returned an incompatible response',
+          );
         }
-        const loc = await findProject(folder.uri.fsPath);
-        const config = await loadProjectConfig(loc.configPath);
-        projects.set(folder.name, { folder, root: loc.root, workdir: loc.workdir, config });
-        items.push(...(await discoverItems(folder.name, loc.root, config)));
+        projects.set(folder.name, {
+          folder,
+          root: discovered.root,
+          workdir: discovered.workdir,
+          config,
+        });
+        items.push(...(await discoverItems(folder.name, config, discovered)));
       } catch (err) {
         const message =
           err instanceof GridstatorError && err.hint
@@ -233,7 +206,7 @@ export class Launcher implements vscode.Disposable {
 
   /** Builds, snapshots and submits a job for a launch request. */
   async launch(request: LaunchRequest): Promise<LaunchResult> {
-    const client = this.state.requireClient();
+    this.state.requireClient();
     let item = this.item(request.itemId);
     if (!item && request.itemId.startsWith('command:')) {
       item = {
@@ -255,94 +228,35 @@ export class Launcher implements vscode.Disposable {
     const names = configuredSecretNames(item, project.config);
     assertSecretEnvironment(item, request.options, project.config, names);
     const secretEnv = await this.secrets.resolve(project.root, names);
-    if (this.native?.enabled) {
-      const selected = item;
-      return this.nativeProgress(async (signal) => {
-        this.state.requireClient();
-        const clusterId = this.state.connection.clusterId;
-        const spec = buildSpec(selected, request.options, project, '', undefined, secretEnv);
-        const taskShards =
-          selected.kind === 'task' ? project.config.tasks[selected.task!.name]?.shards : undefined;
-        const result = await this.native!.execute<LaunchResult>(
-          {
-            operation: 'submit',
-            root: project.root,
-            spec: { ...spec, snapshot: undefined },
-            shards: request.options.shards ?? taskShards ?? 1,
-            snapshotOptions: nativeSnapshotOptions(project.config),
-            configPath: effectiveClientConfigPath(),
-            expectedClusterId: clusterId ?? undefined,
-          },
-          signal,
-        );
-        this.checkNativeCluster(clusterId);
-        const origin: JobOrigin = {
+    const selected = item;
+    return this.nativeProgress(async (signal) => {
+      this.state.requireClient();
+      const clusterId = this.state.connection.clusterId;
+      const spec = buildSpec(selected, request.options, project, '', undefined, secretEnv);
+      const taskShards =
+        selected.kind === 'task' ? project.config.tasks[selected.task!.name]?.shards : undefined;
+      const result = await this.native.execute<LaunchResult>(
+        {
+          operation: 'submit',
           root: project.root,
-          workdir: project.workdir,
-          folder: project.folder.name,
-          request,
-        };
-        this.trackNativeResult(result, origin);
-        return result;
-      });
-    }
-    const git = item.kind === 'workflow' ? await gitContext(project.root) : undefined;
-
-    return vscode.window.withProgress(
-      { location: vscode.ProgressLocation.Window, title: 'Gridstator' },
-      async (progress) => {
-        progress.report({ message: 'capturing snapshot…' });
-        const captured = await captureSnapshot({
-          root: project.root,
-          include: project.config.snapshot.include,
-          exclude: project.config.snapshot.exclude,
-          allowSecrets: project.config.snapshot.allowSecrets,
-          maxFileSize:
-            typeof project.config.snapshot.maxFileSize === 'number'
-              ? project.config.snapshot.maxFileSize * 1024 * 1024
-              : parseBytes(project.config.snapshot.maxFileSize),
-          cacheDir: defaultCacheDir(),
-        });
-        this.log.appendLine(
-          `Snapshot ${captured.id.slice(7, 19)} of ${project.root}: ${captured.stats.files} files, ${formatBytes(captured.stats.totalBytes)}`,
-        );
-        for (const w of captured.warnings) this.log.appendLine(`  ! ${w.path}: ${w.message}`);
-        progress.report({ message: 'uploading snapshot…' });
-        await uploadSnapshot(captured, client);
-        const spec = buildSpec(item, request.options, project, captured.id, git, secretEnv);
-        progress.report({ message: 'submitting…' });
-        const origin: JobOrigin = {
-          root: project.root,
-          workdir: project.workdir,
-          folder: project.folder.name,
-          request,
-        };
-        const taskShards =
-          item.kind === 'task' ? project.config.tasks[item.task!.name]?.shards : undefined;
-        const shards = request.options.shards ?? taskShards ?? 1;
-        if (shards > 1 && spec.kind === 'command') {
-          const group = await client.submitGroup({
-            spec,
-            shards,
-            ...(spec.name ? { name: spec.name } : {}),
-          });
-          this.state.myGroups.add(group.id);
-          this.groupOrigins.set(group.id, origin);
-          for (const j of group.jobs) {
-            this.state.myJobs.add(j.id);
-            this.origins.set(j.id, origin);
-            this.state.upsertJob(j);
-          }
-          this.state.upsertGroup(group);
-          return group;
-        }
-        const job = await client.submitJob(spec);
-        this.state.myJobs.add(job.id);
-        this.origins.set(job.id, origin);
-        this.state.upsertJob(job);
-        return job;
-      },
-    );
+          spec: { ...spec, snapshot: undefined },
+          shards: request.options.shards ?? taskShards ?? 1,
+          snapshotOptions: nativeSnapshotOptions(project.config),
+          configPath: effectiveClientConfigPath(),
+          expectedClusterId: clusterId ?? undefined,
+        },
+        signal,
+      );
+      this.checkNativeCluster(clusterId);
+      const origin: JobOrigin = {
+        root: project.root,
+        workdir: project.workdir,
+        folder: project.folder.name,
+        request,
+      };
+      this.trackNativeResult(result, origin);
+      return result;
+    });
   }
 
   /** Runs a finished job's launch again against the current files (new snapshot). */
@@ -371,34 +285,25 @@ export class Launcher implements vscode.Disposable {
         );
       assertWorkflowLaunch(item, { job: spec.job }, project.config.actions);
     }
-    const client = this.state.requireClient();
     await this.handleUnsavedFiles(project.root);
-    if (this.native?.enabled) {
-      return this.nativeProgress(async (signal) => {
-        this.state.requireClient();
-        const clusterId = this.state.connection.clusterId;
-        const result = await this.native!.execute<LaunchResult>(
-          {
-            operation: 'submit',
-            root: project.root,
-            spec: { ...job.spec, snapshot: undefined },
-            snapshotOptions: nativeSnapshotOptions(project.config),
-            configPath: effectiveClientConfigPath(),
-            expectedClusterId: clusterId ?? undefined,
-          },
-          signal,
-        );
-        this.checkNativeCluster(clusterId);
-        this.trackNativeResult(result);
-        return result;
-      });
-    }
-    const captured = await captureSnapshot({ root: project.root, cacheDir: defaultCacheDir() });
-    await uploadSnapshot(captured, client);
-    const next = await client.submitJob({ ...job.spec, snapshot: captured.id });
-    this.state.myJobs.add(next.id);
-    this.state.upsertJob(next);
-    return next;
+    return this.nativeProgress(async (signal) => {
+      this.state.requireClient();
+      const clusterId = this.state.connection.clusterId;
+      const result = await this.native.execute<LaunchResult>(
+        {
+          operation: 'submit',
+          root: project.root,
+          spec: { ...job.spec, snapshot: undefined },
+          snapshotOptions: nativeSnapshotOptions(project.config),
+          configPath: effectiveClientConfigPath(),
+          expectedClusterId: clusterId ?? undefined,
+        },
+        signal,
+      );
+      this.checkNativeCluster(clusterId);
+      this.trackNativeResult(result);
+      return result;
+    });
   }
 
   private checkNativeCluster(clusterId: string | null): void {
@@ -487,9 +392,8 @@ export class Launcher implements vscode.Disposable {
 
 async function discoverItems(
   folder: string,
-  root: string,
   config: ProjectConfig,
-  discovered?: Pick<NativeDiscovery, 'workflows' | 'packages' | 'dockerfiles'>,
+  discovered: Pick<NativeDiscovery, 'workflows' | 'packages' | 'dockerfiles'>,
 ): Promise<LaunchItem[]> {
   const items: LaunchItem[] = [];
   for (const [name, task] of Object.entries(config.tasks)) {
@@ -525,7 +429,7 @@ async function discoverItems(
       },
     });
   }
-  const workflows = discovered?.workflows ?? (await discoverWorkflows(root));
+  const workflows = discovered.workflows;
   for (const { workflow: w, description, wholeWorkflow } of launcherWorkflows(
     workflows,
     config.actions,
@@ -553,7 +457,7 @@ async function discoverItems(
       },
     });
   }
-  for (const pkg of discovered?.packages ?? (await discoverPackageScripts(root))) {
+  for (const pkg of discovered.packages) {
     for (const [script, cmd] of Object.entries(pkg.scripts)) {
       items.push({
         id: `script:${folder}:${pkg.dir}:${script}`,
@@ -572,7 +476,7 @@ async function discoverItems(
       });
     }
   }
-  for (const d of discovered?.dockerfiles ?? (await discoverDockerfiles(root))) {
+  for (const d of discovered.dockerfiles) {
     items.push({
       id: `dockerfile:${folder}:${d.file}`,
       kind: 'dockerfile',
@@ -595,28 +499,6 @@ function nativeSnapshotOptions(config: ProjectConfig) {
       typeof config.snapshot.maxFileSize === 'number'
         ? config.snapshot.maxFileSize * 1024 * 1024
         : parseBytes(config.snapshot.maxFileSize),
-  };
-}
-
-async function gitContext(
-  root: string,
-): Promise<{ branch?: string; remoteUrl?: string; headSha?: string }> {
-  const run = async (args: string[]) => {
-    try {
-      return (await execFileAsync('git', ['-C', root, ...args])).stdout.trim() || undefined;
-    } catch {
-      return undefined;
-    }
-  };
-  const [branch, remoteUrl, headSha] = await Promise.all([
-    run(['rev-parse', '--abbrev-ref', 'HEAD']),
-    run(['remote', 'get-url', 'origin']),
-    run(['rev-parse', 'HEAD']),
-  ]);
-  return {
-    ...(branch && branch !== 'HEAD' ? { branch } : {}),
-    ...(remoteUrl ? { remoteUrl } : {}),
-    ...(headSha ? { headSha } : {}),
   };
 }
 

@@ -1,6 +1,6 @@
-# Native v2 architecture
+# Architecture
 
-This is the architecture of the Rust v2 development line. The [v1 Node design](legacy/v1/ARCHITECTURE.md) is retained for recovery and parity work. Current evidence and unclosed gates are in [V2_PROGRESS.md](V2_PROGRESS.md) and the [parity ledger](../native/contracts/parity-ledger.json).
+Gridstator uses one Rust executable for the CLI, controller and worker. The extension runs in VS Code and delegates workspace work to that executable. [Progress](NATIVE_PROGRESS.md) and [release acceptance](../native/contracts/release-acceptance.json) record the remaining qualification.
 
 ## System at a glance
 
@@ -38,7 +38,7 @@ The native executable contains CLI, controller, worker, snapshot, scheduling and
 
 ## Repository map
 
-| Path | Native v2 responsibility |
+| Path | Responsibility |
 | --- | --- |
 | [native/src/cli.rs](../native/src/cli.rs) and [client.rs](../native/src/client.rs) | Commands, local configuration, authenticated API client |
 | [native/src/bridge.rs](../native/src/bridge.rs) and [apps/vscode](../apps/vscode) | Editor/native boundary, VS Code views and webview |
@@ -48,7 +48,7 @@ The native executable contains CLI, controller, worker, snapshot, scheduling and
 | [native/src/updates.rs](../native/src/updates.rs), [release.rs](../native/src/release.rs) and [install.rs](../native/src/install.rs) | Artifact verification, installation, updates and rollback |
 | [native/src/protocol.rs](../native/src/protocol.rs) | Shared wire contracts and version checks |
 
-The TypeScript packages and Node CLI under `apps/cli` are the frozen v1 reference. They are not the runtime for a native v2 cluster.
+The retained TypeScript packages serve the extension UI, API types and tests.
 
 ## Job and data flow
 
@@ -77,7 +77,7 @@ The controller owns job transitions, tokens and scheduling. Workers report facts
 
 The controller stores jobs, nodes, tokens, settings and event state in SQLite, plus content-addressed blobs and logs on disk. Workers maintain local identity, a blob cache and a durable result outbox. A worker initiates the network connection to the controller, so worker hosts need no inbound listening port. The controller can run an embedded worker on the same machine.
 
-A verified native release has one build identity and platform-specific checksums. A managed update stages the new executable, drains the affected role, backs up controller state and waits for a health confirmation. An unhealthy candidate rolls back to the previous executable and database. These rules are described and rehearsed in [native/RELEASING.md](../native/RELEASING.md) and [native/CUTOVER.md](../native/CUTOVER.md); platform evidence is tracked separately from passing unit tests.
+A verified native release has one build identity and platform-specific checksums. A managed update stages the new executable, drains the affected role, backs up controller state and waits for a health confirmation. An unhealthy candidate rolls back to the previous executable and database. These rules are described and rehearsed in [native/RELEASING.md](../native/RELEASING.md); platform evidence is tracked separately from passing unit tests.
 
 ## Trust boundaries
 
@@ -93,4 +93,4 @@ Gridstator is for a trusted personal or small-team network. Docker resource limi
 
 ## Protocol and compatibility
 
-The v2 implementation keeps the `/v1/...` HTTP and WebSocket route family for the accepted wire contract; the route prefix is not the product release number. Native clients and workers perform capability/version checks. Do not mix v1 and v2 credentials, databases or services. The public API overview is in [API.md](API.md); source contract and acceptance fixtures are authoritative for exact payloads. Compatibility exceptions are recorded in [native/contracts/compatibility-exceptions.json](../native/contracts/compatibility-exceptions.json).
+The `/v1/...` HTTP and WebSocket route family names the wire protocol, independently of the product release number. Native clients and workers check capabilities and versions. See [API.md](API.md), [protocol.rs](../native/src/protocol.rs) and the [behavior fixtures](../native/contracts/behavior/) for payloads and acceptance cases.

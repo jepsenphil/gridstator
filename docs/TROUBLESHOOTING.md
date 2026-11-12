@@ -5,7 +5,7 @@ Start with `gridstator doctor` on the source host and each worker. Record `grids
 ## Cannot connect
 
 - Check the controller service and `gridstator status` on its host. Confirm its configured listening address is reachable from the client/worker.
-- Confirm the URL and pinned CA fingerprint match the **native v2** cluster. A v1 login cannot authenticate to a fresh v2 cluster.
+- Confirm the URL and pinned CA fingerprint match the intended cluster.
 - Check the token role, expiry and revocation state. Restore local access from the owning controller account if a local token was revoked.
 - In Remote SSH/WSL, run `doctor` on the **workspace host**, where the extension and helper actually run.
 
@@ -30,4 +30,4 @@ Start with `gridstator doctor` on the source host and each worker. Record `grids
 
 ## Updating and recovery
 
-Do not point v2 at v1 data or manually edit a release store state file. Keep the exact candidate bundle, manifest/checksums and supervisor logs when diagnosing an update. The [native cutover and recovery guide](../native/CUTOVER.md) explains isolated v1 restoration and v2 rollback. The [legacy guide](legacy/v1/TROUBLESHOOTING.md) applies only to the Node release.
+Do not manually edit a release store state file. Keep the exact candidate bundle, manifest/checksums and supervisor logs when diagnosing an update. See the [native release procedure](../native/RELEASING.md) for install and rollback validation.

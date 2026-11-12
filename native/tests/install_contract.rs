@@ -70,7 +70,7 @@ fn manifest(
     ReleaseManifest {
         schema_version: MANIFEST_VERSION,
         build_id: build_id.into(),
-        version: "2.0.0-dev.1".into(),
+        version: gridstator::VERSION.into(),
         source_revision: "test-revision".into(),
         protocol: ProtocolCompatibility::default(),
         artifacts: SUPPORTED_TARGETS
@@ -948,7 +948,7 @@ async fn http_fixture(routes: BTreeMap<String, Vec<u8>>) -> (String, tokio::task
 }
 
 #[tokio::test]
-async fn official_discovery_filters_legacy_releases_and_bootstraps_the_verified_mirror() {
+async fn official_discovery_filters_incomplete_releases_and_bootstraps_the_verified_mirror() {
     let temp = TempDir::new().unwrap();
     let (manifest, files) = release_fixture(&temp);
     let bytes = manifest.to_bytes().unwrap();
@@ -968,12 +968,13 @@ async fn official_discovery_filters_legacy_releases_and_bootstraps_the_verified_
     let stable = serde_json::json!({"tag_name":"v2.0.0","name":"Native release","body":"notes","published_at":"2026-11-10T00:00:00Z","draft":false,"prerelease":false,"assets":assets});
     let mut preview = stable.clone();
     preview["tag_name"] = "v2.1.0-preview.1".into();
-    let mut legacy = stable.clone();
-    legacy["tag_name"] = "v0.1.0".into();
-    legacy["assets"] = serde_json::json!([{"name":"gridstator-0.1.0.tgz"},{"name":"SHA256SUMS"}]);
+    let mut incomplete = stable.clone();
+    incomplete["tag_name"] = "v2.0.1".into();
+    incomplete["assets"] =
+        serde_json::json!([{"name":"gridstator-2.0.1.tar.gz"},{"name":"SHA256SUMS"}]);
     routes.insert(
         "/api/".into(),
-        serde_json::to_vec(&vec![legacy, preview, stable.clone()]).unwrap(),
+        serde_json::to_vec(&vec![incomplete, preview, stable.clone()]).unwrap(),
     );
     routes.insert(
         "/api/tags/v2.0.0".into(),

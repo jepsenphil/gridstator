@@ -168,7 +168,7 @@ fn walk_order_exclusions_managers_stages_and_tasks_are_preserved() {
 #[test]
 fn frozen_project_defaults_and_strictness_match() {
     let fixture: Value =
-        serde_json::from_str(include_str!("../contracts/accepted-v1/schema-cases.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/behavior/schema-cases.json")).unwrap();
     for case in fixture["cases"]
         .as_array()
         .unwrap()
@@ -213,8 +213,7 @@ tasks:
     shards: 2.0
     retry: { max: 2.0 }
 "#;
-    // This expected value was replayed through the frozen v1 yaml parser and
-    // ProjectConfigSchema at 4b8f13ccf1b21820007fef0ab52143c961b69216.
+    // This expected value preserves the project configuration contract.
     let expected = json!({
         "version":1,
         "defaults":{"resources":{"cpus":2,"memory":4096}},

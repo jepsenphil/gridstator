@@ -22,7 +22,7 @@ on:
         default: false
         type: boolean
 
-# Produces reviewable artifacts only. Stable publication requires the recorded M0–M9 evidence.
+# Produces reviewable artifacts only. Stable publication requires all release acceptance gates.
 permissions:
   contents: read
 

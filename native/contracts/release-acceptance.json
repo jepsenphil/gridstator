@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "product": "Gridstator native",
+  "releaseSeries": "2.x",
+  "statusPolicy": ["not started", "implemented", "verified"],
+  "gates": [
+    {
+      "id": "mac-signing",
+      "owner": "project owner + native::release",
+      "behavior": "Stable macOS candidate bytes are Developer ID signed and notarized before checksum/distribution validation.",
+      "status": "not started",
+      "acceptance": {
+        "caseId": "mac-signing",
+        "description": "Owner provides Apple credentials/access; sign/notarize candidate and verify downloaded bytes on each Mac architecture.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "evidence": []
+    },
+    {
+      "id": "four-target-linkage",
+      "owner": "native::build/release",
+      "behavior": "All four native targets run without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
+      "status": "implemented",
+      "acceptance": {
+        "caseId": "four-target-linkage",
+        "description": "Build and audit linkage then run actual tested bytes on clean Linux x64/ARM64 and macOS Intel/ARM64 hosts.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "evidence": [
+        {
+          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
+          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "result": "passed",
+          "environment": "Per-platform identities and runtime limits recorded in linked proof",
+          "location": "native/contracts/evidence/preview-2026-11-10/assembly/summary.json",
+          "scope": "All four real final preview binaries assembled and verified. Linux x64 executes in clean offline Alpine; Mac ARM64 native and Intel under Rosetta execute final bytes. Linux ARM64 is build-only; physical Intel and full clean-host/minimum-OS matrix remain open."
+        }
+      ]
+    },
+    {
+      "id": "mac-docker-capacity",
+      "owner": "native::platform/worker",
+      "behavior": "Docker Desktop availability and VM capacity are distinct from host pressure and recover after late startup/restart.",
+      "status": "implemented",
+      "acceptance": {
+        "caseId": "mac-docker-capacity",
+        "description": "On both Mac architectures, limit the Docker VM below host capacity and prove placement respects the smaller capacity.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "evidence": [
+        {
+          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
+          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "result": "passed",
+          "environment": "Per-platform identities and runtime limits recorded in linked proof",
+          "location": "native/contracts/evidence/mac-preview-2026-11-10/summary.json",
+          "scope": "Actual final Mac role processes connect with Docker deliberately unavailable. This does not prove VM capacity, real Docker startup/restart or placement against VM limits."
+        },
+        {
+          "revision": "working-tree cd6b769ebe6e1340203c5a2e66ebc9650f8f5f9227ad5073b64fa3cc65ac6cc5; exact final ARM payload identity in linked proof",
+          "command": "Private final native CLI/controller/standalone worker command/artifact/cancel/build; separate source-identical Docker stop/start/same PID/queued completion proof",
+          "result": "passed",
+          "environment": "Actual M4/macOS15.6; DockerDesktop4.99.0; Engine29.9.3; VM10CPU/7934MiB versus host10CPU/16384MiB",
+          "location": "native/contracts/evidence/mac-preview-darwin-2026-11-10/summary.json"
+        }
+      ]
+    },
+    {
+      "id": "launchd-live",
+      "owner": "native::services",
+      "behavior": "Mac services distinguish boot-start system daemons and login-start user agents, with stable user/environment/path.",
+      "status": "implemented",
+      "acceptance": {
+        "caseId": "launchd-live",
+        "description": "Run launchd lifecycle, login/logout/reboot and late-Docker recovery on Intel and Apple Silicon Macs.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "evidence": [
+        {
+          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
+          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "result": "passed",
+          "environment": "Per-platform identities and runtime limits recorded in linked proof",
+          "location": "native/contracts/evidence/mac-preview-2026-11-10/summary.json",
+          "scope": "Actual final ARM64 and x86_64-under-Rosetta unique user LaunchAgents install/start/restart/stop/uninstall and cleanup. System LaunchDaemons, login/logout/reboot and real Docker recovery remain open."
+        }
+      ]
+    },
+    {
+      "id": "systemd-live",
+      "owner": "native::services",
+      "behavior": "Linux system/user units install, replace, start, stop, restart and uninstall with correct ownership and isolated v2 paths.",
+      "status": "implemented",
+      "acceptance": {
+        "caseId": "systemd-live",
+        "description": "Run actual service lifecycle on Linux x64/ARM64; a rendered unit is insufficient.",
+        "requiredEvidence": [
+          "Native source revision, exact command/scenario and result log",
+          "Actual target/tool/environment identity for platform or real-tool claims"
+        ]
+      },
+      "evidence": [
+        {
+          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
+          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "result": "passed",
+          "environment": "Per-platform identities and runtime limits recorded in linked proof",
+          "location": "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json",
+          "scope": "Actual isolated Linux x64 user systemd service, confirmed update and failed-schema rollback. System scope and Linux ARM64 lifecycle remain unverified."
+        },
+        {
+          "revision": "native-preview-20261110-cd6b769ebe6e; working-tree root system fixture source hash in evidence",
+          "command": "system_scope_e2e actual_root_system_service_drains_and_restores_database_after_schema_crash --ignored --exact --nocapture",
+          "result": "passed",
+          "environment": "Actual Ubuntu25.04 x64 KVM; root; PID1 systemd; unique private unit/data; Docker29.1.4",
+          "location": "native/contracts/evidence/mixed-lan-system-2026-11-10/evidence.json"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Native release candidates
 
-The [v2 upgrade plan](../docs/V2_UPGRADE_PLAN.md) defines the stable release gates. The
+The [native release plan](../docs/NATIVE_RELEASE_PLAN.md) defines the stable release gates. The
 [candidate workflow](../.github/workflows/native-candidate.yml) builds reviewable artifacts;
 it does not publish a release, update a cluster, or declare those gates passed.
 
@@ -62,9 +62,8 @@ executable hashes, then stages and atomically renames the output directory. It p
 - `SHA256SUMS`, covering that installer, the manifest, all archives and the native bundle.
 
 The workflow also packages a thin native VSIX and adds its checksum. VS Code supplies its Node
-runtime; the packaged native flavor requires the Rust helper. Set `gridstator.nativeCli.path`
-to its verified executable in the workspace host. The retained v1 extension flavor still uses the
-opt-in `gridstator.nativeCli.enabled` setting for side-by-side development. The VSIX uses the
+runtime; the packaged extension requires the Rust helper. Set `gridstator.nativeCli.path`
+to its verified executable in the workspace host.. The VSIX uses the
 candidate's numeric base version because VS Code's package version is separate from the native
 prerelease identity.
 
@@ -78,17 +77,9 @@ uses the native verifier before installation. It requires ordinary OS tools and 
 Node/npm/Rust/Python/jq. It installs the CLI; `controller init`, `agent join` and `install-service`
 remain explicit operations. Use isolated v2 configuration, data and services throughout rehearsal.
 
-Before stable publication, record every required parity/platform result in the
-[ledger](contracts/parity-ledger.json), including actual Mac and ARM hosts, WSL2, service startup,
-late Docker, update failure/rollback, signed downloaded artifacts and the fresh-cluster recovery
-runbook. The legacy npm release workflow only handles v0/v1 tags. Native v2 publication stays
-separate until the agreed release review has accepted the evidence.
+Before stable publication, verify all five [release acceptance gates](contracts/release-acceptance.json) with final candidate evidence, including actual Mac and ARM hosts, service startup, late Docker, update rollback and downloaded signed artifacts. The release review must accept the evidence.
 
-The concrete clean installation, manual-download, stopped-v1 archive/fresh-v2 cutover and separate
-v1 recovery procedure is in [CUTOVER.md](CUTOVER.md). Its opt-in `recovery_e2e` builds actual static
-Linux candidates and exercises authenticated controller update, health confirmation, crash rollback
-and restoration after a schema-changing failed executable. This is Linux-host evidence; other-target
-bundle entries in that rehearsal are explicitly parsing fixtures and do not pass their runtime gates.
+The opt-in `recovery_e2e` exercises native installation, authenticated controller update, health confirmation, crash rollback and database restoration after a failed schema change on Linux. Other-target bundle entries in that rehearsal are parsing fixtures and do not pass runtime gates.
 For concrete candidate acquisition and M4/Docker Desktop/launchd, ARM Ubuntu VM and Windows WSL2
 validation steps, use [VALIDATION_HOSTS.md](VALIDATION_HOSTS.md).
 

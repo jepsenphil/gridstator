@@ -42,7 +42,7 @@ fn source_001_current_behind_missing_metadata_unmanaged_and_offline_status() {
     let mut nodes = vec![
         worker("cur", "new", true, false),
         worker("old", "old", true, false),
-        worker("legacy", "old", false, false),
+        worker("missing-build", "old", false, false),
         worker("unmanaged", "old", false, false),
         worker("gone", "old", false, false),
     ];

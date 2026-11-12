@@ -1,6 +1,6 @@
 # Developing Gridstator
 
-Native v2 is the current implementation. The TypeScript CLI/controller/worker under `apps/` and `packages/` remain a v1 reference and compatibility test bed. Build and test the two lines separately; a passing v1 test does not close a native release gate.
+The Rust executable is the CLI, controller and worker. TypeScript remains for the VS Code extension and its shared editor packages. Build and test both parts before submitting changes.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ pnpm --filter ./apps/vscode package:native
 pnpm test:ui
 ~~~
 
-The native package is `apps/vscode/dist/gridstator-native.vsix`. It contains the thin extension, webview and installer helper, and excludes the v1 CLI. For a real isolated Linux editor/worker run, set `GRIDSTATOR_NATIVE_CLI_E2E` to a built Rust executable and follow [native/TESTING.md](../native/TESTING.md). The webview tests generate ignored fixture screenshots under `apps/vscode/test/ui/screenshots/`. Curated public images and their capture procedure are in [SCREENSHOTS.md](SCREENSHOTS.md).
+The native package is `apps/vscode/dist/gridstator-native.vsix`. It contains the thin extension, webview and installer helper, and contains no bundled CLI. For a real isolated Linux editor/worker run, set `GRIDSTATOR_NATIVE_CLI_E2E` to a built Rust executable and follow [native/TESTING.md](../native/TESTING.md). The webview tests generate ignored fixture screenshots under `apps/vscode/test/ui/screenshots/`. Curated public images and their capture procedure are in [SCREENSHOTS.md](SCREENSHOTS.md).
 
 ## Run this repository through Gridstator
 
@@ -49,18 +49,18 @@ Run `gridstator run --task native-check` from the repository root or click the t
 
 | Workflow | Scope |
 | --- | --- |
-| [CI](../.github/workflows/ci.yml) | Node 22/24, package smoke, Docker/BuildKit/act and VS Code integration |
-| [Native development](../.github/workflows/native.yml) | Rust reference contracts and actual-host Linux/Mac builds |
+| [CI](../.github/workflows/ci.yml) | Node 22/24 TypeScript checks, VS Code UI/integration and VSIX packaging |
+| [Native development](../.github/workflows/native.yml) | Rust tests and actual-host Linux/Mac builds |
 | [Desktop preview](../.github/workflows/desktop.yml) | Separate companion build evidence |
 | [Security](../.github/workflows/security.yml) | CodeQL, dependency review, pnpm and RustSec audits |
 | [Native candidate](../.github/workflows/native-candidate.yml) | Four-target signed candidate and thin VSIX; no publication |
-| [Native publish](../.github/workflows/native-publish.yml) | Manual stable release after ledger and owner gates |
+| [Native publish](../.github/workflows/native-publish.yml) | Manual stable release after acceptance and owner gates |
 
 Do not interpret green compilation or UI fixtures as completion of platform service, Docker readiness, WSL2, Gatekeeper, recovery or signed downloaded-artifact checks. [Release readiness](RELEASING.md) lists the evidence required.
 
-## Working on v1 compatibility
+## Behavior fixtures
 
-The accepted v1 source and fixtures are frozen in [native/contracts/accepted-v1](../native/contracts/accepted-v1). Use the [legacy development guide](legacy/v1/DEVELOPMENT.md) only for v1 reference work. If a v1 behavior changes during native development, review its effect on the parity ledger and compatibility exceptions. Do not regenerate expectations from the v2 implementation.
+The [native behavior fixtures](../native/contracts/behavior/) preserve useful inputs and outputs for Rust acceptance tests. Update a fixture with a focused test and explain why the behavior changed. The `/v1` API route names are protocol versions and remain stable.
 
 ## Pull requests
 

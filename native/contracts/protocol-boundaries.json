@@ -1,5 +1,4 @@
 {
-  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
   "encoding": "Objects with exactly $text:[text,count] or $array:[value,count] expand repeated strings/arrays; all other objects are ordinary JSON.",
   "schemas": ["JobSpec", "Timestamp", "JobOutputs", "AgentJobResult", "ProjectConfig"],
   "cases": [

@@ -46,7 +46,6 @@ it.skipIf(!binary)(
       stdio: 'ignore',
     });
     const native = new NativeCli({
-      enabled: () => true,
       trusted: () => true,
       path: () => binary,
       workspaceRoots: () => [project],

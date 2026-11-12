@@ -1,6 +1,6 @@
 # Contributing to Gridstator
 
-Gridstator is an Apache-2.0 open source project. Native v2 is the current development line; the Node v1 code remains as a compatibility reference and recovery path. Issues, reproducible bug reports and focused pull requests are welcome.
+Gridstator is an Apache-2.0 open source project. The Rust CLI/controller/worker and native VS Code extension are the current development line. Issues, reproducible bug reports and focused pull requests are welcome.
 
 ## Start
 
@@ -28,7 +28,7 @@ The real Docker, BuildKit, `act`, VS Code and platform suites are listed in [nat
 
 - Update the relevant user guide and architecture/security material in the same PR as behavior changes.
 - Add a regression scenario for security-sensitive code: auth, TLS, snapshots, filesystem paths, container execution, secrets, updates and rollback.
-- Keep v1 reference fixtures frozen. If native behavior intentionally differs, record an approved compatibility exception with evidence.
+- Keep useful behavior fixtures and native tests in sync with changes; record platform evidence for release gates.
 - Do not add a failing security scanner to `continue-on-error` or silently suppress an advisory. An exception needs an owner, exposure analysis and expiry.
 - Do not include tokens, host credentials or private cluster data in screenshots, logs or issues.
 

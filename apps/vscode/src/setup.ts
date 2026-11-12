@@ -58,10 +58,6 @@ export async function setUpController(
     throw new GridstatorError('CONFIG', 'A custom configuration path selects this connection', {
       hint: 'Use the existing connection or clear gridstator.configPath before local setup.',
     });
-  if (!native.enabled) {
-    await configuration.update('nativeCli.enabled', true, vscode.ConfigurationTarget.Global);
-    native.reset();
-  }
   return vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,

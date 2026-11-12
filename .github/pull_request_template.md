@@ -4,7 +4,7 @@
 
 ## How it was tested
 
-<!-- Commands you ran (pnpm check, pnpm test:e2e, …) and what you verified manually. -->
+<!-- Commands you ran (pnpm check, cargo test, pnpm test:vscode, …) and what you verified manually. -->
 
 ## Checklist
 

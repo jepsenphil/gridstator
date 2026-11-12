@@ -1,20 +1,8 @@
 {
   "formatVersion": 1,
-  "baselineRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
-  "sources": [
-    {
-      "path": "packages/scheduler/src/index.ts",
-      "sha256": "sha256:75d725d3b0e7d7f92325a4a0445ce2a005ea34ae85d80e185f1f7685863f94e5"
-    },
-    {
-      "path": "packages/scheduler/src/index.test.ts",
-      "sha256": "sha256:338e0ac0d599ad6ffaa403da33141356d7dcd842b6310fde4f4ffaca91c97b84"
-    }
-  ],
   "cases": [
     {
       "id": "eligible",
-      "ledgerRows": ["reference-scheduler-index-001"],
       "jobs": [
         {
           "id": "j",
@@ -42,7 +30,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -87,7 +75,6 @@
     },
     {
       "id": "no-nodes",
-      "ledgerRows": ["reference-scheduler-index-002"],
       "jobs": [
         {
           "id": "j",
@@ -114,7 +101,6 @@
     },
     {
       "id": "all-offline",
-      "ledgerRows": ["reference-scheduler-index-002"],
       "jobs": [
         {
           "id": "j",
@@ -142,7 +128,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -183,7 +169,6 @@
     },
     {
       "id": "load-score",
-      "ledgerRows": ["reference-scheduler-index-003"],
       "jobs": [
         {
           "id": "j",
@@ -211,7 +196,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -252,7 +237,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -297,7 +282,6 @@
     },
     {
       "id": "host-reservation",
-      "ledgerRows": ["reference-scheduler-index-004"],
       "jobs": [
         {
           "id": "small",
@@ -338,7 +322,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -385,7 +369,6 @@
     },
     {
       "id": "same-pass-accounting",
-      "ledgerRows": ["reference-scheduler-index-005"],
       "jobs": [
         {
           "id": "a",
@@ -439,7 +422,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -491,7 +474,6 @@
     },
     {
       "id": "concurrency",
-      "ledgerRows": ["reference-scheduler-index-006"],
       "jobs": [
         {
           "id": "a",
@@ -532,7 +514,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -579,7 +561,6 @@
     },
     {
       "id": "disabled",
-      "ledgerRows": ["reference-scheduler-index-007"],
       "jobs": [
         {
           "id": "j",
@@ -607,7 +588,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -648,7 +629,6 @@
     },
     {
       "id": "draining",
-      "ledgerRows": ["reference-scheduler-index-007"],
       "jobs": [
         {
           "id": "j",
@@ -676,7 +656,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -717,7 +697,6 @@
     },
     {
       "id": "matching-label",
-      "ledgerRows": ["reference-scheduler-index-008"],
       "jobs": [
         {
           "id": "j",
@@ -745,7 +724,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -786,7 +765,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -831,7 +810,6 @@
     },
     {
       "id": "missing-single-label",
-      "ledgerRows": ["reference-scheduler-index-008"],
       "jobs": [
         {
           "id": "j",
@@ -859,7 +837,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -900,7 +878,6 @@
     },
     {
       "id": "missing-all-labels",
-      "ledgerRows": ["reference-scheduler-index-008"],
       "jobs": [
         {
           "id": "j",
@@ -928,7 +905,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -969,7 +946,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1010,7 +987,6 @@
     },
     {
       "id": "pin-b",
-      "ledgerRows": ["reference-scheduler-index-009"],
       "jobs": [
         {
           "id": "j",
@@ -1039,7 +1015,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1080,7 +1056,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1125,7 +1101,6 @@
     },
     {
       "id": "pin-b-id",
-      "ledgerRows": ["reference-scheduler-index-009"],
       "jobs": [
         {
           "id": "j",
@@ -1154,7 +1129,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1195,7 +1170,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1240,7 +1215,6 @@
     },
     {
       "id": "pin-missing",
-      "ledgerRows": ["reference-scheduler-index-009"],
       "jobs": [
         {
           "id": "j",
@@ -1269,7 +1243,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1310,7 +1284,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1351,7 +1325,6 @@
     },
     {
       "id": "priority-backfill",
-      "ledgerRows": ["reference-scheduler-index-010"],
       "jobs": [
         {
           "id": "low",
@@ -1405,7 +1378,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1457,7 +1430,6 @@
     },
     {
       "id": "fifo",
-      "ledgerRows": ["reference-scheduler-index-010"],
       "jobs": [
         {
           "id": "late",
@@ -1498,7 +1470,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1545,7 +1517,6 @@
     },
     {
       "id": "missing-docker",
-      "ledgerRows": ["reference-scheduler-index-011"],
       "jobs": [
         {
           "id": "j",
@@ -1573,7 +1544,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": false
             },
@@ -1614,7 +1585,6 @@
     },
     {
       "id": "missing-executor",
-      "ledgerRows": ["reference-scheduler-index-011"],
       "jobs": [
         {
           "id": "j",
@@ -1642,7 +1612,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1683,7 +1653,6 @@
     },
     {
       "id": "live-memory",
-      "ledgerRows": ["reference-scheduler-index-012"],
       "jobs": [
         {
           "id": "j",
@@ -1711,7 +1680,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1759,7 +1728,6 @@
     },
     {
       "id": "warm-project",
-      "ledgerRows": ["reference-scheduler-index-013"],
       "jobs": [
         {
           "id": "j",
@@ -1788,7 +1756,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1829,7 +1797,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1876,7 +1844,6 @@
     },
     {
       "id": "preferred-busy",
-      "ledgerRows": ["reference-scheduler-index-014"],
       "jobs": [
         {
           "id": "j",
@@ -1905,7 +1872,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1946,7 +1913,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -1991,7 +1958,6 @@
     },
     {
       "id": "preferred-full-fallback",
-      "ledgerRows": ["reference-scheduler-index-014"],
       "jobs": [
         {
           "id": "j",
@@ -2020,7 +1986,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2061,7 +2027,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2106,7 +2072,6 @@
     },
     {
       "id": "spread-shards",
-      "ledgerRows": ["reference-scheduler-index-015"],
       "jobs": [
         {
           "id": "shard1",
@@ -2177,7 +2142,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2218,7 +2183,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2278,7 +2243,6 @@
     },
     {
       "id": "running-siblings",
-      "ledgerRows": ["reference-scheduler-index-015"],
       "jobs": [
         {
           "id": "j",
@@ -2307,7 +2271,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2351,7 +2315,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2396,7 +2360,6 @@
     },
     {
       "id": "rejected-worker",
-      "ledgerRows": ["reference-scheduler-index-016"],
       "jobs": [
         {
           "id": "j",
@@ -2425,7 +2388,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2466,7 +2429,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2511,7 +2474,6 @@
     },
     {
       "id": "utf16-name-tie",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j",
@@ -2539,7 +2501,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2580,7 +2542,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2625,7 +2587,6 @@
     },
     {
       "id": "pending-round-half",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j",
@@ -2653,7 +2614,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2694,7 +2655,6 @@
     },
     {
       "id": "pending-round-tenth",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j",
@@ -2722,7 +2682,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2763,7 +2723,6 @@
     },
     {
       "id": "pending-tiny-cpu",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j",
@@ -2791,7 +2750,7 @@
             "arch": "x64",
             "cpus": 0,
             "memoryTotalMb": 65536,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2832,7 +2791,6 @@
     },
     {
       "id": "combined-0",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -2933,7 +2891,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -2977,7 +2935,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3021,7 +2979,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3071,7 +3029,6 @@
     },
     {
       "id": "combined-1",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -3171,7 +3128,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3215,7 +3172,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3259,7 +3216,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3314,7 +3271,6 @@
     },
     {
       "id": "combined-2",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -3416,7 +3372,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3463,7 +3419,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3510,7 +3466,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3568,7 +3524,6 @@
     },
     {
       "id": "combined-3",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -3669,7 +3624,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3713,7 +3668,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3757,7 +3712,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3812,7 +3767,6 @@
     },
     {
       "id": "combined-4",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -3913,7 +3867,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -3957,7 +3911,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4001,7 +3955,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4060,7 +4014,6 @@
     },
     {
       "id": "combined-5",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -4161,7 +4114,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4205,7 +4158,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4249,7 +4202,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4299,7 +4252,6 @@
     },
     {
       "id": "combined-6",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -4401,7 +4353,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4445,7 +4397,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4489,7 +4441,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4548,7 +4500,6 @@
     },
     {
       "id": "combined-7",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -4648,7 +4599,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4695,7 +4646,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4742,7 +4693,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4804,7 +4755,6 @@
     },
     {
       "id": "combined-8",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -4905,7 +4855,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4949,7 +4899,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -4993,7 +4943,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5048,7 +4998,6 @@
     },
     {
       "id": "combined-9",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -5148,7 +5097,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5192,7 +5141,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5236,7 +5185,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5291,7 +5240,6 @@
     },
     {
       "id": "combined-10",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -5391,7 +5339,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5438,7 +5386,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5485,7 +5433,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5538,7 +5486,6 @@
     },
     {
       "id": "combined-11",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -5638,7 +5585,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5682,7 +5629,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5726,7 +5673,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5789,7 +5736,6 @@
     },
     {
       "id": "combined-12",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -5890,7 +5836,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5937,7 +5883,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -5984,7 +5930,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6042,7 +5988,6 @@
     },
     {
       "id": "combined-13",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -6143,7 +6088,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6190,7 +6135,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6237,7 +6182,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6290,7 +6235,6 @@
     },
     {
       "id": "combined-14",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -6391,7 +6335,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6438,7 +6382,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6485,7 +6429,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6547,7 +6491,6 @@
     },
     {
       "id": "combined-15",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -6647,7 +6590,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6694,7 +6637,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6741,7 +6684,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6794,7 +6737,6 @@
     },
     {
       "id": "combined-16",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -6896,7 +6838,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6940,7 +6882,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -6984,7 +6926,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7034,7 +6976,6 @@
     },
     {
       "id": "combined-17",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -7136,7 +7077,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7183,7 +7124,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7230,7 +7171,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7283,7 +7224,6 @@
     },
     {
       "id": "combined-18",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -7383,7 +7323,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7427,7 +7367,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7471,7 +7411,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7526,7 +7466,6 @@
     },
     {
       "id": "combined-19",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -7626,7 +7565,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7673,7 +7612,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7720,7 +7659,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7773,7 +7712,6 @@
     },
     {
       "id": "combined-20",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -7874,7 +7812,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7918,7 +7856,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -7962,7 +7900,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8012,7 +7950,6 @@
     },
     {
       "id": "combined-21",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -8116,7 +8053,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8160,7 +8097,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8204,7 +8141,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8254,7 +8191,6 @@
     },
     {
       "id": "combined-22",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -8354,7 +8290,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8401,7 +8337,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8448,7 +8384,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8501,7 +8437,6 @@
     },
     {
       "id": "combined-23",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -8601,7 +8536,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8645,7 +8580,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8689,7 +8624,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8748,7 +8683,6 @@
     },
     {
       "id": "combined-24",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -8849,7 +8783,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8896,7 +8830,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8943,7 +8877,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -8996,7 +8930,6 @@
     },
     {
       "id": "combined-25",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -9096,7 +9029,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9143,7 +9076,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9190,7 +9123,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9256,7 +9189,6 @@
     },
     {
       "id": "combined-26",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -9357,7 +9289,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9401,7 +9333,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9445,7 +9377,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9495,7 +9427,6 @@
     },
     {
       "id": "combined-27",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -9595,7 +9526,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9639,7 +9570,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9683,7 +9614,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9733,7 +9664,6 @@
     },
     {
       "id": "combined-28",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -9833,7 +9763,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9880,7 +9810,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9927,7 +9857,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -9985,7 +9915,6 @@
     },
     {
       "id": "combined-29",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -10085,7 +10014,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10129,7 +10058,7 @@
             "arch": "x64",
             "cpus": 2,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10173,7 +10102,7 @@
             "arch": "x64",
             "cpus": 8,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10228,7 +10157,6 @@
     },
     {
       "id": "combined-30",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -10329,7 +10257,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10376,7 +10304,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 32768,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10423,7 +10351,7 @@
             "arch": "x64",
             "cpus": 16,
             "memoryTotalMb": 4096,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10485,7 +10413,6 @@
     },
     {
       "id": "combined-31",
-      "ledgerRows": [],
       "jobs": [
         {
           "id": "j0",
@@ -10587,7 +10514,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10634,7 +10561,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },
@@ -10681,7 +10608,7 @@
             "arch": "x64",
             "cpus": 4,
             "memoryTotalMb": 8192,
-            "agentVersion": "0.1.0",
+            "agentVersion": "2.0.0-dev.2",
             "docker": {
               "available": true
             },

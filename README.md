@@ -7,7 +7,7 @@
 
 **Multiple machines. One workflow.** Gridstator runs builds, tests, Docker image builds and supported GitHub Actions jobs on computers you control. It snapshots the saved working tree, including uncommitted edits, sends only missing content to a worker, and streams logs and results back to the CLI or VS Code.
 
-> **Release status:** the Rust v2 CLI/controller/worker and native VS Code extension are development previews. The [v2 acceptance ledger](native/contracts/parity-ledger.json) still has open platform, service and signing gates. No public v2 package or Marketplace listing exists yet. The [v0.1.0 release](https://github.com/jepsenphil/gridstator/releases/tag/v0.1.0) is the legacy Node implementation; its [guides](docs/legacy/v1/README.md) remain available for recovery. The v2 CLI will be distributed as verified native binaries, not through npm.
+> **Release status:** Gridstator 2.0.0 is planned as the first public native release. The Rust CLI/controller/worker and VS Code extension are development previews while five [release acceptance gates](native/contracts/release-acceptance.json) remain open. No native package or Marketplace listing is published yet. The CLI will ship as verified native binaries, not through npm.
 
 ## See it
 
@@ -24,7 +24,7 @@ The Gridstator view shows workers, jobs and runnable tasks beside your project. 
 
 The native CLI, controller and worker are one Rust executable. The thin extension uses VS Code's supplied Node runtime for its UI and delegates workspace operations to the native executable. [Architecture and trust boundaries](docs/ARCHITECTURE.md).
 
-## Try the v2 development preview
+## Try the native development preview
 
 The release installer is intentionally unavailable until the acceptance gates pass. For an isolated source build, install the pinned Rust toolchain, a C compiler and Docker, then run:
 
@@ -38,7 +38,7 @@ cargo build --locked
 ./target/debug/gridstator controller start --with-agent
 ~~~
 
-In another terminal, export the same `GRIDSTATOR_CONFIG` path, then from a project directory run `/path/to/gridstator nodes` and `/path/to/gridstator run -- npm test`. Choose an unused port if 17431 is occupied. The init command creates a fresh v2 cluster and saves a local login. The worker needs access to Docker. Do not point a v2 process at v1 data or credentials. [Development setup](docs/DEVELOPMENT.md) and [installation/release procedure](docs/INSTALL.md) cover other hosts and the verified distribution.
+In another terminal, export the same `GRIDSTATOR_CONFIG` path, then from a project directory run `/path/to/gridstator nodes` and `/path/to/gridstator run -- npm test`. Choose an unused port if 17431 is occupied. The init command creates a fresh cluster and saves a local login. The worker needs access to Docker. [Development setup](docs/DEVELOPMENT.md) and [installation/release procedure](docs/INSTALL.md) cover other hosts and the verified distribution.
 
 ## Capabilities
 
@@ -59,7 +59,6 @@ In another terminal, export the same `GRIDSTATOR_CONFIG` path, then from a proje
 | [Security](docs/SECURITY.md) | Threat model, credentials and reporting |
 | [Development](docs/DEVELOPMENT.md) | Build, test, CI and project tasks |
 | [Release readiness](docs/RELEASING.md) | Gates, artifacts, Marketplace setup and owner actions |
-| [Legacy v1](docs/legacy/v1/README.md) | Node release, migration and recovery |
 
 The [desktop companion](apps/desktop/README.md) is a separate development preview. Its platform qualification and publication follow a later release.
 

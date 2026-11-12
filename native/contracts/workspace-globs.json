@@ -1,28 +1,11 @@
 {
   "formatVersion": 1,
   "reference": {
-    "revision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
     "package": "picomatch",
     "version": "4.0.7",
-    "options": { "dot": true },
-    "sources": [
-      {
-        "path": "pnpm-lock.yaml",
-        "sha256": "sha256:21c8a78eba05faeda37746865599b1bfc12b9db7670326bafb5170c1494049e9"
-      },
-      {
-        "path": "packages/snapshot/src/capture.ts",
-        "sha256": "sha256:91c19c4f81827d86b545f07f025335a94fd04b9b499a0d3f56166cf568f3bc2d"
-      },
-      {
-        "path": "packages/snapshot/src/secrets.ts",
-        "sha256": "sha256:a191844ddf966cfd2fde6b1a7929aee74ca87f0fb72e5989a262b799895c8d54"
-      },
-      {
-        "path": "packages/protocol/src/manifest.ts",
-        "sha256": "sha256:2d11c254109c516a33d70b9606a574bc5fa87345fd67c6ba598d6d0ca00e3071"
-      }
-    ]
+    "options": {
+      "dot": true
+    }
   },
   "paths": [
     "",
@@ -944,7 +927,12 @@
       "bases": [""],
       "matches": ["filec.txt"]
     },
-    { "id": "posix-class", "patterns": ["[[:digit:]]"], "bases": [""], "matches": ["1", "2", "3"] },
+    {
+      "id": "posix-class",
+      "patterns": ["[[:digit:]]"],
+      "bases": [""],
+      "matches": ["1", "2", "3"]
+    },
     {
       "id": "escaped-star",
       "patterns": ["literal\\*.txt"],
@@ -969,9 +957,24 @@
       "bases": [""],
       "matches": ["foo.ts"]
     },
-    { "id": "numeric-range", "patterns": ["{1..3}"], "bases": [""], "matches": ["1", "2", "3"] },
-    { "id": "zero-padded-range-reference", "patterns": ["{01..03}"], "bases": [""], "matches": [] },
-    { "id": "risky-repetition-reference", "patterns": ["*(a|aa)"], "bases": [""], "matches": [] },
+    {
+      "id": "numeric-range",
+      "patterns": ["{1..3}"],
+      "bases": [""],
+      "matches": ["1", "2", "3"]
+    },
+    {
+      "id": "zero-padded-range-reference",
+      "patterns": ["{01..03}"],
+      "bases": [""],
+      "matches": []
+    },
+    {
+      "id": "risky-repetition-reference",
+      "patterns": ["*(a|aa)"],
+      "bases": [""],
+      "matches": []
+    },
     {
       "id": "nested-repeat-literalization",
       "patterns": ["+(*(foo))"],
@@ -1014,26 +1017,66 @@
       "bases": [""],
       "matches": ["***", "*a", "a", "aa", "aaa"]
     },
-    { "id": "repeat-prefix-overlap", "patterns": ["+(a|aa)"], "bases": [""], "matches": [] },
-    { "id": "repeat-wildcard-branch", "patterns": ["+(*|a)"], "bases": [""], "matches": [] },
-    { "id": "literal-unclosed-bracket", "patterns": ["["], "bases": ["["], "matches": ["["] },
-    { "id": "invalid-character-range", "patterns": ["[z-a]"], "bases": [""], "matches": ["[z-a]"] },
+    {
+      "id": "repeat-prefix-overlap",
+      "patterns": ["+(a|aa)"],
+      "bases": [""],
+      "matches": []
+    },
+    {
+      "id": "repeat-wildcard-branch",
+      "patterns": ["+(*|a)"],
+      "bases": [""],
+      "matches": []
+    },
+    {
+      "id": "literal-unclosed-bracket",
+      "patterns": ["["],
+      "bases": ["["],
+      "matches": ["["]
+    },
+    {
+      "id": "invalid-character-range",
+      "patterns": ["[z-a]"],
+      "bases": [""],
+      "matches": ["[z-a]"]
+    },
     {
       "id": "literal-unclosed-parenthesis",
       "patterns": ["a(b"],
       "bases": [""],
       "matches": ["a(b"]
     },
-    { "id": "unclosed-brace-reference", "patterns": ["a{b"], "bases": ["a{b"], "matches": ["a{b"] },
-    { "id": "bmp-one-unit", "patterns": ["?.ts"], "bases": [""], "matches": ["é.ts"] },
+    {
+      "id": "unclosed-brace-reference",
+      "patterns": ["a{b"],
+      "bases": ["a{b"],
+      "matches": ["a{b"]
+    },
+    {
+      "id": "bmp-one-unit",
+      "patterns": ["?.ts"],
+      "bases": [""],
+      "matches": ["é.ts"]
+    },
     {
       "id": "nonbmp-two-units",
       "patterns": ["??.ts"],
       "bases": [""],
       "matches": ["💾.ts", "😀.ts", "xé.ts"]
     },
-    { "id": "bmp-class", "patterns": ["[é].ts"], "bases": [""], "matches": ["é.ts"] },
-    { "id": "nonbmp-class", "patterns": ["[💾].ts"], "bases": [""], "matches": [] },
+    {
+      "id": "bmp-class",
+      "patterns": ["[é].ts"],
+      "bases": [""],
+      "matches": ["é.ts"]
+    },
+    {
+      "id": "nonbmp-class",
+      "patterns": ["[💾].ts"],
+      "bases": [""],
+      "matches": []
+    },
     {
       "id": "mixed-unicode-class",
       "patterns": ["[é💾]"],
@@ -1069,7 +1112,12 @@
       "bases": ["README.md"],
       "matches": ["README.md"]
     },
-    { "id": "include-directory-base", "patterns": ["src"], "bases": ["src"], "matches": ["src"] }
+    {
+      "id": "include-directory-base",
+      "patterns": ["src"],
+      "bases": ["src"],
+      "matches": ["src"]
+    }
   ],
   "rawCases": [
     {
@@ -16394,7 +16442,10 @@
   "captureCases": [
     {
       "id": "ignored-literal-include",
-      "options": { "noGit": true, "include": ["README.md"] },
+      "options": {
+        "noGit": true,
+        "include": ["README.md"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16412,7 +16463,10 @@
     },
     {
       "id": "ignored-negative-literal-include",
-      "options": { "noGit": true, "include": ["!README.md"] },
+      "options": {
+        "noGit": true,
+        "include": ["!README.md"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16430,7 +16484,10 @@
     },
     {
       "id": "ignored-negative-extglob-include",
-      "options": { "noGit": true, "include": ["!(README.md)"] },
+      "options": {
+        "noGit": true,
+        "include": ["!(README.md)"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16448,7 +16505,10 @@
     },
     {
       "id": "ignored-extglob-include",
-      "options": { "noGit": true, "include": ["src/@(foo|bar).ts"] },
+      "options": {
+        "noGit": true,
+        "include": ["src/@(foo|bar).ts"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16473,7 +16533,10 @@
     },
     {
       "id": "ignored-wildcard-include",
-      "options": { "noGit": true, "include": ["**/*.ts"] },
+      "options": {
+        "noGit": true,
+        "include": ["**/*.ts"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16499,7 +16562,10 @@
     },
     {
       "id": "negative-exclude",
-      "options": { "noGit": true, "exclude": ["!README.md"] },
+      "options": {
+        "noGit": true,
+        "exclude": ["!README.md"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16517,7 +16583,10 @@
     },
     {
       "id": "negative-extglob-exclude",
-      "options": { "noGit": true, "exclude": ["**/!(fixtures)/*.ts"] },
+      "options": {
+        "noGit": true,
+        "exclude": ["**/!(fixtures)/*.ts"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16535,7 +16604,10 @@
     },
     {
       "id": "secret-negated-allow",
-      "options": { "noGit": true, "allowSecrets": ["!secret.key"] },
+      "options": {
+        "noGit": true,
+        "allowSecrets": ["!secret.key"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16553,7 +16625,10 @@
     },
     {
       "id": "secret-extglob-allow",
-      "options": { "noGit": true, "allowSecrets": ["**/!(secret).key"] },
+      "options": {
+        "noGit": true,
+        "allowSecrets": ["**/!(secret).key"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16571,7 +16646,10 @@
     },
     {
       "id": "raw-lookahead-include",
-      "options": { "noGit": true, "include": ["src/(?=foo)foo.ts"] },
+      "options": {
+        "noGit": true,
+        "include": ["src/(?=foo)foo.ts"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16589,7 +16667,10 @@
     },
     {
       "id": "raw-lookahead-exclude",
-      "options": { "noGit": true, "exclude": ["(?=fixtures/)fixtures/*.ts"] },
+      "options": {
+        "noGit": true,
+        "exclude": ["(?=fixtures/)fixtures/*.ts"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16607,7 +16688,10 @@
     },
     {
       "id": "raw-lookahead-allow-secret",
-      "options": { "noGit": true, "allowSecrets": ["(?=safe.key)safe.key"] },
+      "options": {
+        "noGit": true,
+        "allowSecrets": ["(?=safe.key)safe.key"]
+      },
       "files": {
         ".gitignore": "README.md\nsrc/\n",
         "README.md": "readme",
@@ -16625,12 +16709,42 @@
     }
   ],
   "manifestUnicodeCases": [
-    { "id": "symlink-target-2048-astral", "field": "target", "count": 2048, "accepted": true },
-    { "id": "symlink-target-2049-astral", "field": "target", "count": 2049, "accepted": true },
-    { "id": "symlink-target-4096-astral", "field": "target", "count": 4096, "accepted": true },
-    { "id": "symlink-target-4097-astral", "field": "target", "count": 4097, "accepted": false },
-    { "id": "manifest-path-2048-astral", "field": "path", "count": 2048, "accepted": true },
-    { "id": "manifest-path-2049-astral", "field": "path", "count": 2049, "accepted": false }
+    {
+      "id": "symlink-target-2048-astral",
+      "field": "target",
+      "count": 2048,
+      "accepted": true
+    },
+    {
+      "id": "symlink-target-2049-astral",
+      "field": "target",
+      "count": 2049,
+      "accepted": true
+    },
+    {
+      "id": "symlink-target-4096-astral",
+      "field": "target",
+      "count": 4096,
+      "accepted": true
+    },
+    {
+      "id": "symlink-target-4097-astral",
+      "field": "target",
+      "count": 4097,
+      "accepted": false
+    },
+    {
+      "id": "manifest-path-2048-astral",
+      "field": "path",
+      "count": 2048,
+      "accepted": true
+    },
+    {
+      "id": "manifest-path-2049-astral",
+      "field": "path",
+      "count": 2049,
+      "accepted": false
+    }
   ],
   "openCases": [],
   "nativeResourceLimits": {
@@ -16638,5 +16752,10 @@
     "maximumMatchWork": 2000000,
     "behavior": "Return an explicit capture error; never silently treat exhaustion as a non-match."
   },
-  "invalid": [{ "patterns": [""], "error": "Expected pattern to be a non-empty string" }]
+  "invalid": [
+    {
+      "patterns": [""],
+      "error": "Expected pattern to be a non-empty string"
+    }
+  ]
 }

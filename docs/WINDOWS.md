@@ -15,6 +15,6 @@ A WSL worker dials the controller, so it needs no incoming worker port. WSL memo
 
 Install the native extension and CLI on the **workspace side** of a Remote WSL window. Opening a Windows-local VS Code window against a Windows folder does not make the Linux worker binary available on that host. For local Windows worker controls, use the separate desktop companion preview.
 
-## Migrating from v1
+## Release qualification
 
-The v1 Windows/WSL Node instructions are [archived](legacy/v1/WINDOWS.md). Native v2 uses new data, credentials and service names. Follow the [cutover and recovery runbook](../native/CUTOVER.md) before changing a working v1 cluster. Actual WSL2 release qualification is tracked in the [v2 progress report](V2_PROGRESS.md).
+Actual WSL2 qualification is tracked in the [native progress report](NATIVE_PROGRESS.md) and [validation host guide](../native/VALIDATION_HOSTS.md).

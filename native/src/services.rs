@@ -57,7 +57,7 @@ pub struct ServiceConfig {
     pub role: ServiceRole,
     pub scope: ServiceScope,
     /// Basename without .service/.plist, e.g. gridstator-native-controller. Callers deliberately
-    /// choose a separate name for development; no ambiguous v1 service is replaced by default.
+    /// choose a separate name for development.
     pub name: String,
     pub label: String,
     pub supervisor: PathBuf,

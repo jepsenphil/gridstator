@@ -14,25 +14,7 @@
       "path": "packages/reports"
     },
     {
-      "path": "packages/scheduler"
-    },
-    {
-      "path": "packages/snapshot"
-    },
-    {
-      "path": "packages/executors"
-    },
-    {
       "path": "packages/client"
-    },
-    {
-      "path": "apps/controller"
-    },
-    {
-      "path": "apps/agent"
-    },
-    {
-      "path": "apps/cli"
     }
   ]
 }

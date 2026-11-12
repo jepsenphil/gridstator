@@ -4,8 +4,7 @@ import { access, realpath, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { delimiter, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import * as vscode from 'vscode';
-import { defaultClientConfigPath, GridstatorError } from '@gridstator/shared';
-import { nativeExtensionBuild } from './build-flavor';
+import { GridstatorError } from '@gridstator/shared';
 
 export interface NativeBuildInfo {
   buildId: string;
@@ -26,7 +25,6 @@ export interface NativeRequest {
 }
 
 interface NativeOptions {
-  enabled?: () => boolean;
   path?: () => string;
   trusted?: () => boolean;
   workspaceRoots?: () => readonly string[];
@@ -42,13 +40,6 @@ export class NativeCancelledError extends Error {
   }
 }
 
-export function nativeEnabled(): boolean {
-  return (
-    nativeExtensionBuild() ||
-    vscode.workspace.getConfiguration('gridstator').get<boolean>('nativeCli.enabled', false)
-  );
-}
-
 export function nativeClientConfigPath(env: NodeJS.ProcessEnv = process.env): string {
   if (env.GRIDSTATOR_CONFIG) return env.GRIDSTATOR_CONFIG;
   const base =
@@ -58,15 +49,14 @@ export function nativeClientConfigPath(env: NodeJS.ProcessEnv = process.env): st
   return join(base, 'gridstator-v2', 'client.json');
 }
 
-/** Shared by connection watchers, local administration and Settings so preview mode never falls
- * through to the v1 login merely because the user left configPath empty. */
+/** Shared by connection watchers, local administration and Settings. */
 export function effectiveClientConfigPath(): string {
   const path =
     vscode.workspace.getConfiguration('gridstator').get<string>('configPath', '') ||
-    (nativeEnabled() ? nativeClientConfigPath() : defaultClientConfigPath());
+    nativeClientConfigPath();
   // Bridge capture runs from the project root. Preserve the extension host's interpretation of a
   // relative machine configuration path rather than resolving it differently in each project.
-  return nativeEnabled() ? resolve(path) : path;
+  return resolve(path);
 }
 
 /** Runs the native executable on the workspace extension host. A shell is never involved and the
@@ -77,10 +67,6 @@ export class NativeCli implements vscode.Disposable {
   private verified: { identity: string; info: NativeBuildInfo } | undefined;
 
   constructor(private readonly options: NativeOptions = {}) {}
-
-  get enabled(): boolean {
-    return this.options.enabled?.() ?? nativeEnabled();
-  }
 
   reset(): void {
     this.generation += 1;
@@ -94,7 +80,6 @@ export class NativeCli implements vscode.Disposable {
 
   async execute<T>(request: NativeRequest, signal?: AbortSignal): Promise<T> {
     this.requireTrust();
-    if (!this.enabled) throw new GridstatorError('CONFIG', 'Native CLI preview mode is disabled');
     if (signal?.aborted) throw new NativeCancelledError();
     const generation = this.generation;
     const executable = await this.resolveExecutable();
@@ -116,7 +101,7 @@ export class NativeCli implements vscode.Disposable {
       return JSON.parse(result) as T;
     } catch {
       throw new GridstatorError('CONFIG', 'The native CLI returned invalid bridge JSON', {
-        hint: 'Update the native CLI to a preview with bridge-v1 support.',
+        hint: 'Update the native CLI to a matching release with bridge-v1 support.',
       });
     }
   }

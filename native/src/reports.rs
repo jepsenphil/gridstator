@@ -206,7 +206,7 @@ fn visit_suite(suite: &Element, parents: &[String], cases: &mut Vec<Value>) {
     }
 }
 
-/// Return the same array-of-cases JSON consumed by the v1 CLI and VS Code adapters.
+/// Return the array-of-cases JSON consumed by the VS Code adapter.
 pub fn parse_junit(xml: &str) -> Result<Value> {
     let document = parse_xml(xml)?;
     let mut cases = Vec::new();

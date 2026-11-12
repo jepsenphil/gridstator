@@ -1,6 +1,6 @@
 # Native controller API
 
-The Rust v2 controller implements the accepted `/v1/...` wire protocol. The prefix names the wire contract, not the v2 product release. This page is an integration map, not an independent compatibility promise: exact request/response schemas and access rules are defined in [native/src/protocol.rs](../native/src/protocol.rs), [controller.rs](../native/src/controller.rs) and the [accepted parity fixtures](../native/contracts/accepted-v1). The [v1 API guide](legacy/v1/API.md) is archived separately.
+The Rust controller implements the `/v1/...` wire protocol. The route prefix versions the wire contract independently of the product release. Exact request/response schemas and access rules are defined in [protocol.rs](../native/src/protocol.rs), [controller.rs](../native/src/controller.rs) and the [behavior fixtures](../native/contracts/behavior/).
 
 ## Transport and identity
 
@@ -20,4 +20,4 @@ Use the native CLI for ordinary integrations: `gridstator --help`, `gridstator j
 
 ## Compatibility and release status
 
-The native server and clients negotiate capabilities and reject incompatible roles. v1 and v2 data directories, credentials and services are separate even where wire paths are shared. The v2 API remains a development preview until the [release gates](RELEASING.md) pass; accepted differences from the v1 reference are in [compatibility exceptions](../native/contracts/compatibility-exceptions.json).
+The native server and clients negotiate capabilities and reject incompatible roles. The API remains a development preview until the [release gates](RELEASING.md) pass.

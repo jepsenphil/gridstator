@@ -1,4 +1,4 @@
-// Build in a disposable staging directory: v1 outputs and source manifest remain usable.
+// Build the native VSIX in a disposable staging directory.
 import { execFile } from 'node:child_process';
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -33,7 +33,6 @@ try {
     'README.md',
     'LICENSE.md',
   ];
-  delete manifest.contributes.configuration.properties['gridstator.nativeCli.enabled'];
   manifest.contributes.configuration.properties['gridstator.configPath'].markdownDescription =
     'Path to the shared native v2 CLI login on this workspace host. Empty uses gridstator-v2/client.json under the platform configuration directory.';
   await writeFile(join(stage, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
@@ -41,7 +40,7 @@ try {
   await copyFile(join(root, 'LICENSE.md'), join(stage, 'LICENSE.md'));
   const built = await execute(
     process.execPath,
-    [join(root, 'scripts/build.mjs'), '--production', '--native', '--output-root', stage],
+    [join(root, 'scripts/build.mjs'), '--production', '--output-root', stage],
     {
       env: { ...process.env, GRIDSTATOR_NATIVE_INSTALL_TAG: `v${nativeVersion}` },
       maxBuffer: 8 * 1024 * 1024,

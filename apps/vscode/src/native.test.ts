@@ -7,7 +7,6 @@ import {
   NativeCli,
   effectiveClientConfigPath,
   nativeClientConfigPath,
-  nativeEnabled,
 } from './native';
 import { testHost } from './test-vscode';
 import {
@@ -76,7 +75,6 @@ if (process.argv[2] === 'build-info') {
 
 function client(path: string, options: { trusted?: boolean; timeoutMs?: number } = {}): NativeCli {
   const native = new NativeCli({
-    enabled: () => true,
     path: () => path,
     trusted: () => options.trusted ?? true,
     environment: () => ({ ...process.env, NATIVE_TRACE: join(directory, 'trace.json') }),
@@ -119,7 +117,6 @@ describe('native workspace-host adapter', () => {
   it('installs a missing default helper and requires its setup capability', async () => {
     const path = await executable({ capabilities: ['bridge-v1', 'local-setup-v1'] });
     const native = new NativeCli({
-      enabled: () => true,
       trusted: () => true,
       path: () => '',
       homeDirectory: () => directory,
@@ -138,7 +135,7 @@ describe('native workspace-host adapter', () => {
     ).rejects.toThrow('does not support controller setup');
     await expect(readFile(join(directory, 'trace.json'))).rejects.toThrow();
   });
-  it('accepts Rust build/toolchain metadata while keeping legacy managed platforms scoped', () => {
+  it('accepts Rust build/toolchain metadata while keeping managed platforms scoped', () => {
     const build = AgentBuildSchema.parse({
       id: 'native-build',
       version: '2.0.0-dev.1',
@@ -166,22 +163,12 @@ describe('native workspace-host adapter', () => {
     expect(ReportedToolPlatformSchema.parse('darwin/arm64')).toBe('darwin/arm64');
     expect(ToolPlatformSchema.safeParse('darwin/arm64').success).toBe(false);
   });
-  it('keeps preview mode opt-in and uses the separate native configuration by default', () => {
+  it('uses the native configuration by default and honors an explicit path', () => {
     vi.stubEnv('GRIDSTATOR_CONFIG', '');
-    expect(nativeEnabled()).toBe(false);
-    testHost.configure('nativeCli.enabled', true);
-    expect(nativeEnabled()).toBe(true);
     expect(effectiveClientConfigPath()).toBe(nativeClientConfigPath());
     expect(effectiveClientConfigPath()).toContain('gridstator-v2');
     testHost.configure('configPath', '/explicit/shared-login.json');
     expect(effectiveClientConfigPath()).toBe('/explicit/shared-login.json');
-  });
-  it('requires Rust delegation in the v2 package even when a retained v1 setting disables it', () => {
-    vi.stubGlobal('__GRIDSTATOR_NATIVE_ONLY__', true);
-    testHost.configure('nativeCli.enabled', false);
-    vi.stubEnv('GRIDSTATOR_CONFIG', '');
-    expect(nativeEnabled()).toBe(true);
-    expect(effectiveClientConfigPath()).toBe(nativeClientConfigPath());
   });
 
   it('probes compatibility and sends secrets only through private stdin JSON', async () => {
@@ -237,7 +224,6 @@ describe('native workspace-host adapter', () => {
     await writeFile(path, await readFile(source));
     await chmod(path, 0o755);
     const native = new NativeCli({
-      enabled: () => true,
       path: () => '',
       trusted: () => true,
       workspaceRoots: () => [directory],
@@ -255,7 +241,6 @@ describe('native workspace-host adapter', () => {
     await writeFile(managed, await readFile(await executable()));
     await chmod(managed, 0o755);
     const native = new NativeCli({
-      enabled: () => true,
       path: () => '',
       trusted: () => true,
       workspaceRoots: () => [join(directory, 'project')],

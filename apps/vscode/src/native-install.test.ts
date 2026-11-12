@@ -115,7 +115,7 @@ describe('native CLI setup installation', () => {
     expect(run).toHaveBeenCalledOnce();
   });
 
-  it('discovers only published v2 releases with complete artifacts for this host', async () => {
+  it('discovers only published matching-series releases with complete artifacts for this host', async () => {
     const fetchRelease = vi
       .fn<typeof fetch>()
       .mockResolvedValue(
@@ -126,7 +126,7 @@ describe('native CLI setup installation', () => {
             { ...release('v2.1.0', false), draft: true },
             { ...release('v2.2.0', false), assets: [] },
             release('v2.0.1', false),
-            release('v1.0.0', false),
+            release('v3.0.0', false),
           ]),
         ),
       );

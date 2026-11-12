@@ -2,7 +2,7 @@
   "name": "gridstator",
   "displayName": "Gridstator",
   "description": "Multiple machines. One workflow. Run builds, tests and GitHub Actions workflows on the computers on your LAN, from VS Code.",
-  "version": "0.1.0",
+  "version": "2.0.0-dev.2",
   "private": true,
   "publisher": "gridstator",
   "license": "Apache-2.0",
@@ -150,28 +150,28 @@
       },
       {
         "command": "gridstator.runCommand",
-        "title": "Run Command on Cluster\u2026",
+        "title": "Run Command on Cluster…",
         "category": "Gridstator",
         "icon": "$(terminal)"
       },
       {
         "command": "gridstator.runTask",
-        "title": "Run Task on Cluster\u2026",
+        "title": "Run Task on Cluster…",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.runScript",
-        "title": "Run Package Script on Cluster\u2026",
+        "title": "Run Package Script on Cluster…",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.runWorkflow",
-        "title": "Run GitHub Actions Workflow on Cluster\u2026",
+        "title": "Run GitHub Actions Workflow on Cluster…",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.buildImage",
-        "title": "Build Docker Image on Cluster\u2026",
+        "title": "Build Docker Image on Cluster…",
         "category": "Gridstator"
       },
       {
@@ -181,7 +181,7 @@
       },
       {
         "command": "gridstator.selectTarget",
-        "title": "Select Target Worker\u2026",
+        "title": "Select Target Worker…",
         "category": "Gridstator",
         "icon": "$(target)"
       },
@@ -231,18 +231,18 @@
       },
       {
         "command": "gridstator.node.setConcurrency",
-        "title": "Set Maximum Concurrent Jobs\u2026",
+        "title": "Set Maximum Concurrent Jobs…",
         "category": "Gridstator"
       },
       {
         "command": "gridstator.node.rename",
-        "title": "Rename Worker\u2026",
+        "title": "Rename Worker…",
         "category": "Gridstator",
         "icon": "$(edit)"
       },
       {
         "command": "gridstator.node.setReservation",
-        "title": "Set Reserved Resources\u2026",
+        "title": "Set Reserved Resources…",
         "category": "Gridstator"
       },
       {
@@ -418,12 +418,6 @@
     "configuration": {
       "title": "Gridstator",
       "properties": {
-        "gridstator.nativeCli.enabled": {
-          "type": "boolean",
-          "default": false,
-          "scope": "machine",
-          "markdownDescription": "Use the native Rust CLI preview on this workspace host for discovery, snapshots, submissions and local administration. Requires a trusted workspace and a CLI with `bridge-v1` support. Uses the separate `gridstator-v2` login by default; the existing Node mode remains available when disabled."
-        },
         "gridstator.nativeCli.path": {
           "type": "string",
           "default": "",
@@ -433,7 +427,7 @@
         "gridstator.configPath": {
           "type": "string",
           "default": "",
-          "markdownDescription": "Path to the client configuration written by `gridstator login`. Empty uses the CLI default (`~/.config/gridstator/client.json` on Linux).",
+          "markdownDescription": "Path to the shared native CLI login on this workspace host. Empty uses gridstator-v2/client.json under the platform configuration directory.",
           "scope": "machine"
         },
         "gridstator.defaultNode": {
@@ -487,7 +481,7 @@
           "type": "boolean",
           "default": true,
           "scope": "machine",
-          "markdownDescription": "Connect automatically using this remote account\u2019s shared CLI login. On the controller host, set up local admin access automatically."
+          "markdownDescription": "Connect automatically using this remote account’s shared CLI login. On the controller host, set up local admin access automatically."
         }
       }
     }
@@ -495,7 +489,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
-    "package": "node scripts/build.mjs --production && vsce package --no-dependencies --out dist/gridstator.vsix",
+    "package": "node scripts/package-native.mjs",
     "package:native": "node scripts/package-native.mjs",
     "test:integration": "node test/run-integration.mjs"
   },
@@ -504,7 +498,6 @@
     "@gridstator/discovery": "workspace:*",
     "@gridstator/protocol": "workspace:*",
     "@gridstator/shared": "workspace:*",
-    "@gridstator/snapshot": "workspace:*",
     "@gridstator/reports": "workspace:*"
   },
   "devDependencies": {
@@ -516,7 +509,6 @@
     "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^4.1.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "@gridstator/controller": "workspace:*"
+    "react-dom": "^19.3.1"
   }
 }

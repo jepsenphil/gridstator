@@ -5,10 +5,9 @@ export * from './fs.js';
 export * from './paths.js';
 export * from './logger.js';
 export * from './tls.js';
-export * from './install.js';
 export * from './machine.js';
 
-export const GRIDSTATOR_VERSION = '0.1.0';
+export const GRIDSTATOR_VERSION = '2.0.0-dev.2';
 
 /** Decodes a `ws` message payload (Buffer, ArrayBuffer or fragments) as UTF-8 text. */
 export function decodeWsData(data: Buffer | ArrayBuffer | Buffer[]): string {

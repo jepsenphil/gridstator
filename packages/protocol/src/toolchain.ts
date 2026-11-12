@@ -14,8 +14,8 @@ export const TOOL_NAMES: readonly ToolName[] = ToolNameSchema.options;
 export const ToolPlatformSchema = z.enum(['linux-x64', 'linux-arm64']);
 export type ToolPlatform = z.infer<typeof ToolPlatformSchema>;
 
-/** Read-only update metadata also describes native Rust mirrors. Keep the v1 tool pin/download
- * platform set above Linux-only; accepting reported native targets does not enable Mac Node updates. */
+/** Read-only update metadata describes native Rust mirrors. Managed tool downloads
+ * currently support Linux; reported native targets include macOS. */
 export const ReportedToolPlatformSchema = z.union([
   ToolPlatformSchema,
   z.enum(['linux/amd64', 'linux/arm64', 'darwin/amd64', 'darwin/arm64']),

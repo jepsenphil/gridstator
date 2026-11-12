@@ -85,9 +85,9 @@ fn custom_absolute_and_relative_config_paths_preserve_parent_permissions() {
     }
 }
 #[test]
-fn every_reference_help_command_parses_and_removed_node_runtime_flag_is_absent() {
+fn every_native_help_command_parses_and_removed_node_runtime_flag_is_absent() {
     let reference: Value =
-        serde_json::from_str(include_str!("../contracts/accepted-v1/cli-help.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/cli-help.json")).unwrap();
     let temp = tempfile::tempdir().unwrap();
     for case in reference["cases"].as_array().unwrap() {
         let mut args = case["path"]
@@ -134,7 +134,7 @@ fn parser_errors_use_exit_two_and_stdout_stderr_are_separate() {
     assert!(version.stderr.is_empty());
 }
 #[test]
-fn snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels() {
+fn snapshot_dry_run_and_discover_need_no_login_and_preserve_sentinels() {
     let temporary = tempfile::tempdir().unwrap();
     let root = temporary.path();
     fs::write(root.join("file.txt"), "uncommitted").unwrap();
@@ -145,7 +145,7 @@ fn snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels() {
     .unwrap();
     let old = root.join("data/gridstator/controller/sentinel");
     fs::create_dir_all(old.parent().unwrap()).unwrap();
-    fs::write(&old, "keep v1").unwrap();
+    fs::write(&old, "keep data").unwrap();
     let snapshot = cli(root, &["snapshot", "--dry-run", "--json"]);
     assert!(
         snapshot.status.success(),
@@ -171,7 +171,7 @@ fn snapshot_dry_run_and_discover_need_no_login_and_preserve_v1_sentinels() {
     );
     let found: Value = serde_json::from_slice(&found.stdout).unwrap();
     assert_eq!(found["tasks"]["test"]["command"], "echo hello");
-    assert_eq!(fs::read_to_string(old).unwrap(), "keep v1");
+    assert_eq!(fs::read_to_string(old).unwrap(), "keep data");
     assert!(!root.join("config/gridstator/client.json").exists());
 }
 #[test]

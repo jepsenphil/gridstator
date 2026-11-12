@@ -1,4 +1,4 @@
-//! Differential minimum/maximum/null/omission/UTF-16 cases from the immutable v1 schemas.
+//! Minimum, maximum, null, omission and UTF-16 protocol behavior cases.
 use gridstator::protocol;
 use serde_json::{Map, Value};
 fn expand(input: &Value) -> Value {
@@ -31,7 +31,7 @@ fn expand(input: &Value) -> Value {
 #[test]
 fn every_source_boundary_matches_native_acceptance_and_normalization() {
     let fixture: Value =
-        serde_json::from_str(include_str!("../contracts/protocol-boundaries-v1.json")).unwrap();
+        serde_json::from_str(include_str!("../contracts/protocol-boundaries.json")).unwrap();
     let mut failures = vec![];
     for case in fixture["cases"].as_array().unwrap() {
         let input = expand(&case["input"]);

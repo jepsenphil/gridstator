@@ -1,45 +1,23 @@
-//! Language-neutral accepted-v1 contracts. No Node/pnpm is used by these native tests.
+//! Behavior fixtures for the native implementation.
 use gridstator::{protocol, workspace};
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 
 fn fixture(name: &str) -> Value {
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("contracts/accepted-v1")
+        .join("contracts/behavior")
         .join(name);
-    serde_json::from_slice(&std::fs::read(path).expect("read frozen fixture"))
-        .expect("valid frozen JSON")
+    serde_json::from_slice(&std::fs::read(path).expect("read behavior fixture"))
+        .expect("valid behavior JSON")
 }
 
 #[test]
-fn frozen_fixture_bytes_match_recorded_reference_hashes() {
-    let baseline = fixture("baseline.json");
-    assert_eq!(
-        baseline["revision"],
-        "4b8f13ccf1b21820007fef0ab52143c961b69216"
-    );
-    for entry in baseline["fixtures"].as_array().expect("fixture index") {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("contracts/accepted-v1")
-            .join(entry["path"].as_str().expect("fixture path"));
-        let bytes = std::fs::read(path).expect("read indexed fixture");
-        assert_eq!(
-            format!("sha256:{}", hex::encode(Sha256::digest(bytes))),
-            entry["sha256"].as_str().expect("fixture hash"),
-            "{}",
-            entry["path"]
-        );
-    }
-}
-
-#[test]
-fn manifest_canonical_bytes_and_ids_match_v1() {
+fn manifest_canonical_bytes_and_ids_match_expected_behavior() {
     for case in fixture("manifests.json")["cases"]
         .as_array()
         .expect("valid manifests")
     {
         let input = serde_json::to_vec(&case["input"]).expect("manifest JSON");
-        let parsed = workspace::parse_manifest(&input).expect("v1-valid manifest");
+        let parsed = workspace::parse_manifest(&input).expect("valid manifest");
         let bytes = workspace::serialize_manifest(&parsed).expect("canonical manifest");
         assert_eq!(
             bytes,
@@ -66,7 +44,7 @@ fn manifest_canonical_bytes_and_ids_match_v1() {
 }
 
 #[test]
-fn manifest_structural_rejections_match_v1() {
+fn manifest_structural_rejections_match_expected_behavior() {
     for case in fixture("manifests.json")["invalid"]
         .as_array()
         .expect("invalid manifests")
@@ -74,14 +52,14 @@ fn manifest_structural_rejections_match_v1() {
         let input = serde_json::to_vec(&case["input"]).expect("manifest JSON");
         assert!(
             workspace::parse_manifest(&input).is_err(),
-            "accepted v1-invalid manifest: {}",
+            "accepted invalid manifest: {}",
             case["id"]
         );
     }
 }
 
 #[test]
-fn complete_job_transition_matrix_and_terminal_states_match_v1() {
+fn complete_job_transition_matrix_and_terminal_states_match_expected_behavior() {
     let reference = fixture("job-transitions.json");
     let cases = reference["cases"].as_array().expect("transitions");
     assert_eq!(cases.len(), 81);
@@ -116,7 +94,7 @@ fn complete_job_transition_matrix_and_terminal_states_match_v1() {
 }
 
 #[test]
-fn job_spec_defaults_validation_and_unknown_fields_match_v1() {
+fn job_spec_defaults_validation_and_unknown_fields_match_expected_behavior() {
     for case in fixture("schema-cases.json")["cases"]
         .as_array()
         .expect("schema cases")
@@ -126,16 +104,16 @@ fn job_spec_defaults_validation_and_unknown_fields_match_v1() {
         let result = protocol::normalize_spec(case["input"].clone());
         if case["success"] == true {
             let output = result
-                .unwrap_or_else(|error| panic!("rejected v1-valid spec {}: {error:#}", case["id"]));
+                .unwrap_or_else(|error| panic!("rejected valid spec {}: {error:#}", case["id"]));
             assert_eq!(output, case["output"], "defaults/output: {}", case["id"]);
         } else {
-            assert!(result.is_err(), "accepted v1-invalid spec: {}", case["id"]);
+            assert!(result.is_err(), "accepted invalid spec: {}", case["id"]);
         }
     }
 }
 
 #[test]
-fn timestamp_and_step_telemetry_match_v1() {
+fn timestamp_and_step_telemetry_match_expected_behavior() {
     for case in fixture("schema-cases.json")["cases"]
         .as_array()
         .expect("schema cases")

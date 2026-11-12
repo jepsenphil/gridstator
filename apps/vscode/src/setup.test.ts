@@ -30,7 +30,6 @@ it('remembers a verified installation when the account home is the open workspac
     'GRIDSTATOR_CONFIG',
   ])
     vi.stubEnv(key, undefined);
-  testHost.configure('nativeCli.enabled', true);
   const executable = join(directory, '.local/bin/gridstator');
   const result: SetupResult = {
     status: 'connected',

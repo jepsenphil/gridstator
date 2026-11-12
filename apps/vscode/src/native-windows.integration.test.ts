@@ -26,7 +26,7 @@ import {
 } from '@gridstator/protocol';
 import { decodeWsData } from '@gridstator/shared';
 import { LocalController } from './local-controller';
-import { NativeCli, effectiveClientConfigPath, nativeEnabled } from './native';
+import { NativeCli, effectiveClientConfigPath } from './native';
 import { DashboardSettings } from './settings';
 import { ClusterState } from './state';
 import { testHost, Uri, window as testWindow } from './test-vscode';
@@ -137,7 +137,6 @@ function assertPrivateScope(): void {
   const scope = networkFence.current();
   if (
     !scope ||
-    !nativeEnabled() ||
     effectiveClientConfigPath() !== scope.config ||
     configPath !== scope.config ||
     resolve(directory) !== scope.root
@@ -607,12 +606,9 @@ async function boot(name = 'primary', managed = false): Promise<RustController> 
 }
 function nativeFor(current: RustController): NativeCli {
   const native = new NativeCli({
-    enabled: () => {
-      networkFence.assertActive();
-      return nativeEnabled();
-    },
     trusted: () => true,
     path: () => {
+      networkFence.assertActive();
       assertSavedPrivateLogin();
       return selectedBinary!;
     },
@@ -644,7 +640,7 @@ async function openWindow(): Promise<{ state: ClusterState; settings: DashboardS
   assertSavedPrivateLogin();
   const state = new ClusterState(privateConfigPath, () => 100, log);
   const native = nativeFor(server);
-  const local = new LocalController(context(), privateConfigPath, log, native);
+  const local = new LocalController(privateConfigPath, log, native);
   const settings = new DashboardSettings(
     context(),
     state,
@@ -686,10 +682,8 @@ describe.skipIf(!selectedBinary)(
       vi.stubEnv('GRIDSTATOR_CA_FILE', undefined);
       directory = await mkdtemp(join(tmpdir(), 'gridstator-native-window-models-'));
       configPath = join(directory, 'shared-client.json');
-      testHost.configure('nativeCli.enabled', true);
       testHost.configure('nativeCli.path', resolve(selectedBinary));
       testHost.configure('configPath', configPath);
-      expect(nativeEnabled()).toBe(true);
       networkFence.begin(resolve(directory), resolve(configPath));
       assertPrivateScope();
       storage = new SharedStorage();
@@ -798,7 +792,7 @@ describe.skipIf(!selectedBinary)(
       await share(server, token.token);
       let preparations = 0;
       const native = nativeFor(server);
-      const local = new LocalController(context(), privateConfigPath, log, native);
+      const local = new LocalController(privateConfigPath, log, native);
       const state = new ClusterState(
         privateConfigPath,
         () => 100,

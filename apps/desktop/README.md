@@ -129,7 +129,7 @@ preview or a host left running through an update cannot receive a different buil
 The `2.0.0-dev.2` companion includes this fix. Earlier builds shared one host endpoint per account:
 an installed app could consequently use a Downloads preview's host and report a missing native
 release despite containing a verified offline bundle. Quitting the companion from the tray and
-stopping that specific legacy `--worker-host` process clears the old routing until the update is
+stopping that specific earlier `--worker-host` process clears the old routing until the update is
 installed. Native worker/controller services are independent of the companion host.
 
 Pause persists across restarts and reboots. It prevents new admissions; assignments already accepted

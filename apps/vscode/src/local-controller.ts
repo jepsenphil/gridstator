@@ -1,14 +1,9 @@
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import * as vscode from 'vscode';
-import { defaultClientConfigPath, errorMessage, GridstatorError } from '@gridstator/shared';
+import type * as vscode from 'vscode';
+import { errorMessage, GridstatorError } from '@gridstator/shared';
 import { readClientConfig } from '@gridstator/client';
 import { resolve } from 'node:path';
 import type { LocalControllerHost } from './messages';
 import { nativeClientConfigPath, type NativeCli } from './native';
-import { nativeExtensionBuild } from './build-flavor';
-
-const execFileAsync = promisify(execFile);
 
 interface LoginResult {
   status: 'connected' | 'revoked' | 'unavailable' | 'differentCluster';
@@ -33,45 +28,21 @@ export class LocalController {
   }
 
   constructor(
-    private readonly context: vscode.ExtensionContext,
     private readonly configPath: () => string | undefined,
     private readonly log: vscode.OutputChannel,
-    private readonly native?: NativeCli,
+    private readonly native: NativeCli,
   ) {}
 
   private async run<T>(args: string[]): Promise<T> {
-    if (this.native?.enabled) {
-      return this.native.execute<T>({
-        operation: 'local',
-        args,
-        configPath: this.configPath() || nativeClientConfigPath(),
-      });
-    }
-    if (nativeExtensionBuild())
-      throw new GridstatorError('CONFIG', 'Native v2 host administration requires the Rust CLI');
-    const helper = vscode.Uri.joinPath(this.context.extensionUri, 'dist/local-cli.mjs').fsPath;
-    try {
-      const { stdout } = await execFileAsync(
-        process.execPath,
-        [helper, 'controller', 'local', ...args, '--json'],
-        {
-          env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' },
-          timeout: 120_000,
-          maxBuffer: 1024 * 1024,
-          windowsHide: true,
-        },
-      );
-      return JSON.parse(stdout) as T;
-    } catch (err) {
-      const e = err as Error & { stderr?: string };
-      // Only local commands run here; their contract never prints credential values.
-      throw new GridstatorError('CONFIG', e.stderr?.trim() || e.message);
-    }
+    return this.native.execute<T>({
+      operation: 'local',
+      args,
+      configPath: this.configPath() || nativeClientConfigPath(),
+    });
   }
 
   async refresh(): Promise<LocalControllerHost | null> {
-    if (process.platform !== 'linux' && !(this.native?.enabled && process.platform === 'darwin'))
-      return null;
+    if (process.platform !== 'linux' && process.platform !== 'darwin') return null;
     try {
       this.host = await this.run<LocalControllerHost>([
         'status',
@@ -93,7 +64,7 @@ export class LocalController {
   }
 
   private defaultConfigPath(): string {
-    return this.native?.enabled ? nativeClientConfigPath() : defaultClientConfigPath();
+    return nativeClientConfigPath();
   }
 
   async prepare(): Promise<void> {

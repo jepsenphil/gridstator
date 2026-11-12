@@ -8,10 +8,6 @@ import { Launcher } from './launcher';
 
 const mocks = vi.hoisted(() => ({
   prompt: vi.fn(),
-  capture: vi.fn(),
-  upload: vi.fn(),
-  find: vi.fn(),
-  config: vi.fn(),
 }));
 vi.mock('vscode', async () => {
   const host = await import('./test-vscode');
@@ -34,19 +30,6 @@ vi.mock('vscode', async () => {
     window: { ...host.window, showInputBox: mocks.prompt },
   };
 });
-vi.mock('@gridstator/snapshot', () => ({
-  captureSnapshot: mocks.capture,
-  uploadSnapshot: mocks.upload,
-  findProject: mocks.find,
-  loadProjectConfig: mocks.config,
-}));
-vi.mock('@gridstator/discovery', () => ({
-  discoverDockerfiles: async () => [],
-  discoverPackageScripts: async () => [],
-  discoverWorkflows: async () => [],
-  scriptCommand: vi.fn(),
-}));
-
 const NAME = 'GRIDSTATOR_LAUNCH_TEST_SECRET';
 const VALUE = 'private-launch-token';
 const config = ProjectConfigSchema.parse({
@@ -58,17 +41,6 @@ const launchers: Launcher[] = [];
 beforeEach(() => {
   vi.resetAllMocks();
   vi.stubEnv(NAME, undefined);
-  mocks.find.mockResolvedValue({
-    root: '/projects/app',
-    workdir: '.',
-    configPath: '/projects/app/gridstator.yml',
-  });
-  mocks.config.mockResolvedValue(config);
-  mocks.capture.mockResolvedValue({
-    id: 'sha256:snapshot',
-    stats: { files: 1, totalBytes: 10 },
-    warnings: [],
-  });
   mocks.prompt.mockResolvedValue(VALUE);
 });
 afterEach(() => {
@@ -76,7 +48,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-async function setup(mode: 'node' | 'native') {
+async function setup() {
   const job: Job = {
     id: 'submitted-job',
     name: 'check',
@@ -140,7 +112,7 @@ async function setup(mode: 'node' | 'native') {
   const launcher = new Launcher(
     state as unknown as ClusterState,
     log as unknown as vscode.OutputChannel,
-    mode === 'native' ? (native as unknown as NativeCli) : undefined,
+    native as unknown as NativeCli,
     new JobSecrets(storage),
   );
   launchers.push(launcher);
@@ -150,30 +122,21 @@ async function setup(mode: 'node' | 'native') {
   return { launcher, native, client, storage, log };
 }
 
-describe.each(['node', 'native'] as const)('%s launcher job secrets', (mode) => {
+describe('native launcher job secrets', () => {
   it('resolves before submission and keeps secret values out of request, origin and logs', async () => {
-    const { launcher, native, client, storage, log } = await setup(mode);
+    const { launcher, native, client, storage, log } = await setup();
     const request = { itemId: 'task:project:check', options: { env: { PUBLIC: 'visible' } } };
     await launcher.launch(request);
-    const spec = mode === 'native' ? native.execute.mock.calls[0]?.[0] : undefined;
-    if (mode === 'native') {
-      expect(spec).toEqual(
-        expect.objectContaining({
-          operation: 'submit',
-          spec: expect.objectContaining({
-            secretEnv: { [NAME]: VALUE },
-            env: { PUBLIC: 'visible' },
-          }),
+    expect(native.execute.mock.calls[0]?.[0]).toEqual(
+      expect.objectContaining({
+        operation: 'submit',
+        spec: expect.objectContaining({
+          secretEnv: { [NAME]: VALUE },
+          env: { PUBLIC: 'visible' },
         }),
-      );
-      expect(mocks.capture).not.toHaveBeenCalled();
-    } else {
-      expect(client.submitJob).toHaveBeenCalledWith(
-        expect.objectContaining({ secretEnv: { [NAME]: VALUE }, env: { PUBLIC: 'visible' } }),
-      );
-      expect(mocks.capture).toHaveBeenCalledTimes(1);
-      expect(mocks.upload).toHaveBeenCalledTimes(1);
-    }
+      }),
+    );
+    expect(client.submitJob).not.toHaveBeenCalled();
     expect(storage.store).toHaveBeenCalledTimes(1);
     expect(JSON.stringify(request)).not.toContain(VALUE);
     expect(JSON.stringify([...launcher.origins.values()])).not.toContain(VALUE);
@@ -184,14 +147,12 @@ describe.each(['node', 'native'] as const)('%s launcher job secrets', (mode) => 
   it.each(['cancel', 'storage failure'] as const)(
     'stops before snapshot or submission on %s',
     async (failure) => {
-      const { launcher, native, client, storage } = await setup(mode);
+      const { launcher, native, client, storage } = await setup();
       if (failure === 'cancel') mocks.prompt.mockResolvedValue(undefined);
       else storage.get.mockRejectedValue(new Error('keychain unavailable'));
       const launch = launcher.launch({ itemId: 'task:project:check', options: {} });
       if (failure === 'cancel') await expect(launch).rejects.toBeInstanceOf(SecretInputCancelled);
       else await expect(launch).rejects.toMatchObject({ code: 'CONFIG' });
-      expect(mocks.capture).not.toHaveBeenCalled();
-      expect(mocks.upload).not.toHaveBeenCalled();
       expect(client.submitJob).not.toHaveBeenCalled();
       expect(native.execute).not.toHaveBeenCalled();
       expect(launcher.origins.size).toBe(0);

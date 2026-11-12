@@ -1,5 +1,4 @@
 import type * as vscode from 'vscode';
-import type * as Discovery from '@gridstator/discovery';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { parseWorkflow } from '@gridstator/discovery';
 import { JobSpecSchema, ProjectConfigSchema, type Job } from '@gridstator/protocol';
@@ -10,11 +9,6 @@ import type { ClusterState } from './state';
 
 const mocks = vi.hoisted(() => ({
   prompt: vi.fn(),
-  capture: vi.fn(),
-  upload: vi.fn(),
-  find: vi.fn(),
-  config: vi.fn(),
-  workflows: vi.fn(),
 }));
 
 vi.mock('vscode', async () => {
@@ -37,19 +31,6 @@ vi.mock('vscode', async () => {
     window: { ...host.window, showInputBox: mocks.prompt },
   };
 });
-vi.mock('@gridstator/snapshot', () => ({
-  captureSnapshot: mocks.capture,
-  uploadSnapshot: mocks.upload,
-  findProject: mocks.find,
-  loadProjectConfig: mocks.config,
-}));
-vi.mock('@gridstator/discovery', async (importOriginal) => ({
-  ...(await importOriginal<typeof Discovery>()),
-  discoverDockerfiles: async () => [],
-  discoverPackageScripts: async () => [],
-  discoverWorkflows: mocks.workflows,
-}));
-
 const secretName = 'GRIDSTATOR_CURATED_LAUNCH_TEST_SECRET';
 const coverageFile = '.github/workflows/coverage.yml';
 const hiddenFile = '.github/workflows/ci-cd-staging.yml';
@@ -121,18 +102,6 @@ function job(spec: Job['spec']): Job {
 beforeEach(() => {
   vi.resetAllMocks();
   vi.stubEnv(secretName, undefined);
-  mocks.find.mockResolvedValue({
-    root: '/projects/app',
-    workdir: '.',
-    configPath: '/projects/app/gridstator.yml',
-  });
-  mocks.config.mockResolvedValue(config);
-  mocks.workflows.mockResolvedValue(workflows);
-  mocks.capture.mockResolvedValue({
-    id: `sha256:${'a'.repeat(64)}`,
-    stats: { files: 1, totalBytes: 10 },
-    warnings: [],
-  });
   mocks.prompt.mockResolvedValue('fixture-curated-launch-token');
 });
 
@@ -141,7 +110,7 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-async function setup(mode: 'node' | 'native') {
+async function setup() {
   const result = job(
     JobSpecSchema.parse({
       kind: 'actions',
@@ -180,7 +149,7 @@ async function setup(mode: 'node' | 'native') {
   const launcher = new Launcher(
     state as unknown as ClusterState,
     { appendLine: vi.fn() } as unknown as vscode.OutputChannel,
-    mode === 'native' ? (native as unknown as NativeCli) : undefined,
+    native as unknown as NativeCli,
     secrets,
   );
   launchers.push(launcher);
@@ -189,9 +158,9 @@ async function setup(mode: 'node' | 'native') {
   return { launcher, native, client, state, resolveSecrets };
 }
 
-describe.each(['node', 'native'] as const)('%s curated workflow launcher integration', (mode) => {
+describe('native curated workflow launcher integration', () => {
   it('exposes only the curated workflow and job with its explanatory description', async () => {
-    const { launcher } = await setup(mode);
+    const { launcher } = await setup();
     expect(launcher.items).toEqual([
       expect.objectContaining({
         id: coverageId,
@@ -209,18 +178,16 @@ describe.each(['node', 'native'] as const)('%s curated workflow launcher integra
     ['internal badge job', coverageId, { job: 'publish_badge' }, 'BAD_REQUEST'],
     ['whole workflow', coverageId, {}, 'BAD_REQUEST'],
   ] as const)('rejects %s before credentials or submission', async (_, itemId, options, code) => {
-    const { launcher, native, client, resolveSecrets } = await setup(mode);
+    const { launcher, native, client, resolveSecrets } = await setup();
     await expect(launcher.launch({ itemId, options })).rejects.toMatchObject({ code });
     expect(resolveSecrets).not.toHaveBeenCalled();
     expect(mocks.prompt).not.toHaveBeenCalled();
-    expect(mocks.capture).not.toHaveBeenCalled();
-    expect(mocks.upload).not.toHaveBeenCalled();
     expect(client.submitJob).not.toHaveBeenCalled();
     expect(native.execute).not.toHaveBeenCalled();
   });
 
   it('submits the chosen standalone check rather than its entire workflow', async () => {
-    const { launcher, native, client, resolveSecrets } = await setup(mode);
+    const { launcher, native, client, resolveSecrets } = await setup();
     await launcher.launch({
       itemId: coverageId,
       options: { job: 'coverage', event: 'workflow_call' },
@@ -233,17 +200,11 @@ describe.each(['node', 'native'] as const)('%s curated workflow launcher integra
       secretEnv: { [secretName]: 'fixture-curated-launch-token' },
     });
     expect(resolveSecrets).toHaveBeenCalledTimes(1);
-    if (mode === 'native') {
-      expect(native.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ operation: 'submit', spec: expectedSpec }),
-        expect.any(AbortSignal),
-      );
-      expect(mocks.capture).not.toHaveBeenCalled();
-    } else {
-      expect(client.submitJob).toHaveBeenCalledWith(expectedSpec);
-      expect(mocks.capture).toHaveBeenCalledTimes(1);
-      expect(mocks.upload).toHaveBeenCalledTimes(1);
-    }
+    expect(native.execute).toHaveBeenCalledWith(
+      expect.objectContaining({ operation: 'submit', spec: expectedSpec }),
+      expect.any(AbortSignal),
+    );
+    expect(client.submitJob).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -253,7 +214,7 @@ describe.each(['node', 'native'] as const)('%s curated workflow launcher integra
   ] as const)(
     'rejects rerunning an external %s before snapshot or submission',
     async (_, file, id) => {
-      const { launcher, native, client, state, resolveSecrets } = await setup(mode);
+      const { launcher, native, client, state, resolveSecrets } = await setup();
       state.jobs.set(
         'external',
         job(
@@ -267,8 +228,6 @@ describe.each(['node', 'native'] as const)('%s curated workflow launcher integra
       );
       await expect(launcher.rerun('external')).rejects.toMatchObject({ code: 'BAD_REQUEST' });
       expect(resolveSecrets).not.toHaveBeenCalled();
-      expect(mocks.capture).not.toHaveBeenCalled();
-      expect(mocks.upload).not.toHaveBeenCalled();
       expect(client.submitJob).not.toHaveBeenCalled();
       expect(native.execute).not.toHaveBeenCalled();
     },

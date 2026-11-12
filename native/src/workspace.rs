@@ -50,7 +50,7 @@ impl ManifestEntry {
     }
 }
 
-// Internally-tagged enum serialization puts the discriminator first. v1 hashes fixed bytes
+// Internally-tagged enum serialization puts the discriminator first. snapshot IDs hash fixed bytes
 // with `path` first, so this serialization order is a protocol decision, not derive trivia.
 impl Serialize for ManifestEntry {
     fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {

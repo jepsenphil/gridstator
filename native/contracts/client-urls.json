@@ -1,10 +1,5 @@
 {
   "formatVersion": 1,
-  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
-  "source": {
-    "path": "packages/client/src/http.ts",
-    "sha256": "a48e8c800104f32a933d5281d0a7b58dc25408cb392dc33b41a92272e87df39d"
-  },
   "cases": [
     {
       "id": "url-001",

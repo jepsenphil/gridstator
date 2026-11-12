@@ -3,9 +3,8 @@ use serde_json::Value;
 use std::collections::{HashMap, HashSet};
 
 #[test]
-fn frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reasons() {
-    let fixture: Value =
-        serde_json::from_str(include_str!("../contracts/scheduler-v1.json")).unwrap();
+fn scheduler_behavior_scenarios_preserve_placements_scores_and_pending_reasons() {
+    let fixture: Value = serde_json::from_str(include_str!("../contracts/scheduler.json")).unwrap();
     let mut covered = HashSet::new();
     for case in fixture["cases"].as_array().unwrap() {
         let name = case["id"].as_str().unwrap();
@@ -55,15 +54,10 @@ fn frozen_source_scheduler_scenarios_preserve_placements_scores_and_pending_reas
             before,
             "{name}: inputs changed"
         );
-        covered.extend(
-            case["ledgerRows"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|r| r.as_str().unwrap().to_owned()),
+        assert!(
+            covered.insert(name.to_owned()),
+            "duplicate scheduler case: {name}"
         );
     }
-    for index in 1..=16 {
-        assert!(covered.contains(&format!("reference-scheduler-index-{index:03}")));
-    }
+    assert_eq!(covered.len(), fixture["cases"].as_array().unwrap().len());
 }

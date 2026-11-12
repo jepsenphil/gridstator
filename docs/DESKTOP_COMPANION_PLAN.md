@@ -18,7 +18,7 @@ on Windows it lists that user's configured WSL workers by distribution.
 
 The original request authorized planning; the subsequent build request authorizes implementation.
 It does not authorize changing an existing production cluster or publishing a release. The
-[native upgrade plan](V2_UPGRADE_PLAN.md) and [release gates](../native/RELEASING.md) remain in force.
+[native release plan](NATIVE_RELEASE_PLAN.md) and [release gates](../native/RELEASING.md) remain in force.
 The companion extends their scope with a Windows GUI and local worker controls, while retaining
 the existing Linux/macOS worker execution model.
 

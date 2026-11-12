@@ -38,10 +38,8 @@ async fn response(status: u16, body: Vec<u8>) -> anyhow::Result<anyhow::Error> {
 }
 #[tokio::test]
 async fn source_error_bodies_retain_codes_optional_hints_and_details() {
-    let fixture: Value = serde_json::from_str(include_str!(
-        "../contracts/accepted-v1/errors-and-units.json"
-    ))
-    .unwrap();
+    let fixture: Value =
+        serde_json::from_str(include_str!("../contracts/behavior/errors-and-units.json")).unwrap();
     for case in fixture["bodies"].as_array().unwrap() {
         let error = response(
             case["status"].as_u64().unwrap() as u16,

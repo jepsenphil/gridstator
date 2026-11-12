@@ -1,6 +1,5 @@
 {
-  "sourceRevision": "4b8f13ccf1b21820007fef0ab52143c961b69216",
-  "policy": "Declarative command metadata, not expected help bytes. The native registry and renderer share these declarations; accepted-v1 remains the independent presentation oracle.",
+  "policy": "Declarative command metadata; expected help output lives only in the native test fixture.",
   "cases": [
     {
       "path": [],
@@ -1489,7 +1488,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--config <path>",
@@ -1498,7 +1497,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_CONFIG/client.json"
+          "default": "/TEST_CONFIG/client.json"
         },
         {
           "flags": "--json",
@@ -1526,7 +1525,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--config <path>",
@@ -1535,7 +1534,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_CONFIG/client.json"
+          "default": "/TEST_CONFIG/client.json"
         },
         {
           "flags": "--json",
@@ -1578,7 +1577,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--config <path>",
@@ -1587,7 +1586,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_CONFIG/client.json"
+          "default": "/TEST_CONFIG/client.json"
         },
         {
           "flags": "--json",
@@ -1615,7 +1614,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--config <path>",
@@ -1624,7 +1623,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_CONFIG/client.json"
+          "default": "/TEST_CONFIG/client.json"
         },
         {
           "flags": "--json",
@@ -1676,7 +1675,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--host <host>",
@@ -1738,7 +1737,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--host <host>",
@@ -1876,7 +1875,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/controller"
+          "default": "/TEST_DATA/controller"
         },
         {
           "flags": "--login",
@@ -2032,7 +2031,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/agent"
+          "default": "/TEST_DATA/agent"
         },
         {
           "flags": "--force",
@@ -2092,7 +2091,7 @@
           "required": true,
           "optional": false,
           "variadic": false,
-          "default": "/V1_DATA/agent"
+          "default": "/TEST_DATA/agent"
         },
         {
           "flags": "--cache-size <size>",

@@ -38,13 +38,13 @@ fn catalog() -> &'static [Value] {
             for option in case["options"].as_array_mut().unwrap() {
                 if let Some(default) = option.get("default").and_then(Value::as_str) {
                     let replacement = match default {
-                        "/V1_DATA/controller" => {
+                        "/TEST_DATA/controller" => {
                             Some(state::data_dir("controller").to_string_lossy().into_owned())
                         }
-                        "/V1_DATA/agent" => {
+                        "/TEST_DATA/agent" => {
                             Some(state::data_dir("agent").to_string_lossy().into_owned())
                         }
-                        "/V1_CONFIG/client.json" => {
+                        "/TEST_CONFIG/client.json" => {
                             Some(state::config_path().to_string_lossy().into_owned())
                         }
                         "<HOSTNAME>" => Some(
@@ -149,7 +149,7 @@ fn reference_command(case: &'static Value) -> Command {
         if let Some(default) = option
             .get("default")
             .and_then(Value::as_str)
-            .filter(|v| !v.starts_with("/V1_") && *v != "<HOSTNAME>")
+            .filter(|v| !v.starts_with("/TEST_") && *v != "<HOSTNAME>")
         {
             argument = argument.default_value(default);
         }
@@ -3868,7 +3868,7 @@ mod tests {
     #[tokio::test]
     async fn command_workflows_units_settings_and_job_exits_match_frozen_source() {
         let fixture: Value =
-            serde_json::from_str(include_str!("../contracts/cli-workflows-v1.json")).unwrap();
+            serde_json::from_str(include_str!("../contracts/cli-workflows.json")).unwrap();
         let mut failures = vec![];
         for case in fixture["cases"].as_array().unwrap() {
             let args = case["argv"]
@@ -3986,10 +3986,9 @@ mod tests {
     }
     #[test]
     fn errors_preserve_frozen_code_and_http_status_exit_mappings() {
-        let reference: Value = serde_json::from_str(include_str!(
-            "../contracts/accepted-v1/errors-and-units.json"
-        ))
-        .unwrap();
+        let reference: Value =
+            serde_json::from_str(include_str!("../contracts/behavior/errors-and-units.json"))
+                .unwrap();
         for (code, mapping) in reference["errors"].as_object().unwrap() {
             let expected = mapping["exitCode"].as_i64().unwrap() as i32;
             assert_eq!(
@@ -4021,10 +4020,9 @@ mod tests {
     }
     #[test]
     fn remote_error_presentation_preserves_source_hint_and_omission() {
-        let source: Value = serde_json::from_str(include_str!(
-            "../contracts/accepted-v1/errors-and-units.json"
-        ))
-        .unwrap();
+        let source: Value =
+            serde_json::from_str(include_str!("../contracts/behavior/errors-and-units.json"))
+                .unwrap();
         for case in source["bodies"].as_array().unwrap() {
             let body = &case["body"]["error"];
             let error = anyhow::Error::new(crate::client::ControllerError {

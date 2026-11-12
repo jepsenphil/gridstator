@@ -1,4 +1,4 @@
-//! Actual Linux installer, fresh-cluster cutover and controller schema rollback rehearsal.
+//! Actual Linux installer and controller schema rollback rehearsal.
 //! Opt in: cargo test --test recovery_e2e -- --ignored --nocapture
 //! Builds real native payloads in a disposable source copy. Non-host bundle entries are explicitly
 //! header-only parsing fixtures; this test is never evidence for their runtime/signing gates.
@@ -649,8 +649,8 @@ fn db_facts(path: &Path) -> Result<Value> {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
-#[ignore = "builds real static candidates and starts only disposable loopback clusters; requires Rust musl tools and an existing built v1 CLI"]
-async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback() -> Result<()> {
+#[ignore = "builds real static candidates and starts only disposable loopback clusters; requires Rust musl tools"]
+async fn verified_install_successful_upgrade_and_schema_rollback() -> Result<()> {
     let _ = rustls::crypto::ring::default_provider().install_default();
     let temporary = tempfile::Builder::new()
         .prefix("gridstator-recovery-")
@@ -805,9 +805,8 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
         base.directory.join("SHA256SUMS"),
         manual_metadata.join("SHA256SUMS"),
     )?;
-    let (v1_archive, v1_cluster) = archive_v1(&root).await?;
-    let directory = root.join("fresh-v2");
-    let login = root.join("v2-client.json");
+    let directory = root.join("fresh-native");
+    let login = root.join("client.json");
     let listener = std::net::TcpListener::bind("127.0.0.1:0")?;
     let native_port = listener.local_addr()?.port().to_string();
     drop(listener);
@@ -829,10 +828,6 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
     )?;
     let fresh_config: Config = serde_json::from_slice(&fs::read(&login)?)?;
     let initial_id = state::read_json(&directory.join("controller.json"))?["clusterId"].clone();
-    ensure!(
-        initial_id != v1_cluster["clusterId"],
-        "cutover reused legacy cluster identity"
-    );
     let store = InstallStore::new(root.join("managed"));
     store.install_verified(&base.manifest, release::host_target()?, &archive)?;
     store.activate(&base.manifest.build_id, None)?;
@@ -854,29 +849,6 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
     let service_name = server.name();
     let client = client_for(&directory, &login, Some(&base.manifest.build_id)).await?;
     embedded_ready(&client, &base.manifest.build_id).await?;
-    let old_config: Config =
-        serde_json::from_slice(&fs::read(root.join("v1-original-preserved/client.json"))?)?;
-    ensure!(
-        client.config.ca_fingerprint != old_config.ca_fingerprint,
-        "fresh native cluster reused v1 CA"
-    );
-    let mut old_token = client.config.clone();
-    old_token.token = old_config.token.clone();
-    ensure!(
-        Client::new(old_token)?
-            .get("/v1/cluster")
-            .await
-            .unwrap_err()
-            .to_string()
-            .starts_with("401"),
-        "native cluster accepted v1 credential"
-    );
-    let mut old_trust = old_config;
-    old_trust.url = client.config.url.clone();
-    ensure!(
-        Client::new(old_trust)?.get("/v1/cluster").await.is_err(),
-        "v1 CA unexpectedly trusted native listener"
-    );
     let join = client
         .post(
             "/v1/tokens",
@@ -897,13 +869,13 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
                 "fresh-rejoined-worker",
                 "--data-dir",
             ])
-            .arg(root.join("fresh-v2-agent"))
+            .arg(root.join("native-agent"))
             .env_clear()
             .env("HOME", &home)
             .env("PATH", &tools),
     )?;
     ensure!(
-        state::read_json(&root.join("fresh-v2-agent/agent.json"))?["version"] == 2,
+        state::read_json(&root.join("native-agent/agent.json"))?["version"] == 2,
         "fresh worker credentials not persisted"
     );
     let marker=client.post("/v1/jobs",json!({"spec":{"kind":"command","command":["echo","restore-me"],"name":"pre-update history marker"}})).await?;
@@ -1001,8 +973,7 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
         rollback.reason == gridstator::install::RollbackReason::Crashed,
         "candidate did not roll back after crashes"
     );
-    let recovered = restore_v1(&root, &v1_archive, &v1_cluster).await?;
-    let report = json!({"scope":"actual Linux host installer/manual/fresh-cutover/controller update+schema rollback; other target entries are parsing fixtures only","target":release::host_target()?,"sourceRevision":gridstator::SOURCE_REVISION,"nativeUserService":service_name,"payloadSourceDirectory":payload_source,"prebuiltPayloads":prebuilt.is_some(),"baseline":base.manifest.build_id,"confirmed":good.manifest.build_id,"failed":bad.manifest.build_id,"before":before,"restored":restored,"failedDatabase":failed_facts,"rollback":store.state()?.unwrap().last_rollback,"v1ClusterId":v1_cluster["clusterId"],"freshV2ClusterId":initial_id,"restoredV1ClusterId":recovered["clusterId"],"archiveSha256":release::hash_file(&v1_archive)?.1});
+    let report = json!({"scope":"actual Linux host installer/manual/controller update and schema rollback; other target entries are parsing fixtures only","target":release::host_target()?,"sourceRevision":gridstator::SOURCE_REVISION,"nativeUserService":service_name,"payloadSourceDirectory":payload_source,"prebuiltPayloads":prebuilt.is_some(),"baseline":base.manifest.build_id,"confirmed":good.manifest.build_id,"failed":bad.manifest.build_id,"before":before,"restored":restored,"failedDatabase":failed_facts,"rollback":store.state()?.unwrap().last_rollback,"clusterId":initial_id});
     fs::write(
         root.join("rehearsal.json"),
         serde_json::to_vec_pretty(&report)?,
@@ -1012,97 +983,4 @@ async fn verified_install_fresh_cutover_successful_upgrade_and_schema_rollback()
         root.join("rehearsal.json").display()
     );
     Ok(())
-}
-
-fn v1_command(root: &Path) -> Result<Command> {
-    let cli = std::env::var_os("GRIDSTATOR_V1_CLI")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../apps/cli/dist/main.js")
-        });
-    ensure!(
-        cli.is_file(),
-        "build/retain the v1 CLI before this rehearsal or set GRIDSTATOR_V1_CLI"
-    );
-    let mut command = Command::new(executable("node")?);
-    command
-        .arg(cli)
-        .env("GRIDSTATOR_CONFIG", root.join("v1/client.json"))
-        .env("HOME", root.join("legacy-home"))
-        .env("XDG_DATA_HOME", root.join("legacy-data"))
-        .env("XDG_CACHE_HOME", root.join("legacy-cache"))
-        .env("XDG_CONFIG_HOME", root.join("legacy-config"));
-    Ok(command)
-}
-async fn archive_v1(root: &Path) -> Result<(PathBuf, Value)> {
-    fs::create_dir_all(root.join("v1"))?;
-    fs::create_dir_all(root.join("legacy-home"))?;
-    let listener = std::net::TcpListener::bind("127.0.0.1:0")?;
-    let port = listener.local_addr()?.port();
-    drop(listener);
-    let directory = root.join("v1/controller");
-    command_ok(
-        v1_command(root)?
-            .args(["controller", "init", "--data-dir"])
-            .arg(&directory)
-            .args(["--host", "127.0.0.1", "--port", &port.to_string()]),
-    )?;
-    let mut server = launch(
-        v1_command(root)?
-            .args(["controller", "start", "--data-dir"])
-            .arg(&directory),
-        &root.join("v1-before-cutover.log"),
-    )?;
-    let client = client_for(&directory, &root.join("v1/client.json"), None).await?;
-    let cluster = client.get("/v1/cluster").await?;
-    let marker=client.post("/v1/jobs",json!({"spec":{"kind":"command","command":["echo","legacy-history"],"name":"archived v1 history"}})).await?;
-    let mut cluster = cluster;
-    cluster["markerJob"] = marker["id"].clone();
-    server.stop()?;
-    let archive = root.join("v1-history.tar.gz");
-    command_ok(
-        Command::new("tar")
-            .args(["-czf"])
-            .arg(&archive)
-            .arg("-C")
-            .arg(root.join("v1"))
-            .args(["controller", "client.json"]),
-    )?;
-    fs::rename(root.join("v1"), root.join("v1-original-preserved"))?;
-    Ok((archive, cluster))
-}
-async fn restore_v1(root: &Path, archive: &Path, original: &Value) -> Result<Value> {
-    fs::create_dir_all(root.join("v1"))?;
-    command_ok(
-        Command::new("tar")
-            .arg("-xzf")
-            .arg(archive)
-            .arg("-C")
-            .arg(root.join("v1")),
-    )?;
-    let directory = root.join("v1/controller");
-    let mut server = launch(
-        v1_command(root)?
-            .args(["controller", "start", "--data-dir"])
-            .arg(&directory),
-        &root.join("v1-restored.log"),
-    )?;
-    let client = client_for(&directory, &root.join("v1/client.json"), None).await?;
-    let recovered = client.get("/v1/cluster").await?;
-    ensure!(
-        recovered["clusterId"] == original["clusterId"],
-        "restored v1 cluster identity changed"
-    );
-    ensure!(
-        client
-            .get(&format!(
-                "/v1/jobs/{}",
-                original["markerJob"].as_str().unwrap()
-            ))
-            .await?["name"]
-            == "archived v1 history",
-        "v1 archive lost history"
-    );
-    server.stop()?;
-    Ok(recovered)
 }

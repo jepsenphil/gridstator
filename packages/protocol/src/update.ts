@@ -31,7 +31,7 @@ export const RollbackSchema = z.object({
 export const AgentBuildSchema = BuildRefSchema.extend({
   /** Started from a managed install (version store + launcher), so it can update itself. */
   managed: z.boolean(),
-  /** Node.js version for the legacy core; Rust agents have no host Node runtime. */
+  /** Optional Node.js tool version reported for workflow execution. */
   node: z.string().max(32).optional(),
   runtime: z.enum(['node', 'rust']).optional(),
   target: z.string().max(64).optional(),

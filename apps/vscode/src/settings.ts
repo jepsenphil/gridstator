@@ -4,18 +4,13 @@ import { readFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { resolve } from 'node:path';
 import * as vscode from 'vscode';
-import {
-  GRIDSTATOR_VERSION,
-  GridstatorError,
-  defaultClientConfigPath,
-  errorMessage,
-} from '@gridstator/shared';
+import { GRIDSTATOR_VERSION, GridstatorError, errorMessage } from '@gridstator/shared';
 import { GridstatorClient, readClientConfig, resolveConnection } from '@gridstator/client';
 import type { PublishBuildResponse } from '@gridstator/protocol';
 import type { ClusterState } from './state';
 import type { LocalController } from './local-controller';
 import type { EditorPreferences, FromWebview, SettingsView, ToWebview } from './messages';
-import { effectiveClientConfigPath, nativeClientConfigPath, nativeEnabled } from './native';
+import { effectiveClientConfigPath, nativeClientConfigPath } from './native';
 import { formatConnectionCommand, workerControllerUrlError } from './connection-command';
 
 function preferences(): EditorPreferences {
@@ -111,9 +106,7 @@ export class DashboardSettings implements vscode.Disposable {
       const saved = await readClientConfig(path).catch(() => undefined);
       if (
         (host.clusterId && clusterId && host.clusterId !== clusterId) ||
-        (resolve(path) !==
-          resolve(nativeEnabled() ? nativeClientConfigPath() : defaultClientConfigPath()) &&
-          !saved) ||
+        (resolve(path) !== resolve(nativeClientConfigPath()) && !saved) ||
         (host.caFingerprint &&
           saved?.caFingerprint &&
           host.caFingerprint !== saved.caFingerprint) ||
@@ -212,7 +205,7 @@ export class DashboardSettings implements vscode.Disposable {
       }
       case 'saveClusterSettings': {
         this.requireAdmin();
-        if (nativeEnabled() && m.patch.toolchain) {
+        if (m.patch.toolchain) {
           await this.state.requireClient().request('PATCH', '/v1/settings', {
             json: { ...m.patch, toolchain: { act: m.patch.toolchain.act } },
           });
@@ -309,19 +302,15 @@ export class DashboardSettings implements vscode.Disposable {
         const targetClusterId = this.state.connection.clusterId;
         const selected = await vscode.window.showOpenDialog({
           canSelectMany: false,
-          filters: nativeEnabled()
-            ? { 'Native release bundle': ['gz', 'tgz'] }
-            : { 'Gridstator package': ['tgz'] },
-          openLabel: nativeEnabled() ? 'Select Native Release Bundle' : 'Select Controller Package',
+          filters: { 'Native release bundle': ['gz', 'tgz'] },
+          openLabel: 'Select Native Release Bundle',
         });
         if (!selected?.[0]) return true;
         const file = selected[0].fsPath;
         if (
           !(await this.confirm(
-            nativeEnabled()
-              ? 'Install this native release bundle? It must contain the release manifest and all four target archives. The controller restarts after running jobs finish.'
-              : 'Install this controller package? The controller will restart after its running jobs finish.',
-            nativeEnabled() ? 'Install Native Bundle' : 'Install Package',
+            'Install this native release bundle? It must contain the release manifest and all four target archives. The controller restarts after running jobs finish.',
+            'Install Native Bundle',
           ))
         )
           return true;

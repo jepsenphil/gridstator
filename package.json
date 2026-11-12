@@ -9,20 +9,16 @@
   },
   "scripts": {
     "build": "tsc -b && pnpm --filter ./apps/vscode build",
-    "clean": "tsc -b --clean && rm -rf apps/cli/release",
+    "clean": "tsc -b --clean",
     "typecheck": "tsc -b --pretty && tsc -p tsconfig.tests.json --pretty && tsc -p apps/vscode/tsconfig.json && tsc -p apps/vscode/webview/tsconfig.json && tsc -p apps/vscode/test/tsconfig.json && pnpm desktop:typecheck",
     "test": "vitest run --no-file-parallelism",
     "test:watch": "vitest",
-    "test:e2e": "pnpm build && GRIDSTATOR_E2E=1 vitest run --config vitest.e2e.config.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "bundle": "pnpm build && pnpm --filter ./apps/cli bundle",
-    "gridstator": "node apps/cli/dist/main.js",
-    "pack:release": "pnpm bundle && cd apps/cli/release && npm pack",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
     "test:ui": "pnpm build && pnpm --filter ./apps/vscode exec playwright test",
-    "test:vscode": "pnpm build && cd apps/vscode && xvfb-run -a node test/run-integration.mjs",
+    "test:vscode": "pnpm build && cd apps/vscode && GRIDSTATOR_NATIVE_CLI_E2E=\"$PWD/../../native/target/debug/gridstator\" xvfb-run -a node test/run-integration.mjs",
     "package:vscode": "pnpm build && pnpm --filter ./apps/vscode package",
     "desktop:resources": "node scripts/desktop-artifacts.mjs stage",
     "desktop:dev": "pnpm desktop:resources && pnpm --filter @gridstator/desktop desktop:dev",
@@ -43,5 +39,5 @@
     "typescript-eslint": "^8.72.1",
     "vitest": "5.1.0"
   },
-  "version": "0.1.0"
+  "version": "2.0.0-dev.2"
 }

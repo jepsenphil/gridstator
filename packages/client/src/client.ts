@@ -91,7 +91,7 @@ interface RequestOptions<T> {
   timeoutMs?: number;
 }
 
-/** Typed client for the controller's v1 API. Shared by the CLI, agents and the VS Code extension. */
+/** Typed client for the controller's /v1 wire API, used by the VS Code extension. */
 export class GridstatorClient {
   private baseUrl: string;
   private readonly ca: string;

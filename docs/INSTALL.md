@@ -1,6 +1,6 @@
 # Install native Gridstator
 
-**Status:** native v2 is a development preview. No public v2 release tag exists yet. This guide describes the verified path that will be used after the [release gates](RELEASING.md) pass. For current testing, [build from source](DEVELOPMENT.md). The [v0.1.0 npm tarball](legacy/v1/README.md) installs the separate legacy Node implementation; do not use it for a new v2 cluster.
+**Status:** native 2.0.0 is a development preview and the planned first public release. This guide describes the verified install path after the [release gates](RELEASING.md) pass. For current testing, [build from source](DEVELOPMENT.md).
 
 ## Requirements
 
@@ -28,7 +28,7 @@ awk '$2 == "install-native.sh" { print; count++ } END { if (count != 1) exit 1 }
 "$HOME/.local/bin/gridstator" build-info --json
 ~~~
 
-The installer does not initialize a cluster or start a service. For manual archive verification, exact package layout and rollback, follow [the native cutover runbook](../native/CUTOVER.md). Never run an installer for a tag that has not been published and reviewed.
+The installer does not initialize a cluster or start a service. For manual archive verification, exact package layout and rollback, follow [the native release procedure](../native/RELEASING.md). Never run an installer for a tag that has not been published and reviewed.
 
 ## Start a fresh cluster
 
@@ -63,7 +63,3 @@ Treat the join command and token as credentials. A worker dials the controller; 
 ## VS Code
 
 The first public extension will use the Marketplace ID `gridstator.gridstator`. Until it is published, build the [native VSIX](../apps/vscode/README.md) from source and install it with **Extensions: Install from VSIX**. Install the extension and native CLI on the remote workspace host for Remote SSH/WSL. Open the Gridstator view, set up a local controller or connect using the native login, and use **Run** to launch a task or workflow.
-
-## From v1
-
-Native v2 creates separate credentials, services, database and history. It cannot upgrade a v1 cluster in place. Preserve the old installation and Node runtime for recovery until the fresh cluster is accepted. The [cutover and recovery runbook](../native/CUTOVER.md) covers draining, archiving, rejoining workers and restoring v1 separately. The [v1 guides](legacy/v1/README.md) remain archived.

@@ -5,13 +5,21 @@ on:
     branches: [main]
     paths:
       - 'native/**'
+      - 'apps/vscode/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
       - '.github/workflows/native.yml'
-      - 'docs/V2_*.md'
+      - 'docs/NATIVE_*.md'
   pull_request:
     paths:
       - 'native/**'
+      - 'apps/vscode/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
       - '.github/workflows/native.yml'
-      - 'docs/V2_*.md'
+      - 'docs/NATIVE_*.md'
   workflow_dispatch:
 
 permissions:
@@ -24,42 +32,6 @@ concurrency:
 # Development evidence only. No installation into a live cluster or release publishing.
 # Each job runs on its target architecture; cross-compilation is not runtime proof.
 jobs:
-  reference-contracts:
-    name: Frozen TypeScript reference integrity
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: pnpm
-      - name: Read the immutable accepted revision
-        id: baseline
-        run: echo "revision=$(node -p "require('./native/contracts/accepted-v1/baseline.json').revision")" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ steps.baseline.outputs.revision }}
-          path: .v1-reference
-      - name: Copy the current capture harness without changing frozen source
-        run: |
-          mkdir -p .v1-reference/native
-          cp -R native/scripts native/contracts .v1-reference/native/
-          mkdir -p .v1-reference/native/src/cli
-          cp native/src/cli/commands.json .v1-reference/native/src/cli/
-      - name: Rebuild and verify the immutable TypeScript reference
-        working-directory: .v1-reference
-        run: |
-          pnpm install --frozen-lockfile
-          node native/scripts/capture-v1.mjs --check
-          node native/scripts/capture-scheduler.mjs
-          node native/scripts/capture-cancel-race.mjs .
-          node native/scripts/check-cli-protocol-fixtures.mjs .
-          node native/scripts/check-source-inventory.mjs .
-      - run: node native/scripts/check-ledger.mjs
-
   native:
     name: Actual host ${{ matrix.release-key }} build, tests and CLI smoke
     strategy:

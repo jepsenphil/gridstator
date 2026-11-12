@@ -38,7 +38,7 @@ exports.run = async function run() {
   if (process.env.GRIDSTATOR_NATIVE_CLI_E2E) {
     assert.ok(
       !('gridstator.nativeCli.enabled' in ext.packageJSON.contributes.configuration.properties),
-      'native package has no legacy mode switch',
+      'native package has no alternate runtime switch',
     );
   }
   await vscode.workspace

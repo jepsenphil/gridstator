@@ -1,16 +1,49 @@
 import { X509Certificate } from 'node:crypto';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { createServer, request } from 'node:https';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, it } from 'vitest';
-import { generatePki } from '../../../apps/controller/src/pki.js';
+import { certificateFingerprint } from '@gridstator/shared';
 import { fetchPinnedCa } from './pki.js';
+
+async function testCertificate(directory: string, name: string) {
+  await mkdir(directory);
+  const certificate = join(directory, 'cert.pem');
+  const key = join(directory, 'key.pem');
+  execFileSync(
+    'openssl',
+    [
+      'req',
+      '-x509',
+      '-newkey',
+      'rsa:2048',
+      '-nodes',
+      '-days',
+      '1',
+      '-subj',
+      `/CN=${name}`,
+      '-keyout',
+      key,
+      '-out',
+      certificate,
+    ],
+    { stdio: 'ignore' },
+  );
+  const caPem = await readFile(certificate, 'utf8');
+  return {
+    caPem,
+    serverChainPem: caPem,
+    serverKeyPem: await readFile(key, 'utf8'),
+    fingerprint: certificateFingerprint(caPem),
+  };
+}
 
 it('bootstrap trusts only the fingerprinted CA when an attacker appends another root', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'gridstator-pinned-ca-'));
-  const trusted = await generatePki(join(directory, 'trusted'), 'trusted');
-  const attacker = await generatePki(join(directory, 'attacker'), 'attacker');
+  const trusted = await testCertificate(join(directory, 'trusted'), 'trusted');
+  const attacker = await testCertificate(join(directory, 'attacker'), 'attacker');
   let credentialRequests = 0;
   const server = createServer(
     { cert: attacker.serverChainPem, key: attacker.serverKeyPem },

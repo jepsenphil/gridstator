@@ -17,10 +17,8 @@ delete process.env.ELECTRON_RUN_AS_NODE;
 const here = dirname(fileURLToPath(import.meta.url));
 const extensionPath = join(here, '..');
 const repo = join(extensionPath, '..', '..');
-const cli = join(repo, 'apps/cli/dist/main.js');
 let native = process.env.GRIDSTATOR_NATIVE_CLI_E2E;
-let cliCommand = native || process.execPath;
-const cliArguments = (args) => (native ? args : [cli, ...args]);
+if (!native) throw new Error('Set GRIDSTATOR_NATIVE_CLI_E2E to a built Rust executable');
 
 const port = await new Promise((resolve) => {
   const s = createServer();
@@ -49,61 +47,52 @@ let controller;
 let controllerLog = '';
 let code = 1;
 try {
-  if (native) {
-    const selected = join(root, 'native CLI');
-    await copyFile(native, selected);
-    native = selected;
-    cliCommand = selected;
-    const hash = createHash('sha256');
-    await pipeline(createReadStream(selected), hash);
-    const info = JSON.parse(execFileSync(selected, ['build-info', '--json']).toString());
-    process.stdout.write(
-      `[gridstator-it] native candidate ${JSON.stringify({ sha256: hash.digest('hex'), version: info.version, buildId: info.buildId, target: info.target })}\n`,
-    );
-  }
+  const selected = join(root, 'native CLI');
+  await copyFile(native, selected);
+  native = selected;
+  const hash = createHash('sha256');
+  await pipeline(createReadStream(selected), hash);
+  const info = JSON.parse(execFileSync(selected, ['build-info', '--json']).toString());
+  process.stdout.write(
+    `[gridstator-it] native candidate ${JSON.stringify({ sha256: hash.digest('hex'), version: info.version, buildId: info.buildId, target: info.target })}\n`,
+  );
   if (!external) {
-    execFileSync(
-      cliCommand,
-      cliArguments(['controller', 'init', '--host', '127.0.0.1', '--port', String(port)]),
-      { env, stdio: 'ignore' },
-    );
+    execFileSync(native, ['controller', 'init', '--host', '127.0.0.1', '--port', String(port)], {
+      env,
+      stdio: 'ignore',
+    });
     controller = spawn(
-      cliCommand,
-      cliArguments(['controller', 'start', '--with-agent', '--agent-name', 'it-worker']),
+      native,
+      ['controller', 'start', '--with-agent', '--agent-name', 'it-worker'],
       { env, stdio: ['ignore', 'ignore', 'pipe'] },
     );
     controller.stderr.on('data', (d) => (controllerLog += d.toString()));
   }
-  let testedExtension = extensionPath;
-  if (native) {
-    const unpacked = join(root, 'native-vsix');
-    await mkdir(unpacked);
-    execFileSync('unzip', [
-      '-q',
-      process.env.GRIDSTATOR_NATIVE_VSIX || join(extensionPath, 'dist/gridstator-native.vsix'),
-      '-d',
-      unpacked,
-    ]);
-    testedExtension = join(unpacked, 'extension');
-    const userSettings = join(root, 'user-data', 'User');
-    await mkdir(userSettings, { recursive: true });
-    await writeFile(
-      join(userSettings, 'settings.json'),
-      JSON.stringify({
-        'gridstator.nativeCli.path': native,
-        // A retained v1 preference cannot route this artifact back to Node helpers.
-        'gridstator.nativeCli.enabled': false,
-        'security.workspace.trust.enabled': false,
-      }),
-    );
-  }
+  const unpacked = join(root, 'native-vsix');
+  await mkdir(unpacked);
+  execFileSync('unzip', [
+    '-q',
+    process.env.GRIDSTATOR_NATIVE_VSIX || join(extensionPath, 'dist/gridstator-native.vsix'),
+    '-d',
+    unpacked,
+  ]);
+  const testedExtension = join(unpacked, 'extension');
+  const userSettings = join(root, 'user-data', 'User');
+  await mkdir(userSettings, { recursive: true });
+  await writeFile(
+    join(userSettings, 'settings.json'),
+    JSON.stringify({
+      'gridstator.nativeCli.path': native,
+      'security.workspace.trust.enabled': false,
+    }),
+  );
   for (let i = 0; i < 60; i++) {
     try {
-      execFileSync(cliCommand, cliArguments(['nodes', '--json']), { env, stdio: 'pipe' });
+      execFileSync(native, ['nodes', '--json'], { env, stdio: 'pipe' });
       if (
-        JSON.parse(
-          execFileSync(cliCommand, cliArguments(['nodes', '--json']), { env }).toString(),
-        ).some((n) => n.status === 'online')
+        JSON.parse(execFileSync(native, ['nodes', '--json'], { env }).toString()).some(
+          (n) => n.status === 'online',
+        )
       )
         break;
     } catch {
@@ -153,7 +142,7 @@ try {
       GRIDSTATOR_CONFIG: env.GRIDSTATOR_CONFIG,
       GRIDSTATOR_CACHE: env.GRIDSTATOR_CACHE,
       GRIDSTATOR_IT_NODE: targetNode,
-      GRIDSTATOR_NATIVE_CLI_E2E: native || '',
+      GRIDSTATOR_NATIVE_CLI_E2E: native,
       GRIDSTATOR_URL: env.GRIDSTATOR_URL || '',
       GRIDSTATOR_TOKEN: env.GRIDSTATOR_TOKEN || '',
       GRIDSTATOR_CA_FILE: env.GRIDSTATOR_CA_FILE || '',

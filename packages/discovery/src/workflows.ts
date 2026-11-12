@@ -1,5 +1,3 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 export interface DispatchInput {
@@ -211,32 +209,4 @@ export function parseWorkflow(file: string, text: string): WorkflowInfo {
     jobs,
     warnings,
   };
-}
-
-/** Discovers `.github/workflows/*.yml|yaml` under `root`. */
-export async function discoverWorkflows(root: string): Promise<WorkflowInfo[]> {
-  const dir = join(root, '.github', 'workflows');
-  let names: string[];
-  try {
-    names = (await readdir(dir)).filter((n) => /\.ya?ml$/.test(n)).sort();
-  } catch {
-    return [];
-  }
-  return Promise.all(
-    names.map(async (n) =>
-      parseWorkflow(`.github/workflows/${n}`, await readFile(join(dir, n), 'utf8')),
-    ),
-  );
-}
-
-/** Finds a workflow by file name, path, or display name. */
-export function findWorkflow(
-  workflows: readonly WorkflowInfo[],
-  query: string,
-): WorkflowInfo | undefined {
-  return (
-    workflows.find((w) => w.file === query || w.file === query.replace(/^\.\//, '')) ??
-    workflows.find((w) => w.file.split('/').pop() === query) ??
-    workflows.find((w) => w.name === query)
-  );
 }

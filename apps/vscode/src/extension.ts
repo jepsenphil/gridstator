@@ -1,10 +1,5 @@
 import * as vscode from 'vscode';
-import {
-  GridstatorError,
-  defaultClientConfigPath,
-  errorMessage,
-  formatDuration,
-} from '@gridstator/shared';
+import { GridstatorError, errorMessage, formatDuration } from '@gridstator/shared';
 import {
   isTerminal,
   NodeNameSchema,
@@ -18,7 +13,6 @@ import {
   normalizeControllerUrl,
   writeClientConfig,
   watchClientConfig,
-  readClientConfig,
 } from '@gridstator/client';
 import { Dashboard } from './dashboard';
 import { CancelledByUser, Launcher, isGroup } from './launcher';
@@ -73,9 +67,8 @@ function command(id: string, fn: (...args: never[]) => unknown): vscode.Disposab
 export async function activate(context: vscode.ExtensionContext): Promise<GridstatorApi> {
   const log = vscode.window.createOutputChannel('Gridstator');
   const native = new NativeCli();
-  const configPath = () =>
-    native.enabled ? effectiveClientConfigPath() : config<string>('configPath', '') || undefined;
-  const local = new LocalController(context, configPath, log, native);
+  const configPath = () => effectiveClientConfigPath();
+  const local = new LocalController(configPath, log, native);
   let settingUp = false;
   let setupTask: Promise<void> | undefined;
   let canSetUp = false;
@@ -305,7 +298,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
     if (configTimer) clearTimeout(configTimer);
     configTimer = setTimeout(() => {
       if (settingUp) return;
-      if (native.enabled) native.reset();
+      native.reset();
       if (config<boolean>('autoConnect', true)) {
         local.reset();
         void state.connect();
@@ -314,10 +307,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
   };
   const watchCredentials = () => {
     stopWatching();
-    stopWatching = watchClientConfig(
-      configPath() ?? defaultClientConfigPath(),
-      onCredentialsChanged,
-    );
+    stopWatching = watchClientConfig(configPath(), onCredentialsChanged);
   };
   watchCredentials();
   context.subscriptions.push({
@@ -336,10 +326,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
         settingUp = true;
         if (configTimer) clearTimeout(configTimer);
         try {
-          if (!native.enabled && (await readClientConfig(configPath())))
-            throw new GridstatorError('CONFIG', 'A saved connection is already selected', {
-              hint: 'Use the existing connection before setting up another controller.',
-            });
           const result = await setUpController(context, native);
           if (result.persistenceWarning)
             void vscode.window.showWarningMessage(`Gridstator: ${result.persistenceWarning}`);
@@ -412,7 +398,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
                 token,
                 tokenName: cluster.whoami.name,
               },
-              configPath() ?? defaultClientConfigPath(),
+              configPath(),
             );
             void vscode.window.showInformationMessage(
               `Gridstator: signed in to ${base} as ${cluster.whoami.name}. The CLI on this machine uses the same connection.`,
