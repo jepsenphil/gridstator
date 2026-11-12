@@ -197,11 +197,27 @@ async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() ->
         }
     })
     .await??;
+    ensure!(
+        service
+            .manager
+            .install(&service.config, false)
+            .is_err_and(|error| error.kind() == std::io::ErrorKind::AlreadyExists),
+        "existing service was replaced without explicit force"
+    );
+    service.manager.install(&service.config, true)?;
+    let (client, replaced) = ready(&directory, &initialized, Some(pid)).await?;
+    ensure!(
+        client
+            .get(&format!("/v1/jobs/{}", job["id"].as_str().unwrap()))
+            .await?["state"]
+            == "succeeded",
+        "replacing service lost completed job history"
+    );
     service
         .manager
         .control(&service.config, ServiceAction::Restart)?;
-    let (_, restarted) = ready(&directory, &initialized, Some(pid)).await?;
-    ensure!(pid != restarted, "service payload did not restart");
+    let (_, restarted) = ready(&directory, &initialized, Some(replaced)).await?;
+    ensure!(replaced != restarted, "service payload did not restart");
     service
         .manager
         .control(&service.config, ServiceAction::Stop)?;
