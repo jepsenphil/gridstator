@@ -1,5 +1,5 @@
 #!/bin/sh
-# Native development-preview installer. Runtime requirements: ordinary OS tools and curl.
+# Native release installer. Runtime requirements: ordinary OS tools and curl.
 # This downloads a CLI only; init, join, and install-service remain explicit user actions.
 set -eu
 umask 077
@@ -18,13 +18,13 @@ trusted_archive=
 fail() { printf '%s\n' "gridstator installer: $*" >&2; exit 1; }
 usage() {
     cat <<'EOF'
-Usage: install-native.sh --tag v2.0.0-preview.1 [--prefix /absolute/path] [--base-url URL] [--if-missing]
+Usage: install-native.sh --tag v2.0.0 [--prefix /absolute/path] [--base-url URL] [--if-missing]
        install-native.sh --tag VERSION --bundle-dir /absolute/path --manifest-sha256 DIGEST --archive-sha256 DIGEST [--prefix /absolute/path] [--if-missing]
 
-Downloads a checksum-verified native Gridstator development preview. Default prefix: ~/.local.
+Downloads a checksum-verified native Gridstator release. Default prefix: ~/.local.
 No cluster is initialized and no service is installed or started. Manual release downloads remain
-available. --if-missing verifies an existing binary instead of replacing it. Stable-release parity,
-four-target runtime, and Mac signing gates are separate checks.
+available. --if-missing verifies an existing binary instead of replacing it. Check the selected
+release notes for supported platforms and signing status.
 EOF
 }
 cleanup() {
@@ -139,7 +139,7 @@ verify_checksum() {
     [ "$actual" = "$expected" ] || fail "checksum mismatch for $checksum_name"
 }
 
-printf 'Preparing verified native Gridstator preview %s for %s\n' "$tag" "$target" >&2
+printf 'Preparing verified native Gridstator release %s for %s\n' "$tag" "$target" >&2
 download SHA256SUMS 1048576
 download "$manifest_name" 1048576
 if [ -n "$bundle_dir" ]; then
@@ -232,7 +232,7 @@ mv -f "$staged_binary" "$prefix/bin/gridstator"
 staged_binary=
 
 printf 'Installed %s/bin/gridstator\nVerified release metadata: %s\n' "$prefix" "$release_dir"
-printf '%s\n' 'This is a native development preview; stable parity/platform/signing gates remain separate.'
+printf '%s\n' 'Review the release notes for platform support and signing status.'
 for worker_tool in docker act git; do
     if ! command -v "$worker_tool" >/dev/null 2>&1; then
         printf 'Worker prerequisite missing from PATH: %s\n' "$worker_tool" >&2
