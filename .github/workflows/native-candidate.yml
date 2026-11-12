@@ -269,10 +269,24 @@ jobs:
           path: native/candidate-input
       - name: Normalize artifact directories
         run: |
-          for directory in native/candidate-input/candidate-*; do
-            name=${directory##*/}
-            mv "$directory" "native/candidate-input/${name#candidate-}"
-          done
+          shopt -s nullglob
+          directories=(native/candidate-input/candidate-*)
+          if ((${#directories[@]})); then
+            for directory in "${directories[@]}"; do
+              name=${directory##*/}
+              mv "$directory" "native/candidate-input/${name#candidate-}"
+            done
+          else
+            # download-artifact flattens a pattern when only one artifact matches.
+            target=$(jq -er .target native/candidate-input/build-info.json)
+            case "$target" in
+              linux/amd64|linux/arm64|darwin/amd64|darwin/arm64) ;;
+              *) echo "Unexpected candidate target: $target" >&2; exit 1 ;;
+            esac
+            key=${target/\//-}
+            mkdir "native/candidate-input/$key"
+            find native/candidate-input -maxdepth 1 -type f -exec mv -t "native/candidate-input/$key" {} +
+          fi
       - name: Assemble verified final-byte archives, manifest, checksums and native bundle
         working-directory: native
         env:
