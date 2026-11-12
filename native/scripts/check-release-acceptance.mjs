@@ -16,20 +16,6 @@ const expected = new Map([
   ['launchd-live', 'mac-stable-future'],
   ['systemd-live', 'linux-stable'],
 ]);
-const release = process.argv.includes('--release');
-const revisionIndex = process.argv.indexOf('--revision');
-const revision = revisionIndex >= 0 ? process.argv[revisionIndex + 1] : undefined;
-const candidateIndex = process.argv.indexOf('--candidate-revision');
-const candidateRevision = candidateIndex >= 0 ? process.argv[candidateIndex + 1] : undefined;
-if (release) {
-  assert.match(revision ?? '', /^[a-f0-9]{40}$/, '--release requires --revision <40-hex commit>');
-  assert.match(
-    candidateRevision ?? '',
-    /^[a-f0-9]{40}$/,
-    '--release requires --candidate-revision <40-hex commit>',
-  );
-  assert(sourceEquivalent(candidateRevision), 'candidate source differs from release revision');
-}
 const releaseSources = [
   'package.json',
   'pnpm-lock.yaml',
@@ -60,6 +46,21 @@ function sourceEquivalent(proofRevision) {
   } catch {
     return false;
   }
+}
+
+const release = process.argv.includes('--release');
+const revisionIndex = process.argv.indexOf('--revision');
+const revision = revisionIndex >= 0 ? process.argv[revisionIndex + 1] : undefined;
+const candidateIndex = process.argv.indexOf('--candidate-revision');
+const candidateRevision = candidateIndex >= 0 ? process.argv[candidateIndex + 1] : undefined;
+if (release) {
+  assert.match(revision ?? '', /^[a-f0-9]{40}$/, '--release requires --revision <40-hex commit>');
+  assert.match(
+    candidateRevision ?? '',
+    /^[a-f0-9]{40}$/,
+    '--release requires --candidate-revision <40-hex commit>',
+  );
+  assert(sourceEquivalent(candidateRevision), 'candidate source differs from release revision');
 }
 
 assert.equal(document.schemaVersion, 1);
