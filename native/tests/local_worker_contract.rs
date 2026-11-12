@@ -98,13 +98,14 @@ async fn offline_worker(root: &Path) -> Result<PathBuf> {
 }
 
 fn run_worker(dir: &Path) -> Result<Child> {
+    let error_log = std::fs::File::create(dir.join("worker-stderr.log"))?;
     Ok(Child(
         command()
             .args(["agent", "start", "--data-dir"])
             .arg(dir)
             .stdin(Stdio::null())
             .stdout(Stdio::null())
-            .stderr(Stdio::null())
+            .stderr(Stdio::from(error_log))
             .spawn()?,
     ))
 }
@@ -172,9 +173,13 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     assert_eq!(saved["workers"][0]["running"], false);
     assert_eq!(saved["workers"][0]["paused"], true);
     let mut again = run_worker(&dir)?;
-    let after = wait_worker(&dir)
-        .await
-        .context("restarted worker startup")?;
+    let after = wait_worker(&dir).await.with_context(|| {
+        format!(
+            "restarted worker startup; exit status: {:?}; stderr: {}",
+            again.0.try_wait(),
+            std::fs::read_to_string(dir.join("worker-stderr.log")).unwrap_or_default()
+        )
+    })?;
     assert_eq!(after["paused"], true);
     assert_eq!(after["budget"]["memoryMb"], 768);
     bridge(request("stop")).await?;
