@@ -1,0 +1,11 @@
+# Linux 2.0.1 patch candidate proof
+
+The [candidate run](https://github.com/jepsenphil/gridstator/actions/runs/43291771950) built the final Linux x64 and ARM64 executables from source `ee35057f941a0f412a3e8a1cb563bf2bf6faabdb` on matching GitHub-hosted Ubuntu 24.04 machines. All six jobs passed. The VS Code integration job was rerun after the VS Code version endpoint returned an invalid response; the rerun passed against the exact final Linux x64 binary. The final artifact is `native-release-candidate` from run attempt 2.
+
+For each target, `build-info.json` records the version, source, build ID, architecture and executable SHA-256. `clean-runtime.json` is the output of that same executable inside an `alpine:3.21` container with `--network none`. `linkage.txt` is `readelf -l -d` output without an interpreter or needed shared library. `systemd-proof.json` records the actual host, systemd, Docker and final executable hash. User and system logs show the isolated [systemd lifecycle test](../../../tests/systemd_e2e.rs) passed with the final executable, including explicit replacement, a Docker job, restart, stop and uninstall.
+
+The [candidate workflow](../../../../.github/workflows/native-candidate.yml) records the build and validation commands: `cargo fmt --check`, strict `cargo clippy`, serial `cargo test --locked --all-targets`, release build, linkage audit, offline Alpine execution, and the ignored systemd test as both user and root. It also tests the packaged VSIX with the final Linux x64 binary. The workflow logs are the complete command/result record.
+
+The copied [manifest](gridstator-release.json) and [checksum document](release-SHA256SUMS.txt) identify the downloaded candidate. Both archive executables match their target-host `build-info.json` hashes. A separate isolated x64 installation used `install-native.sh --tag v2.0.1 --bundle-dir <candidate-release> --manifest-sha256 <manifest-digest> --archive-sha256 <archive-digest> --prefix <temporary-prefix>` and produced the same binary hash. The archives are referenced by checksum and deliberately not duplicated here.
+
+This proof qualifies the two Linux stable gates for 2.0.1. It does not qualify signed macOS, Docker Desktop capacity, launchd lifecycle, or Intel Mac support.

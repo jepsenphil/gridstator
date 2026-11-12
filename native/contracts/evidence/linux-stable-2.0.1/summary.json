@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "version": "2.0.1",
+  "sourceRevision": "ee35057f941a0f412a3e8a1cb563bf2bf6faabdb",
+  "buildId": "native-43291771950-1",
+  "candidateRun": "https://github.com/jepsenphil/gridstator/actions/runs/43291771950",
+  "candidateRunId": 43291771950,
+  "candidateConclusion": "success",
+  "artifact": "native-release-candidate",
+  "manifestSha256": "a0dc1f571e7852c96bc8b128dbf7555fb436d2e1a43656eb8f39f22617425602",
+  "checksumsSha256": "b4b6129491e7c755b1aac3a1a87dc633cb1185702a2f11184df9249712bd0ad3",
+  "vsixSha256": "3d7cf7fdf52531d50889c8b21187b799d7958d2d4ab45fe13aaef27ee64c3172",
+  "checks": {
+    "sourceFormattingClippyAndTests": "passed on both actual Linux hosts",
+    "finalExecutableStaticLinkage": "passed on both actual Linux hosts; no ELF INTERP or NEEDED entries",
+    "cleanRuntime": "passed in Alpine 3.21 containers with network disabled on both actual Linux hosts",
+    "systemdUserAndSystem": "passed on both actual Linux hosts with exact final executable bytes; install, explicit replacement, restart, stop and uninstall",
+    "packagedVsixIntegration": "passed with the final linux/amd64 executable on candidate run attempt 2",
+    "releaseAssemblyAndChecksums": "passed; downloaded final candidate and verified every SHA256 entry",
+    "isolatedOfflineInstaller": "passed on Linux x64 against the assembled archive and pinned manifest/archive digests"
+  },
+  "targets": {
+    "linux/amd64": {
+      "runnerArchitecture": "X64",
+      "executableSha256": "d09296c8fd02dedf94eac1013425fe21d3cf338bb47aca65575bbf85857fa928",
+      "archiveSha256": "6eef4337b2886303fb1336e3f2598aa250ece7877cbe976a709dd5d14095ddf4",
+      "proofDirectory": "linux-amd64"
+    },
+    "linux/arm64": {
+      "runnerArchitecture": "ARM64",
+      "executableSha256": "80613cccf86c0d007bbb96beecae0a93fd57ab86c600b53f20d096b2e4981de6",
+      "archiveSha256": "c1d6450c14935fe8a0856cf4e9a6185f483f1b24e1799ccf792551a18723f21c",
+      "proofDirectory": "linux-arm64"
+    }
+  }
+}

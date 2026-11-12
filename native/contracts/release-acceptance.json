@@ -42,6 +42,14 @@
           "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners, Docker 28.0.4; isolated Alpine 3.21 with network disabled; host identities and final hashes in linked proof",
           "location": "native/contracts/evidence/linux-stable-2.0.0/summary.json",
           "scope": "Both final Linux 2.0.0 executables are static, match the assembled archives and run without Node, npm, Rust, compiler, separately installed SQLite or OpenSSL."
+        },
+        {
+          "revision": "ee35057f941a0f412a3e8a1cb563bf2bf6faabdb",
+          "command": "native-candidate run 43291771950: cargo fmt/clippy/test/build on both actual Linux hosts; readelf final executables; docker run --network none alpine:3.21 build-info; SHA256SUMS verification; isolated install-native.sh --bundle-dir on Linux x64",
+          "result": "passed",
+          "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners with Docker 28.0.4; isolated Alpine 3.21 with network disabled; final hashes and host identities in linked proof",
+          "location": "native/contracts/evidence/linux-stable-2.0.1/summary.json",
+          "scope": "Both final Linux 2.0.1 executables are static, match assembled archives and run without Node, npm, Rust, compiler, separately installed SQLite or OpenSSL."
         }
       ]
     },
@@ -124,6 +132,14 @@
           "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners with systemd 255 and Docker 28.0.4; unique private unit/data and final executable SHA per host in linked proof",
           "location": "native/contracts/evidence/linux-stable-2.0.0/summary.json",
           "scope": "User and root system scopes on both architectures installed, explicitly replaced, started, restarted, stopped and uninstalled the isolated service; Docker job and completed history verified."
+        },
+        {
+          "revision": "ee35057f941a0f412a3e8a1cb563bf2bf6faabdb",
+          "command": "native-candidate run 43291771950: GRIDSTATOR_TEST_BINARY=<exact final executable> systemd_e2e actual_systemd_supervisor_controller_and_embedded_worker_lifecycle --ignored --exact --nocapture as user and root on both actual Linux hosts",
+          "result": "passed",
+          "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners with systemd 255 and Docker 28.0.4; unique private unit/data and final executable SHA per host in linked proof",
+          "location": "native/contracts/evidence/linux-stable-2.0.1/summary.json",
+          "scope": "User and root system scopes on both architectures installed, explicitly replaced, started, restarted, stopped and uninstalled the isolated 2.0.1 service; Docker job and completed history verified."
         }
       ]
     }

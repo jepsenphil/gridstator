@@ -1,0 +1,17 @@
+{
+  "version": "2.0.1",
+  "buildId": "native-43291771950-1",
+  "sourceRevision": "ee35057f941a0f412a3e8a1cb563bf2bf6faabdb",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification",
+    "local-setup-v1",
+    "worker-control-v1"
+  ],
+  "target": "linux/arm64",
+  "size": 26788776,
+  "sha256": "80613cccf86c0d007bbb96beecae0a93fd57ab86c600b53f20d096b2e4981de6"
+}
