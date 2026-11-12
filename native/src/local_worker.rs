@@ -473,7 +473,7 @@ pub(crate) async fn send_socket(path: &Path, request: &Value) -> Result<Value> {
     // Requests are newline-delimited. The server does not wait for EOF, and macOS can report
     // ENOTCONN if it has already sent a short response before this half-close completes.
     let mut response = vec![];
-    tokio::time::timeout(
+    let received = tokio::time::timeout(
         Duration::from_secs(5),
         tokio::io::BufReader::new(&mut reader)
             .take((MAX_MESSAGE + 1) as u64)
@@ -481,6 +481,13 @@ pub(crate) async fn send_socket(path: &Path, request: &Value) -> Result<Value> {
     )
     .await
     .context("local worker control timed out")??;
+    if received == 0 || response.last() != Some(&b'\n') {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::UnexpectedEof,
+            "local worker closed its control socket before a complete reply",
+        )
+        .into());
+    }
     ensure!(response.len() <= MAX_MESSAGE, "worker response too large");
     let response: Value = serde_json::from_slice(&response)?;
     ensure!(
@@ -662,7 +669,13 @@ fn control_unavailable(error: &anyhow::Error) -> bool {
         .any(|error| {
             matches!(
                 error.kind(),
-                std::io::ErrorKind::ConnectionRefused | std::io::ErrorKind::NotFound
+                std::io::ErrorKind::ConnectionRefused
+                    | std::io::ErrorKind::NotFound
+                    | std::io::ErrorKind::UnexpectedEof
+                    | std::io::ErrorKind::ConnectionReset
+                    | std::io::ErrorKind::ConnectionAborted
+                    | std::io::ErrorKind::BrokenPipe
+                    | std::io::ErrorKind::NotConnected
             )
         })
 }

@@ -338,7 +338,9 @@ async fn embedded_worker_stop_and_start_leave_the_controller_alive() -> Result<(
         }
     })
     .await?;
-    let before = wait_worker(&worker_dir).await?;
+    let before = wait_worker(&worker_dir)
+        .await
+        .context("embedded worker initially running")?;
     let runtime = state::read_json(&dir.join("runtime.json"))?;
     let client = Client::new(Config {
         version: 1,
@@ -348,13 +350,16 @@ async fn embedded_worker_stop_and_start_leave_the_controller_alive() -> Result<(
         token: init["token"].as_str().unwrap().into(),
         token_name: None,
     })?;
-    bridge(json!({"version":1,"operation":"worker","action":"stop","dataDir":worker_dir})).await?;
+    bridge(json!({"version":1,"operation":"worker","action":"stop","dataDir":worker_dir}))
+        .await
+        .context("embedded stop request")?;
     tokio::time::timeout(Duration::from_secs(8), async {
         loop {
             let status = bridge(
                 json!({"version":1,"operation":"worker","action":"status","dataDir":worker_dir}),
             )
-            .await?;
+            .await
+            .context("embedded stopped status")?;
             if status["workers"][0]["running"] == false {
                 break Ok::<_, anyhow::Error>(());
             }
@@ -370,7 +375,8 @@ async fn embedded_worker_stop_and_start_leave_the_controller_alive() -> Result<(
     );
     let restarted =
         bridge(json!({"version":1,"operation":"worker","action":"start","dataDir":worker_dir}))
-            .await?;
+            .await
+            .context("embedded start request")?;
     assert_eq!(restarted["workers"][0]["running"], true);
     assert_eq!(restarted["workers"][0]["nodeId"], before["nodeId"]);
     assert_eq!(client.get("/v1/health").await?["ok"], true);
