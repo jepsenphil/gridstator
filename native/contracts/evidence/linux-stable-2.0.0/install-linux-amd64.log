@@ -1,0 +1,27 @@
+Preparing verified native Gridstator release v2.0.0 for linux/amd64
+Installed /tmp/gridstator-final-install.duVdXMUP/bin/gridstator
+Verified release metadata: /tmp/gridstator-final-install.duVdXMUP/share/gridstator/releases/v2.0.0
+Review the release notes for platform support and signing status.
+Next: add the prefix bin directory to PATH, then choose explicit setup commands:
+  gridstator controller init
+  gridstator controller install-service
+  gridstator agent join <controller> --token <join-token> --fingerprint <ca-fingerprint>
+  gridstator agent install-service
+{
+  "version": "2.0.0",
+  "buildId": "native-43280058271-1",
+  "sourceRevision": "1b0dfd96785ccee1bfeafd9222bfd623bdbc301f",
+  "capabilities": [
+    "bridge-v1",
+    "native-controller",
+    "native-worker",
+    "snapshots",
+    "release-verification",
+    "local-setup-v1",
+    "worker-control-v1"
+  ],
+  "target": "linux/amd64",
+  "size": 28186368,
+  "sha256": "a8d3defcee585868569f785978046f0c5d3ffb3b8559d6bf6c09fe07cf7123c6"
+}
+Installed binary SHA matches final candidate archive

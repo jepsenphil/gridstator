@@ -1,0 +1,6 @@
+b821e27b96e06c3d906f6d5bc0decb0dab92a2e1f476eecb77049f91d424feb5  gridstator-2.0.0-linux-amd64.tar.gz
+552c729477c157ddcea269b0aef6e6fe67472a9a0820188e6eb1a88c1056ca58  gridstator-2.0.0-linux-arm64.tar.gz
+d8ec8a0764a70b7c931234a79a6626bbd95284d2aaef3d2661ceef133960d756  gridstator-2.0.0-native-bundle.tar.gz
+de691370b12107bf6ae747502ae041453b069e425988812bd52c5507d12891fa  gridstator-release.json
+1ab2b71f32cf3035062c6917c03dd276c6e98274f48a0e9636f6890ea4497197  install-native.sh
+eda4c9c35eb1f93d9dd5dddff7b7c1992fd4bce2289c4866b390ebee1b86d26f  ./gridstator-native-2.0.0.vsix

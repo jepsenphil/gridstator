@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "version": "2.0.0",
+  "sourceRevision": "1b0dfd96785ccee1bfeafd9222bfd623bdbc301f",
+  "buildId": "native-43280058271-1",
+  "candidateRun": "https://github.com/jepsenphil/gridstator/actions/runs/43280058271",
+  "candidateRunId": 43280058271,
+  "candidateConclusion": "success",
+  "artifact": "native-release-candidate",
+  "manifestSha256": "de691370b12107bf6ae747502ae041453b069e425988812bd52c5507d12891fa",
+  "checksumsSha256": "51b92b4bf50ae4ac08134b1bb0ee90ce0f82b379ed6ab9dd0d5041f8fb6d0714",
+  "vsixSha256": "eda4c9c35eb1f93d9dd5dddff7b7c1992fd4bce2289c4866b390ebee1b86d26f",
+  "checks": {
+    "sourceFormattingClippyAndTests": "passed on both actual hosts",
+    "finalExecutableStaticLinkage": "passed on both actual hosts; no ELF INTERP or NEEDED entries",
+    "cleanRuntime": "passed in Alpine 3.21 containers with network disabled on both actual hosts",
+    "systemdUserAndSystem": "passed on both actual hosts with exact final executable bytes; install, explicit replacement, restart, stop and uninstall",
+    "packagedVsixIntegration": "passed with the final linux/amd64 executable",
+    "releaseAssemblyAndChecksums": "passed",
+    "isolatedOfflineInstaller": "passed on Linux x64 against the assembled archive and pinned manifest/archive digests"
+  },
+  "targets": {
+    "linux/amd64": {
+      "runnerArchitecture": "X64",
+      "executableSha256": "a8d3defcee585868569f785978046f0c5d3ffb3b8559d6bf6c09fe07cf7123c6",
+      "archiveSha256": "b821e27b96e06c3d906f6d5bc0decb0dab92a2e1f476eecb77049f91d424feb5",
+      "proofDirectory": "linux-amd64"
+    },
+    "linux/arm64": {
+      "runnerArchitecture": "ARM64",
+      "executableSha256": "71620ad2ff58d8ee7226cad8da622ec19c574715379054130ba54194e9e6eb90",
+      "archiveSha256": "552c729477c157ddcea269b0aef6e6fe67472a9a0820188e6eb1a88c1056ca58",
+      "proofDirectory": "linux-arm64"
+    }
+  }
+}

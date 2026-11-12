@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "buildId": "native-43280058271-1",
+  "version": "2.0.0",
+  "sourceRevision": "1b0dfd96785ccee1bfeafd9222bfd623bdbc301f",
+  "protocol": {
+    "api": 1,
+    "agent": 1,
+    "update": 1
+  },
+  "artifacts": {
+    "linux/amd64": {
+      "archive": {
+        "file": "gridstator-2.0.0-linux-amd64.tar.gz",
+        "size": 10902784,
+        "sha256": "b821e27b96e06c3d906f6d5bc0decb0dab92a2e1f476eecb77049f91d424feb5"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 28186368,
+        "sha256": "a8d3defcee585868569f785978046f0c5d3ffb3b8559d6bf6c09fe07cf7123c6"
+      }
+    },
+    "linux/arm64": {
+      "archive": {
+        "file": "gridstator-2.0.0-linux-arm64.tar.gz",
+        "size": 10533598,
+        "sha256": "552c729477c157ddcea269b0aef6e6fe67472a9a0820188e6eb1a88c1056ca58"
+      },
+      "executable": {
+        "file": "gridstator",
+        "size": 26870544,
+        "sha256": "71620ad2ff58d8ee7226cad8da622ec19c574715379054130ba54194e9e6eb90"
+      }
+    }
+  }
+}

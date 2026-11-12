@@ -1,0 +1,11 @@
+{
+  "runner": "GitHub Actions 1000004137",
+  "os": "Linux",
+  "arch": "X64",
+  "uname": "Linux runnervm8axu0 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+  "systemd": "systemd 255 (255.4-1ubuntu8.18)",
+  "docker": "28.0.4",
+  "executableSha256": "a8d3defcee585868569f785978046f0c5d3ffb3b8559d6bf6c09fe07cf7123c6",
+  "userScope": "passed",
+  "systemScope": "passed"
+}

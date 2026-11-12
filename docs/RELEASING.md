@@ -20,7 +20,7 @@ The [native candidate workflow](../.github/workflows/native-candidate.yml) build
 2. Linux amd64/arm64 binaries are static and pass clean-target install/runtime and systemd lifecycle checks. Mac signing, Docker Desktop and launchd gates do not apply to this Linux release and remain open for future stable Mac support.
 3. The selected source revision is clean and immutable, with a versioned `CHANGELOG.md` section. Final artifact hashes, manifest identity, VSIX contents and packaged extension integration are checked. The VSIX contains the extension UI and no separate CLI runtime.
 4. [CI](../.github/workflows/ci.yml), [native CI](../.github/workflows/native.yml) and [security CI](../.github/workflows/security.yml) pass. High/critical dependency findings and scanner failures are resolved or have an owner-reviewed, time-bounded exception. Verify CodeQL analysis and dependency review reports, not only job names.
-5. Clean installation, service startup, update and rollback are rehearsed using final candidate bytes. The owner reviews the exact evidence and approves the release.
+5. Clean installation and service install, explicit replacement, restart, stop and uninstall are rehearsed using final candidate bytes. Managed update and rollback have separate contract tests and isolated rehearsal evidence; this first public release has no earlier public Gridstator installation to upgrade. The owner reviews the exact evidence and approves the release.
 
 A green hosted build, cross-compiled ARM executable or browser fixture is not a substitute for required actual-host evidence.
 

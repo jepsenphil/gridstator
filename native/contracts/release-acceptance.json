@@ -25,7 +25,7 @@
       "scope": "linux-stable",
       "owner": "native::build/release",
       "behavior": "Both Linux native targets run on clean actual-architecture hosts without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
-      "status": "implemented",
+      "status": "verified",
       "acceptance": {
         "caseId": "linux-two-target-runtime",
         "description": "Build and audit linkage then run exact candidate bytes in clean offline containers on actual Linux x64 and ARM64 hosts.",
@@ -36,12 +36,12 @@
       },
       "evidence": [
         {
-          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
-          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "revision": "1b0dfd96785ccee1bfeafd9222bfd623bdbc301f",
+          "command": "native-candidate run 43280058271: cargo fmt/clippy/test/build on each actual host; readelf -l -d final executable; docker run --rm --network none alpine:3.21 /gridstator build-info --json; sha256sum --check SHA256SUMS; isolated offline install-native.sh --bundle-dir on Linux x64",
           "result": "passed",
-          "environment": "Per-platform identities and runtime limits recorded in linked proof",
-          "location": "native/contracts/evidence/preview-2026-11-10/assembly/summary.json",
-          "scope": "All four real final preview binaries assembled and verified. Linux x64 executes in clean offline Alpine; Mac ARM64 native and Intel under Rosetta execute final bytes. Linux ARM64 is build-only; physical Intel and full clean-host/minimum-OS matrix remain open."
+          "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners, Docker 28.0.4; isolated Alpine 3.21 with network disabled; host identities and final hashes in linked proof",
+          "location": "native/contracts/evidence/linux-stable-2.0.0/summary.json",
+          "scope": "Both final Linux 2.0.0 executables are static, match the assembled archives and run without Node, npm, Rust, compiler, separately installed SQLite or OpenSSL."
         }
       ]
     },
@@ -107,7 +107,7 @@
       "scope": "linux-stable",
       "owner": "native::services",
       "behavior": "Linux system/user units install, replace, start, stop, restart and uninstall with correct ownership and isolated v2 paths.",
-      "status": "implemented",
+      "status": "verified",
       "acceptance": {
         "caseId": "systemd-live",
         "description": "Run actual service lifecycle on Linux x64/ARM64; a rendered unit is insufficient.",
@@ -118,19 +118,12 @@
       },
       "evidence": [
         {
-          "revision": "Exact component/final executable source and SHA checkpoints in linked evidence",
-          "command": "Actual per-scenario commands and complete output are recorded in linked evidence",
+          "revision": "1b0dfd96785ccee1bfeafd9222bfd623bdbc301f",
+          "command": "native-candidate run 43280058271: GRIDSTATOR_TEST_BINARY=<exact final executable> systemd_e2e actual_systemd_supervisor_controller_and_embedded_worker_lifecycle --ignored --exact --nocapture, first as user then as root on both actual Linux hosts",
           "result": "passed",
-          "environment": "Per-platform identities and runtime limits recorded in linked proof",
-          "location": "native/contracts/evidence/linux-cutover-2026-11-10/rehearsal.json",
-          "scope": "Actual isolated Linux x64 user systemd service, confirmed update and failed-schema rollback. System scope and Linux ARM64 lifecycle remain unverified."
-        },
-        {
-          "revision": "native-preview-20261110-cd6b769ebe6e; working-tree root system fixture source hash in evidence",
-          "command": "system_scope_e2e actual_root_system_service_drains_and_restores_database_after_schema_crash --ignored --exact --nocapture",
-          "result": "passed",
-          "environment": "Actual Ubuntu25.04 x64 KVM; root; PID1 systemd; unique private unit/data; Docker29.1.4",
-          "location": "native/contracts/evidence/mixed-lan-system-2026-11-10/evidence.json"
+          "environment": "Actual GitHub-hosted Ubuntu 24.04 X64 and ARM64 runners with systemd 255 and Docker 28.0.4; unique private unit/data and final executable SHA per host in linked proof",
+          "location": "native/contracts/evidence/linux-stable-2.0.0/summary.json",
+          "scope": "User and root system scopes on both architectures installed, explicitly replaced, started, restarted, stopped and uninstalled the isolated service; Docker job and completed history verified."
         }
       ]
     }
