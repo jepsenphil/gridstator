@@ -25,7 +25,7 @@ jobs:
           rustup target add --toolchain "$toolchain" "$CARGO_BUILD_TARGET"
       - name: Repeat offline worker restart test
         run: |
-          for attempt in {1..12}; do
+          for attempt in {1..100}; do
             echo "::group::attempt $attempt"
             cargo test --locked --test local_worker_contract \
               private_control_works_offline_and_preserves_pause_and_budget_across_restart \
