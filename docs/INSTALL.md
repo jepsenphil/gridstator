@@ -1,6 +1,6 @@
 # Install native Gridstator
 
-Gridstator 2.0.0 is the first native Linux release. Use the published GitHub release after its [Linux acceptance gates](RELEASING.md) are verified. The Apple Silicon build uses a separate unsigned preview tag. For development, [build from source](DEVELOPMENT.md).
+Gridstator 2.0.0 was the first native Linux release; [2.0.1](https://github.com/jepsenphil/gridstator/releases/tag/v2.0.1) is current. Use a published GitHub release with verified [Linux acceptance gates](RELEASING.md). Apple Silicon uses a separate [unsigned preview](https://github.com/jepsenphil/gridstator/releases/tag/v2.0.1-macos-preview.1). For development, [build from source](DEVELOPMENT.md).
 
 ## Requirements
 
@@ -15,7 +15,7 @@ The installed native CLI has no Node, npm or Rust requirement. VS Code supplies 
 Choose a published v2 tag whose [release record](RELEASING.md) links all required acceptance evidence. The release contains platform archives, `gridstator-release.json`, `SHA256SUMS` and `install-native.sh`. Download the installer and checksum document from the **same tag** and verify the installer before executing it. The installer then verifies the manifest, matching archive, executable and architecture.
 
 ~~~sh
-tag=v2.0.0
+tag=v2.0.1
 base=https://github.com/jepsenphil/gridstator/releases/download
 stage=$(mktemp -d)
 curl -fsSL -o "$stage/SHA256SUMS" "$base/$tag/SHA256SUMS"

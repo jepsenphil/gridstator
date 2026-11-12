@@ -1,6 +1,8 @@
-name: Publish native Linux v2
+name: Approve native Linux v2 release
 
 # Manual only. Linux release acceptance and reviewed candidate must pass.
+# The repository owner publishes the approved package because the Actions integration cannot
+# create GitHub Releases in this repository even with contents: write.
 on:
   workflow_dispatch:
     inputs:
@@ -67,13 +69,13 @@ jobs:
             }
           '
 
-  publish:
+  prepare-approved-release:
     needs: release-gate
     runs-on: ubuntu-24.04
     environment: v2-release
     permissions:
       actions: read
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - name: Download the reviewed candidate bytes
@@ -92,23 +94,18 @@ jobs:
             '.version == $version and .sourceRevision == $revision and (.artifacts | keys | sort) == ["linux/amd64", "linux/arm64"]' \
             gridstator-release.json
           test "$(find . -maxdepth 1 -name '*.vsix' | wc -l)" -eq 1
-      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Create a draft GitHub release
+      - name: Prepare versioned release notes
         env:
-          GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ inputs.version }}
-          CANDIDATE_SHA: ${{ needs.release-gate.outputs.candidate-sha }}
-        run: |
-          node scripts/changelog-section.mjs "$RELEASE_VERSION" > release-notes.md
-          gh release create "v$RELEASE_VERSION" release/* --draft --target "$CANDIDATE_SHA" \
-            --title "Gridstator v$RELEASE_VERSION" --notes-file release-notes.md
-      - name: Promote the verified GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_VERSION: ${{ inputs.version }}
-        run: gh release edit "v$RELEASE_VERSION" --draft=false
+        run: node scripts/changelog-section.mjs "$RELEASE_VERSION" > release-notes.md
+      - uses: actions/upload-artifact@v7
+        with:
+          name: approved-native-release-${{ inputs.version }}
+          path: |
+            release/
+            release-notes.md
+          if-no-files-found: error
+          retention-days: 14

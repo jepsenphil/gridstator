@@ -53,8 +53,8 @@ Run `gridstator run --task native-check` from the repository root or click the t
 | [Native development](../.github/workflows/native.yml) | Rust tests and actual-host Linux/Mac builds |
 | [Desktop preview](../.github/workflows/desktop.yml) | Separate companion build evidence |
 | [Security](../.github/workflows/security.yml) | CodeQL, dependency review, pnpm and RustSec audits |
-| [Native candidate](../.github/workflows/native-candidate.yml) | Four-target signed candidate and thin VSIX; no publication |
-| [Native publish](../.github/workflows/native-publish.yml) | Manual stable release after acceptance and owner gates |
+| [Native candidate](../.github/workflows/native-candidate.yml) | Two-target Linux stable candidate or selected unsigned preview, plus thin VSIX; no publication |
+| [Native release approval](../.github/workflows/native-publish.yml) | Manual acceptance and protected approval; owner publishes the verified artifact |
 
 Do not interpret green compilation or UI fixtures as completion of platform service, Docker readiness, WSL2, Gatekeeper, recovery or signed downloaded-artifact checks. [Release readiness](RELEASING.md) lists the evidence required.
 

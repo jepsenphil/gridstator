@@ -125,6 +125,8 @@ try {
   });
 
   code = await runTests({
+    // Avoid querying the moving stable-release index during candidate qualification.
+    version: process.env.GRIDSTATOR_VSCODE_TEST_VERSION || '1.145.2',
     extensionDevelopmentPath: testedExtension,
     extensionTestsPath: join(here, 'suite', 'index.cjs'),
     // GitHub runners sometimes need longer than the 15-second default to resolve VS Code.

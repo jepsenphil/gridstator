@@ -7,7 +7,7 @@
 
 **Multiple machines. One workflow.** Gridstator runs builds, tests, Docker image builds and supported GitHub Actions jobs on computers you control. It snapshots the saved working tree, including uncommitted edits, sends only missing content to a worker, and streams logs and results back to the CLI or VS Code.
 
-> **Release scope:** Gridstator 2.0.0 supports Linux x64 and ARM64. The [release acceptance record](native/contracts/release-acceptance.json) tracks the tested Linux builds and keeps future macOS qualification separate. Apple Silicon uses a separate unsigned development preview; Intel Mac is not a supported release target. The CLI is distributed as verified native binaries, not through npm. The VSIX is available through GitHub Releases; Marketplace publication follows publisher registration.
+> **Release scope:** [Gridstator 2.0.1](https://github.com/jepsenphil/gridstator/releases/tag/v2.0.1) supports Linux x64 and ARM64. The [release acceptance record](native/contracts/release-acceptance.json) tracks the tested Linux builds and keeps future macOS qualification separate. Apple Silicon has a separate [unsigned development preview](https://github.com/jepsenphil/gridstator/releases/tag/v2.0.1-macos-preview.1); Intel Mac is not a supported release target. The CLI is distributed as verified native binaries, not through npm. The VSIX is available through GitHub Releases; Marketplace publication follows publisher registration.
 
 ## See it
 
