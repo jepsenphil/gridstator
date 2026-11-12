@@ -22,6 +22,7 @@ import {
 } from '@gridstator/client';
 import { Dashboard } from './dashboard';
 import { CancelledByUser, Launcher, isGroup } from './launcher';
+import { JobSecrets, SecretInputCancelled } from './job-secrets';
 import type { LaunchItem, LaunchOptions } from './messages';
 import { ResultsIntegration } from './results';
 import { ClusterState } from './state';
@@ -48,7 +49,12 @@ function config<T>(key: string, fallback: T): T {
 }
 
 function showError(err: unknown): void {
-  if (err instanceof CancelledByUser || err instanceof NativeCancelledError) return;
+  if (
+    err instanceof CancelledByUser ||
+    err instanceof NativeCancelledError ||
+    err instanceof SecretInputCancelled
+  )
+    return;
   const message =
     err instanceof GridstatorError && err.hint ? `${err.message}. ${err.hint}` : errorMessage(err);
   void vscode.window.showErrorMessage(`Gridstator: ${message}`);
@@ -110,7 +116,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       setupPending: Boolean(local.host?.setupPending && (local.matchesLocal || canSetUp)),
     }),
   );
-  const launcher = new Launcher(state, log, native);
+  const launcher = new Launcher(state, log, native, new JobSecrets(context.secrets));
   const results = new ResultsIntegration(state, launcher, log);
   const dashboard = new Dashboard(context, state, launcher, log, local);
   dashboard.results = results;
@@ -370,6 +376,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       await local.restore();
       await state.connect();
     }),
+    command('gridstator.clearSavedSecrets', () => launcher.clearSavedSecrets()),
     command('gridstator.openRun', (itemId?: string, job?: string) =>
       dashboard.show('run', itemId ? { itemId: job ? `${itemId}#${job}` : itemId } : {}),
     ),
@@ -442,7 +449,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Gridst
       const jobs = item.workflow.jobs.filter((j) => j.runnable);
       const pick = await vscode.window.showQuickPick(
         [
-          { label: '$(run-all) Whole workflow', id: '' },
+          ...(item.workflow.wholeWorkflow === false
+            ? []
+            : [{ label: '$(run-all) Whole workflow', id: '' }]),
           ...jobs.map((j) => ({
             label: j.id,
             description: j.name !== j.id ? j.name : undefined,

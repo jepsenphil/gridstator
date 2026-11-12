@@ -21,7 +21,7 @@ cargo build --locked --release
 The v2 editor artifact is packaged separately from the retained v1 extension:
 
 ```sh
-pnpm --filter gridstator-vscode package:native
+pnpm --filter ./apps/vscode package:native
 ```
 
 Run that command from the repository root. It produces `apps/vscode/dist/gridstator-native.vsix`

@@ -32,7 +32,7 @@ async function bounded(promise, what) {
 }
 
 exports.run = async function run() {
-  const ext = vscode.extensions.getExtension('gridstator.gridstator-vscode');
+  const ext = vscode.extensions.getExtension('gridstator.gridstator');
   assert.ok(ext, 'extension is installed');
   const api = await ext.activate();
   if (process.env.GRIDSTATOR_NATIVE_CLI_E2E) {

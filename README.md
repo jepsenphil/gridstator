@@ -1,254 +1,70 @@
 # Gridstator
 
 [![CI](https://github.com/jepsenphil/gridstator/actions/workflows/ci.yml/badge.svg)](https://github.com/jepsenphil/gridstator/actions/workflows/ci.yml)
+[![Native](https://github.com/jepsenphil/gridstator/actions/workflows/native.yml/badge.svg)](https://github.com/jepsenphil/gridstator/actions/workflows/native.yml)
+[![Security](https://github.com/jepsenphil/gridstator/actions/workflows/security.yml/badge.svg)](https://github.com/jepsenphil/gridstator/actions/workflows/security.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Multiple machines. One workflow.**
+**Multiple machines. One workflow.** Gridstator runs builds, tests, Docker image builds and supported GitHub Actions jobs on computers you control. It snapshots the saved working tree, including uncommitted edits, sends only missing content to a worker, and streams logs and results back to the CLI or VS Code.
 
-Gridstator turns the computers on your local network into a development compute cluster. Run your
-tests, builds and other commands on whichever machine has capacity, against the exact files in
-your working tree (including uncommitted changes) without pushing to GitHub or copying code around.
+> **Release status:** the Rust v2 CLI/controller/worker and native VS Code extension are development previews. The [v2 acceptance ledger](native/contracts/parity-ledger.json) still has open platform, service and signing gates. No public v2 package or Marketplace listing exists yet. The [v0.1.0 release](https://github.com/jepsenphil/gridstator/releases/tag/v0.1.0) is the legacy Node implementation; its [guides](docs/legacy/v1/README.md) remain available for recovery. The v2 CLI will be distributed as verified native binaries, not through npm.
 
-```console
-$ gridstator run -- pnpm test
-Snapshot of /home/me/web-app: 412 files, 3.1 MiB (git, 2 hashed, 41ms)
-Job 01M6YRS9QKK0X6GDE3YDMNB8NB submitted (snapshot a7966da95eff); waiting for scheduler
-[gridstator] Job 01M6YRS9QKK0X6GDE3YDMNB8NB (attempt 1) accepted by node big-box
-[gridstator] Snapshot a7966da95eff: 412 entries, 3.1 MiB, fetching 2 of 410 blobs
-...your test output, streamed live...
-Job 01M6YRS9QKK0X6GDE3YDMNB8NB succeeded on big-box in 41s
-```
+## See it
 
-> **Status: v0.1, early but complete.** Remote commands, working-tree snapshots, Docker builds,
-> GitHub Actions via `act`, test sharding and the VS Code extension work and are tested, including
-> across two physical machines (Linux and a Windows PC through WSL2). See [docs/PLAN.md](docs/PLAN.md).
+The Gridstator view shows workers, jobs and runnable tasks beside your project. The dashboard adds capacity, logs and results. [More screenshots and capture notes](docs/SCREENSHOTS.md).
 
-## What works today
+![Gridstator Run view beside a project configuration in VS Code](docs/images/vscode-editor.png)
 
-- **Controller + agents.** One controller holds the queue and history; lightweight agents on each
-  machine run jobs in Docker. Any machine can host the controller, alone or alongside an agent.
-- **Run commands remotely.** `gridstator run -- <command>` runs in a fresh container on a suitable
-  node, streams stdout/stderr live, and exits with the job's exit code.
-- **Exact working-tree snapshots.** Tracked files, untracked files and uncommitted edits are
-  captured (respecting `.gitignore`), content-addressed, and only changed files are transferred.
-  Secrets such as `.env` and private keys are excluded by default, with a warning.
-- **Scheduling.** Capability, label and resource-aware placement; per-node concurrency limits and
-  CPU/RAM reserved for the host (so your development laptop stays responsive); priorities;
-  enable/disable/drain; pinning a job to a node.
-- **Reliable lifecycle.** Cancel, retry, automatic retry of lost jobs, and persistent history with
-  an audit trail. Jobs survive controller restarts and agent reconnects without losing log lines.
-- **Docker builds on another machine.** `gridstator build` runs BuildKit on a worker: target
-  stages, build args, build secrets, tags, push, or export the image as a downloadable artifact. The
-  build cache stays on the worker, and repeat builds go back to it.
-- **GitHub Actions without pushing.** `gridstator actions run ci.yml` runs your existing workflows
-  (or one job) with [act](https://github.com/nektos/act) on a worker, against your uncommitted
-  files, with inputs, secrets, step-by-step progress and artifacts. `gridstator actions list` shows
-  what can run locally and what cannot.
-- **Parallel test shards.** `gridstator run --shards 4 -- npx vitest run --shard={shard}/{total}`
-  spreads shards across workers, streams them side by side, and combines their JUnit results into
-  one group; `gridstator group retry` re-runs only the failed shards.
-- **VS Code extension.** A Gridstator Activity Bar with your nodes, jobs and everything runnable in
-  the workspace; a dashboard with live logs, steps, artifacts, cancel/retry/rerun and node
-  management; errors in the Problems panel and JUnit results in the Testing view. Works over
-  Remote SSH, running where your code lives.
-- **Secure by default.** TLS everywhere with a self-generated cluster CA pinned by fingerprint,
-  named and revocable tokens, and no inbound ports on workers. See [docs/SECURITY.md](docs/SECURITY.md).
+## How it works
 
-## Requirements
+1. A **client** on the workspace host captures the files saved on disk. With Remote SSH or WSL, this is the remote workspace host.
+2. The **controller** authenticates the client, stores a content-addressed snapshot, queues the job and selects a worker.
+3. A **worker** connects outbound to the controller, fetches missing content and runs the job with Docker, BuildKit or `act`.
+4. Logs, structured steps, artifacts and JUnit results return to the client. VS Code can also show errors in Problems and results in Testing.
 
-- Node.js 22.19 or newer on every machine.
-- Docker on every machine that runs jobs, usable by the user running the agent (buildx for image
-  builds).
-- [act](https://github.com/nektos/act) and git on workers that should run GitHub Actions workflows.
-- git on the machine where your source code lives (recommended).
-- VS Code 1.105 or newer for the extension.
+The native CLI, controller and worker are one Rust executable. The thin extension uses VS Code's supplied Node runtime for its UI and delegates workspace operations to the native executable. [Architecture and trust boundaries](docs/ARCHITECTURE.md).
 
-## Quick start
+## Try the v2 development preview
 
-Install on each machine (from a [release](https://github.com/jepsenphil/gridstator/releases); the
-full walkthrough, including services that start at boot, is in [docs/INSTALL.md](docs/INSTALL.md)):
+The release installer is intentionally unavailable until the acceptance gates pass. For an isolated source build, install the pinned Rust toolchain, a C compiler and Docker, then run:
 
-```bash
-npm install -g https://github.com/jepsenphil/gridstator/releases/download/v0.1.0/gridstator-0.1.0.tgz
-```
+~~~sh
+cd native
+export GRIDSTATOR_CONFIG="$PWD/../.gridstator-dev/client.json"
+export GRIDSTATOR_CONTROLLER_DATA="$PWD/../.gridstator-dev/controller"
+export GRIDSTATOR_AGENT_DATA="$PWD/../.gridstator-dev/agent"
+cargo build --locked
+./target/debug/gridstator controller init --host 127.0.0.1 --port 17431
+./target/debug/gridstator controller start --with-agent
+~~~
 
-**1. Create the cluster** on the machine that will run the controller (it can also be a worker):
+In another terminal, export the same `GRIDSTATOR_CONFIG` path, then from a project directory run `/path/to/gridstator nodes` and `/path/to/gridstator run -- npm test`. Choose an unused port if 17431 is occupied. The init command creates a fresh v2 cluster and saves a local login. The worker needs access to Docker. Do not point a v2 process at v1 data or credentials. [Development setup](docs/DEVELOPMENT.md) and [installation/release procedure](docs/INSTALL.md) cover other hosts and the verified distribution.
 
-```bash
-gridstator controller init
-gridstator controller install-service --with-agent   # controller + a worker here, started at boot
-```
+## Capabilities
 
-`init` prints the CA fingerprint and an admin token, and saves them as this machine's client
-configuration.
-
-**2. Add a worker.** On the controller machine:
-
-```bash
-gridstator token create --join
-```
-
-Run the printed command on the worker, then start the agent:
-
-```bash
-gridstator agent join https://192.168.1.20:7300 --token gsj_... --fingerprint sha256:...
-sudo gridstator agent install-service --system       # or: gridstator agent start
-```
-
-Windows PCs join through WSL2; see [docs/WINDOWS.md](docs/WINDOWS.md).
-
-**3. Connect your development machine** (if it is not the controller):
-
-```bash
-gridstator token create --name my-laptop        # on the controller machine
-gridstator login https://192.168.1.20:7300 --fingerprint sha256:... --token gsc_...
-```
-
-**4. Run something:**
-
-```bash
-cd my-project
-gridstator nodes
-gridstator run -- npm test
-gridstator run --node big-box --cpus 8 --memory 16g -- pnpm build
-gridstator run --detach -- ./scripts/long-task.sh
-gridstator jobs
-gridstator logs <job-id> --follow
-gridstator cancel <job-id>
-gridstator retry <job-id>
-```
-
-Press Ctrl-C once during `gridstator run` to cancel the remote job; press it again to detach and
-leave the job running.
-
-**5. Build images and run workflows:**
-
-```bash
-gridstator build --target runner -t web:dev            # BuildKit on a worker
-gridstator build --output tar && gridstator artifacts <job-id> --download image.tar
-gridstator actions list
-gridstator actions run ci.yml --job test
-gridstator actions run deploy.yml -e workflow_dispatch -i environment=staging
-```
-
-## VS Code
-
-Install the extension from `gridstator.vsix` (**Extensions: Install from VSIX…**, or
-`code --install-extension gridstator.vsix`; build it with `pnpm package:vscode`). In a Remote SSH
-window, install it on the remote side, where your code is. The extension connects automatically
-using that account's CLI configuration. All windows on the same SSH account pick up login changes
-without a reload. On the controller host, an account that owns the controller data gets a shared
-local admin login automatically. Other machines can use **Gridstator: Sign In to Controller** or
-`gridstator login` once. Revoked local access offers **Restore Local Access** instead of silently
-creating another token.
-
-With no connection configured, choose **Set up a controller here** or **Connect to an existing
-controller**. Local setup installs a verified native CLI if missing, creates a background user
-service with a worker, and signs in automatically. The worker waits for Docker if needed. In remote
-windows, setup runs on the workspace host. Connecting elsewhere accepts a pasted login command or
-manual connection details.
-
-The dashboard shows the controller hostname and identifies machines that run both controller and
-worker. Its **Settings** tab includes component versions/builds, editor preferences, tokens,
-retention, update policies and official release installation. Updates wait for running jobs by
-default. Controller-host SSH windows also have user-service and listening-address controls; a
-stopped controller stays stopped until **Start Controller** is selected.
-
-Open the Gridstator Activity Bar view and press ▶ next to a task, workflow job, package script or
-Dockerfile, or open the dashboard (**Gridstator: Open Dashboard**) for logs, steps, artifacts and node
-management. **Gridstator: Select Target Worker** chooses a worker for this workspace (default:
-automatic). Jobs run the files saved on disk; the extension asks first if editors have unsaved
-changes.
-
-## Keeping your laptop usable
-
-Every node reserves CPU and memory for its host. Jobs are only placed where their requested
-resources fit in what remains, and never when the node's currently available memory is too low:
-
-```bash
-gridstator nodes set laptop --reserve-cpus 6 --reserve-memory 24g --max-concurrency 1
-gridstator nodes drain laptop        # finish running jobs, accept no new ones
-gridstator nodes disable laptop      # accept no new jobs
-gridstator nodes enable laptop
-```
-
-Rename a worker without rejoining it or changing its identity:
-
-```bash
-gridstator nodes set DESKTOP-JEL --name big-box
-```
-
-The dashboard exposes the same control under **Nodes → Worker name**, and the Cluster tree's
-worker context menu has **Rename Worker**. Names may contain up to 64 letters, numbers, dots,
-underscores and hyphens, starting with a letter or number. Renaming preserves credentials, resource
-settings and history; queued and retried jobs keep targeting the same worker. Update project files
-that should use its new name, or use its stable node ID for targets that should survive renaming.
-
-## Project configuration
-
-`gridstator init` writes an optional `gridstator.yml`:
-
-```yaml
-version: 1
-defaults:
-  image: node:24-bookworm
-  resources: { cpus: 2, memory: 4g }
-snapshot:
-  include: []        # paths git ignores that should still be sent
-  exclude: []        # extra paths to leave out
-  allowSecrets: []   # secret-looking files that are safe to send (e.g. .env.test)
-tasks:
-  test:
-    command: corepack enable && pnpm install --frozen-lockfile && pnpm vitest run --reporter=junit --outputFile=junit.xml
-    junit: junit.xml           # results appear in VS Code's Testing view
-builds:
-  web: { file: Dockerfile, stage: runner, tags: [web:dev] }
-actions:
-  platforms: { ubuntu-latest: catthehacker/ubuntu:act-latest }
-  secretEnv: [GITHUB_TOKEN]    # forwarded from your environment when set
-```
-
-Run a task with `gridstator run --task test` and a build with `gridstator build -b web`. Package-manager caches (npm, pnpm, yarn, pip, Go)
-persist on each worker in a shared Docker volume, so repeat installs are fast.
-
-## Command reference
-
-| Command | Purpose |
-|---|---|
-| `controller init` / `controller start [--with-agent]` | create and run the controller |
-| `agent join <url>` / `agent start` | register and run a worker |
-| `login <url>` | connect a client machine |
-| `status`, `doctor` | cluster overview; diagnose setup problems |
-| `nodes`, `nodes show/set/enable/disable/drain/remove` | inspect and manage workers |
-| `run`, `jobs`, `job`, `logs`, `cancel`, `retry` | submit and manage jobs |
-| `build [context]` | build a Docker image on a worker |
-| `actions list` / `actions run <workflow>` | discover and run GitHub Actions workflows with act |
-| `artifacts <job> [--download <name>]` | list or download a job's artifacts |
-| `run --shards N`, `groups`, `group show/cancel/retry` | sharded runs and their combined results |
-| `controller install-service`, `agent install-service` | run as systemd services that start at boot |
-| `snapshot [--dry-run] [--json]` | see exactly which files would be sent |
-| `token create/list/revoke` | manage client and join tokens |
-| `init` | create `gridstator.yml` |
-
-Most commands accept `--json`. Exit codes: the job's exit code for `run`, `130` if cancelled,
-`75` if lost; `2` usage error, `3` controller unreachable, `4` authentication, `5` not found.
+- **Exact workspace runs:** tracked, untracked and edited files are captured; ignored secret files are excluded by default. Unsaved editor buffers must be saved before a run.
+- **Placement and lifecycle:** schedule by capacity, resources and labels; reserve CPU/RAM for the host; drain or disable workers; cancel, retry and inspect persistent history.
+- **Builds and workflows:** run commands, BuildKit image builds, supported GitHub Actions jobs through `act`, and test shards across workers.
+- **Editor experience:** launch jobs from VS Code, follow logs, download artifacts, view JUnit results and manage workers. The extension supports Remote SSH and WSL workspace hosts.
+- **Security model:** pinned cluster CA, TLS, scoped and revocable tokens, outbound worker connections and bounded containers. Gridstator is intended for a trusted personal or small-team network. [Security guide](docs/SECURITY.md).
 
 ## Documentation
 
-The Rust v2 implementation lives alongside v1 in [`native/`](native/README.md). Its CLI,
-controller and worker run without Node; VS Code keeps its supplied Node runtime and delegates to
-the native helper. See [validation progress](docs/V2_PROGRESS.md) and
-[native release candidates](native/RELEASING.md) for tested behavior and the remaining release gates.
+| Guide | What it covers |
+| --- | --- |
+| [Install](docs/INSTALL.md) | Native artifacts, first cluster, workers and VS Code |
+| [Architecture](docs/ARCHITECTURE.md) | Components, job flow, storage and trust boundaries |
+| [VS Code](apps/vscode/README.md) | Run view, dashboard, secrets and remote windows |
+| [Screenshots](docs/SCREENSHOTS.md) | Product captures and reproducible fixtures |
+| [Security](docs/SECURITY.md) | Threat model, credentials and reporting |
+| [Development](docs/DEVELOPMENT.md) | Build, test, CI and project tasks |
+| [Release readiness](docs/RELEASING.md) | Gates, artifacts, Marketplace setup and owner actions |
+| [Legacy v1](docs/legacy/v1/README.md) | Node release, migration and recovery |
 
-- [Installation](docs/INSTALL.md), [Windows / WSL2](docs/WINDOWS.md), [Troubleshooting](docs/TROUBLESHOOTING.md)
-- [Architecture](docs/ARCHITECTURE.md): components, flows, data model, decisions
-- [Security](docs/SECURITY.md): threat model and controls
-- [API](docs/API.md): controller REST and WebSocket API
-- [Development](docs/DEVELOPMENT.md): building, testing, multi-machine validation
-- [Plan](docs/PLAN.md): milestones and progress
-- [Desktop companion](apps/desktop/README.md): tray/menu-bar app, build instructions and preview limitations; installers are collected in `distro/<version>/`
-- [Desktop companion plan](docs/DESKTOP_COMPANION_PLAN.md): confirmed design and per-OS acceptance checks; [implementation evidence](docs/DESKTOP_COMPANION_PROGRESS.md)
-- [Changelog](CHANGELOG.md), [Contributing](CONTRIBUTING.md), [Code of conduct](CODE_OF_CONDUCT.md), [Security policy](SECURITY.md)
+The [desktop companion](apps/desktop/README.md) is a separate development preview. Its platform qualification and publication follow a later release.
 
-## License
+## Contributing
 
-Apache-2.0. See [LICENSE](LICENSE).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Vulnerabilities should be reported through the [private security advisory form](https://github.com/jepsenphil/gridstator/security/advisories/new).
+
+Apache-2.0; see [LICENSE](LICENSE).

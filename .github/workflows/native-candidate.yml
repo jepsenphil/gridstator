@@ -167,7 +167,7 @@ jobs:
           pnpm typecheck
           pnpm lint
           pnpm exec vitest run --no-file-parallelism
-          pnpm --filter gridstator-vscode package:native
+          pnpm --filter ./apps/vscode package:native
           mv apps/vscode/dist/gridstator-native.vsix "apps/vscode/dist/gridstator-native-$RELEASE_VERSION.vsix"
       - uses: actions/upload-artifact@v7
         with:
@@ -175,8 +175,37 @@ jobs:
           path: apps/vscode/dist/*.vsix
           if-no-files-found: error
 
+  vscode-integration:
+    needs: [build, vscode]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v8
+        with:
+          name: candidate-linux-amd64
+          path: native/integration-candidate
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-vscode-candidate
+          path: apps/vscode/dist
+      - name: Exercise the packaged VSIX against the native CLI and isolated worker
+        run: |
+          chmod +x native/integration-candidate/gridstator
+          vsix=$(find "$GITHUB_WORKSPACE/apps/vscode/dist" -maxdepth 1 -name '*.vsix' -print -quit)
+          cd apps/vscode
+          GRIDSTATOR_NATIVE_CLI_E2E="$GITHUB_WORKSPACE/native/integration-candidate/gridstator" \
+            GRIDSTATOR_NATIVE_VSIX="$vsix" \
+            xvfb-run -a node test/run-integration.mjs
+
   assemble:
-    needs: [identity, build, vscode]
+    needs: [identity, build, vscode, vscode-integration]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7

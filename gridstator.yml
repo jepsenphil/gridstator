@@ -9,6 +9,28 @@ defaults:
   timeout: 60m
 
 tasks:
+  native-check:
+    description: Format, lint and run the native Rust test suite
+    command: cd native && cargo fmt --check && cargo clippy --locked --all-targets -- -D warnings && cargo test --locked --all-targets -- --test-threads=1
+    resources:
+      cpus: 4
+      memory: 8g
+    timeout: 90m
+  vscode-check:
+    description: Build, typecheck, lint, test and package the native VS Code extension
+    image: node:24-bookworm
+    command: npm install --global pnpm@10.33.2 && pnpm install --frozen-lockfile && pnpm build && pnpm typecheck && pnpm lint && pnpm test && pnpm --filter ./apps/vscode package:native
+    resources:
+      cpus: 4
+      memory: 8g
+    timeout: 90m
+  rust-audit:
+    description: Audit Cargo.lock for high and critical RustSec advisories
+    command: cargo install cargo-audit --locked --version 0.22.2 && cd native && cargo audit --file Cargo.lock
+  js-audit:
+    description: Audit pnpm-lock.yaml for high and critical advisories
+    image: node:24-bookworm
+    command: npm install --global pnpm@10.33.2 && pnpm audit --audit-level high
   native-linux:
     description: Build both static Linux v2 executables from this working tree
     command: bash native/scripts/build-linux.sh both

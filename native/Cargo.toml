@@ -22,7 +22,7 @@ globset = "0.4"
 hex = "0.4"
 ignore = "0.4"
 libc = "0.2"
-quick-xml = { version = "0.38", features = ["serialize"] }
+quick-xml = { version = "0.42", features = ["serialize"] }
 rand = "0.9"
 rcgen = { version = "0.14", features = ["x509-parser", "pem"] }
 regex = "1"
@@ -45,7 +45,7 @@ tokio-tungstenite = { version = "0.28", features = ["rustls-tls-webpki-roots"] }
 tokio-util = { version = "0.7", features = ["rt", "io-util"] }
 ulid = "1"
 url = "2"
-zip = { version = "4", default-features = false, features = ["deflate"] }
+zip = { version = "9", default-features = false, features = ["deflate"] }
 
 [profile.release]
 lto = "thin"

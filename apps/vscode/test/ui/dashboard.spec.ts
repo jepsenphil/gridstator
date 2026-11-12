@@ -32,6 +32,7 @@ const LIGHT_THEME = `${THEME}\n:root {
   --vscode-textLink-foreground: #005fb8; --vscode-testing-iconPassed: #237b4b; --vscode-testing-iconFailed: #b5200d;
   --vscode-editorWarning-foreground: #8a5d00; --vscode-textCodeBlock-background: #f0f0f0;
   --vscode-inputValidation-errorBackground: #fff0f0; --vscode-inputValidation-errorBorder: #b5200d;
+  --vscode-list-activeSelectionBackground: #cce8ff; --vscode-list-activeSelectionForeground: #1f1f1f;
 }`;
 
 async function open(page: Page, initial = state(), theme = THEME): Promise<void> {
@@ -199,6 +200,107 @@ test('run launcher builds workflow, Docker and command requests', async ({ page 
       request: { itemId: 'command:ws', options: { command: 'npm ci && npm test' } },
     },
   ]);
+});
+
+test('curated workflows expose standalone jobs without a whole-workflow bypass', async ({
+  page,
+}) => {
+  const entries = [
+    [
+      'staging-local.yml',
+      '🧪 Staging: Local build / publish / deploy',
+      'local',
+      'Build staging locally; publish or deploy a saved build when ready.',
+    ],
+    ['coverage.yml', '✅ Checks: Coverage', 'coverage', 'Run the test suite with coverage.'],
+    [
+      'security.yml',
+      '✅ Checks: Security scans',
+      'dependency-and-secret-scan',
+      'Scan dependencies and Git history for security findings.',
+    ],
+    [
+      'database-integration.yml',
+      '✅ Checks: Database integration',
+      'database',
+      'Run integration tests against isolated PostgreSQL and Redis.',
+    ],
+    [
+      'playwright-e2e.yml',
+      '✅ Checks: Playwright browser tests',
+      'tests',
+      'Run the general browser test suite.',
+    ],
+    [
+      'onboarding-e2e.yml',
+      '✅ Checks: Onboarding journeys',
+      'journeys',
+      'Run the full onboarding browser journeys.',
+    ],
+  ] as const;
+  for (const [theme, css] of [
+    ['dark', THEME],
+    ['light', LIGHT_THEME],
+  ] as const) {
+    for (const width of [1280, 390]) {
+      const initial = state();
+      initial.launcher.items = entries.map(([file, label, id, description]) => ({
+        id: `workflow:ws:.github/workflows/${file}`,
+        kind: 'workflow',
+        label,
+        description,
+        folder: 'ws',
+        warnings: [],
+        workflow: {
+          file: `.github/workflows/${file}`,
+          events: ['workflow_call'],
+          defaultEvent: 'workflow_call',
+          inputs: [],
+          wholeWorkflow: false,
+          jobs: [{ id, name: id, needs: [], runnable: true, warnings: [] }],
+        },
+      }));
+      initial.jobs = [];
+      initial.groups = [];
+      const beforeCuration = structuredClone(initial);
+      const previousWorkflow = beforeCuration.launcher.items[1]!.workflow!;
+      delete previousWorkflow.wholeWorkflow;
+      previousWorkflow.jobs.push({
+        id: 'publish_badge',
+        name: 'Publish badge',
+        needs: [],
+        runnable: true,
+        warnings: [],
+      });
+      await page.setViewportSize({ width, height: 1000 });
+      await open(page, beforeCuration, css);
+      await page.getByRole('tab', { name: /Run/ }).click();
+      await expect(page.locator('.run-item').filter({ hasText: /Internal/ })).toHaveCount(0);
+      await page.locator('.run-item', { hasText: '✅ Checks: Coverage' }).click();
+      await expect(page.getByLabel('Job')).toHaveValue('');
+      await push(page, { type: 'state', state: initial });
+      await expect(page.getByLabel('Job')).toHaveValue('coverage');
+      await expect(
+        page.getByRole('button', { name: 'Run job coverage', exact: true }),
+      ).toBeEnabled();
+      await expect(page.getByLabel('Job').locator('option')).toHaveCount(1);
+      await expect(
+        page.getByLabel('Job').getByRole('option', { name: /Whole workflow|publish_badge/ }),
+      ).toHaveCount(0);
+      await page.screenshot({
+        path: test.info().outputPath(`curated-${theme}-${width}.png`),
+        fullPage: true,
+      });
+      await page.getByRole('button', { name: 'Run job coverage', exact: true }).click();
+      expect((await sent(page)).filter((message) => message.type === 'launch')).toContainEqual({
+        type: 'launch',
+        request: {
+          itemId: 'workflow:ws:.github/workflows/coverage.yml',
+          options: { job: 'coverage', event: 'workflow_call', inputs: {} },
+        },
+      });
+    }
+  }
 });
 
 test('node management posts scheduling and capacity changes', async ({ page }) => {

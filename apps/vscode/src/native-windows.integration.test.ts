@@ -633,7 +633,7 @@ async function share(current = server, token = current.config.token): Promise<vo
 function context(): vscode.ExtensionContext {
   return {
     extension: {
-      id: 'gridstator.gridstator-vscode',
+      id: 'gridstator.gridstator',
       packageJSON: { version: '2.0.0-native-test' },
     },
     extensionUri: Uri.file(directory),

@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { GridstatorError, errorMessage } from '@gridstator/shared';
 import type { LogEntry } from '@gridstator/protocol';
 import { CancelledByUser, isGroup, type LaunchResult, type Launcher } from './launcher';
+import { SecretInputCancelled } from './job-secrets';
 import type { ResultsIntegration } from './results';
 import type { DashboardState, FromWebview, ToWebview, View } from './messages';
 import { mapRemotePath } from './problems';
@@ -166,7 +167,7 @@ export class Dashboard implements vscode.Disposable {
     try {
       await fn();
     } catch (err) {
-      if (err instanceof CancelledByUser) return;
+      if (err instanceof CancelledByUser || err instanceof SecretInputCancelled) return;
       const message =
         err instanceof GridstatorError && err.hint
           ? `${err.message}. ${err.hint}`

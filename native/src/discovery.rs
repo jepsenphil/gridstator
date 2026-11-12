@@ -671,7 +671,7 @@ pub fn normalize_project_config(mut config: Value) -> Result<Value> {
     let actions = config.get("actions").cloned().unwrap_or(json!({}));
     strict(
         &actions,
-        &["platforms", "dockerSocket", "secretEnv", "vars"],
+        &["platforms", "dockerSocket", "secretEnv", "vars", "launcher"],
         "actions",
     )?;
     if let Some(value) = actions.get("dockerSocket") {
@@ -681,6 +681,45 @@ pub fn normalize_project_config(mut config: Value) -> Result<Value> {
     for field in ["platforms", "vars"] {
         if let Some(value) = actions.get(field) {
             string_record(value, field, false)?;
+        }
+    }
+    if let Some(launcher) = actions.get("launcher") {
+        let workflows = launcher
+            .as_object()
+            .context("actions.launcher: expected workflow map")?;
+        let file_pattern =
+            Regex::new(r"^(?:\.github/workflows/)?[A-Za-z0-9_-][A-Za-z0-9_.-]*\.ya?ml$")
+                .expect("launcher workflow filename regex");
+        let mut seen = std::collections::BTreeSet::new();
+        for (file, entry) in workflows {
+            ensure!(
+                file_pattern.is_match(file),
+                "actions.launcher.{file}: expected workflow filename or .github/workflows path"
+            );
+            let name = file.strip_prefix(".github/workflows/").unwrap_or(file);
+            ensure!(
+                seen.insert(name),
+                "actions.launcher.{file}: workflow is listed twice"
+            );
+            strict(entry, &["description", "jobs"], "actions.launcher entry")?;
+            optional_strings(entry, &["description"])?;
+            if let Some(jobs) = entry.get("jobs") {
+                string_array(jobs, "actions.launcher.jobs")?;
+                let jobs = jobs.as_array().unwrap();
+                ensure!(
+                    !jobs.is_empty()
+                        && jobs
+                            .iter()
+                            .all(|job| !job.as_str().unwrap().trim().is_empty()),
+                    "actions.launcher.{file}.jobs: expected nonempty job IDs"
+                );
+                let unique: std::collections::BTreeSet<_> =
+                    jobs.iter().map(|job| job.as_str().unwrap()).collect();
+                ensure!(
+                    unique.len() == jobs.len(),
+                    "actions.launcher.{file}.jobs: duplicate job IDs"
+                );
+            }
         }
     }
     config["version"] = json!(1);

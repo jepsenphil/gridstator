@@ -1,6 +1,7 @@
 //! Bounded in-memory JUnit parsing and report extraction; archive contents are never materialized.
 use anyhow::{Context, Result, bail, ensure};
 use quick_xml::Reader;
+use quick_xml::XmlVersion;
 use quick_xml::events::{BytesStart, Event};
 use serde_json::{Map, Number, Value, json};
 use std::io::{Cursor, Read};
@@ -18,17 +19,17 @@ struct Element {
     text: String,
 }
 
-fn element(start: &BytesStart<'_>, reader: &Reader<&[u8]>) -> Result<Element> {
+fn element(start: &BytesStart<'_>) -> Result<Element> {
     let mut attributes = Map::new();
     for attribute in start.attributes() {
         let attribute = attribute?;
         attributes.insert(
-            String::from_utf8(attribute.key.as_ref().to_vec())?,
-            json!(attribute.decode_and_unescape_value(reader.decoder())?),
+            attribute.key.as_ref().to_owned(),
+            json!(attribute.normalized_value(XmlVersion::Implicit1_0)?),
         );
     }
     Ok(Element {
-        name: String::from_utf8(start.name().as_ref().to_vec())?,
+        name: start.name().as_ref().to_owned(),
         attributes,
         ..Default::default()
     })
@@ -50,16 +51,12 @@ fn parse_xml(xml: &str) -> Result<Element> {
                     nodes <= MAX_XML_NODES && stack.len() <= MAX_XML_DEPTH,
                     "JUnit XML exceeds structural limits"
                 );
-                stack.push(element(&start, &reader)?);
+                stack.push(element(&start)?);
             }
             Event::Empty(start) => {
                 nodes += 1;
                 ensure!(nodes <= MAX_XML_NODES, "JUnit XML exceeds node limit");
-                stack
-                    .last_mut()
-                    .unwrap()
-                    .children
-                    .push(element(&start, &reader)?);
+                stack.last_mut().unwrap().children.push(element(&start)?);
             }
             Event::End(_) => {
                 ensure!(stack.len() > 1, "Unmatched JUnit XML closing tag");
@@ -70,18 +67,18 @@ fn parse_xml(xml: &str) -> Result<Element> {
                 .last_mut()
                 .unwrap()
                 .text
-                .push_str(&text.xml_content()?),
+                .push_str(&text.xml10_content()),
             Event::CData(text) => stack
                 .last_mut()
                 .unwrap()
                 .text
-                .push_str(&text.xml_content()?),
+                .push_str(&text.xml10_content()),
             Event::GeneralRef(reference) => {
                 if let Some(character) = reference.resolve_char_ref()? {
                     stack.last_mut().unwrap().text.push(character);
                 } else {
-                    let name = reference.decode()?;
-                    let value = quick_xml::escape::resolve_predefined_entity(&name)
+                    let name = reference.as_ref();
+                    let value = quick_xml::escape::resolve_predefined_entity(name)
                         .with_context(|| format!("Unknown XML entity &{name};"))?;
                     stack.last_mut().unwrap().text.push_str(value);
                 }
@@ -320,7 +317,7 @@ pub fn xml_documents(name: &str, bytes: &[u8]) -> Result<Vec<String>> {
                 entry.size() <= remaining,
                 "Archive expands beyond report size limit"
             );
-            let xml = entry.name().ends_with(".xml");
+            let xml = entry.name()?.ends_with(".xml");
             let content = bounded_read(entry, &mut remaining)?;
             if xml {
                 documents.push(String::from_utf8_lossy(&content).into_owned());

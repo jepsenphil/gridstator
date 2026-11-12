@@ -72,5 +72,5 @@ await writeFile(
   ) + '\n',
 );
 await cp(join(repoRoot, 'LICENSE'), join(out, 'LICENSE'));
-await cp(join(repoRoot, 'README.md'), join(out, 'README.md'));
+await cp(join(repoRoot, 'docs/legacy/v1/README.md'), join(out, 'README.md'));
 process.stdout.write(`Bundled ${main}\n`);

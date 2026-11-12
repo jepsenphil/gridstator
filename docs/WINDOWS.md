@@ -1,84 +1,20 @@
-# Windows machines (WSL2)
+# Windows and WSL2
 
-A Windows PC contributes compute by running the Gridstator agent inside **WSL2**, where Docker
-runs Linux containers natively. This setup was validated on Ubuntu 24.04 under WSL2 with systemd
-enabled and mirrored networking. The agent only makes outbound connections, so no Windows firewall
-rules are needed for a worker.
+The native CLI/controller/worker targets Linux and macOS. On Windows, the first v2 worker path runs the **Linux native binary inside WSL2**. The [desktop companion](../apps/desktop/README.md) has a native Windows window and WSL worker controls, but remains a separate development preview with outstanding OS qualification.
 
-## 1. WSL2 with systemd
+## Worker inside WSL2
 
-In PowerShell (as administrator) install Ubuntu if you have not already:
+1. Install an Ubuntu WSL2 distribution with systemd enabled. Ensure Docker Engine in that distribution, or Docker Desktop's WSL integration, is usable by the WSL account that will run Gridstator.
+2. After a verified v2 release exists, install the **Linux archive matching the WSL architecture** from [INSTALL.md](INSTALL.md), inside WSL. For development, build the native CLI there from source.
+3. On the controller, issue a one-use join token. In WSL, run the displayed `gridstator agent join ...` command with the controller URL and pinned CA fingerprint.
+4. Inspect `gridstator agent install-service --print` and install the user service. Run `gridstator doctor` and `gridstator nodes` to verify Docker, connectivity and admission capacity.
 
-```powershell
-wsl --install -d Ubuntu-24.04
-```
+A WSL worker dials the controller, so it needs no incoming worker port. WSL memory and CPU limits can be lower than the Windows host's; check Docker's actual capacity and leave a host reservation. A systemd user service and WSL sign-in lifecycle must be validated for the machine where it runs.
 
-Inside Ubuntu, make sure systemd is enabled (current WSL versions enable it by default):
+## VS Code
 
-```bash
-cat /etc/wsl.conf          # should contain:  [boot]  systemd=true
-systemctl is-system-running
-```
+Install the native extension and CLI on the **workspace side** of a Remote WSL window. Opening a Windows-local VS Code window against a Windows folder does not make the Linux worker binary available on that host. For local Windows worker controls, use the separate desktop companion preview.
 
-If you change `/etc/wsl.conf`, run `wsl --shutdown` in PowerShell and open Ubuntu again.
+## Migrating from v1
 
-## 2. Give WSL enough memory
-
-WSL2 uses half of the Windows RAM by default. To let jobs use more, create
-`%UserProfile%\.wslconfig`:
-
-```ini
-[wsl2]
-memory=48GB
-processors=16
-# Optional: use the Windows machine's LAN address directly
-networkingMode=mirrored
-```
-
-then run `wsl --shutdown` and reopen Ubuntu. `gridstator nodes show <name>` shows what the agent sees.
-
-## 3. Docker Engine inside WSL
-
-Install Docker Engine in the Ubuntu distribution (Docker's apt repository; see
-<https://docs.docker.com/engine/install/ubuntu/>), then:
-
-```bash
-sudo usermod -aG docker "$USER"     # then close and reopen the Ubuntu window
-docker run --rm hello-world
-```
-
-Docker Desktop with WSL integration also works; the agent uses whichever `docker` the WSL user can run.
-
-## 4. Node.js, Gridstator and the agent
-
-Follow [INSTALL.md](INSTALL.md) steps 2 and 4 inside Ubuntu:
-
-```bash
-gridstator agent join https://<controller>:7300 --token gsj_… --fingerprint sha256:… --name windows-pc
-sudo gridstator agent install-service --system
-```
-
-## 5. Keep WSL running
-
-WSL stops a distribution some time after its last window or process ends, which takes the agent
-offline. Options:
-
-- Keep an Ubuntu terminal open while the PC should be a worker.
-- Or start WSL at sign-in with a scheduled task: Task Scheduler → *Create Task* → trigger *At log
-  on* → action `wsl.exe` with arguments `-d Ubuntu-24.04 --exec sleep infinity`.
-
-The controller marks the node offline when WSL stops; queued work waits or goes to other nodes, and
-the node comes back online automatically when WSL starts again.
-
-## Running the controller on Windows
-
-Prefer a Linux machine (or the laptop where your code lives) for the controller. If it must run in
-WSL, use `networkingMode=mirrored` so other machines can reach port 7300, and allow the port in
-the Windows firewall (`New-NetFirewallRule -DisplayName Gridstator -Direction Inbound -Protocol TCP
--LocalPort 7300 -Action Allow -RemoteAddress LocalSubnet`).
-
-## VS Code on Windows with Remote SSH
-
-The common setup: VS Code runs on Windows and connects to a Linux machine with Remote SSH. Install
-the Gridstator extension **in the remote window** (it then runs on the Linux side, next to your code
-and your `gridstator login`). Nothing needs to be installed on Windows itself for this.
+The v1 Windows/WSL Node instructions are [archived](legacy/v1/WINDOWS.md). Native v2 uses new data, credentials and service names. Follow the [cutover and recovery runbook](../native/CUTOVER.md) before changing a working v1 cluster. Actual WSL2 release qualification is tracked in the [v2 progress report](V2_PROGRESS.md).

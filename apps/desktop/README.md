@@ -13,6 +13,11 @@ This is an unsigned development preview. Actual macOS and Windows sign-in, tray 
 qualification remains outstanding. See [implementation evidence](../../docs/DESKTOP_COMPANION_PROGRESS.md)
 and the [acceptance plan](../../docs/DESKTOP_COMPANION_PLAN.md).
 
+![Linux desktop companion connected to an isolated demo worker](../../docs/images/desktop-preview-real.png)
+
+The image is a real Linux debug window against a disposable cluster. [More captures and fixture
+labels](../../docs/SCREENSHOTS.md) keep it separate from platform release evidence.
+
 ## Installers
 
 The companion is distributed as an installer for each desktop OS. Portable executables and ZIPs

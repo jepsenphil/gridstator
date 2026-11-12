@@ -38,7 +38,9 @@ import {
 } from '@gridstator/snapshot';
 import type { LaunchItem, LaunchOptions, LaunchRequest } from './messages';
 import type { ClusterState } from './state';
+import type { JobSecrets } from './job-secrets';
 import { effectiveClientConfigPath, NativeCancelledError, type NativeCli } from './native';
+import { assertWorkflowLaunch, launcherWorkflows } from './workflow-launcher';
 
 const execFileAsync = promisify(execFile);
 
@@ -93,7 +95,8 @@ export class Launcher implements vscode.Disposable {
   constructor(
     private readonly state: ClusterState,
     private readonly log: vscode.OutputChannel,
-    private readonly native?: NativeCli,
+    private readonly native: NativeCli | undefined,
+    private readonly secrets: JobSecrets,
   ) {
     for (const pattern of [
       '**/gridstator.{yml,yaml}',
@@ -106,6 +109,45 @@ export class Launcher implements vscode.Disposable {
       this.watchers.push(w, w.onDidChange(kick), w.onDidCreate(kick), w.onDidDelete(kick));
     }
     this.watchers.push(vscode.workspace.onDidChangeWorkspaceFolders(() => this.scheduleRefresh()));
+  }
+
+  async clearSavedSecrets(): Promise<void> {
+    const projects = [...this.projects.values()];
+    const project =
+      projects.length === 1
+        ? projects[0]
+        : (
+            await vscode.window.showQuickPick(
+              projects.map((project) => ({
+                label: project.folder.name,
+                description: project.root,
+                project,
+              })),
+              { title: 'Clear saved job secrets', placeHolder: 'Choose a project' },
+            )
+          )?.project;
+    if (!project) return;
+    const names = [
+      ...new Set([
+        ...(project.config.actions.secretEnv ?? []),
+        ...Object.values(project.config.tasks).flatMap((task) => task.secretEnv ?? []),
+        ...Object.values(project.config.builds).flatMap((build) => build.secretEnv ?? []),
+      ]),
+    ];
+    if (!names.length) {
+      void vscode.window.showInformationMessage('This project has no configured job secrets.');
+      return;
+    }
+    const selected = await vscode.window.showQuickPick(names, {
+      title: 'Clear saved job secrets',
+      canPickMany: true,
+      placeHolder: 'Choose secrets to remove; the next run will request them again',
+    });
+    if (!selected?.length) return;
+    await this.secrets.clear(project.root, selected);
+    void vscode.window.showInformationMessage(
+      'Saved secrets cleared. The next run will request them again.',
+    );
   }
 
   private scheduleRefresh(): void {
@@ -208,13 +250,17 @@ export class Launcher implements vscode.Disposable {
         `Nothing to run for ${request.itemId}; refresh the launcher`,
       );
     const project = this.project(item.folder);
+    assertWorkflowLaunch(item, request.options, project.config.actions);
     await this.handleUnsavedFiles(project.root);
+    const names = configuredSecretNames(item, project.config);
+    assertSecretEnvironment(item, request.options, project.config, names);
+    const secretEnv = await this.secrets.resolve(project.root, names);
     if (this.native?.enabled) {
       const selected = item;
       return this.nativeProgress(async (signal) => {
         this.state.requireClient();
         const clusterId = this.state.connection.clusterId;
-        const spec = buildSpec(selected, request.options, project, '');
+        const spec = buildSpec(selected, request.options, project, '', undefined, secretEnv);
         const taskShards =
           selected.kind === 'task' ? project.config.tasks[selected.task!.name]?.shards : undefined;
         const result = await this.native!.execute<LaunchResult>(
@@ -263,7 +309,7 @@ export class Launcher implements vscode.Disposable {
         for (const w of captured.warnings) this.log.appendLine(`  ! ${w.path}: ${w.message}`);
         progress.report({ message: 'uploading snapshot…' });
         await uploadSnapshot(captured, client);
-        const spec = buildSpec(item, request.options, project, captured.id, git);
+        const spec = buildSpec(item, request.options, project, captured.id, git, secretEnv);
         progress.report({ message: 'submitting…' });
         const origin: JobOrigin = {
           root: project.root,
@@ -312,6 +358,19 @@ export class Launcher implements vscode.Disposable {
       );
     }
     const project = this.project(vscode.workspace.workspaceFolders?.[0]?.name ?? '');
+    if (job.spec.kind === 'actions' && project.config.actions.launcher !== undefined) {
+      const spec = job.spec;
+      const item = this.items.find(
+        (candidate) =>
+          candidate.folder === project.folder.name && candidate.workflow?.file === spec.workflow,
+      );
+      if (!item)
+        throw new GridstatorError(
+          'BAD_REQUEST',
+          'This workflow is not available in the local launcher. Choose a workflow from Run.',
+        );
+      assertWorkflowLaunch(item, { job: spec.job }, project.config.actions);
+    }
     const client = this.state.requireClient();
     await this.handleUnsavedFiles(project.root);
     if (this.native?.enabled) {
@@ -466,12 +525,16 @@ async function discoverItems(
       },
     });
   }
-  for (const w of discovered?.workflows ?? (await discoverWorkflows(root))) {
+  const workflows = discovered?.workflows ?? (await discoverWorkflows(root));
+  for (const { workflow: w, description, wholeWorkflow } of launcherWorkflows(
+    workflows,
+    config.actions,
+  )) {
     items.push({
       id: `workflow:${folder}:${w.file}`,
       kind: 'workflow',
       label: w.name,
-      description: w.file.split('/').pop() ?? w.file,
+      description: description ?? w.file.split('/').pop() ?? w.file,
       folder,
       warnings: w.parseError ? [`Cannot parse: ${w.parseError}`] : w.warnings,
       workflow: {
@@ -479,6 +542,7 @@ async function discoverItems(
         events: w.events,
         defaultEvent: w.defaultEvent,
         inputs: w.dispatchInputs,
+        ...(wholeWorkflow ? {} : { wholeWorkflow: false }),
         jobs: w.jobs.map((j) => ({
           id: j.id,
           name: j.name,
@@ -556,20 +620,50 @@ async function gitContext(
   };
 }
 
-function secretsFrom(names: readonly string[]): Record<string, string> {
-  const out: Record<string, string> = {};
+/** Only secrets declared for this launch item may be forwarded. */
+export function configuredSecretNames(item: LaunchItem, config: ProjectConfig): string[] {
+  switch (item.kind) {
+    case 'task':
+      return config.tasks[item.task!.name]?.secretEnv ?? [];
+    case 'workflow':
+      return config.actions.secretEnv ?? [];
+    case 'build':
+      return config.builds[item.build!.name]?.secretEnv ?? [];
+    default:
+      return [];
+  }
+}
+
+function assertSecretEnvironment(
+  item: LaunchItem,
+  options: LaunchOptions,
+  config: ProjectConfig,
+  names: readonly string[],
+): void {
+  const taskEnv = item.kind === 'task' ? config.tasks[item.task!.name]?.env : undefined;
   for (const name of names) {
-    const v = process.env[name];
-    if (v === undefined) {
+    if (Object.hasOwn(options.env ?? {}, name) || Object.hasOwn(taskEnv ?? {}, name)) {
       throw new GridstatorError(
         'BAD_REQUEST',
-        `Secret ${name} is not set in VS Code's environment`,
+        `Secret ${name} must not be in the plain environment`,
         {
-          hint: 'Set it in the environment VS Code (or the Remote SSH server) starts with, or run this job from the CLI.',
+          hint: 'Remove it from Environment or task env. Gridstator loads configured secrets securely when you run.',
         },
       );
     }
-    out[name] = v;
+  }
+}
+
+function secretsFrom(
+  names: readonly string[],
+  values: Record<string, string>,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const name of names) {
+    if (!Object.hasOwn(values, name) || !values[name]) {
+      throw new GridstatorError('BAD_REQUEST', `Secret ${name} has not been resolved`);
+    }
+    Object.defineProperty(out, name, { value: values[name], enumerable: true, configurable: true });
   }
   return out;
 }
@@ -586,8 +680,11 @@ export function buildSpec(
   project: Pick<Project, 'config' | 'workdir' | 'root'>,
   snapshot: string,
   git?: { branch?: string; remoteUrl?: string; headSha?: string },
+  secretEnv: Record<string, string> = {},
 ): JobSpecInput {
   const config = project.config;
+  assertWorkflowLaunch(item, options, config.actions);
+  assertSecretEnvironment(item, options, config, configuredSecretNames(item, config));
   const defaults = config.defaults.resources ?? {};
   const memoryMb =
     options.memoryGb !== undefined
@@ -626,7 +723,7 @@ export function buildSpec(
         image: options.image ?? task.image ?? config.defaults.image ?? DEFAULT_IMAGE,
         command,
         env: { ...task.env, ...common.env },
-        secretEnv: secretsFrom(task.secretEnv ?? []),
+        secretEnv: secretsFrom(task.secretEnv ?? [], secretEnv),
         workdir: task.workdir ? rel(task.workdir) : '.',
         artifacts: [...new Set(artifacts)],
         ...(task.timeout ? { timeoutSeconds: Math.ceil(parseDuration(task.timeout) / 1000) } : {}),
@@ -671,7 +768,7 @@ export function buildSpec(
         vars: config.actions.vars ?? {},
         platforms: config.actions.platforms ?? {},
         dockerSocket: config.actions.dockerSocket ?? false,
-        secretEnv: secretsFrom(config.actions.secretEnv ?? []),
+        secretEnv: secretsFrom(config.actions.secretEnv ?? [], secretEnv),
         ...(git ? { git } : {}),
       };
     }
@@ -704,7 +801,7 @@ export function buildSpec(
         output: options.output ?? b.output ?? 'load',
         buildArgs: { ...b.buildArgs, ...options.buildArgs },
         platforms: b.platforms ?? [],
-        secretEnv: secretsFrom(b.secretEnv ?? []),
+        secretEnv: secretsFrom(b.secretEnv ?? [], secretEnv),
       };
     }
   }

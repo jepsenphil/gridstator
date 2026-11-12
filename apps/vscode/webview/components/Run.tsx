@@ -29,7 +29,11 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
   const [cpus, setCpus] = useState('');
   const [memory, setMemory] = useState('');
   const [env, setEnv] = useState('');
-  const [job, setJob] = useState('');
+  const [job, setJob] = useState(() =>
+    item.workflow?.wholeWorkflow === false
+      ? (item.workflow.jobs.find((candidate) => candidate.runnable)?.id ?? '')
+      : '',
+  );
   const [event, setEvent] = useState(item.workflow?.defaultEvent ?? 'push');
   const [inputs, setInputs] = useState<Record<string, string>>(() =>
     Object.fromEntries(
@@ -52,8 +56,16 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
 
   const stages = item.dockerfile?.stages ?? [];
   const jobs = item.workflow?.jobs ?? [];
-  const selectedJob = jobs.find((j) => j.id === job);
-  const runnable = !selectedJob || selectedJob.runnable;
+  const selectedJobId =
+    item.workflow?.wholeWorkflow === false &&
+    !jobs.some((candidate) => candidate.id === job && candidate.runnable)
+      ? (jobs.find((candidate) => candidate.runnable)?.id ?? '')
+      : job;
+  const selectedJob = jobs.find((j) => j.id === selectedJobId);
+  const runnable =
+    item.workflow?.wholeWorkflow === false
+      ? selectedJob?.runnable === true
+      : !selectedJob || selectedJob.runnable;
 
   const launch = () => {
     const options: LaunchOptions = {
@@ -71,7 +83,7 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
     };
     if (item.kind === 'workflow')
       Object.assign(options, {
-        ...(job ? { job } : {}),
+        ...(selectedJobId ? { job: selectedJobId } : {}),
         event,
         inputs:
           event === 'workflow_dispatch'
@@ -161,8 +173,10 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
         <>
           <label className="field">
             <span className="label">Job</span>
-            <select aria-label="Job" value={job} onChange={(e) => setJob(e.target.value)}>
-              <option value="">Whole workflow ({jobs.length} jobs, dependencies in order)</option>
+            <select aria-label="Job" value={selectedJobId} onChange={(e) => setJob(e.target.value)}>
+              {item.workflow?.wholeWorkflow !== false ? (
+                <option value="">Whole workflow ({jobs.length} jobs, dependencies in order)</option>
+              ) : null}
               {jobs.map((j) => (
                 <option key={j.id} value={j.id} disabled={!j.runnable}>
                   {j.id}
@@ -290,7 +304,7 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
       <fieldset className="fieldset">
         <legend>Where</legend>
         <div className="row">
-          <label className="field grow">
+          <label className="field grow worker-field">
             <span className="label">Worker</span>
             <select aria-label="Worker" value={node} onChange={(e) => setNode(e.target.value)}>
               <option value="">Automatic (best available)</option>
@@ -383,8 +397,8 @@ function Form({ item, data, busy }: { item: LaunchItem; data: DashboardState; bu
           disabled={!runnable || data.connection.status !== 'connected'}
         >
           {item.kind === 'workflow'
-            ? job
-              ? `Run job ${job}`
+            ? selectedJobId
+              ? `Run job ${selectedJobId}`
               : 'Run workflow'
             : item.kind === 'dockerfile' || item.kind === 'build'
               ? 'Build'

@@ -3,6 +3,19 @@
 All notable changes are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Native v2 architecture, installation, security, release and screenshot guides, with archived v1 documentation.
+- Repository Run tasks and CI checks for native builds, VS Code packaging and dependency security audits.
+- Manual native release preparation for the `gridstator.gridstator` Marketplace extension with trusted publishing.
+
+### Changed
+
+- Legacy v1 tags produce GitHub CLI recovery archives without publishing to npm or the Marketplace.
+- Updated native XML and ZIP dependencies to clear high and critical RustSec advisories.
+
 ## [0.1.0] - 2026-11-09
 
 First public release.

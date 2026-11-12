@@ -18,10 +18,11 @@ try {
   const nativeVersion = process.env.RELEASE_VERSION || cargo.match(/^version = "([^"]+)"/m)?.[1];
   if (!nativeVersion || !/^2\.\d+\.\d+(?:[-+][\w.-]+)?$/.test(nativeVersion))
     throw new Error('Native VSIX requires a v2 release version');
+  const prerelease = nativeVersion.includes('-');
   // VS Code uses its prerelease channel rather than semver prerelease identifiers.
   manifest.version = nativeVersion.split(/[-+]/)[0];
-  manifest.displayName = 'Gridstator (Native v2 Preview)';
-  manifest.description = 'Set up or connect to Gridstator native v2 clusters from VS Code.';
+  manifest.displayName = prerelease ? 'Gridstator (Native v2 Preview)' : 'Gridstator';
+  manifest.description = 'Run builds, tests, and workflows on your Gridstator native cluster.';
   delete manifest.scripts;
   delete manifest.dependencies;
   delete manifest.devDependencies;
@@ -36,10 +37,7 @@ try {
   manifest.contributes.configuration.properties['gridstator.configPath'].markdownDescription =
     'Path to the shared native v2 CLI login on this workspace host. Empty uses gridstator-v2/client.json under the platform configuration directory.';
   await writeFile(join(stage, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
-  await writeFile(
-    join(stage, 'README.md'),
-    '# Gridstator native v2 preview\n\nOpen Gridstator to set up a controller on the workspace host or connect to an existing one. Setup installs a verified native CLI for this account if it is missing, creates a background user service with a local worker, and signs in automatically. In SSH/WSL windows, setup runs on the workspace host. A local worker waits for Docker when it is unavailable.\n\nExisting CLI logins and controllers owned by this account are reused automatically. Explicit connection settings remain authoritative; existing native executables are never replaced during first-run setup. Manual installation remains available: set `gridstator.nativeCli.path` to the absolute native CLI path or put it on the host PATH. The CLI must support `bridge-v1` and `local-setup-v1` for first-run controller setup.\n\nThis preview delegates discovery, snapshots, submissions and local administration to Rust. It uses the separate `gridstator-v2` login by default. Create a fresh native cluster; v1 credentials and state remain separate. Docker, buildx and act/git remain worker tools. Node is supplied by VS Code for the editor UI and live API client.\n\nNative mode is required in this package. It includes no legacy JavaScript CLI helper. Full cross-platform release validation remains open.\n',
-  );
+  await copyFile(join(root, 'README.md'), join(stage, 'README.md'));
   await copyFile(join(root, 'LICENSE.md'), join(stage, 'LICENSE.md'));
   const built = await execute(
     process.execPath,
@@ -59,7 +57,7 @@ try {
     [
       require.resolve('@vscode/vsce/vsce'),
       'package',
-      '--pre-release',
+      ...(prerelease ? ['--pre-release'] : []),
       '--no-dependencies',
       '--out',
       output,

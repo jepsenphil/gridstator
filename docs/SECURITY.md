@@ -1,150 +1,43 @@
-# Gridstator Security
+# Security model
 
-Gridstator runs developer code on other machines. This document states what it protects against,
-what it explicitly does not, and the controls that implement those guarantees.
+Gridstator executes developer-supplied code on trusted worker machines. A controller receives source snapshots, job secrets, logs and artifacts. Treat controller data, worker accounts and Docker access as sensitive.
 
-**Intended deployment:** one person or a small trusted team on a private LAN. Gridstator is not a
-multi-tenant CI service and must not be exposed to the internet.
+## Supported environment
 
-## 1. Trust model
+Native v2 targets a trusted personal or small-team LAN. It is not a multi-tenant execution service or an internet-facing controller. Anyone who can submit a job can cause code to run on workers, subject to the permissions of the worker account and Docker engine. Container limits reduce accidental resource exhaustion; Docker is not a security boundary for hostile users.
 
-| Party | Trust |
-|---|---|
-| Operators (holders of client tokens) | Trusted. Anyone who can submit jobs can run arbitrary code on every worker that accepts their jobs, and can read any snapshot. |
-| Admins (client tokens with role `admin`) | Trusted; can additionally mint and revoke tokens. |
-| Agents | Trusted to execute jobs and report honestly. A compromised worker can read the source of jobs sent to it and forge results for them. |
-| Controller host | Fully trusted; holds the CA key, all token hashes, all snapshots, logs and job secrets. |
-| Code inside jobs | **Semi-trusted.** It is your own project and its dependencies. Containers limit accidents, not determined attackers (see §3). |
-| Other devices on the LAN | Untrusted. They must not be able to run jobs, read source, or impersonate the controller. |
+The [native release ledger](../native/contracts/parity-ledger.json) records platform and security evidence. Until its required gates pass, v2 is a development preview. The [v1 security model](legacy/v1/SECURITY.md) describes the separate Node release.
 
-## 2. Threats and controls
+## Boundaries and controls
 
-### 2.1 Network attacker on the LAN
+| Boundary | Control |
+| --- | --- |
+| Client or worker to controller | TLS with a self-generated cluster CA, fingerprint pinning, named tokens, role checks and revocation |
+| Worker network | Worker dials outbound; no inbound worker port is required |
+| Snapshot upload | Content digests, manifest checks, path and archive validation, size bounds and safe materialization |
+| Job execution | Docker resource limits, ownership labels, cleanup and no privileged container mode by default |
+| Release and update | Per-platform checksums, manifest identity, signed/notarized Mac release gate, staged activation and rollback |
 
-- **All traffic is TLS**, including loopback. `controller init` generates an ECDSA P-256 cluster CA
-  (10-year validity) and a server certificate signed by it.
-- **Pinning:** login and join commands include the CA's SHA-256 fingerprint. The client downloads
-  `/v1/pki/ca.pem`, refuses to continue unless the fingerprint matches, stores the CA, and from then
-  on trusts **only** that CA (Node's default public roots are not used). An attacker without the CA
-  key cannot impersonate the controller. Hostname checking is disabled because the pinned private CA
-  is the trust anchor and LAN IP addresses change.
-- **No unauthenticated execution endpoints.** Only `GET /v1/health` (version only) and the public CA
-  certificate are served without a token.
-- **Agents never listen** on the network. Workers only make outbound connections.
-- **Docker's TCP API is never used or exposed.** Agents use the local `docker` CLI and socket.
+The controller is the source of truth for job state. Workers report completion and replay durable results after reconnecting. A controller administrator can issue or revoke credentials and publish verified builds; restrict that role to trusted maintainers.
 
-### 2.2 Credential theft and misuse
+## Source and secrets
 
-- Tokens are 256-bit random values with type prefixes (`gsc_` client, `gsj_` join, `gsa_` agent).
-  The controller stores only SHA-256 hashes, compared in constant time.
-- Join tokens expire (default 24 h) and are single-use by default.
-- Each agent has its own credential; removing a node revokes it. Client tokens are named and can be
-  revoked individually; every job records the name of the token that submitted it.
-- Credentials live in files with mode 0600 (`client.json`, `agent.json`, the controller's `pki/`
-  and database); data directories are created with mode 0700.
-- Tokens are never accepted in URLs or query strings, and are never logged. Fastify request logging
-  redacts the `authorization` header.
+Snapshots include saved tracked and untracked files while respecting project ignore rules. Common secret files such as `.env` and private keys are excluded by default, but a user can still put secrets in other files or deliberately allow them. Review `gridstator snapshot --dry-run` before sending a sensitive tree.
 
-### 2.3 Source and secret leakage
+A job's `secretEnv` names are resolved on the client. The CLI reads values from its shell environment. In a trusted VS Code workspace, the extension reads its workspace-host environment or project-scoped VS Code SecretStorage and asks for missing values with masked prompts. Values are not stored in workspace settings, webview state or the snapshot. Plain environment fields must not duplicate configured secret names. The extension's **Clear Saved Job Secrets** command removes selected saved values. The workspace-host account and VS Code manage local secret storage; values do not sync to another host.
 
-- **Snapshot excludes:** `.git/`, `node_modules/`, everything git ignores, and secret patterns even
-  when tracked: `.env`, `.env.*` (except `.env.example`, `.env.sample`, `.env.template`,
-  `.env.defaults`), `*.pem`, `*.key`, `*.p12`, `*.pfx`, `*.jks`, `*.keystore`, `id_rsa*`,
-  `id_ecdsa*`, `id_ed25519*`, `.netrc`, `.secrets`, `.pypirc`, `.ssh/`, `.aws/`, `.docker/config.json`, and
-  `.npmrc` files that contain auth tokens. Each exclusion is reported as a warning. A project can
-  re-admit specific files with `snapshot.allowSecrets` in `gridstator.yml`.
-- **Secrets in jobs:** values passed with `--secret-env NAME` are read from the client environment,
-  never placed on any command line (the agent passes environment through a 0600 `--env-file` that is
-  deleted right after `docker create`), masked as `***` in streamed logs, and redacted from every API
-  response. They are stored in the controller database so that retries reproduce the original job;
-  protect the controller host accordingly.
-- Snapshots and logs are retained only as long as configured (see ARCHITECTURE §7).
+Once submitted, job secrets are retained by the controller so retries can reproduce the run. They are redacted from streamed logs and API responses, but the controller's database and backups must be protected. Keep admin tokens and join commands out of shared logs, screenshots and issue reports.
 
-### 2.4 Malicious or malformed snapshot content
+## Supply chain and pull requests
 
-- Manifest paths are validated on the controller and the agent: relative, normalised, no `..`
-  segments, no absolute or drive-letter paths, no NUL or backslashes, no duplicates, and no path
-  nested under a file or symlink entry.
-- Symlinks whose target is absolute or resolves outside the snapshot root are excluded at capture
-  and rejected at materialization.
-- Every blob is verified against its SHA-256 digest on upload (controller) and on download (agent).
-- The default staging path never writes snapshot content to the worker's host filesystem: the agent
-  builds a tar from validated entries and streams it into a per-job Docker volume. The host-directory
-  extractor (used to stage builds and workflows) creates a fresh directory, refuses to follow or overwrite
-  existing entries, and writes with `O_EXCL`.
+[CI](../.github/workflows/ci.yml) builds and tests the extension and legacy reference; [native CI](../.github/workflows/native.yml) covers four actual build hosts. [Security CI](../.github/workflows/security.yml) scans Rust, JavaScript/TypeScript and Actions with CodeQL, reviews changed dependencies, and audits the Node and Rust lockfiles. High and critical dependency findings fail PR checks. Scanner failures also fail. Any exception must identify the advisory, affected version, exposure analysis, owner and expiry in the PR or a tracked issue; do not silently suppress a scanner. [Dependabot](../.github/dependabot.yml) covers npm, Cargo and Actions.
 
-### 2.5 Interference with the worker host
+The 2026-11-12 lockfile triage upgraded direct `quick-xml` and `zip` dependencies to clear high/critical RustSec findings. The remaining advisory is a moderate `minimatch` issue in the development-only ESLint dependency; the configured high/critical threshold does not suppress its report. RustSec also warns that `rustls-pemfile` and `unsafe-libyaml` are unmaintained. Review these findings at each dependency update and before the stable release.
 
-- Gridstator only stops, removes or garbage-collects Docker objects labelled
-  `io.gridstator.managed=true` **and** `io.gridstator.node=<this node>`. Unrelated containers are
-  never touched.
-- Containers run without `--privileged`, with `--security-opt no-new-privileges`, a PID limit, CPU
-  and memory limits, and `--init` so the whole process tree is signalled on stop.
-- Mounts are fixed: the job's workspace volume and the shared package-cache volume. Host paths and
-  the Docker socket are **not** mountable through the job API.
-- Per-node CPU/RAM reservations and live available-memory checks keep jobs from starving interactive
-  work on development machines.
+Repository administrators should enable dependency alerts, secret scanning, push protection and required PR checks. These settings are outside the source tree; the [release checklist](RELEASING.md) records how to verify them.
 
-### 2.6 Docker builds
+The [v2 publish workflow](../.github/workflows/native-publish.yml) is manual and gated by the parity ledger. Marketplace publishing uses GitHub OIDC trusted publishing. The owner must register the `gridstator` publisher and its workflow trust policy before publication. No long-lived Marketplace PAT is needed for the v2 path.
 
-- Build secrets (`--secret-env`) reach BuildKit as `--secret id=NAME,env=NAME`: the value is only in
-  the buildx process environment and is available to `RUN --mount=type=secret` steps, never written
-  to an image layer, the command line or the log (it is masked like any secret).
-- Build arguments are **not** secret: they can end up in image history. Use secrets for credentials.
-- Dockerfile and context paths must resolve inside the staged snapshot (symlinks are followed and
-  checked); builds labelled with the job ID; the staging directory is removed after the build.
-- Builds run inside the worker's Docker daemon, so per-job CPU/memory limits are a scheduling
-  reservation, not an enforced cgroup limit.
+## Report a vulnerability
 
-### 2.7 GitHub Actions workflows (act)
-
-Workflows are code that runs on your workers, including third-party actions that act downloads from
-GitHub. Run only workflows you would run on your own machine; Gridstator never triggers workflows
-from external events (pushes, pull requests). Defaults chosen to limit the blast radius:
-
-- The worker's Docker socket is **not** mounted into workflow containers unless the job opts in
-  (`dockerSocket` / `--docker-socket`), and act's container-options policy then restricts
-  workflow-supplied container options and host-path volumes. With the socket mounted, a workflow is
-  root-equivalent on the worker.
-- Secrets, vars and environment are written to private 0600 files for act and deleted afterwards;
-  act never reads `.secrets`, `.vars` or `.env` from the project (and `.secrets` is excluded from
-  snapshots like `.env`). act masks secret values in output and Gridstator masks them again.
-- act's cache server is bound to `127.0.0.1` (act binds it to the LAN address by default) and its
-  artifact server listens on loopback on a per-job port.
-- act's containers are labelled with the job and node and removed by Gridstator if act leaves any
-  behind.
-- `GITHUB_TOKEN` is only available if you forward one explicitly (`--secret-env GITHUB_TOKEN`).
-
-### 2.8 VS Code extension
-
-- The dashboard webview runs with a strict Content Security Policy (scripts only with a per-load
-  nonce, local resources only) and has no network access to the controller: every action is a typed
-  message handled by the extension.
-- The extension uses the same client configuration file as the CLI (mode 0600) and the same CA
-  pinning; sign-in verifies the CA fingerprint before saving anything.
-- Secrets named in `gridstator.yml` are read from the environment of the VS Code (or Remote SSH)
-  server process; they are not stored by the extension.
-
-## 3. What Gridstator does not protect against
-
-- **Containers are not a sandbox for hostile code.** Docker shares the host kernel and the Docker
-  daemon is root-equivalent. Do not run untrusted code (for example, workflows from public pull
-  requests) on your machines. Gridstator never triggers execution automatically from external events.
-- **Operators are all-powerful by design.** There is no per-project authorization in the initial
-  release.
-- **A compromised controller host compromises the cluster** (it can send any job to any worker).
-- **Denial of service on the LAN** is out of scope.
-- **Network egress from jobs is not restricted**; jobs can reach your LAN like any container.
-
-## 4. Operational guidance
-
-- Keep the controller port reachable from your LAN only. Do not forward it through your router.
-- Rotate a token by creating a new one and revoking the old one (`gridstator token revoke`).
-- If a machine is lost, `gridstator nodes remove <node>` revokes its credential immediately.
-- To rotate the CA, re-run `gridstator controller init --force` and re-pair clients and agents.
-- Use `gridstator doctor` to check pinning, permissions and token validity.
-
-## 5. Reporting vulnerabilities
-
-Please report vulnerabilities privately through GitHub Security Advisories on the project
-repository rather than in public issues.
+Use [GitHub's private security advisory form](https://github.com/jepsenphil/gridstator/security/advisories/new), not a public issue. Include affected version, configuration and a minimal reproduction. The top-level [security policy](../SECURITY.md) states response and support terms.

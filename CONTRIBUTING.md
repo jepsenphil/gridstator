@@ -1,38 +1,41 @@
 # Contributing to Gridstator
 
-Thanks for your interest! Gridstator is early-stage; issues, design feedback and pull requests are
-all welcome.
+Gridstator is an Apache-2.0 open source project. Native v2 is the current development line; the Node v1 code remains as a compatibility reference and recovery path. Issues, reproducible bug reports and focused pull requests are welcome.
 
-## Getting started
+## Start
 
-See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for setup, layout and tests. Before opening a pull
-request:
+Read the [architecture](docs/ARCHITECTURE.md) and [development guide](docs/DEVELOPMENT.md). Use the pinned Rust toolchain and pnpm version, then run the checks relevant to your change:
 
-```bash
-pnpm check        # typecheck, lint, format check, unit tests
-pnpm test:e2e     # if you touched the controller, agent, executors or CLI (needs Docker)
-```
+~~~sh
+cd native
+cargo fmt --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked --all-targets -- --test-threads=1
 
-## Guidelines
+# From the repository root, for extension/TypeScript changes:
+cd ..
+pnpm install --frozen-lockfile
+pnpm build
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm --filter ./apps/vscode package:native
+~~~
 
-- **Real behaviour only.** No mock data or placeholder endpoints in shipped code. Every UI action
-  and CLI command must work end to end.
-- **Keep the boundaries.** `protocol` defines contracts and `scheduler` stays pure (no I/O).
-  Executors talk to Docker only through `DockerCli`. Dependencies point downward
-  (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
-- **State transitions** go through `Cluster.transition`/`finish` and the table in
-  `packages/protocol/src/states.ts`. Add a test for any new transition or reconciliation rule.
-- **Security-sensitive changes** (snapshot paths, auth, TLS, container options, cleanup) need a
-  test that shows the protection working, and an update to [docs/SECURITY.md](docs/SECURITY.md).
-- **Errors** should be `GridstatorError`s with a clear message and, where possible, a hint telling
-  the user what to do next.
-- **Docs** in `docs/` are kept in sync with the code. Update them in the same pull request.
-- Strict TypeScript; avoid `any`. Format with Prettier.
+The real Docker, BuildKit, `act`, VS Code and platform suites are listed in [native/TESTING.md](native/TESTING.md). A test skipped for missing tools does not count as release evidence.
 
-## Reporting security issues
+## Pull request expectations
 
-Please do not open public issues for vulnerabilities. Use GitHub's private security advisories.
+- Update the relevant user guide and architecture/security material in the same PR as behavior changes.
+- Add a regression scenario for security-sensitive code: auth, TLS, snapshots, filesystem paths, container execution, secrets, updates and rollback.
+- Keep v1 reference fixtures frozen. If native behavior intentionally differs, record an approved compatibility exception with evidence.
+- Do not add a failing security scanner to `continue-on-error` or silently suppress an advisory. An exception needs an owner, exposure analysis and expiry.
+- Do not include tokens, host credentials or private cluster data in screenshots, logs or issues.
 
-## License
+[CI](.github/workflows/ci.yml), [native checks](.github/workflows/native.yml) and [security checks](.github/workflows/security.yml) run on pull requests. Maintainers can also launch the root [Gridstator tasks](gridstator.yml) from VS Code's Run view.
 
-By contributing you agree that your contributions are licensed under the Apache License 2.0.
+## Security reports
+
+Use [private GitHub security advisories](https://github.com/jepsenphil/gridstator/security/advisories/new), not a public issue. See [SECURITY.md](SECURITY.md).
+
+By contributing, you license your contribution under Apache-2.0; see [LICENSE](LICENSE).

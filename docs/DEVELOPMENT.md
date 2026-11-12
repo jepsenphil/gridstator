@@ -1,191 +1,67 @@
 # Developing Gridstator
 
+Native v2 is the current implementation. The TypeScript CLI/controller/worker under `apps/` and `packages/` remain a v1 reference and compatibility test bed. Build and test the two lines separately; a passing v1 test does not close a native release gate.
+
 ## Prerequisites
 
-- Node.js 22.19+ (CI and development use Node 24)
-- pnpm 10 (`corepack enable` provides it)
-- Docker with BuildKit/buildx, usable without sudo (needed for executor and end-to-end tests)
-- [act](https://github.com/nektos/act) on PATH for the workflow tests (they are skipped without it)
-- git
-- Xvfb (`xvfb-run`) for the headless VS Code integration test
+Use the pinned toolchain in [native/rust-toolchain.toml](../native/rust-toolchain.toml), a C compiler, Node 24, pnpm 10.33.2, Git and Docker. Buildx and `act` are needed for their execution suites. Linux VS Code integration needs Xvfb. Installed native users need neither Rust nor Node; Node is used to build and test the extension.
 
-## Setup and everyday commands
+~~~sh
+pnpm install --frozen-lockfile
+cd native
+cargo fmt --check
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked --all-targets -- --test-threads=1
+cargo build --locked --release
+./target/release/gridstator build-info --json
+~~~
 
-```bash
-pnpm install
-pnpm build            # tsc -b across all packages (project references)
-pnpm test             # unit + protocol tests (Docker executor tests run if Docker is available)
-pnpm test:e2e         # real controller + 2 agents + Docker/BuildKit/act, via the built CLI
-pnpm test:ui          # dashboard webview in Chromium (Playwright), screenshots in apps/vscode/test/ui/screenshots
-pnpm test:vscode      # the extension inside a real, headless VS Code against a real cluster
-pnpm typecheck        # sources and tests
-pnpm lint             # ESLint (type-aware)
-pnpm format           # Prettier
-pnpm check            # typecheck + lint + format check + unit tests
-pnpm pack:release     # single-file bundle + npm tarball in apps/cli/release/
-pnpm package:vscode   # apps/vscode/dist/gridstator.vsix
-```
+The full real-tool and platform matrix is in [native/TESTING.md](../native/TESTING.md). Ignored tests and cross-compilation are not runtime evidence.
 
-Run the CLI from source with `pnpm gridstator <args>` (after `pnpm build`).
+## VS Code extension
 
-## Repository layout
+~~~sh
+pnpm build
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm --filter ./apps/vscode package:native
+pnpm test:ui
+~~~
 
-| Path | Contents |
-|---|---|
-| `packages/shared` | errors (codes, HTTP status, exit codes), ids and tokens, logger, paths, size/duration parsing, fingerprints |
-| `packages/protocol` | zod schemas: job spec, states and transitions, nodes, manifests, REST bodies, WebSocket messages, `gridstator.yml` |
-| `packages/scheduler` | pure `schedule()` function |
-| `packages/snapshot` | project discovery, capture, secret filter, blob store, tar streams, materialization, upload |
-| `packages/executors` | `docker` CLI wrapper, `Executor` interface; command, Docker build and act executors; act log parser |
-| `packages/discovery` | workflows (with act caveats), package scripts, Dockerfiles |
-| `packages/reports` | JUnit parsing, report extraction from artifacts, combined summaries |
-| `packages/client` | HTTPS/WSS client with CA pinning, client configuration |
-| `apps/controller` | PKI, SQLite store, auth, cluster state machine and scheduler loop, Fastify server, retention |
-| `apps/agent` | agent connection loop, job runner, log pipeline, metrics, join |
-| `apps/cli` | `gridstator` command; `scripts/bundle.mjs` builds the publishable package |
-| `apps/vscode` | VS Code extension: `src/` (extension host), `webview/` (React dashboard), `test/` (Playwright + VS Code integration) |
-| `tests/integration` | end-to-end tests that spawn real processes |
-| `examples/` | sample projects for manual validation |
+The native package is `apps/vscode/dist/gridstator-native.vsix`. It contains the thin extension, webview and installer helper, and excludes the v1 CLI. For a real isolated Linux editor/worker run, set `GRIDSTATOR_NATIVE_CLI_E2E` to a built Rust executable and follow [native/TESTING.md](../native/TESTING.md). The webview tests generate ignored fixture screenshots under `apps/vscode/test/ui/screenshots/`. Curated public images and their capture procedure are in [SCREENSHOTS.md](SCREENSHOTS.md).
 
-Dependencies point downward only: apps → client/executors/snapshot/scheduler → protocol → shared.
+## Run this repository through Gridstator
 
-## Testing strategy
+The root [gridstator.yml](../gridstator.yml) exposes daily tasks in the VS Code Run view:
 
-| Layer | Where | What it proves |
-|---|---|---|
-| Pure logic | `packages/scheduler`, `packages/protocol` | placement rules, transitions |
-| Snapshots | `packages/snapshot/src/snapshot.test.ts` | git file selection, secrets, determinism, CAS integrity, tar safety, materialization safety |
-| Executor | `packages/executors/src/container.test.ts` | real Docker: output, exit codes, env/secrets, workspace copy, cancel, timeout, cleanup |
-| Controller protocol | `apps/controller/src/controller.test.ts` | real HTTPS/WSS controller with scripted fake agents: auth, lifecycle, idempotency, cancellation, retries, lost nodes, restart reconciliation, blob verification |
-| Build executor | `packages/executors/src/build.test.ts` | real BuildKit: stages, build args, secrets not leaked, labels, image export, path escapes, cancellation |
-| Actions executor | `packages/executors/src/actions.test.ts`, `act-log.test.ts` | real act: snapshot used instead of checkout, git context, inputs, secrets masked, steps, artifacts, failures, cancellation and cleanup |
-| Discovery | `packages/discovery/src/discovery.test.ts` | workflow parsing and act caveats, scripts, Dockerfile stages |
-| Reports | `packages/reports/src/junit.test.ts` | JUnit parsing (incl. Node's reporter), tar/zip extraction, combined summaries |
-| Services | `apps/cli/src/service.test.ts` | systemd unit generation for user and system services |
-| End to end | `tests/integration/e2e.test.ts` | built CLI processes, two agents, Docker: remote runs, uncommitted snapshots, secret masking, concurrency, labels, cancel/retry, controller restart, agent crash, remote Docker build, act workflow with artifacts |
-| Extension logic | `apps/vscode/src/*.test.ts` | problem matchers and path mapping, JUnit parsing, artifact extraction |
-| Webview UI | `apps/vscode/test/ui` (Playwright) | every dashboard view renders and every action posts the right message |
-| VS Code | `apps/vscode/test/run-integration.mjs` | real VS Code + real cluster: discovery, run a task, Problems and Testing results, cancel, retry, node management. Set `GRIDSTATOR_IT_CONFIG` and `GRIDSTATOR_IT_NODE` to run it against an existing cluster |
+| Task | Purpose |
+| --- | --- |
+| `native-check` | Rust format, Clippy and serial tests |
+| `vscode-check` | TypeScript build, checks, tests and native VSIX package |
+| `rust-audit` | High/critical RustSec lockfile audit |
+| `js-audit` | High/critical pnpm lockfile audit |
+| `native-linux` and target variants | Static Linux build artifacts; separate from actual ARM runtime qualification |
 
-Running two agents on one machine exercises the same code paths as two physical machines (each
-has its own data directory, node identity and Docker labels). The remaining difference, real LAN
-networking, is covered by the manual procedure below.
+Run `gridstator run --task native-check` from the repository root or click the task in VS Code. These are worker jobs and require a configured trusted development cluster. Build and security CI run independently on pull requests; no contributor needs a Gridstator cluster to submit a PR.
 
-## Manual multi-machine validation
+## CI and release evidence
 
-This verifies the Milestone 1 and 2 acceptance criteria across two machines: **A** (where your
-source lives, runs the controller) and **B** (a worker). Replace `192.168.1.20` with A's LAN
-address.
+| Workflow | Scope |
+| --- | --- |
+| [CI](../.github/workflows/ci.yml) | Node 22/24, package smoke, Docker/BuildKit/act and VS Code integration |
+| [Native development](../.github/workflows/native.yml) | Rust reference contracts and actual-host Linux/Mac builds |
+| [Desktop preview](../.github/workflows/desktop.yml) | Separate companion build evidence |
+| [Security](../.github/workflows/security.yml) | CodeQL, dependency review, pnpm and RustSec audits |
+| [Native candidate](../.github/workflows/native-candidate.yml) | Four-target signed candidate and thin VSIX; no publication |
+| [Native publish](../.github/workflows/native-publish.yml) | Manual stable release after ledger and owner gates |
 
-1. **Install on both machines.** On A: `pnpm pack:release`, then copy
-   `apps/cli/release/gridstator-0.1.0.tgz` to B. On each: `npm install -g ./gridstator-0.1.0.tgz`.
-   B needs Docker usable by your user (`docker run --rm hello-world`).
+Do not interpret green compilation or UI fixtures as completion of platform service, Docker readiness, WSL2, Gatekeeper, recovery or signed downloaded-artifact checks. [Release readiness](RELEASING.md) lists the evidence required.
 
-2. **Create the cluster on A:**
+## Working on v1 compatibility
 
-   ```bash
-   gridstator controller init
-   gridstator controller start           # leave running; add --with-agent to also use A
-   ```
+The accepted v1 source and fixtures are frozen in [native/contracts/accepted-v1](../native/contracts/accepted-v1). Use the [legacy development guide](legacy/v1/DEVELOPMENT.md) only for v1 reference work. If a v1 behavior changes during native development, review its effect on the parity ledger and compatibility exceptions. Do not regenerate expectations from the v2 implementation.
 
-   Allow TCP 7300 from your LAN in A's firewall if one is active (e.g. `sudo ufw allow from 192.168.1.0/24 to any port 7300`).
+## Pull requests
 
-3. **Join B.** On A run `gridstator token create --join`, then on B run the printed command:
-
-   ```bash
-   gridstator agent join https://192.168.1.20:7300 --token gsj_... --fingerprint sha256:...
-   gridstator agent start
-   ```
-
-   Check on A: `gridstator nodes` shows B `online`.
-
-4. **Remote execution with live logs (M1):**
-
-   ```bash
-   gridstator run --no-snapshot --node <B> --image alpine:3.20 -- \
-     sh -c 'for i in $(seq 1 10); do echo "tick $i on $GRIDSTATOR_NODE_NAME"; sleep 1; done'
-   ```
-
-   Expect one `tick` line per second, naming B.
-
-5. **Cancellation (M1):** start `gridstator run --no-snapshot --node <B> --image alpine:3.20 -- sleep 600`,
-   press Ctrl-C once. Expect `Job … cancelled` within a few seconds, and on B
-   `docker ps -a --filter label=io.gridstator.managed=true` lists no job container.
-
-6. **Retry and history (M1):** `gridstator retry <id>`, then `gridstator jobs` and `gridstator job <id>`.
-
-7. **Uncommitted changes (M2):**
-
-   ```bash
-   cp -r examples/node-project /tmp/gst-demo && cd /tmp/gst-demo
-   git init -q && git add -A && git commit -qm init
-   gridstator run --node <B> --task test                 # passes
-   sed -i 's/add(2, 3), 5/add(2, 3), 6/' test/math.test.js # do not commit
-   gridstator run --node <B> --task test                 # fails: B ran the edited test
-   gridstator snapshot --dry-run --json | grep -c '"path"'
-   ```
-
-8. **Resilience:** while a long job runs on B, restart the controller on A; the job continues and
-   `gridstator logs <id>` shows every line. Kill the agent on B with `kill -9` and restart it;
-   the job becomes `lost` (and is retried if submitted with `--retries 1`).
-
-9. **Docker build on the worker (M3):** in a project with a Dockerfile,
-   `gridstator build --node <B> --target <stage> -t app:dev`; on B, `docker image inspect app:dev`
-   shows the `io.gridstator.job` label. Building again is fast (cache on B).
-
-10. **GitHub Actions (M4):** install act on B, then in a repository with workflows and an
-    uncommitted change: `gridstator actions list`, `gridstator actions run ci.yml --node <B>`. The
-    run uses the uncommitted files; `gridstator artifacts <job>` lists uploaded artifacts.
-
-11. **VS Code (M5):** install the VSIX in your VS Code window on A (the remote side, for Remote SSH),
-    sign in, set **Gridstator: Select Target Worker** to B, press ▶ on a task in the Run view and
-    watch it in the dashboard; cancel and retry from the Jobs view.
-
-## Developing the VS Code extension
-
-```bash
-pnpm build                                   # packages + extension + dashboard
-pnpm --filter gridstator-vscode watch        # rebuild on change
-code --extensionDevelopmentPath=$PWD/apps/vscode path/to/a/project
-```
-
-The extension host code is bundled to `apps/vscode/dist/extension.js` (CommonJS, `vscode`
-external); the dashboard to `apps/vscode/media/dashboard.js`. The webview and extension share the
-message types in `apps/vscode/src/messages.ts`.
-
-## Windows and WSL2
-
-The controller, agent and CLI are plain Node.js and use only cross-platform APIs. For a Windows
-machine to contribute compute, run the agent **inside WSL2** with Docker Engine installed in the
-WSL distribution (or Docker Desktop's WSL integration enabled), exactly as on Linux. This was
-validated on Ubuntu 24.04 under WSL2 with systemd enabled (see [PLAN.md](PLAN.md#two-machine-validation-2026-11-09)).
-Notes:
-
-- The agent only makes outbound connections, so WSL's NAT/mirrored networking and the Windows
-  firewall need no changes on the worker.
-- WSL2 gets half of the host's RAM by default. To offer more to jobs, set `memory=` under `[wsl2]`
-  in `%UserProfile%\.wslconfig` and run `wsl --shutdown`.
-- After `usermod -aG docker $USER`, start a new login session before starting the agent.
-- To run the agent in the background, use a systemd service, for example (until `install-service`
-  arrives in M7):
-
-  ```bash
-  sudo systemd-run --unit=gridstator-agent --uid=$USER --gid=$USER -p SupplementaryGroups=docker \
-    /usr/local/bin/gridstator agent start
-  ```
-
-Fully validated Windows guidance (services, WSL settings) is part of Milestone 7.
-
-## Releasing
-
-1. Add the release notes under a new `## [x.y.z] - date` heading in `CHANGELOG.md` and merge to `main`.
-2. Tag and push: `git tag v0.2.0 && git push origin v0.2.0`.
-3. `.github/workflows/release.yml` stamps the version into every package (`scripts/set-version.mjs`),
-   runs the checks, builds `gridstator-<version>.tgz` (a single bundled file, no runtime dependencies)
-   and `gridstator-<version>.vsix`, and creates a GitHub release with both and a `SHA256SUMS` file.
-4. With repository secrets `NPM_TOKEN` (npm automation token) and `VSCE_PAT` (Azure DevOps token for
-   the `gridstator` Marketplace publisher) it also publishes to npm (with provenance) and the
-   VS Code Marketplace. Without them those steps are skipped.
-
-Tags with a suffix (`v0.2.0-rc.1`) become pre-releases. Locally, `pnpm pack:release` and
-`pnpm package:vscode` produce the same artifacts.
+Keep user docs, threat model and tests in the same change as affected behavior. For security-sensitive changes, add a concrete regression scenario. Document any advisory exception with owner, exposure analysis and expiry. See [CONTRIBUTING.md](../CONTRIBUTING.md).

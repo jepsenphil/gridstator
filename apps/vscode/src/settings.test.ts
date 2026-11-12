@@ -154,7 +154,7 @@ async function openWindow(
     log,
   );
   const context = {
-    extension: { id: 'gridstator.gridstator-vscode', packageJSON: { version: '0.1.0' } },
+    extension: { id: 'gridstator.gridstator', packageJSON: { version: '0.1.0' } },
     extensionUri: Uri.file(directory),
     globalState: storage,
   } as unknown as vscode.ExtensionContext;

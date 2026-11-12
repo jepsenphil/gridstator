@@ -1,20 +1,16 @@
 # Security policy
 
-Gridstator executes code on the machines in your network, so security reports are taken seriously.
-
-## Reporting a vulnerability
-
-Please report vulnerabilities **privately** through
-[GitHub security advisories](https://github.com/jepsenphil/gridstator/security/advisories/new),
-not in public issues. Include the version, your setup and steps to reproduce. You should receive a
-response within a week.
-
-## Scope and threat model
-
-Gridstator is designed for a trusted personal or small-team LAN, not for multi-tenant or
-internet-facing use. The threat model, the controls in place and what is out of scope are described
-in [docs/SECURITY.md](docs/SECURITY.md).
+Gridstator runs developer code on worker machines and stores source snapshots and job results on a controller. Report vulnerabilities **privately** through [GitHub security advisories](https://github.com/jepsenphil/gridstator/security/advisories/new), not public issues. Include the affected build, setup and a minimal reproduction. The project aims to acknowledge reports within one week.
 
 ## Supported versions
 
-Security fixes are made for the latest release.
+| Line | Status |
+| --- | --- |
+| Native v2 | Development preview; no public stable release yet |
+| Node v0.1.x | Current published release; deprecated in favor of native v2 and supported until stable v2 launches |
+
+At stable v2 launch, v1 support ends. Its [tagged release](https://github.com/jepsenphil/gridstator/releases/tag/v0.1.0) and [recovery guides](docs/legacy/v1/README.md) remain available.
+
+## Scope
+
+Gridstator is designed for a trusted personal or small-team network. It is not a multi-tenant sandbox or an internet-facing service. The [native security guide](docs/SECURITY.md) documents credentials, trust boundaries, source and job-secret handling, CI scans and limits. The [v1 guide](docs/legacy/v1/SECURITY.md) covers the older implementation.

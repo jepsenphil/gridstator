@@ -1,0 +1,94 @@
+name: Publish native v2
+
+# Manual only. The parity ledger, reviewed environment and notarized candidate must all pass.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Stable version, for example 2.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require a stable v2 version from main
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          [[ "$GITHUB_REF" == refs/heads/main ]]
+          [[ "$RELEASE_VERSION" =~ ^2\.[0-9]+\.[0-9]+$ ]]
+      - name: Require every recorded native acceptance gate
+        run: node native/scripts/check-ledger.mjs --release
+      - name: Require release notes for this version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const version = process.env.RELEASE_VERSION;
+            const headings = fs.readFileSync("CHANGELOG.md", "utf8").split("\n");
+            if (!headings.some((line) => line.startsWith(`## [${version}]`) || line.startsWith(`## ${version}`))) {
+              console.error(`CHANGELOG.md needs a ${version} release section`);
+              process.exit(1);
+            }
+          '
+
+  candidate:
+    needs: release-gate
+    uses: ./.github/workflows/native-candidate.yml
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish:
+    needs: candidate
+    runs-on: ubuntu-24.04
+    environment: v2-release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-release-candidate
+          path: release
+      - name: Verify the assembled release identity and bytes
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          cd release
+          sha256sum --check SHA256SUMS
+          jq -e --arg version "$RELEASE_VERSION" --arg revision "$GITHUB_SHA" \
+            '.version == $version and .sourceRevision == $revision and (.artifacts | length) == 4' \
+            gridstator-release.json
+          test "$(find . -maxdepth 1 -name '*.vsix' | wc -l)" -eq 1
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create a draft GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          node scripts/changelog-section.mjs "$RELEASE_VERSION" > release-notes.md
+          gh release create "v$RELEASE_VERSION" release/* --draft --target "$GITHUB_SHA" \
+            --title "Gridstator v$RELEASE_VERSION" --notes-file release-notes.md
+      - name: Publish the native extension to the VS Code Marketplace with OIDC
+        run: |
+          vsix=$(find "$GITHUB_WORKSPACE/release" -maxdepth 1 -name '*.vsix' -print -quit)
+          pnpm --filter ./apps/vscode exec vsce publish --oidc --packagePath "$vsix"
+      - name: Promote the verified GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: gh release edit "v$RELEASE_VERSION" --draft=false

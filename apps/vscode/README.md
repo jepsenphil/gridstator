@@ -1,76 +1,34 @@
 # Gridstator for VS Code
 
-**Multiple machines. One workflow.** Run builds, tests and GitHub Actions workflows on the
-computers in your network, from VS Code, against the exact files in your workspace (including
-unsaved-to-git changes). Works in local folders and over Remote SSH: the extension runs where your
-code lives.
+**Native v2 development preview.** This extension runs build, test and supported workflow jobs on your Gridstator cluster from the workspace where your files live. The first public listing is planned as `gridstator.gridstator`. Until the [release gates](https://github.com/jepsenphil/gridstator/blob/main/docs/RELEASING.md) pass, build the native VSIX from source; no Marketplace package is live.
 
-## Features
+![Gridstator Run view beside a project configuration in VS Code](https://raw.githubusercontent.com/jepsenphil/gridstator/main/docs/images/vscode-editor.png)
 
-- **Gridstator Activity Bar** with your cluster's nodes, running and recent jobs, and everything
-  runnable in the workspace: `gridstator.yml` tasks and builds, GitHub Actions workflows and jobs,
-  package.json scripts, and Dockerfiles (with their stages).
-- **Dashboard**: cluster overview, job list with filters, job details with live searchable logs,
-  steps, image details and artifact downloads, a launcher with worker selection and options, and
-  node management (enable, drain, disable, concurrency, reserved resources, labels).
-- **Cancel, retry and rerun** jobs from the dashboard, the Jobs view or notifications.
-- **Problems panel**: compiler, linter and test failures from remote logs, mapped to your files.
-- **Testing view**: JUnit reports from job artifacts, and a *Run on Gridstator* test profile.
-- **Status bar**: nodes online, running and queued jobs.
+## What you can do
 
-## Getting started
+- Open **Run** to find `gridstator.yml` tasks, package scripts, Dockerfiles and supported GitHub Actions workflows. An optional `actions.launcher` allowlist in project config can narrow workflow/job choices in the editor.
+- Choose a worker or let the scheduler place the job, then follow live logs and structured steps.
+- See recent jobs, artifacts, image results and worker capacity in the dashboard; cancel, retry or rerun jobs.
+- Map compiler and test failures to **Problems**, and JUnit artifacts to **Testing**.
+- Manage workers, reservations, concurrency and access from the Cluster view and Settings.
 
-1. Open a folder and the Gridstator view. Choose **Set up a controller here** or **Connect to an
-   existing controller**. In SSH and WSL windows, “here” means the workspace host.
-2. Local setup installs a verified native CLI for your account if needed, creates a controller and
-   worker as a background user service, and signs you in automatically. The service survives
-   closing VS Code and starts at OS sign-in. The worker waits for Docker if it is unavailable.
-   Existing CLI logins and controllers owned by this account are reused automatically; all windows
-   share login changes. To connect elsewhere, paste the complete `gridstator login …` command or
-   enter the URL, fingerprint and token manually.
-3. Open the Gridstator view and press ▶ next to a task, workflow, script or Dockerfile.
+![Workflow launch form](https://raw.githubusercontent.com/jepsenphil/gridstator/main/docs/images/vscode-run-workflow.png)
 
-Jobs run the files saved on disk; the extension asks before running when editors have unsaved
-changes (`gridstator.unsavedFiles`).
+## Start
 
-To add another worker, open **Nodes → Add worker**, use the **+** button in the Cluster view, or
-run **Gridstator: Generate Worker Join Command** from the command palette. With an admin login,
-name the command, check the controller's LAN address, then generate and copy it. It expires after
-24 hours and allows one worker to join. The command is shown only in memory; revoke access in
-**Settings → Access tokens** if needed.
+1. Install a verified native CLI on the **workspace host** using the [install guide](https://github.com/jepsenphil/gridstator/blob/main/docs/INSTALL.md). In Remote SSH and WSL windows, that is the remote machine, not the desktop running VS Code.
+2. Build a development VSIX with `pnpm --filter ./apps/vscode package:native`, then install `apps/vscode/dist/gridstator-native.vsix` through **Extensions: Install from VSIX**. The public extension will be available from the Marketplace after release.
+3. Open a trusted project folder and the Gridstator Activity Bar. Choose **Set up a controller here** or **Connect to an existing controller**. Local setup uses a verified published native release; until one exists, install the CLI manually and set `gridstator.nativeCli.path` if needed.
+4. Select a task, script, Dockerfile or workflow in **Run**. Jobs use files saved on disk; the extension asks about unsaved editors before submission.
 
-Paste the command into **Join a controller → Worker join command** in the Gridstator desktop
-app on the other computer. On Windows, choose its WSL2 distribution; the app starts the worker.
-For terminal setup on Linux, macOS or inside WSL, run the copied command with the native CLI,
-then `gridstator agent install-service`. Docker must be available on workers to run jobs.
+The native VSIX delegates discovery, snapshot capture, submission and local administration to Rust. It uses a separate native v2 login and does not bundle the legacy Node CLI. VS Code supplies the extension's Node runtime.
 
-Open **Settings** in the dashboard for connection details, editor preferences, component versions,
-tokens, retention and worker update policies. Admins can find official releases or upload a
-controller package; downloads are checksum verified and managed installs retain rollback support.
-Worker updates wait for running jobs to finish by default. Controller updates wait for any worker
-on the controller machine to finish before restarting.
+## Secrets and remote workspaces
 
-To rename a worker, edit **Nodes → Worker name** and save, or right-click it in the Cluster tree
-and select **Rename Worker**. This changes its Gridstator name, leaving the machine's hostname,
-worker identity, credentials, settings and job history intact. Existing queued jobs and retries
-remain bound to that worker. New task configurations should use the new name or its stable node ID.
+Declare only **names** in `secretEnv` on a task, build or Actions config. The extension reads corresponding values from the extension-host environment. In a trusted workspace it asks for missing values with masked prompts and saves them in VS Code SecretStorage, scoped to that workspace host, account and project path. The host environment takes precedence. Saved values do not sync between machines; **Gridstator: Clear Saved Job Secrets** removes selected values. Do not put secret values in the plain Environment field.
 
-Controller-host SSH windows can start, stop and restart the user service and apply listening
-address/port changes. A public HTTPS URL lets workers learn the new endpoint. Previous listeners
-remain available for offline or older workers; a failed migration restores the previous setup.
-Overlapping bindings, such as changing `0.0.0.0` to a specific address on the same port, require a
-new port so the old listener can remain available. These controls manage Linux/systemd user
-services. Opening a window never starts a deliberately stopped controller.
+Workers connect outbound to the controller. A Remote SSH or WSL VS Code window captures and submits the workspace on its remote host. Install the native helper and sign in there. Local desktop companion controls are [separate preview functionality](https://github.com/jepsenphil/gridstator/blob/main/apps/desktop/README.md).
 
-Use **Restore Local Access** after revoking a local login. Custom configuration paths and explicit
-environment connections remain authoritative. Disable `gridstator.autoConnect` to connect manually.
+## More
 
-Interrupted local setup offers **Finish controller setup** and preserves the controller identity
-and shared login. Existing native executables are never replaced by first-run setup; update an
-older CLI manually if it lacks controller setup support. Automatic installation requires a
-published native release with `local-setup-v1` support. Manual CLI setup remains available in the
-[project README](https://github.com/jepsenphil/gridstator#quick-start).
-
-On Linux, setup also tries to keep the user service running after the last SSH session closes.
-If the host denies this, setup and Settings explain how to enable user-service lingering; the
-controller remains usable in the current session.
+See the [screenshots and capture notes](https://github.com/jepsenphil/gridstator/blob/main/docs/SCREENSHOTS.md), [architecture](https://github.com/jepsenphil/gridstator/blob/main/docs/ARCHITECTURE.md), [security model](https://github.com/jepsenphil/gridstator/blob/main/docs/SECURITY.md) and [development guide](https://github.com/jepsenphil/gridstator/blob/main/docs/DEVELOPMENT.md). File bugs in the [repository](https://github.com/jepsenphil/gridstator/issues) and report vulnerabilities privately through [GitHub advisories](https://github.com/jepsenphil/gridstator/security/advisories/new).

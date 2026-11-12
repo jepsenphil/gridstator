@@ -115,6 +115,8 @@ export interface LaunchItem {
     file: string;
     events: string[];
     defaultEvent: string;
+    /** False when project configuration exposes only selected standalone jobs. */
+    wholeWorkflow?: boolean;
     inputs: WorkflowInputInfo[];
     jobs: Array<{
       id: string;

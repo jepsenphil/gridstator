@@ -278,3 +278,53 @@ fn project_environment_limits_count_source_unicode_code_points() {
         .is_err()
     );
 }
+
+#[test]
+fn workflow_launcher_configuration_survives_discovery_and_preserves_defaults() {
+    let defaults = normalize_project_config(json!({})).unwrap();
+    assert!(defaults["actions"].get("launcher").is_none());
+    let empty = normalize_project_config(json!({"actions":{"launcher":{}}})).unwrap();
+    assert_eq!(empty["actions"]["launcher"], json!({}));
+    let launcher = json!({
+        "staging-local.yml":{"description":"Build locally","jobs":["local"]},
+        ".github/workflows/coverage.yaml":{"jobs":["coverage","report"]},
+        "all.yml":{}
+    });
+    let temporary = tempfile::tempdir().unwrap();
+    write(
+        temporary.path(),
+        "gridstator.yml",
+        &json!({"actions":{"launcher":launcher}}).to_string(),
+    );
+    let found = discover(temporary.path()).unwrap();
+    assert_eq!(found["config"]["actions"]["launcher"], launcher);
+}
+
+#[test]
+fn workflow_launcher_rejects_invalid_and_ambiguous_entries() {
+    for launcher in [
+        json!(null),
+        json!([]),
+        json!({"../internal.yml":{}}),
+        json!({".github/workflows/../internal.yml":{}}),
+        json!({".github/workflows/nested/internal.yml":{}}),
+        json!({"sub/internal.yml":{}}),
+        json!({"internal\\hidden.yml":{}}),
+        json!({"internal.txt":{}}),
+        json!({".yml":{}}),
+        json!({"internal.yml":null}),
+        json!({"internal.yml":{"unknown":true}}),
+        json!({"internal.yml":{"description":1}}),
+        json!({"internal.yml":{"jobs":[]}}),
+        json!({"internal.yml":{"jobs":[""]}}),
+        json!({"internal.yml":{"jobs":["  "]}}),
+        json!({"internal.yml":{"jobs":[1]}}),
+        json!({"internal.yml":{"jobs":["build","build"]}}),
+        json!({"internal.yml":{},".github/workflows/internal.yml":{}}),
+    ] {
+        assert!(
+            normalize_project_config(json!({"actions":{"launcher":launcher}})).is_err(),
+            "{launcher}"
+        );
+    }
+}

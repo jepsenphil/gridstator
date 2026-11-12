@@ -1,0 +1,6 @@
+[advisories]
+severity_threshold = "high"
+
+[database]
+fetch = true
+stale = false

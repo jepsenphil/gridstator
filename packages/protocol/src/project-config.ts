@@ -62,6 +62,32 @@ const BuildConfigSchema = z
   .strict();
 export type BuildConfig = z.infer<typeof BuildConfigSchema>;
 
+const WorkflowLauncherConfigSchema = z
+  .record(
+    z.string().regex(/^(?:\.github\/workflows\/)?[A-Za-z0-9_-][A-Za-z0-9_.-]*\.ya?ml$/),
+    z
+      .object({
+        description: z.string().optional(),
+        /** Only these jobs may be selected directly; their dependencies still run. */
+        jobs: z
+          .array(z.string().refine((job) => job.trim().length > 0, 'Expected a nonempty job ID'))
+          .min(1)
+          .refine((jobs) => new Set(jobs).size === jobs.length, 'Duplicate job IDs')
+          .optional(),
+      })
+      .strict(),
+  )
+  .superRefine((workflows, context) => {
+    const seen = new Set<string>();
+    for (const file of Object.keys(workflows)) {
+      const name = file.replace(/^\.github\/workflows\//, '');
+      if (seen.has(name)) {
+        context.addIssue({ code: 'custom', path: [file], message: 'Workflow is listed twice' });
+      }
+      seen.add(name);
+    }
+  });
+
 const ActionsConfigSchema = z
   .object({
     /** runs-on label → image, e.g. { "ubuntu-latest": "catthehacker/ubuntu:act-latest" }. */
@@ -71,6 +97,8 @@ const ActionsConfigSchema = z
     /** Client environment variables forwarded as workflow secrets (e.g. GITHUB_TOKEN). */
     secretEnv: z.array(z.string()).optional(),
     vars: z.record(z.string(), z.string()).optional(),
+    /** Optional allowlist for the VS Code launcher; omitted discovers all, {} hides all. */
+    launcher: WorkflowLauncherConfigSchema.optional(),
   })
   .strict();
 export type ActionsConfig = z.infer<typeof ActionsConfigSchema>;

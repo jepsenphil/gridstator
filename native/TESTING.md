@@ -95,7 +95,7 @@ The complete packaged v2 extension can also run inside actual VS Code on a Linux
 with Docker and Xvfb (or an existing display):
 
 ```sh
-pnpm --filter gridstator-vscode package:native
+pnpm --filter ./apps/vscode package:native
 cd apps/vscode
 GRIDSTATOR_NATIVE_CLI_E2E="$PWD/../../native/target/debug/gridstator" \
   xvfb-run -a node test/run-integration.mjs

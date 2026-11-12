@@ -1,5 +1,5 @@
 {
-  "name": "gridstator-vscode",
+  "name": "gridstator",
   "displayName": "Gridstator",
   "description": "Multiple machines. One workflow. Run builds, tests and GitHub Actions workflows on the computers on your LAN, from VS Code.",
   "version": "0.1.0",
@@ -101,6 +101,11 @@
       }
     ],
     "commands": [
+      {
+        "command": "gridstator.clearSavedSecrets",
+        "title": "Clear Saved Job Secrets",
+        "category": "Gridstator"
+      },
       {
         "command": "gridstator.generateJoinCommand",
         "title": "Generate Worker Join Command",
