@@ -1945,6 +1945,9 @@ pub async fn start_embedded(
     name: Option<String>,
     settings: Option<Value>,
 ) -> Result<()> {
+    // The local bridge canonicalizes data directories before deriving the embedded control
+    // socket. macOS can spell the same temporary directory through /var or /private/var.
+    let dir = crate::local_worker::owned_directory(&dir)?;
     let _ = std::fs::remove_file(dir.join("runtime.json"));
     let server_stop = tokio_util::sync::CancellationToken::new();
     let mut server = tokio::spawn(start_controlled(

@@ -308,7 +308,11 @@ async fn graceful_local_stop_does_not_wait_for_offline_result_acknowledgements()
 async fn embedded_worker_stop_and_start_leave_the_controller_alive() -> Result<()> {
     let _ = rustls::crypto::ring::default_provider().install_default();
     let root = tempfile::tempdir()?;
-    let dir = root.path().join("controller");
+    let actual = root.path().join("actual");
+    std::fs::create_dir(&actual)?;
+    let alias = root.path().join("alias");
+    std::os::unix::fs::symlink(&actual, &alias)?;
+    let dir = alias.join("controller");
     let init = controller::initialize(
         &dir,
         "127.0.0.1",
