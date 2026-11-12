@@ -370,7 +370,9 @@ async fn symlink_registration_and_job_path_traversal_are_rejected() -> Result<()
     Ok(())
 }
 
-#[cfg(target_os = "linux")]
+// This synchronization fixture intercepts bind(2) through LD_PRELOAD, which cannot affect
+// statically linked musl release binaries. Linux GNU CI exercises the race on a dynamic binary.
+#[cfg(all(target_os = "linux", target_env = "gnu"))]
 #[tokio::test]
 async fn acknowledged_pause_during_socket_bind_is_visible_to_the_starting_worker() -> Result<()> {
     let root = tempfile::tempdir()?;
