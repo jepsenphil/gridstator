@@ -698,6 +698,7 @@ pub(crate) fn validate_service_definition(config: &ServiceConfig) -> Result<()> 
         }
         Ok(())
     })?;
+    #[cfg(target_os = "linux")]
     let definition = fs::read_to_string(&path)?;
     #[cfg(target_os = "linux")]
     let arguments = {

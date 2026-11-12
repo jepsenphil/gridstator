@@ -2744,13 +2744,13 @@ async fn local_service_view(config: &crate::services::ServiceConfig) -> Value {
             let mut tokens = Vec::new();
             loop {
                 match reader.read_event() {
-                    Ok(quick_xml::events::Event::Start(tag)) if tag.name().as_ref() == b"key" => {
+                    Ok(quick_xml::events::Event::Start(tag)) if tag.name().as_ref() == "key" => {
                         if let Ok(key) = reader.read_text(tag.name()) {
-                            program = key == "ProgramArguments";
+                            program = key.as_ref() == "ProgramArguments";
                         }
                     }
                     Ok(quick_xml::events::Event::Start(tag))
-                        if program && tag.name().as_ref() == b"string" =>
+                        if program && tag.name().as_ref() == "string" =>
                     {
                         if let Ok(value) = reader.read_text(tag.name())
                             && let Ok(value) = quick_xml::escape::unescape(&value)
@@ -2759,7 +2759,7 @@ async fn local_service_view(config: &crate::services::ServiceConfig) -> Value {
                         }
                     }
                     Ok(quick_xml::events::Event::End(tag))
-                        if program && tag.name().as_ref() == b"array" =>
+                        if program && tag.name().as_ref() == "array" =>
                     {
                         break;
                     }
