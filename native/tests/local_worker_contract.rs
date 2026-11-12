@@ -7,6 +7,7 @@ use gridstator::{
 };
 use serde_json::{Value, json};
 use std::{
+    os::unix::fs::OpenOptionsExt,
     path::{Path, PathBuf},
     process::Stdio,
     time::Duration,
@@ -196,6 +197,7 @@ async fn starting_worker_waits_for_a_short_offline_control_lock() -> Result<()> 
         .write(true)
         .create(true)
         .truncate(false)
+        .mode(0o600)
         .open(dir.join("agent.lock"))?;
     fs2::FileExt::lock_exclusive(&lock)?;
     let mut actor = run_worker(&dir)?;
