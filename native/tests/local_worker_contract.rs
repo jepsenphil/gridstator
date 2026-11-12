@@ -106,6 +106,27 @@ fn run_worker(dir: &Path) -> Result<Child> {
 }
 
 #[tokio::test]
+async fn worker_and_bridge_use_the_same_socket_for_an_aliased_parent_path() -> Result<()> {
+    let root = tempfile::tempdir()?;
+    let actual = root.path().join("actual");
+    std::fs::create_dir(&actual)?;
+    offline_worker(&actual).await?;
+    let alias = root.path().join("alias");
+    std::os::unix::fs::symlink(&actual, &alias)?;
+    let alias_dir = alias.join("agent");
+    let mut actor = run_worker(&alias_dir)?;
+    let running = wait_worker(&alias_dir).await?;
+    assert_eq!(running["running"], true);
+    let paused =
+        bridge(json!({"version":1,"operation":"worker","action":"pause","dataDir":alias_dir}))
+            .await?;
+    assert_eq!(paused["workers"][0]["paused"], true);
+    bridge(json!({"version":1,"operation":"worker","action":"stop","dataDir":alias_dir})).await?;
+    tokio::time::timeout(Duration::from_secs(5), actor.0.wait()).await??;
+    Ok(())
+}
+
+#[tokio::test]
 async fn private_control_works_offline_and_preserves_pause_and_budget_across_restart() -> Result<()>
 {
     let root = tempfile::tempdir()?;

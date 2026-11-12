@@ -1378,6 +1378,9 @@ pub async fn run_with_shutdown(
     stop: CancellationToken,
     hook: Option<UpdateHook>,
 ) -> Result<WorkerExit> {
+    // The local bridge resolves owned data directories before deriving their control socket.
+    // macOS may expose the same directory through /var and /private/var; use one identity here.
+    let dir = crate::local_worker::owned_directory(&dir)?;
     ensure!(
         !options.heartbeat_interval.is_zero()
             && !options.reprobe_interval.is_zero()
