@@ -127,6 +127,8 @@ try {
   code = await runTests({
     extensionDevelopmentPath: testedExtension,
     extensionTestsPath: join(here, 'suite', 'index.cjs'),
+    // GitHub runners sometimes need longer than the 15-second default to resolve VS Code.
+    timeout: 120_000,
     launchArgs: [
       workspace,
       '--disable-extensions',
