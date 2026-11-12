@@ -6,7 +6,9 @@ use gridstator::{
     controller,
     install::InstallStore,
     release::{self, FileDigest, ProtocolCompatibility, ReleaseArtifact, ReleaseManifest},
-    services::{ServiceAction, ServiceConfig, ServiceManager, ServicePlatform, ServiceRole},
+    services::{
+        ServiceAction, ServiceConfig, ServiceManager, ServicePlatform, ServiceRole, ServiceScope,
+    },
     state,
 };
 use serde_json::{Value, json};
@@ -19,8 +21,12 @@ struct OwnedService {
 impl Drop for OwnedService {
     fn drop(&mut self) {
         let _ = self.manager.uninstall(&self.config);
-        let _ = std::process::Command::new("systemctl")
-            .args(["--user", "reset-failed", &self.config.unit_name()])
+        let mut command = std::process::Command::new("systemctl");
+        if self.config.scope == ServiceScope::User {
+            command.arg("--user");
+        }
+        let _ = command
+            .args(["reset-failed", &self.config.unit_name()])
             .output();
     }
 }
@@ -49,17 +55,25 @@ async fn ready(directory: &Path, original: &Value, previous: Option<u64>) -> Res
     .await?
 }
 #[tokio::test]
-#[ignore = "installs a unique temporary user systemd unit; requires running user manager and Docker"]
+#[ignore = "installs a unique temporary user or root systemd unit; requires systemd and Docker"]
 async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() -> Result<()> {
     let _ = rustls::crypto::ring::default_provider().install_default();
-    ensure!(
-        std::process::Command::new("systemctl")
-            .args(["--user", "show-environment"])
-            .output()?
-            .status
-            .success(),
-        "requires a running user systemd manager"
-    );
+    let system_scope = std::env::var("GRIDSTATOR_SYSTEMD_SCOPE").as_deref() == Ok("system");
+    if system_scope {
+        ensure!(
+            unsafe { libc::geteuid() } == 0,
+            "system scope requires root"
+        );
+    } else {
+        ensure!(
+            std::process::Command::new("systemctl")
+                .args(["--user", "show-environment"])
+                .output()?
+                .status
+                .success(),
+            "requires a running user systemd manager"
+        );
+    }
     ensure!(
         std::process::Command::new("docker")
             .arg("info")
@@ -71,8 +85,13 @@ async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() ->
     let temporary = tempfile::tempdir()?;
     let directory = temporary.path().join("controller");
     let login = temporary.path().join("client.json");
+    // The embedded worker keeps the controller URL across service restarts. A port-zero
+    // listener would choose a different port on restart and test an impossible saved URL.
+    let port = std::net::TcpListener::bind(("127.0.0.1", 0))?
+        .local_addr()?
+        .port();
     let initialized =
-        controller::initialize(&directory, "127.0.0.1", 0, &[], false, &login).await?;
+        controller::initialize(&directory, "127.0.0.1", port, &[], false, &login).await?;
     let binary_path = temporary.path().join("gridstator");
     fs::copy(
         std::env::var_os("GRIDSTATOR_TEST_BINARY")
@@ -88,7 +107,7 @@ async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() ->
             .stdout,
     )?;
     // Single-host managed installation fixture. Other manifest entries are never executed and
-    // are not evidence for those platforms; the actual four-target producer is tested separately.
+    // are not evidence for those platforms; the release producer is tested separately.
     let artifact = ReleaseArtifact {
         archive: FileDigest::from_path("fixture-native", binary)?,
         executable: FileDigest::from_path("gridstator", binary)?,
@@ -119,6 +138,10 @@ async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() ->
         dirs::home_dir().context("home directory required")?,
         unsafe { libc::geteuid() },
     );
+    if system_scope {
+        config.scope = ServiceScope::System;
+        config.user = Some("root".into());
+    }
     config.name = format!("gridstator-native-proof-{}", state::id().to_lowercase());
     config.environment.insert(
         "GRIDSTATOR_CONFIG".into(),
@@ -182,9 +205,12 @@ async fn actual_systemd_supervisor_controller_and_embedded_worker_lifecycle() ->
     service
         .manager
         .control(&service.config, ServiceAction::Stop)?;
-    let status = std::process::Command::new("systemctl")
+    let mut command = std::process::Command::new("systemctl");
+    if !system_scope {
+        command.arg("--user");
+    }
+    let status = command
         .args([
-            "--user",
             "show",
             &service.config.unit_name(),
             "--property=ActiveState",

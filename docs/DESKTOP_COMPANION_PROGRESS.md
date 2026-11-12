@@ -67,7 +67,7 @@ with “No matching native release is published yet” because no native release
 The existing local native previews also lacked `local-setup-v1` and `worker-control-v1`.
 
 The rebuilt Windows x64 installer now carries both Linux WSL architectures from native build
-`native-desktop-20261110-d99c20f05013`. The four-target native release manifest remains complete;
+`native-desktop-20261110-d99c20f05013`. The recorded four-target preview manifest was complete;
 Linux payloads were cross-built as static musl executables, and macOS payloads were built and queried
 on the existing Mac host (Intel through Rosetta). Linux ARM64 runtime qualification is not claimed.
 The companion pins manifest and archive digests in its executable before running any bundled helper.

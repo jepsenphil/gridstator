@@ -71,7 +71,7 @@ jobs:
       - run: cargo fmt --check
       - run: cargo clippy --locked --all-targets -- -D warnings
       - name: Native unit and contract tests (no Node or pnpm dependency)
-        run: cargo test --locked --all-targets
+        run: cargo test --locked --all-targets -- --test-threads=1
       - name: Build tested development binary
         run: cargo build --locked --release
       - name: Record actual host and audit runtime linkage

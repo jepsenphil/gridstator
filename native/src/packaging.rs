@@ -39,6 +39,9 @@ pub fn assemble(
     let mut artifacts = BTreeMap::new();
     for target in release::SUPPORTED_TARGETS {
         let directory = input.join(target.replace('/', "-"));
+        if !directory.exists() {
+            continue;
+        }
         let binary = directory.join("gridstator");
         ensure!(
             fs::symlink_metadata(&binary)?.file_type().is_file(),
@@ -69,7 +72,7 @@ pub fn assemble(
         if let Some(expected) = &identity {
             ensure!(
                 &current == expected,
-                "all four artifacts must have the same version, build ID and source revision"
+                "all artifacts must have the same version, build ID and source revision"
             );
         } else {
             identity = Some(current);
@@ -113,6 +116,19 @@ pub fn assemble(
         );
     }
     let (version, build_id, source_revision) = identity.context("no release artifacts")?;
+    if semver::Version::parse(&version)?.pre.is_empty() {
+        ensure!(
+            artifacts.contains_key("linux/amd64") && artifacts.contains_key("linux/arm64"),
+            "stable release requires both Linux targets"
+        );
+        ensure!(
+            artifacts.keys().all(|target| target.starts_with("linux/"))
+                || release::SUPPORTED_TARGETS
+                    .iter()
+                    .all(|target| artifacts.contains_key(*target)),
+            "stable release cannot include only one macOS architecture"
+        );
+    }
     let manifest = ReleaseManifest {
         schema_version: 1,
         build_id,

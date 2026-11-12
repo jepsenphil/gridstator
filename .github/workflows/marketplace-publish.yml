@@ -1,0 +1,49 @@
+name: Publish VS Code extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published stable GitHub release version, for example 2.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    environment: v2-marketplace
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Download and verify the published VSIX
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == refs/heads/main ]]
+          [[ "$RELEASE_VERSION" =~ ^2\.[0-9]+\.[0-9]+$ ]]
+          mkdir release
+          gh release download "v$RELEASE_VERSION" --dir release --pattern '*.vsix' --pattern SHA256SUMS
+          cd release
+          test "$(find . -maxdepth 1 -name '*.vsix' | wc -l)" -eq 1
+          sha256sum --ignore-missing --check SHA256SUMS
+          vsix=$(find . -maxdepth 1 -name '*.vsix' -print -quit)
+          unzip -p "$vsix" extension/package.json | jq -e \
+            --arg version "$RELEASE_VERSION" \
+            '.publisher == "gridstator" and .name == "gridstator" and .version == $version'
+      - name: Publish with Marketplace trusted publishing
+        run: |
+          vsix=$(find "$GITHUB_WORKSPACE/release" -maxdepth 1 -name '*.vsix' -print -quit)
+          pnpm --filter ./apps/vscode exec vsce publish --oidc --packagePath "$vsix"

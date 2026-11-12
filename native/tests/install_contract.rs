@@ -143,8 +143,14 @@ fn release_identity_is_independent_of_digest_and_protocol_names_are_explicit() {
     assert_eq!(target_for("macos", "aarch64"), Some("darwin/arm64"));
     assert_eq!(target_for("windows", "x86_64"), None);
     let mut incomplete = value.clone();
-    incomplete.artifacts.remove("darwin/arm64");
+    incomplete.artifacts.clear();
     assert!(incomplete.validate().is_err());
+    let mut unsupported = value.clone();
+    let artifact = unsupported.artifacts["linux/amd64"].clone();
+    unsupported
+        .artifacts
+        .insert("windows/amd64".into(), artifact);
+    assert!(unsupported.validate().is_err());
     let mut traversal = value.clone();
     traversal
         .artifacts

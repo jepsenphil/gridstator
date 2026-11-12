@@ -522,7 +522,7 @@ fn target_view(dir: &Path) -> (Value, bool) {
         })
         .and_then(|state| state.last_rollback);
     (
-        json!({"id":crate::BUILD_ID,"version":crate::VERSION,"runtime":"rust","target":crate::release::host_target().ok(),"sha256":manifest.as_ref().and_then(|manifest|manifest.target(crate::release::host_target().ok()?).ok()).map(|artifact|artifact.executable.sha256.clone()),"updatable":available,"reason":if available{None}else{Some("This build has no verified four-target native release archives in the controller mirror")},"lastRollback":rollback,"selfUpdate":{"available":capability,"reason":if capability{None}else{Some("Install this controller as a verified native managed service to enable self-update")}}}),
+        json!({"id":crate::BUILD_ID,"version":crate::VERSION,"runtime":"rust","target":crate::release::host_target().ok(),"sha256":manifest.as_ref().and_then(|manifest|manifest.target(crate::release::host_target().ok()?).ok()).map(|artifact|artifact.executable.sha256.clone()),"updatable":available,"reason":if available{None}else{Some("This build has no verified native release archives in the controller mirror")},"lastRollback":rollback,"selfUpdate":{"available":capability,"reason":if capability{None}else{Some("Install this controller as a verified native managed service to enable self-update")}}}),
         available,
     )
 }
@@ -1000,7 +1000,10 @@ pub async fn route(
             })
             .await??;
             let mirror = mirror(&controller.dir);
-            for target in crate::release::SUPPORTED_TARGETS {
+            for target in crate::release::SUPPORTED_TARGETS
+                .iter()
+                .filter(|target| release.manifest.artifacts.contains_key(**target))
+            {
                 source.mirror_artifact(&release, target, &mirror).await?;
             }
             schedule_controller(controller.clone(), &release.manifest).await?
@@ -1337,7 +1340,7 @@ fn import_bundle_file_with_active(
     for (index, entry) in archive.entries()?.enumerate() {
         ensure!(
             index < 5,
-            "BAD_REQUEST: native bundle must contain one manifest and four target archives"
+            "BAD_REQUEST: native bundle may contain at most one manifest and four target archives"
         );
         let mut entry = entry?;
         ensure!(
@@ -1391,8 +1394,8 @@ fn import_bundle_file_with_active(
         ensure_active_manifest(&manifest, active)?;
     }
     ensure!(
-        files.len() == 5,
-        "BAD_REQUEST: native bundle must contain all four target archives"
+        files.len() == manifest.artifacts.len() + 1,
+        "BAD_REQUEST: native bundle must contain exactly the manifest's target archives"
     );
     for artifact in manifest.artifacts.values() {
         ensure!(
@@ -1691,7 +1694,7 @@ async fn ensure_current_mirror_with_cancel(
     if !claimed {
         return Ok(());
     }
-    let result=async{let source=controller.releases.clone().with_cancellation(cancel).with_lifetime_guard(controller.clone());let release=source.fetch_manifest(&format!("v{}",crate::VERSION)).await?;ensure!(release.manifest.build_id==crate::BUILD_ID,"Official version tag does not describe this exact native build; publish its verified native bundle to populate the controller mirror");let selected=release.manifest.clone();let owner=controller.clone();tokio::task::spawn_blocking(move||{let _owner=owner;ensure_active_manifest(&selected,&store.manifest(crate::BUILD_ID)?)}).await??;let mirror=mirror(&controller.dir);for target in crate::release::SUPPORTED_TARGETS{source.mirror_artifact(&release,target,&mirror).await?;}Ok::<(),anyhow::Error>(())}.await;
+    let result=async{let source=controller.releases.clone().with_cancellation(cancel).with_lifetime_guard(controller.clone());let release=source.fetch_manifest(&format!("v{}",crate::VERSION)).await?;ensure!(release.manifest.build_id==crate::BUILD_ID,"Official version tag does not describe this exact native build; publish its verified native bundle to populate the controller mirror");let selected=release.manifest.clone();let owner=controller.clone();tokio::task::spawn_blocking(move||{let _owner=owner;ensure_active_manifest(&selected,&store.manifest(crate::BUILD_ID)?)}).await??;let mirror=mirror(&controller.dir);for target in crate::release::SUPPORTED_TARGETS.iter().filter(|target|release.manifest.artifacts.contains_key(**target)){source.mirror_artifact(&release,target,&mirror).await?;}Ok::<(),anyhow::Error>(())}.await;
     let error = result.as_ref().err().map(|error| format!("{error:#}"));
     let failed = error.is_some();
     controller.db.write(move|connection|db::put(connection,"updates","mirrorPreparation",&json!({"target":crate::BUILD_ID,"pid":pid,"at":now,"phase":if failed{"failed"}else{"ready"},"error":error,"retryAt":if failed{Some(state::now()+60000)}else{None}}))).await?;

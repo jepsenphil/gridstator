@@ -4,7 +4,10 @@ use serde_json::json;
 use std::{fs, path::Path};
 
 fn inputs(root: &Path, version: &str) -> Result<()> {
-    for target in release::SUPPORTED_TARGETS {
+    inputs_for(root, version, &release::SUPPORTED_TARGETS)
+}
+fn inputs_for(root: &Path, version: &str, targets: &[&str]) -> Result<()> {
+    for &target in targets {
         let directory = root.join(target.replace('/', "-"));
         fs::create_dir_all(&directory)?;
         let mut bytes = [0u8; 128];
@@ -39,6 +42,33 @@ fn inputs(root: &Path, version: &str) -> Result<()> {
             )?,
         )?;
     }
+    Ok(())
+}
+#[test]
+fn stable_linux_pair_and_unsigned_mac_preview_have_distinct_manifests() -> Result<()> {
+    let temp = tempfile::tempdir()?;
+    let linux_input = temp.path().join("linux-input");
+    inputs_for(&linux_input, "2.0.0", &["linux/amd64", "linux/arm64"])?;
+    let linux_output = temp.path().join("linux-release");
+    let stable = packaging::assemble(&linux_input, &linux_output, false)?;
+    assert_eq!(stable.artifacts.len(), 2);
+    assert!(stable.target("darwin/arm64").is_err());
+    let bundle = linux_output.join("gridstator-2.0.0-native-bundle.tar.gz");
+    let (_, hash) = release::hash_file(&bundle)?;
+    assert_eq!(
+        updates::import_bundle(&bundle, &hash, &temp.path().join("controller"))?,
+        stable
+    );
+
+    let mac_input = temp.path().join("mac-input");
+    inputs_for(&mac_input, "2.0.0-macos-preview.1", &["darwin/arm64"])?;
+    let preview = packaging::assemble(&mac_input, &temp.path().join("mac-preview"), false)?;
+    assert_eq!(
+        preview.artifacts.keys().collect::<Vec<_>>(),
+        vec!["darwin/arm64"]
+    );
+    inputs_for(&mac_input, "2.0.0", &["darwin/arm64"])?;
+    assert!(packaging::assemble(&mac_input, &temp.path().join("invalid-stable"), false).is_err());
     Ok(())
 }
 #[test]

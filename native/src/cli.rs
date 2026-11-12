@@ -84,7 +84,7 @@ fn reference_command(case: &'static Value) -> Command {
         .filter_map(Value::as_str)
         .eq(["controller", "publish-build"])
     {
-        command = command.about("Publish a verified native release bundle (manifest and four target archives), drain the controller and restart (admin)");
+        command = command.about("Publish a verified native release bundle (manifest and its target archives), drain the controller and restart (admin)");
     }
     if path.last().and_then(Value::as_str) == Some("install-service") {
         command = command.about("Install an isolated native service: systemd on Linux, launchd on macOS. User services start at login; --system starts at boot.");

@@ -4,7 +4,7 @@ Gridstator 2.0.0 is the planned first public native release. The [release plan](
 
 | Track | Current state | Next public milestone |
 | --- | --- | --- |
-| Native CLI/controller/worker | Development preview; platform, service and signing gates open | Verified four-target 2.0.0 release |
+| Native CLI/controller/worker | Development preview; Linux runtime and systemd gates open | Verified two-target Linux 2.0.0 release; Apple Silicon unsigned preview follows separately |
 | VS Code extension | Native VSIX candidate; Marketplace listing pending | `gridstator.gridstator` listing paired with the CLI release |
 | Desktop companion | Separate unsigned preview | OS installer and lifecycle qualification after the core release |
 

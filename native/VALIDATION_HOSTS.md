@@ -5,25 +5,17 @@ Ubuntu x64 machine as a disposable native controller and Linux worker. Windows 1
 separate WSL2 validation host. These instructions create new state; they do not migrate an old
 cluster or establish that a preview has passed the stable release gates.
 
-No native Darwin release is published at the time this runbook was written. Obtain a reviewed CI
+The Apple Silicon path is an unsigned development preview and does not qualify the stable Linux release. Obtain a reviewed CI
 candidate rather than substituting an imagined release download URL. Target machines need the
 native executable and ordinary installation tools, without Node/npm/Rust. Docker/buildx, git and
 act remain external worker tools. The VS Code extension runs in VS Code's supplied Node runtime.
 
 ## Build and acquire the M4 candidate
 
-The [candidate workflow](../.github/workflows/native-candidate.yml) builds each executable on its
-corresponding host: `ubuntu-24.04`, `ubuntu-24.04-arm`, `macos-15-intel` and `macos-15`.
-GitHub documents the latter two as Intel and ARM64 respectively. These builds, unit tests and
-linkage checks provide different evidence from a Docker/launchd/reboot run on your laptop.
-GitHub's ARM64 Mac runners do not support nested virtualization, so do the Docker Desktop proof on
+The [candidate workflow](../.github/workflows/native-candidate.yml) builds stable Linux on `ubuntu-24.04` and `ubuntu-24.04-arm`. Its `mac-arm` preview profile uses `macos-15` for Apple Silicon. These builds, unit tests and linkage checks provide different evidence from a Docker/launchd/reboot run on your laptop. GitHub's ARM64 Mac runners do not support nested virtualization, so do the Docker Desktop proof on
 the M4. See [GitHub's runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
 
-After the reviewed source has been pushed to an owner-selected branch, run **Native release
-candidate** from GitHub Actions with a unique prerelease version, for example
-`2.0.0-preview.1`. For an unsigned development preview, leave `notarize-preview` false. Stable
-versions always require Developer ID signing/notarization and the credentials in
-[RELEASING.md](RELEASING.md); that input cannot waive the stable gate.
+After the reviewed source has been pushed to an owner-selected branch, run **Native release candidate** from GitHub Actions with a unique prerelease version, for example `2.0.0-macos-preview.1`, and `profile=mac-arm`. Leave `notarize-preview` false. The stable Linux profile uses version `2.0.0` and does not build macOS artifacts.
 
 An owner can use the GitHub UI or these optional build-host commands. Replace the branch, version
 and run ID with the actual reviewed run; this is an instruction to run later, not an existing run:
@@ -31,7 +23,7 @@ and run ID with the actual reviewed run; this is an instruction to run later, no
 ```sh
 reviewed_branch=replace-with-reviewed-branch
 gh workflow run native-candidate.yml --repo jepsenphil/gridstator \
-  --ref "$reviewed_branch" -f version=2.0.0-preview.1 -f notarize-preview=false
+  --ref "$reviewed_branch" -f version=2.0.0-macos-preview.1 -f profile=mac-arm -f notarize-preview=false
 gh run list --repo jepsenphil/gridstator --workflow native-candidate.yml
 run_id=replace-with-actual-numeric-run-id
 gh run view "$run_id" --repo jepsenphil/gridstator --json url,headSha,conclusion
@@ -49,11 +41,7 @@ gh run download "$run_id" --repo jepsenphil/gridstator \
   --name native-release-candidate --dir "$validation_root/release"
 ```
 
-Record the run URL, exact head SHA, version and build ID. Download the assembled artifact, which
-contains the manifest and checksums, rather than only the individual `candidate-darwin-arm64`
-executable. Use the same assembled release on the Ubuntu controller and other validation workers.
-The Linux artifacts can be built in the agreed Docker build environment; Darwin artifacts come
-from the Mac CI jobs and require the Apple toolchain to link.
+Record the run URL, exact head SHA, version and build ID. Download the assembled Mac preview artifact, which contains the manifest and checksums, rather than only the individual `candidate-darwin-arm64` executable. Obtain the separate Linux 2.0.0 candidate from the same source revision for an Ubuntu validation controller. Darwin artifacts come from Mac CI jobs and require the Apple toolchain to link.
 
 ## Verify and manually install the preview
 
@@ -68,7 +56,7 @@ any failed check. The archive must list exactly two regular files, `gridstator` 
 reject a link, repeated name or any unexpected member before extracting the executable.
 
 ```sh
-version=2.0.0-preview.1
+version=2.0.0-macos-preview.1
 archive="gridstator-$version-darwin-arm64.tar.gz"
 prefix="$validation_root/prefix"
 uname -m
@@ -158,8 +146,8 @@ Docker is ready.
 
 ## Attach to a disposable native controller
 
-On Ubuntu, install the **same verified candidate's** `linux/amd64` archive using
-[release procedure](RELEASING.md). Use a new private directory, a free validation port and an address that
+On Ubuntu, install the **separately verified Linux stable candidate's** `linux/amd64` archive using
+[release procedure](RELEASING.md). Require the same source revision and a compatible wire protocol. Use a new private directory, a free validation port and an address that
 the M4 can reach. These commands start a foreground controller without an embedded worker:
 
 ```sh
@@ -256,8 +244,8 @@ removing validation state. These are actions to perform on the actual Mac, not g
 
 | Host | Useful evidence | Separate evidence still needed |
 | --- | --- | --- |
-| M4 macOS, ARM64 binary and Linux ARM64 Docker containers | Native Apple Silicon roles, Docker VM capacity, launchd/login, late Docker, updates/rollback, actual VS Code | Actual Intel Mac behavior; stable downloaded signed/notarized artifact |
-| M4 running the Intel Mac binary with Rosetta | Additional translated `darwin/amd64` compatibility probe | Native Intel hardware validation; Rosetta is not that proof |
+| M4 macOS, ARM64 binary and Linux ARM64 Docker containers | Native Apple Silicon preview roles, Docker VM capacity, launchd/login, late Docker, updates/rollback, actual VS Code | Signed/notarized Mac distribution remains future work |
+| M4 running an Intel Mac binary with Rosetta | Optional translated `darwin/amd64` development probe | Native Intel hardware validation; Rosetta is not that proof |
 | Ubuntu x64 host | Linux amd64 Docker work, controller, systemd and recovery | ARM64, Mac and WSL2 behavior |
 | Ubuntu ARM64 VM virtualized on the M4 | Actual `linux/arm64` userspace/kernel, ARM64 Docker and systemd in a VM | Mac launchd and physical ARM Linux boot/power behavior |
 | Windows 11 with an actual WSL2 Ubuntu distro | Linux native helper, Docker connection, systemd/session behavior and VS Code Remote WSL | Windows-native executable support, which is outside this release |
@@ -277,6 +265,4 @@ the M4 does not establish WSL2 behavior.
 For each host keep: run/source/build identity, manifest/archive/executable hashes, OS/architecture,
 service scope/account, Docker/buildx/act versions and connection, host/VM/reservation measurements,
 commands and exit codes, job IDs/results, sanitized logs, restart/login/reboot observations and
-update/rollback facts. Record unsupported or unrun cases explicitly. Stable publication requires
-the outstanding [release acceptance record](contracts/release-acceptance.json) gates and review, including signed
-downloaded Mac artifacts on both actual Mac architectures.
+update/rollback facts. Record unsupported or unrun cases explicitly. Stable Linux publication requires the Linux-scoped [release acceptance record](contracts/release-acceptance.json) gates and review. The unsigned Mac preview must remain labeled as such.

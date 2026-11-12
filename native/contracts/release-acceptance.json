@@ -6,6 +6,7 @@
   "gates": [
     {
       "id": "mac-signing",
+      "scope": "mac-stable-future",
       "owner": "project owner + native::release",
       "behavior": "Stable macOS candidate bytes are Developer ID signed and notarized before checksum/distribution validation.",
       "status": "not started",
@@ -20,13 +21,14 @@
       "evidence": []
     },
     {
-      "id": "four-target-linkage",
+      "id": "linux-two-target-runtime",
+      "scope": "linux-stable",
       "owner": "native::build/release",
-      "behavior": "All four native targets run without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
+      "behavior": "Both Linux native targets run on clean actual-architecture hosts without Node/npm/Rust/compiler or separately installed SQLite/OpenSSL.",
       "status": "implemented",
       "acceptance": {
-        "caseId": "four-target-linkage",
-        "description": "Build and audit linkage then run actual tested bytes on clean Linux x64/ARM64 and macOS Intel/ARM64 hosts.",
+        "caseId": "linux-two-target-runtime",
+        "description": "Build and audit linkage then run exact candidate bytes in clean offline containers on actual Linux x64 and ARM64 hosts.",
         "requiredEvidence": [
           "Native source revision, exact command/scenario and result log",
           "Actual target/tool/environment identity for platform or real-tool claims"
@@ -45,6 +47,7 @@
     },
     {
       "id": "mac-docker-capacity",
+      "scope": "mac-stable-future",
       "owner": "native::platform/worker",
       "behavior": "Docker Desktop availability and VM capacity are distinct from host pressure and recover after late startup/restart.",
       "status": "implemented",
@@ -76,6 +79,7 @@
     },
     {
       "id": "launchd-live",
+      "scope": "mac-stable-future",
       "owner": "native::services",
       "behavior": "Mac services distinguish boot-start system daemons and login-start user agents, with stable user/environment/path.",
       "status": "implemented",
@@ -100,6 +104,7 @@
     },
     {
       "id": "systemd-live",
+      "scope": "linux-stable",
       "owner": "native::services",
       "behavior": "Linux system/user units install, replace, start, stop, restart and uninstall with correct ownership and isolated v2 paths.",
       "status": "implemented",

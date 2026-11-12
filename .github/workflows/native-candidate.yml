@@ -10,6 +10,10 @@ on:
         required: false
         default: false
         type: boolean
+      profile:
+        required: false
+        default: auto
+        type: string
   workflow_dispatch:
     inputs:
       version:
@@ -17,10 +21,16 @@ on:
         required: true
         type: string
       notarize-preview:
-        description: 'Sign/notarize preview Mac artifacts (stable versions always require this)'
+        description: 'Sign/notarize preview Mac artifacts when Apple credentials are configured'
         required: false
         default: false
         type: boolean
+      profile:
+        description: 'Target set: auto selects Linux for stable versions and all four for previews'
+        required: false
+        default: auto
+        type: choice
+        options: [auto, linux, mac-arm, all]
 
 # Produces reviewable artifacts only. Stable publication requires all release acceptance gates.
 permissions:
@@ -32,15 +42,39 @@ jobs:
     outputs:
       build-id: ${{ steps.identity.outputs.build-id }}
       notarize: ${{ steps.identity.outputs.notarize }}
+      profile: ${{ steps.identity.outputs.profile }}
+      matrix: ${{ steps.identity.outputs.matrix }}
     steps:
       - id: identity
         env:
           RELEASE_VERSION: ${{ inputs.version }}
           NOTARIZE_PREVIEW: ${{ inputs.notarize-preview }}
+          RELEASE_PROFILE: ${{ inputs.profile }}
         run: |
           [[ "$RELEASE_VERSION" =~ ^2\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]
           echo "build-id=native-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
-          if [[ "$RELEASE_VERSION" != *-* || "$NOTARIZE_PREVIEW" == true ]]; then
+          profile=$RELEASE_PROFILE
+          if [[ "$profile" == auto ]]; then
+            if [[ "$RELEASE_VERSION" == *-* ]]; then profile=all; else profile=linux; fi
+          fi
+          if [[ "$RELEASE_VERSION" != *-* && "$profile" != linux ]]; then
+            echo 'Stable 2.0.0 supports only the two Linux targets' >&2
+            exit 1
+          fi
+          case "$profile" in
+            linux)
+              matrix='{"include":[{"runner":"ubuntu-24.04","target":"x86_64-unknown-linux-musl","key":"linux-amd64"},{"runner":"ubuntu-24.04-arm","target":"aarch64-unknown-linux-musl","key":"linux-arm64"}]}' ;;
+            mac-arm)
+              [[ "$RELEASE_VERSION" == *-* ]] || exit 1
+              matrix='{"include":[{"runner":"macos-15","target":"aarch64-apple-darwin","key":"darwin-arm64"}]}' ;;
+            all)
+              [[ "$RELEASE_VERSION" == *-* ]] || exit 1
+              matrix='{"include":[{"runner":"ubuntu-24.04","target":"x86_64-unknown-linux-musl","key":"linux-amd64"},{"runner":"ubuntu-24.04-arm","target":"aarch64-unknown-linux-musl","key":"linux-arm64"},{"runner":"macos-15-intel","target":"x86_64-apple-darwin","key":"darwin-amd64"},{"runner":"macos-15","target":"aarch64-apple-darwin","key":"darwin-arm64"}]}' ;;
+            *) echo "Unknown release profile: $profile" >&2; exit 1 ;;
+          esac
+          echo "profile=$profile" >> "$GITHUB_OUTPUT"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          if [[ "$profile" != linux && "$NOTARIZE_PREVIEW" == true ]]; then
             echo 'notarize=true' >> "$GITHUB_OUTPUT"
           else
             echo 'notarize=false' >> "$GITHUB_OUTPUT"
@@ -50,20 +84,7 @@ jobs:
     needs: identity
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-24.04
-            target: x86_64-unknown-linux-musl
-            key: linux-amd64
-          - runner: ubuntu-24.04-arm
-            target: aarch64-unknown-linux-musl
-            key: linux-arm64
-          - runner: macos-15-intel
-            target: x86_64-apple-darwin
-            key: darwin-amd64
-          - runner: macos-15
-            target: aarch64-apple-darwin
-            key: darwin-arm64
+      matrix: ${{ fromJSON(needs.identity.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     env:
@@ -94,7 +115,7 @@ jobs:
         run: |
           cargo fmt --check
           cargo clippy --locked --all-targets --target "$RELEASE_TARGET" -- -D warnings
-          cargo test --locked --all-targets --target "$RELEASE_TARGET"
+          cargo test --locked --all-targets --target "$RELEASE_TARGET" -- --test-threads=1
           cargo build --locked --release --target "$RELEASE_TARGET"
           mkdir -p "candidate/$RELEASE_KEY"
           cp "target/$RELEASE_TARGET/release/gridstator" "candidate/$RELEASE_KEY/gridstator"
@@ -139,10 +160,41 @@ jobs:
           if [[ "$RUNNER_OS" == Linux ]]; then
             readelf -l -d "$binary" > "native/candidate/$RELEASE_KEY/linkage.txt"
             if grep -Eq 'INTERP|NEEDED' "native/candidate/$RELEASE_KEY/linkage.txt"; then echo 'Linux release must be static' >&2; exit 1; fi
+            docker run --rm --network none --mount "type=bind,src=$GITHUB_WORKSPACE/$binary,dst=/gridstator,readonly" \
+              alpine:3.21 /gridstator build-info --json > "native/candidate/$RELEASE_KEY/clean-runtime.json"
+            jq -e --arg target "${RELEASE_KEY/-/\/}" '.target == $target' \
+              "native/candidate/$RELEASE_KEY/clean-runtime.json"
           else
             otool -L "$binary" > "native/candidate/$RELEASE_KEY/linkage.txt"
             if grep -Eiq 'lib(sqlite3|ssl|crypto|node)[.-]' "native/candidate/$RELEASE_KEY/linkage.txt"; then exit 1; fi
           fi
+      - name: Exercise isolated user and system service lifecycle with final Linux bytes
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          binary="$GITHUB_WORKSPACE/native/candidate/$RELEASE_KEY/gridstator"
+          proof_dir="native/candidate/$RELEASE_KEY"
+          test_binary=$(find "native/target/$RELEASE_TARGET/debug/deps" -maxdepth 1 -name 'systemd_e2e-*' -type f -executable -print -quit)
+          test -n "$test_binary"
+          uid=$(id -u)
+          sudo loginctl enable-linger "$(id -un)"
+          sudo systemctl start "user@$uid.service"
+          export XDG_RUNTIME_DIR="/run/user/$uid"
+          export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+          systemctl --user show-environment > /dev/null
+          GRIDSTATOR_TEST_BINARY="$binary" "$test_binary" --ignored --exact \
+            actual_systemd_supervisor_controller_and_embedded_worker_lifecycle --nocapture \
+            2>&1 | tee "$proof_dir/systemd-user.log"
+          sudo env GRIDSTATOR_TEST_BINARY="$binary" GRIDSTATOR_SYSTEMD_SCOPE=system \
+            "$GITHUB_WORKSPACE/$test_binary" --ignored --exact \
+            actual_systemd_supervisor_controller_and_embedded_worker_lifecycle --nocapture \
+            2>&1 | tee "$proof_dir/systemd-system.log"
+          jq -n --arg runner "$RUNNER_NAME" --arg os "$RUNNER_OS" --arg arch "$RUNNER_ARCH" \
+            --arg uname "$(uname -a)" --arg systemd "$(systemctl --version | head -1)" \
+            --arg docker "$(docker version --format '{{.Server.Version}}')" \
+            --arg executableSha256 "$(sha256sum "$binary" | cut -d' ' -f1)" \
+            '{runner:$runner,os:$os,arch:$arch,uname:$uname,systemd:$systemd,docker:$docker,executableSha256:$executableSha256,userScope:"passed",systemScope:"passed"}' \
+            > "$proof_dir/systemd-proof.json"
       - uses: actions/upload-artifact@v7
         with:
           name: candidate-${{ matrix.key }}
@@ -176,7 +228,8 @@ jobs:
           if-no-files-found: error
 
   vscode-integration:
-    needs: [build, vscode]
+    needs: [identity, build, vscode]
+    if: needs.identity.outputs.profile != 'mac-arm'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -206,6 +259,7 @@ jobs:
 
   assemble:
     needs: [identity, build, vscode, vscode-integration]
+    if: always() && needs.identity.result == 'success' && needs.build.result == 'success' && needs.vscode.result == 'success' && (needs.vscode-integration.result == 'success' || needs.identity.outputs.profile == 'mac-arm')
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7

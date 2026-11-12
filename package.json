@@ -18,7 +18,7 @@
     "format:check": "prettier --check .",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
     "test:ui": "pnpm build && pnpm --filter ./apps/vscode exec playwright test",
-    "test:vscode": "pnpm build && cd apps/vscode && GRIDSTATOR_NATIVE_CLI_E2E=\"$PWD/../../native/target/debug/gridstator\" xvfb-run -a node test/run-integration.mjs",
+    "test:vscode": "pnpm build && pnpm --filter ./apps/vscode package:native && cd apps/vscode && GRIDSTATOR_NATIVE_CLI_E2E=\"$PWD/../../native/target/debug/gridstator\" xvfb-run -a node test/run-integration.mjs",
     "package:vscode": "pnpm build && pnpm --filter ./apps/vscode package",
     "desktop:resources": "node scripts/desktop-artifacts.mjs stage",
     "desktop:dev": "pnpm desktop:resources && pnpm --filter @gridstator/desktop desktop:dev",

@@ -7,7 +7,7 @@
 
 **Multiple machines. One workflow.** Gridstator runs builds, tests, Docker image builds and supported GitHub Actions jobs on computers you control. It snapshots the saved working tree, including uncommitted edits, sends only missing content to a worker, and streams logs and results back to the CLI or VS Code.
 
-> **Release status:** Gridstator 2.0.0 is planned as the first public native release. The Rust CLI/controller/worker and VS Code extension are development previews while five [release acceptance gates](native/contracts/release-acceptance.json) remain open. No native package or Marketplace listing is published yet. The CLI will ship as verified native binaries, not through npm.
+> **Release status:** Gridstator 2.0.0 is being qualified for Linux x64 and ARM64. The [release acceptance record](native/contracts/release-acceptance.json) keeps Linux stable gates separate from future macOS qualification. Apple Silicon will be available only as an unsigned development preview; Intel Mac is not a supported release target. No native package or Marketplace listing is published yet. The CLI will ship as verified native binaries, not through npm.
 
 ## See it
 

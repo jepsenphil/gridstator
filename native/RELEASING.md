@@ -5,7 +5,7 @@ The [native release plan](../docs/NATIVE_RELEASE_PLAN.md) defines the stable rel
 it does not publish a release, update a cluster, or declare those gates passed.
 
 Allocate one build ID before compiling any target. The workflow uses its run ID and attempt,
-and passes the same `GRIDSTATOR_BUILD_ID` and full `GRIDSTATOR_SOURCE_REVISION` to four actual-host
+and passes the same `GRIDSTATOR_BUILD_ID` and full `GRIDSTATOR_SOURCE_REVISION` to the selected actual-host
 builds. `native/scripts/set-version.mjs` stamps Cargo's package and lockfile together. Never derive
 the compiled build ID from an executable/archive/manifest hash: those bytes contain the ID.
 
@@ -13,16 +13,16 @@ the compiled build ID from an executable/archive/manifest hash: those bytes cont
 | --- | --- | --- |
 | `linux/amd64` | `x86_64-unknown-linux-musl` | Linux x64 |
 | `linux/arm64` | `aarch64-unknown-linux-musl` | Linux ARM64 |
-| `darwin/amd64` | `x86_64-apple-darwin` | Mac Intel |
-| `darwin/arm64` | `aarch64-apple-darwin` | Mac Apple Silicon |
+| `darwin/arm64` preview | `aarch64-apple-darwin` | Mac Apple Silicon |
+
+Stable 2.0.0 includes the two Linux targets. The unsigned Apple Silicon binary uses a separate prerelease tag. Intel Mac is not an official release target.
 
 Linux distributions are static musl binaries. Candidate checks reject ELF interpreters and
 shared-library dependencies. Mac distributions use ordinary OS libraries; bundled SQLite/rustls
 avoid a separate SQLite/OpenSSL installation. Build-host Rust/C tools and Node for the extension
 are not target-machine dependencies.
 
-Stable Mac jobs, and previews explicitly selecting `notarize-preview: true`, require these
-repository secrets, supplied by the owner:
+Future signed Mac releases, and previews explicitly selecting `notarize-preview: true`, require these repository secrets, supplied by the owner:
 
 - `APPLE_CERTIFICATE_P12`: base64-encoded Developer ID Application signing certificate/private key.
 - `APPLE_CERTIFICATE_PASSWORD` and `APPLE_SIGNING_IDENTITY` for that certificate.
@@ -35,35 +35,29 @@ are collected **after** signing, against the final shipped executable. This foll
 ZIP notarization and an accepted job do not replace downloaded-binary Gatekeeper checks on both
 supported Mac architectures, nor the required actual Docker/launchd/reboot validation.
 
-Prerelease versions may select `notarize-preview: false` (the workflow default) to build unsigned
-development artifacts without these credentials. They remain preview evidence and cannot pass
-the signed/notarized Mac gate. Versions without a prerelease suffix always require notarization;
-the preview input cannot disable it.
+Prerelease versions may select `notarize-preview: false` (the workflow default) to build unsigned development artifacts without these credentials. They remain preview evidence and cannot pass the signed/notarized Mac gate. The stable Linux profile builds no Mac artifact and needs no Apple credentials.
 
-The assembly example accepts an input directory containing `linux-amd64`, `linux-arm64`,
-`darwin-amd64` and `darwin-arm64`. Each contains `gridstator` and its actual-host
-`gridstator build-info --json` output in `build-info.json`; Mac directories also contain
-`notarization.json`. From `native/`:
+The assembly example accepts an input directory containing the selected target directories. Stable 2.0.0 requires `linux-amd64` and `linux-arm64`. An Apple Silicon prerelease may contain `darwin-arm64` alone. Each directory contains `gridstator` and its actual-host `gridstator build-info --json` output in `build-info.json`; signed Mac candidates also contain `notarization.json`. From `native/`:
 
 ```sh
-cargo run --locked --example assemble_release -- candidate-input release --require-notarization
+cargo run --locked --example assemble_release -- candidate-input release
 cd release
 sha256sum --check SHA256SUMS
 ```
 
-The destination must not exist. Assembly validates all four identities, architectures and final
+The destination must not exist. Assembly validates selected identities, architectures and final
 executable hashes, then stages and atomically renames the output directory. It produces:
 
-- Four deterministic `gridstator-<version>-<os>-<arch>.tar.gz` archives, with root `gridstator` and `LICENSE`.
+- Deterministic `gridstator-<version>-<os>-<arch>.tar.gz` archives for the selected targets, with root `gridstator` and `LICENSE`.
 - `gridstator-release.json`, with separate final executable and archive SHA-256/size fields.
-- `gridstator-<version>-native-bundle.tar.gz`, containing that manifest and the four archives, for
+- `gridstator-<version>-native-bundle.tar.gz`, containing that manifest and the selected archives, for
   authenticated `controller publish-build` imports.
 - `install-native.sh`, the small runtime-independent installer from the selected source revision.
 - `SHA256SUMS`, covering that installer, the manifest, all archives and the native bundle.
 
 The workflow also packages a thin native VSIX and adds its checksum. VS Code supplies its Node
 runtime; the packaged extension requires the Rust helper. Set `gridstator.nativeCli.path`
-to its verified executable in the workspace host.. The VSIX uses the
+to its verified executable in the workspace host. The VSIX uses the
 candidate's numeric base version because VS Code's package version is separate from the native
 prerelease identity.
 
@@ -77,7 +71,7 @@ uses the native verifier before installation. It requires ordinary OS tools and 
 Node/npm/Rust/Python/jq. It installs the CLI; `controller init`, `agent join` and `install-service`
 remain explicit operations. Use isolated v2 configuration, data and services throughout rehearsal.
 
-Before stable publication, verify all five [release acceptance gates](contracts/release-acceptance.json) with final candidate evidence, including actual Mac and ARM hosts, service startup, late Docker, update rollback and downloaded signed artifacts. The release review must accept the evidence.
+Before stable Linux publication, verify both Linux [release acceptance gates](contracts/release-acceptance.json) with final candidate evidence on x64 and ARM64 hosts, including clean runtime and systemd lifecycle. Mac signing, Docker Desktop and launchd remain future stable Mac gates. The release review must accept the evidence.
 
 The opt-in `recovery_e2e` exercises native installation, authenticated controller update, health confirmation, crash rollback and database restoration after a failed schema change on Linux. Other-target bundle entries in that rehearsal are parsing fixtures and do not pass runtime gates.
 For concrete candidate acquisition and M4/Docker Desktop/launchd, ARM Ubuntu VM and Windows WSL2

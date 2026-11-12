@@ -11,8 +11,10 @@ fn main() -> anyhow::Result<()> {
         args.len() == 3,
     )?;
     println!(
-        "Assembled {} ({}) for four targets",
-        manifest.version, manifest.build_id
+        "Assembled {} ({}) for {} targets",
+        manifest.version,
+        manifest.build_id,
+        manifest.artifacts.len()
     );
     Ok(())
 }

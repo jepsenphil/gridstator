@@ -9,18 +9,26 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const document = JSON.parse(
   readFileSync(resolve(root, 'native/contracts/release-acceptance.json'), 'utf8'),
 );
-const required = new Set([
-  'mac-signing',
-  'four-target-linkage',
-  'mac-docker-capacity',
-  'launchd-live',
-  'systemd-live',
+const expected = new Map([
+  ['mac-signing', 'mac-stable-future'],
+  ['linux-two-target-runtime', 'linux-stable'],
+  ['mac-docker-capacity', 'mac-stable-future'],
+  ['launchd-live', 'mac-stable-future'],
+  ['systemd-live', 'linux-stable'],
 ]);
 const release = process.argv.includes('--release');
 const revisionIndex = process.argv.indexOf('--revision');
 const revision = revisionIndex >= 0 ? process.argv[revisionIndex + 1] : undefined;
+const candidateIndex = process.argv.indexOf('--candidate-revision');
+const candidateRevision = candidateIndex >= 0 ? process.argv[candidateIndex + 1] : undefined;
 if (release) {
   assert.match(revision ?? '', /^[a-f0-9]{40}$/, '--release requires --revision <40-hex commit>');
+  assert.match(
+    candidateRevision ?? '',
+    /^[a-f0-9]{40}$/,
+    '--release requires --candidate-revision <40-hex commit>',
+  );
+  assert(sourceEquivalent(candidateRevision), 'candidate source differs from release revision');
 }
 const releaseSources = [
   'package.json',
@@ -57,9 +65,10 @@ function sourceEquivalent(proofRevision) {
 assert.equal(document.schemaVersion, 1);
 assert.equal(document.releaseSeries, '2.x');
 assert(Array.isArray(document.gates));
-assert.equal(document.gates.length, required.size);
+assert.equal(document.gates.length, expected.size);
 for (const gate of document.gates) {
-  assert(required.delete(gate.id), `Unknown or duplicate native gate: ${gate.id}`);
+  assert.equal(expected.get(gate.id), gate.scope, `Unknown or duplicate native gate: ${gate.id}`);
+  expected.delete(gate.id);
   assert(document.statusPolicy.includes(gate.status), `${gate.id}: invalid status`);
   assert(gate.owner && gate.behavior && gate.acceptance?.description);
   assert(Array.isArray(gate.evidence));
@@ -75,24 +84,26 @@ for (const gate of document.gates) {
       gate.evidence.some((proof) => /^[a-f0-9]{40}$/.test(proof.revision)),
       `${gate.id}: final verification requires an exact source commit`,
     );
-    if (release)
+    if (release && gate.scope === 'linux-stable')
       assert(
         gate.evidence.some(
-          (proof) => /^[a-f0-9]{40}$/.test(proof.revision) && sourceEquivalent(proof.revision),
+          (proof) => proof.revision === candidateRevision && sourceEquivalent(proof.revision),
         ),
         `${gate.id}: no passing evidence from source equivalent to ${revision}`,
       );
   }
 }
-assert.equal(required.size, 0, `Missing native gates: ${[...required].join(', ')}`);
+assert.equal(expected.size, 0, `Missing native gates: ${[...expected.keys()].join(', ')}`);
 
-const open = document.gates.filter((gate) => gate.status !== 'verified');
+const open = document.gates.filter(
+  (gate) => gate.scope === 'linux-stable' && gate.status !== 'verified',
+);
 process.stdout.write(
-  `Validated ${document.gates.length} native release gates; ${open.length} open\n`,
+  `Validated ${document.gates.length} native gates; ${open.length} Linux stable gates open\n`,
 );
 if (release && open.length) {
   process.stderr.write(
-    `Stable native release acceptance is incomplete:\n${open
+    `Stable Linux release acceptance is incomplete:\n${open
       .map((gate) => `  ${gate.id}: ${gate.status}`)
       .join('\n')}\n`,
   );

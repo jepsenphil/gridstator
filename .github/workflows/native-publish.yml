@@ -1,11 +1,15 @@
-name: Publish native v2
+name: Publish native Linux v2
 
-# Manual only. Release acceptance, reviewed environment and notarized candidate must all pass.
+# Manual only. Linux release acceptance and reviewed candidate must pass.
 on:
   workflow_dispatch:
     inputs:
       version:
         description: Stable version, for example 2.0.0
+        required: true
+        type: string
+      candidate_run_id:
+        description: Successful native-candidate workflow run with final release bytes
         required: true
         type: string
 
@@ -15,6 +19,11 @@ permissions:
 jobs:
   release-gate:
     runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      candidate-sha: ${{ steps.candidate.outputs.sha }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -28,8 +37,22 @@ jobs:
         run: |
           [[ "$GITHUB_REF" == refs/heads/main ]]
           [[ "$RELEASE_VERSION" =~ ^2\.[0-9]+\.[0-9]+$ ]]
-      - name: Require every recorded native acceptance gate
-        run: node native/scripts/check-release-acceptance.mjs --release --revision "$GITHUB_SHA"
+      - name: Resolve a successful candidate from this repository
+        id: candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_RUN_ID: ${{ inputs.candidate_run_id }}
+        run: |
+          [[ "$CANDIDATE_RUN_ID" =~ ^[0-9]+$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$CANDIDATE_RUN_ID" > candidate-run.json
+          jq -e --arg repository "$GITHUB_REPOSITORY" \
+            '.name == "Native release candidate" and .event == "workflow_dispatch" and .conclusion == "success" and .head_repository.full_name == $repository' \
+            candidate-run.json
+          echo "sha=$(jq -r .head_sha candidate-run.json)" >> "$GITHUB_OUTPUT"
+      - name: Require every recorded Linux stable acceptance gate
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: node native/scripts/check-release-acceptance.mjs --release --revision "$GITHUB_SHA" --candidate-revision "$CANDIDATE_SHA"
       - name: Require release notes for this version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -44,34 +67,29 @@ jobs:
             }
           '
 
-  candidate:
-    needs: release-gate
-    uses: ./.github/workflows/native-candidate.yml
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
   publish:
-    needs: candidate
+    needs: release-gate
     runs-on: ubuntu-24.04
     environment: v2-release
     permissions:
+      actions: read
       contents: write
-      id-token: write
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
-        with:
-          name: native-release-candidate
-          path: release
+      - name: Download the reviewed candidate bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_RUN_ID: ${{ inputs.candidate_run_id }}
+        run: gh run download "$CANDIDATE_RUN_ID" --repo "$GITHUB_REPOSITORY" --name native-release-candidate --dir release
       - name: Verify the assembled release identity and bytes
         env:
           RELEASE_VERSION: ${{ inputs.version }}
+          CANDIDATE_SHA: ${{ needs.release-gate.outputs.candidate-sha }}
         run: |
           cd release
           sha256sum --check SHA256SUMS
-          jq -e --arg version "$RELEASE_VERSION" --arg revision "$GITHUB_SHA" \
-            '.version == $version and .sourceRevision == $revision and (.artifacts | length) == 4' \
+          jq -e --arg version "$RELEASE_VERSION" --arg revision "$CANDIDATE_SHA" \
+            '.version == $version and .sourceRevision == $revision and (.artifacts | keys | sort) == ["linux/amd64", "linux/arm64"]' \
             gridstator-release.json
           test "$(find . -maxdepth 1 -name '*.vsix' | wc -l)" -eq 1
       - uses: pnpm/action-setup@v6
@@ -84,14 +102,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ inputs.version }}
+          CANDIDATE_SHA: ${{ needs.release-gate.outputs.candidate-sha }}
         run: |
           node scripts/changelog-section.mjs "$RELEASE_VERSION" > release-notes.md
-          gh release create "v$RELEASE_VERSION" release/* --draft --target "$GITHUB_SHA" \
+          gh release create "v$RELEASE_VERSION" release/* --draft --target "$CANDIDATE_SHA" \
             --title "Gridstator v$RELEASE_VERSION" --notes-file release-notes.md
-      - name: Publish the native extension to the VS Code Marketplace with OIDC
-        run: |
-          vsix=$(find "$GITHUB_WORKSPACE/release" -maxdepth 1 -name '*.vsix' -print -quit)
-          pnpm --filter ./apps/vscode exec vsce publish --oidc --packagePath "$vsix"
       - name: Promote the verified GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

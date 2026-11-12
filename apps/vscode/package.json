@@ -490,7 +490,7 @@
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",
     "package": "node scripts/package-native.mjs",
-    "package:native": "node scripts/package-native.mjs",
+    "package:native": "pnpm exec tsc -b ../../tsconfig.json && node scripts/package-native.mjs",
     "test:integration": "node test/run-integration.mjs"
   },
   "dependencies": {

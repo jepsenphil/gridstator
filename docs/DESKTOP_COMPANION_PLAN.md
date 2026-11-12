@@ -329,7 +329,7 @@ required. This plan provides no new platform-validation evidence.
 
 ## 7. Packaging, updates and implementation-time qualification
 
-Produce desktop artifacts separately from the existing four-target core manifest, which currently
+Produce desktop artifacts separately from the selected core release manifest, which currently
 rejects additional targets. Add an explicit desktop manifest containing its OS/architecture,
 checksums/signatures, bundled helper identity and supported local-control versions. Windows GUI
 artifacts must not be labeled as Windows worker artifacts.

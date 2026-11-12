@@ -151,13 +151,14 @@ impl ReleaseManifest {
         {
             return Err(invalid("unsupported native protocol compatibility"));
         }
-        if self.artifacts.len() != SUPPORTED_TARGETS.len()
-            || SUPPORTED_TARGETS
-                .iter()
-                .any(|key| !self.artifacts.contains_key(*key))
+        if self.artifacts.is_empty()
+            || self
+                .artifacts
+                .keys()
+                .any(|key| !SUPPORTED_TARGETS.contains(&key.as_str()))
         {
             return Err(invalid(
-                "release manifest must contain exactly the four supported target artifacts",
+                "release manifest has no artifacts or an unsupported target",
             ));
         }
         for artifact in self.artifacts.values() {

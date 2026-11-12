@@ -5,6 +5,10 @@ and the project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0]
+
+The first supported native release targets Linux x64 and ARM64. Apple Silicon uses a separate unsigned development preview; Intel Mac is not included.
+
 ### Added
 
 - Native architecture, installation, security, release and screenshot guides.
@@ -14,5 +18,5 @@ and the project uses [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Removed the unused Node CLI, controller, worker and release packaging. Every VSIX now delegates to the native executable.
-- Replaced Node parity checks with native behavior tests and five platform release acceptance gates.
+- Replaced Node parity checks with native behavior tests and scoped Linux stable/macOS preview release acceptance gates.
 - Updated native XML and ZIP dependencies to clear high and critical RustSec advisories.

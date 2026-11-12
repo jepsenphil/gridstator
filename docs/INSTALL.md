@@ -4,7 +4,7 @@
 
 ## Requirements
 
-- Linux amd64/arm64 or macOS Intel/Apple Silicon for the native CLI. On Windows, run the worker inside a supported WSL2 distribution; see [Windows](WINDOWS.md).
+- Linux amd64/arm64 for the stable native CLI. Apple Silicon is an unsigned development preview with separate instructions; Intel Mac is not a supported release target. On Windows, run the Linux worker inside a supported WSL2 distribution; see [Windows](WINDOWS.md).
 - Docker available to the account that runs each worker. Buildx is needed for image builds; Git and `act` are needed for GitHub Actions jobs. The CLI/controller host need not run Docker unless it is also a worker.
 - VS Code 1.105+ for the extension. The native CLI must be installed on the **workspace host**, including a Remote SSH or WSL host.
 
