@@ -1,6 +1,6 @@
 # Install native Gridstator
 
-**Status:** native 2.0.0 is a development preview and the planned first public release. This guide describes the verified install path after the [release gates](RELEASING.md) pass. For current testing, [build from source](DEVELOPMENT.md).
+Gridstator 2.0.0 is the first native Linux release. Use the published GitHub release after its [Linux acceptance gates](RELEASING.md) are verified. The Apple Silicon build uses a separate unsigned preview tag. For development, [build from source](DEVELOPMENT.md).
 
 ## Requirements
 
@@ -12,10 +12,10 @@ The installed native CLI has no Node, npm or Rust requirement. VS Code supplies 
 
 ## Get and verify a release
 
-Choose a published v2 tag only after its [release record](RELEASING.md) links all required acceptance evidence. The release contains platform archives, `gridstator-release.json`, `SHA256SUMS` and `install-native.sh`. Download the installer and checksum document from the **same tag** and verify the installer before executing it. The installer then verifies the manifest, matching archive, executable and architecture.
+Choose a published v2 tag whose [release record](RELEASING.md) links all required acceptance evidence. The release contains platform archives, `gridstator-release.json`, `SHA256SUMS` and `install-native.sh`. Download the installer and checksum document from the **same tag** and verify the installer before executing it. The installer then verifies the manifest, matching archive, executable and architecture.
 
 ~~~sh
-tag=v2.0.0                         # replace with an actual published tag
+tag=v2.0.0
 base=https://github.com/jepsenphil/gridstator/releases/download
 stage=$(mktemp -d)
 curl -fsSL -o "$stage/SHA256SUMS" "$base/$tag/SHA256SUMS"
@@ -62,4 +62,4 @@ Treat the join command and token as credentials. A worker dials the controller; 
 
 ## VS Code
 
-The first public extension will use the Marketplace ID `gridstator.gridstator`. Until it is published, build the [native VSIX](../apps/vscode/README.md) from source and install it with **Extensions: Install from VSIX**. Install the extension and native CLI on the remote workspace host for Remote SSH/WSL. Open the Gridstator view, set up a local controller or connect using the native login, and use **Run** to launch a task or workflow.
+The extension uses the Marketplace ID `gridstator.gridstator`. Until its Marketplace listing is live, download the VSIX attached to the Linux GitHub release or build the [native VSIX](../apps/vscode/README.md) from source, then choose **Extensions: Install from VSIX**. Install the native CLI on the workspace host for Remote SSH/WSL. Open the Gridstator view, set up a local controller or connect using the native login, and use **Run** to launch a task or workflow.

@@ -7,7 +7,7 @@
 
 **Multiple machines. One workflow.** Gridstator runs builds, tests, Docker image builds and supported GitHub Actions jobs on computers you control. It snapshots the saved working tree, including uncommitted edits, sends only missing content to a worker, and streams logs and results back to the CLI or VS Code.
 
-> **Release status:** Gridstator 2.0.0 is being qualified for Linux x64 and ARM64. The [release acceptance record](native/contracts/release-acceptance.json) keeps Linux stable gates separate from future macOS qualification. Apple Silicon will be available only as an unsigned development preview; Intel Mac is not a supported release target. No native package or Marketplace listing is published yet. The CLI will ship as verified native binaries, not through npm.
+> **Release scope:** Gridstator 2.0.0 supports Linux x64 and ARM64. The [release acceptance record](native/contracts/release-acceptance.json) tracks the tested Linux builds and keeps future macOS qualification separate. Apple Silicon uses a separate unsigned development preview; Intel Mac is not a supported release target. The CLI is distributed as verified native binaries, not through npm. The VSIX is available through GitHub Releases; Marketplace publication follows publisher registration.
 
 ## See it
 
@@ -24,9 +24,9 @@ The Gridstator view shows workers, jobs and runnable tasks beside your project. 
 
 The native CLI, controller and worker are one Rust executable. The thin extension uses VS Code's supplied Node runtime for its UI and delegates workspace operations to the native executable. [Architecture and trust boundaries](docs/ARCHITECTURE.md).
 
-## Try the native development preview
+## Install or build
 
-The release installer is intentionally unavailable until the acceptance gates pass. For an isolated source build, install the pinned Rust toolchain, a C compiler and Docker, then run:
+Use the [verified native release installer](docs/INSTALL.md) for Linux x64 or ARM64. It installs the CLI; cluster creation and service startup are explicit later steps. For an isolated source build, install the pinned Rust toolchain, a C compiler and Docker, then run:
 
 ~~~sh
 cd native

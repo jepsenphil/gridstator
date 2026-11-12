@@ -470,7 +470,8 @@ pub(crate) async fn send_socket(path: &Path, request: &Value) -> Result<Value> {
     ensure!(data.len() < MAX_MESSAGE, "worker request too large");
     data.push(b'\n');
     writer.write_all(&data).await?;
-    writer.shutdown().await?;
+    // Requests are newline-delimited. The server does not wait for EOF, and macOS can report
+    // ENOTCONN if it has already sent a short response before this half-close completes.
     let mut response = vec![];
     tokio::time::timeout(
         Duration::from_secs(5),

@@ -24,6 +24,6 @@ candidate_sha=replace-with-validated-candidate-commit
 node scripts/check-release-acceptance.mjs --release --revision "$(git rev-parse HEAD)" --candidate-revision "$candidate_sha"
 ```
 
-The first command validates the record. The release form intentionally fails until both Linux stable gates contain verified final-candidate evidence. Mac signing, Docker and launchd remain separate future stable Mac gates. Passing unit tests alone does not close actual-host runtime or service requirements.
+The first command validates the record. The release form passes only when both Linux stable gates contain verified final-candidate evidence. Mac signing, Docker and launchd remain separate future stable Mac gates. Passing unit tests alone does not close actual-host runtime or service requirements.
 
 [Native CI](../.github/workflows/native.yml) tests Rust on actual hosted Linux x64/ARM64 and Mac Intel/Apple Silicon runners. The [candidate workflow](../.github/workflows/native-candidate.yml) builds reviewable artifacts without publication. [Validation hosts](VALIDATION_HOSTS.md), [testing](TESTING.md) and [release procedure](RELEASING.md) describe the runtime and artifact checks. Cross-compilation, a hosted build or a fixture screenshot cannot substitute for actual target-host evidence.

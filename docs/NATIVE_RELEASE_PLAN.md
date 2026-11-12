@@ -1,6 +1,6 @@
 # Native release plan
 
-Gridstator 2.0.0 is the planned first public stable release of the Rust CLI, controller, worker and VS Code extension **on Linux x64 and ARM64**. An unsigned Apple Silicon build will use a separate prerelease tag and will be labeled a development preview. Intel Mac and the desktop companion are not part of the stable release. The CLI is distributed as verified native archives and an installer; there is no npm CLI package.
+Gridstator 2.0.0 is the first public stable release of the Rust CLI, controller, worker and VS Code extension **on Linux x64 and ARM64**. An unsigned Apple Silicon build uses a separate prerelease tag and is labeled a development preview. Intel Mac and the desktop companion are not part of the stable release. The CLI is distributed as verified native archives and an installer; there is no npm CLI package.
 
 ## Release acceptance
 

@@ -1,6 +1,6 @@
 # Native release readiness
 
-**Status:** preparation only. Gridstator 2.0.0 is planned as the first public native release. The [progress report](NATIVE_PROGRESS.md) and [release acceptance record](../native/contracts/release-acceptance.json) track open qualification.
+Gridstator 2.0.0 is the first public native Linux release. The [progress report](NATIVE_PROGRESS.md) and [release acceptance record](../native/contracts/release-acceptance.json) track Linux qualification and separate future macOS work.
 
 ## Products and channels
 
@@ -35,5 +35,5 @@ A green hosted build, cross-compiled ARM executable or browser fixture is not a 
 
 ## Publication and follow-through
 
-After both Linux gates and owner approval, dispatch **Publish native Linux v2** from `main` with version `2.0.0` and the validated `candidate_run_id`. The release tag points to that candidate's source revision; the evidence commit can follow it only when release-relevant sources are unchanged. Review the GitHub release assets, VSIX, install instructions and checksum verification from clean Linux machines. Register the Marketplace publisher and OIDC policy before dispatching **Publish VS Code extension** for `2.0.0`. Update the public docs from preview to released status only after publication. The desktop companion follows its [separate qualification plan](DESKTOP_COMPANION_PLAN.md).
+After both Linux gates and owner approval, dispatch **Publish native Linux v2** from `main` with version `2.0.0` and the validated `candidate_run_id`. The release tag points to that candidate's source revision; the evidence commit can follow it only when release-relevant sources are unchanged. Review the GitHub release assets, VSIX, install instructions and checksum verification from clean Linux machines. Register the Marketplace publisher and OIDC policy before dispatching **Publish VS Code extension** for `2.0.0`. The desktop companion follows its [separate qualification plan](DESKTOP_COMPANION_PLAN.md).
 
