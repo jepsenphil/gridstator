@@ -137,6 +137,7 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     let root = tempfile::tempdir()?;
     let dir = offline_worker(root.path()).await?;
     let mut actor = run_worker(&dir)?;
+    let old_pid = actor.0.id();
     let initial = wait_worker(&dir).await.context("initial worker startup")?;
     let request = |action: &str| json!({"version":1,"operation":"worker","action":action,"dataDir":dir,"nodeId":initial["nodeId"],"caFingerprint":initial["caFingerprint"]});
     let paused = bridge(request("pause")).await?;
@@ -174,8 +175,16 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     assert_eq!(saved["workers"][0]["paused"], true);
     let mut again = run_worker(&dir)?;
     let after = wait_worker(&dir).await.with_context(|| {
+        let lock_holders = std::process::Command::new("lsof")
+            .arg("-nP")
+            .arg(dir.join("agent.lock"))
+            .output()
+            .ok()
+            .map(|output| String::from_utf8_lossy(&output.stdout).into_owned())
+            .unwrap_or_default();
         format!(
-            "restarted worker startup; exit status: {:?}; stderr: {}",
+            "restarted worker startup; old pid: {old_pid:?}; new pid: {:?}; exit status: {:?}; stderr: {}; lock holders: {lock_holders}",
+            again.0.id(),
             again.0.try_wait(),
             std::fs::read_to_string(dir.join("worker-stderr.log")).unwrap_or_default()
         )
