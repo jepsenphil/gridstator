@@ -162,7 +162,7 @@ jobs:
           node -e 'const fs=require("node:fs");fs.writeFileSync("apps/desktop/qualification.json",JSON.stringify({kind:"desktop-preview",target:process.env.DESKTOP_TARGET,buildId:process.env.GRIDSTATOR_DESKTOP_BUILD_ID,sourceRevision:process.env.GITHUB_SHA,compiledOnActualArchitecture:true,signed:false,desktopLifecycleValidated:false,wslLifecycleValidated:false},null,2)+"\n")'
         env:
           DESKTOP_TARGET: ${{ matrix.key }}
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: gridstator-desktop-preview-${{ matrix.key }}
           if-no-files-found: error
