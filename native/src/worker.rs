@@ -1405,8 +1405,23 @@ pub async fn run_with_shutdown(
                 options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
             }
             let file = options.open(lock_path)?;
-            fs2::FileExt::try_lock_exclusive(&file)
-                .context("another worker owns this data directory")?;
+            // Offline bridge requests briefly claim this lock while reading or updating local
+            // state. A worker launched at that instant should wait for the request to finish.
+            let deadline = Instant::now() + Duration::from_secs(2);
+            loop {
+                match fs2::FileExt::try_lock_exclusive(&file) {
+                    Ok(()) => break,
+                    Err(error)
+                        if error.kind() == std::io::ErrorKind::WouldBlock
+                            && Instant::now() < deadline =>
+                    {
+                        std::thread::sleep(Duration::from_millis(20));
+                    }
+                    Err(error) => {
+                        return Err(error).context("another worker owns this data directory");
+                    }
+                }
+            }
             Ok(file)
         })
         .await??,

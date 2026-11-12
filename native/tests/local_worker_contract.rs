@@ -137,7 +137,6 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     let root = tempfile::tempdir()?;
     let dir = offline_worker(root.path()).await?;
     let mut actor = run_worker(&dir)?;
-    let old_pid = actor.0.id();
     let initial = wait_worker(&dir).await.context("initial worker startup")?;
     let request = |action: &str| json!({"version":1,"operation":"worker","action":action,"dataDir":dir,"nodeId":initial["nodeId"],"caFingerprint":initial["caFingerprint"]});
     let paused = bridge(request("pause")).await?;
@@ -175,16 +174,8 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     assert_eq!(saved["workers"][0]["paused"], true);
     let mut again = run_worker(&dir)?;
     let after = wait_worker(&dir).await.with_context(|| {
-        let lock_holders = std::process::Command::new("lsof")
-            .arg("-nP")
-            .arg(dir.join("agent.lock"))
-            .output()
-            .ok()
-            .map(|output| String::from_utf8_lossy(&output.stdout).into_owned())
-            .unwrap_or_default();
         format!(
-            "restarted worker startup; old pid: {old_pid:?}; new pid: {:?}; exit status: {:?}; stderr: {}; lock holders: {lock_holders}",
-            again.0.id(),
+            "restarted worker startup; exit status: {:?}; stderr: {}",
             again.0.try_wait(),
             std::fs::read_to_string(dir.join("worker-stderr.log")).unwrap_or_default()
         )
@@ -193,6 +184,32 @@ async fn private_control_works_offline_and_preserves_pause_and_budget_across_res
     assert_eq!(after["budget"]["memoryMb"], 768);
     bridge(request("stop")).await?;
     tokio::time::timeout(Duration::from_secs(5), again.0.wait()).await??;
+    Ok(())
+}
+
+#[tokio::test]
+async fn starting_worker_waits_for_a_short_offline_control_lock() -> Result<()> {
+    let root = tempfile::tempdir()?;
+    let dir = offline_worker(root.path()).await?;
+    let lock = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(dir.join("agent.lock"))?;
+    fs2::FileExt::lock_exclusive(&lock)?;
+    let mut actor = run_worker(&dir)?;
+    tokio::time::sleep(Duration::from_millis(300)).await;
+    ensure!(
+        actor.0.try_wait()?.is_none(),
+        "worker exited while an offline control request held its instance lock: {}",
+        std::fs::read_to_string(dir.join("worker-stderr.log")).unwrap_or_default()
+    );
+    drop(lock);
+    let running = wait_worker(&dir).await?;
+    assert_eq!(running["running"], true);
+    bridge(json!({"version":1,"operation":"worker","action":"stop","dataDir":dir})).await?;
+    tokio::time::timeout(Duration::from_secs(5), actor.0.wait()).await??;
     Ok(())
 }
 
