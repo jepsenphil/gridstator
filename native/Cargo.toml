@@ -29,7 +29,7 @@ regex = "1"
 # Pin the upstream execution-budget API needed for bounded ECMAScript pattern matching.
 regress = { git = "https://github.com/ridiculousfish/regress", rev = "95c04041cd9b30249961eb80d950102c29c9586c", default-features = false, features = ["std", "utf16"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
-rusqlite = { version = "0.37", features = ["bundled", "backup"] }
+rusqlite = { version = "0.40", features = ["bundled", "backup"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
 rustls-pemfile = "2"
 semver = "1"
