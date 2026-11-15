@@ -414,8 +414,41 @@ fn restore_executable_step(source: &str, paths: &[String]) -> Result<(String, bo
     if let Some(jobs) = document.get_mut("jobs").and_then(Yaml::as_mapping_mut) {
         for (_, job) in jobs {
             if let Some(steps) = job.get_mut("steps").and_then(Yaml::as_sequence_mut) {
-                steps.insert(0, step.clone());
-                changed = true;
+                let mut prepared = Vec::new();
+                for checkout in steps.drain(..) {
+                    let local = checkout
+                        .get("uses")
+                        .and_then(Yaml::as_str)
+                        .is_some_and(|uses| uses.trim().starts_with("actions/checkout@"))
+                        && checkout
+                            .get("with")
+                            .and_then(|with| with.get("repository"))
+                            .is_none();
+                    let mut restore = step.clone();
+                    if local {
+                        // act copies the submitted tree during its local checkout action;
+                        // the workspace is empty before that step. Follow its condition/path.
+                        for key in ["if", "continue-on-error"] {
+                            if let Some(value) = checkout.get(key) {
+                                restore[key] = value.clone();
+                            }
+                        }
+                        if let Some(path) = checkout
+                            .get("with")
+                            .and_then(|with| with.get("path"))
+                            .and_then(yaml_text)
+                        {
+                            restore["working-directory"] =
+                                Yaml::String(format!("${{{{ github.workspace }}}}/{path}"));
+                        }
+                    }
+                    prepared.push(checkout);
+                    if local {
+                        prepared.push(restore);
+                        changed = true;
+                    }
+                }
+                *steps = prepared;
             }
         }
     }
@@ -828,9 +861,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn executable_restore_precedes_user_steps_and_encodes_shell_and_expression_syntax() {
+    fn executable_restore_follows_checkout_and_encodes_shell_and_expression_syntax() {
         use base64::Engine;
-        let source = "jobs:\n  test:\n    steps:\n      - run: ./run.sh\n  reused:\n    uses: ./.github/workflows/shared.yml\n";
+        let source = "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@v4\n      - run: ./run.sh\n  reused:\n    uses: ./.github/workflows/shared.yml\n";
         let paths = vec![
             "scripts/it's executable.sh".into(),
             "${{ secrets.TOKEN }}.sh".into(),
@@ -839,13 +872,17 @@ mod tests {
         assert!(changed);
         assert!(!text.contains("secrets.TOKEN"));
         let document: Yaml = serde_yaml_ng::from_str(&text).unwrap();
-        let step = &document["jobs"]["test"]["steps"][0];
+        assert_eq!(
+            document["jobs"]["test"]["steps"][0]["uses"].as_str(),
+            Some("actions/checkout@v4")
+        );
+        let step = &document["jobs"]["test"]["steps"][1];
         assert_eq!(
             step["working-directory"].as_str(),
             Some("${{ github.workspace }}")
         );
         assert_eq!(
-            document["jobs"]["test"]["steps"][1]["run"].as_str(),
+            document["jobs"]["test"]["steps"][2]["run"].as_str(),
             Some("./run.sh")
         );
         assert!(document["jobs"]["reused"].get("steps").is_none());
@@ -863,6 +900,30 @@ mod tests {
         assert_eq!(
             restore_executable_step(source, &[]).unwrap(),
             (source.into(), false)
+        );
+    }
+    #[test]
+    fn executable_restore_preserves_checkout_condition_and_path_and_skips_foreign_repositories() {
+        let source = "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@v4\n        if: inputs.checkout\n        continue-on-error: true\n        with: {path: project}\n      - uses: actions/checkout@v4\n        with: {repository: another/project}\n      - run: echo done\n";
+        let (text, changed) = restore_executable_step(source, &["hello.sh".into()]).unwrap();
+        assert!(changed);
+        let document: Yaml = serde_yaml_ng::from_str(&text).unwrap();
+        let steps = document["jobs"]["test"]["steps"].as_sequence().unwrap();
+        assert_eq!(steps.len(), 4);
+        assert_eq!(steps[1]["if"].as_str(), Some("inputs.checkout"));
+        assert_eq!(steps[1]["continue-on-error"].as_bool(), Some(true));
+        assert_eq!(
+            steps[1]["working-directory"].as_str(),
+            Some("${{ github.workspace }}/project")
+        );
+        assert_eq!(
+            steps[2]["with"]["repository"].as_str(),
+            Some("another/project")
+        );
+        let without_checkout = "jobs:\n  test:\n    steps:\n      - run: echo no-source\n";
+        assert_eq!(
+            restore_executable_step(without_checkout, &["hello.sh".into()]).unwrap(),
+            (without_checkout.into(), false)
         );
     }
     use tempfile::TempDir;

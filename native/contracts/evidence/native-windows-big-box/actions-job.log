@@ -1,0 +1,25 @@
+{"s":1,"t":1794781995812,"o":"system","d":"Job 01M7GNFQTR7F0G5XYZXFA71YX3 accepted by worker\n"}
+{"s":2,"t":1794781996133,"o":"system","d":"act: Using docker host 'npipe:////./pipe/docker_engine', and daemon socket '-'\n"}
+{"s":3,"t":1794781996139,"o":"system","d":"act: Start server on http://192.168.1.213:51365\n"}
+{"s":4,"t":1794781996150,"o":"stdout","d":"[Native Windows smoke/smoke] ⭐ Run Set up job\n"}
+{"s":5,"t":1794781996152,"o":"stdout","d":"[Native Windows smoke/smoke] 🚀  Start image=node:24-bookworm-slim\n"}
+{"s":6,"t":1794781996161,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker pull image=node:24-bookworm-slim platform= username= forcePull=false\n"}
+{"s":7,"t":1794781996196,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker create image=node:24-bookworm-slim platform= entrypoint=[\"tail\" \"-f\" \"/dev/null\"] cmd=[] network=\"host\"\n"}
+{"s":8,"t":1794781996275,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker run image=node:24-bookworm-slim platform= entrypoint=[\"tail\" \"-f\" \"/dev/null\"] cmd=[] network=\"host\"\n"}
+{"s":9,"t":1794781996543,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker exec cmd=[node --no-warnings -e console.log(process.execPath)] user= workdir=\n"}
+{"s":10,"t":1794781996619,"o":"stdout","d":"[Native Windows smoke/smoke] ✅  Success - Set up job\n"}
+{"s":11,"t":1794781996699,"o":"stdout","d":"[Native Windows smoke/smoke] ⭐ Run Main actions/checkout@v4\n"}
+{"s":12,"t":1794781996725,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker cp src=C:\\Users\\User\\AppData\\Local\\Programs\\GridstatorNative\\validation\\smoke-agent\\jobs\\01M7GNFQTR7F0G5XYZXFA71YX3\\src\\. dst=/mnt/c/Users/User/AppData/Local/Programs/GridstatorNative/validation/smoke-agent/jobs/01M7GNFQTR7F0G5XYZXFA71YX3/src\n"}
+{"s":13,"t":1794781996860,"o":"stdout","d":"[Native Windows smoke/smoke] ✅  Success - Main actions/checkout@v4 [155.8192ms]\n"}
+{"s":14,"t":1794781996936,"o":"stdout","d":"[Native Windows smoke/smoke] ⭐ Run Main Restore snapshot executable permissions\n"}
+{"s":15,"t":1794781996996,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker exec cmd=[sh -e /var/run/act/workflow/1.sh] user= workdir=/mnt/c/Users/User/AppData/Local/Programs/GridstatorNative/validation/smoke-agent/jobs/01M7GNFQTR7F0G5XYZXFA71YX3/src\n"}
+{"s":16,"t":1794781997060,"o":"stdout","d":"[Native Windows smoke/smoke] ✅  Success - Main Restore snapshot executable permissions [118.8141ms]\n"}
+{"s":17,"t":1794781997138,"o":"stdout","d":"[Native Windows smoke/smoke] ⭐ Run Main Run executable snapshot\n"}
+{"s":18,"t":1794781997209,"o":"stdout","d":"[Native Windows smoke/smoke] 🐳  docker exec cmd=[bash -e /var/run/act/workflow/2] user= workdir=\n"}
+{"s":19,"t":1794781997265,"o":"stdout","d":"[Native Windows smoke/smoke]   | native-windows-executable-mode-ok\n"}
+{"s":20,"t":1794781997267,"o":"stdout","d":"[Native Windows smoke/smoke] ✅  Success - Main Run executable snapshot [124.2678ms]\n"}
+{"s":21,"t":1794781997291,"o":"stdout","d":"[Native Windows smoke/smoke] ⭐ Run Complete job\n"}
+{"s":22,"t":1794781997293,"o":"stdout","d":"[Native Windows smoke/smoke] Cleaning up container for job smoke\n"}
+{"s":23,"t":1794781997393,"o":"stdout","d":"[Native Windows smoke/smoke] ✅  Success - Complete job\n"}
+{"s":24,"t":1794781997394,"o":"stdout","d":"[Native Windows smoke/smoke] 🏁  Job succeeded\n"}
+{"s":25,"t":1794781997495,"o":"system","d":"Job succeeded\n"}

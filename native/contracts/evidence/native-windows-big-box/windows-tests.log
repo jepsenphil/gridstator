@@ -1,0 +1,18 @@
+
+running 7 tests
+test executor::process::tests::windows_cancellation_and_timeout_reap_descendants_and_close_log_pipes ... ok
+test windows_security::tests::private_state_acl_and_owner_belong_to_this_account ... ok
+test worker::admission_tests::windows_metrics_find_disk_for_canonical_worker_directory ... ok
+test worker::control::tests::windows_transport_rejects_unsupported_startup_without_mutating_policy ... ok
+test workspace::store::windows::tests::materializes_verified_bytes_and_rejects_case_aliases ... ok
+test workspace::store::windows::tests::rejects_windows_device_stream_and_ambiguous_names ... ok
+test workspace::store::windows::tests::symlink_types_follow_directory_chains_and_prefixes_and_reject_cycles ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 5.99s
+
+
+running 1 test
+test worker::control::tests::local_transport_controls_policy_and_refuses_duplicate_listener ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.03s
+

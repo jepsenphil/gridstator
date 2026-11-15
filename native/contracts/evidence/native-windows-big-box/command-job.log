@@ -1,0 +1,19 @@
+{"s":1,"t":1794781326664,"o":"system","d":"Job 01M7GMVB5RC8NYAE5SWCTMKKBK accepted by worker\n"}
+{"s":2,"t":1794781327012,"o":"system","d":"Creating container on big-box-native-validation\n"}
+{"s":3,"t":1794781327159,"o":"system","d":"Unable to find image 'alpine:3.20' locally\n"}
+{"s":4,"t":1794781328624,"o":"system","d":"3.20: "}
+{"s":5,"t":1794781328627,"o":"system","d":"Pulling from library/alpine\n"}
+{"s":6,"t":1794781329011,"o":"system","d":"25f1d6b1951a: "}
+{"s":7,"t":1794781329013,"o":"system","d":"Pulling fs layer\n"}
+{"s":8,"t":1794781329596,"o":"system","d":"25f1d6b1951a: "}
+{"s":9,"t":1794781329598,"o":"system","d":"Download complete\n"}
+{"s":10,"t":1794781329895,"o":"system","d":"25f1d6b1951a: "}
+{"s":11,"t":1794781329896,"o":"system","d":"Pull complete\n"}
+{"s":12,"t":1794781329990,"o":"system","d":"d4050d56ebf2: Download complete\n"}
+{"s":13,"t":1794781329992,"o":"system","d":"3a030ca3f633: Download complete\n"}
+{"s":14,"t":1794781329993,"o":"system","d":"Digest: sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc\n"}
+{"s":15,"t":1794781329994,"o":"system","d":"Status: Downloaded newer image for alpine:3.20\n"}
+{"s":16,"t":1794781330092,"o":"system","d":"Copying workspace snapshot into the container\n"}
+{"s":17,"t":1794781330457,"o":"stdout","d":"native-windows-executable-mode-ok\n"}
+{"s":18,"t":1794781330459,"o":"stdout","d":"native-windows-x64-snapshot\n"}
+{"s":19,"t":1794781331022,"o":"system","d":"Job succeeded\n"}

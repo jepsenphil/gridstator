@@ -1,0 +1,5 @@
+{"s":1,"t":1794782250216,"o":"system","d":"Job 01M7GNQGY5N34KP5QVR4MFYMDC accepted by worker\n"}
+{"s":2,"t":1794782250453,"o":"system","d":"Creating container on big-box\n"}
+{"s":3,"t":1794782250946,"o":"stdout","d":"native-windows-worker-ok node=big-box arch="}
+{"s":4,"t":1794782250971,"o":"stdout","d":"x86_64\n"}
+{"s":5,"t":1794782251485,"o":"system","d":"Job succeeded\n"}

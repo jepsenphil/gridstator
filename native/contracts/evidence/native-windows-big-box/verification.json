@@ -1,0 +1,149 @@
+{
+  "result": "passed",
+  "verifiedAtUtc": "2026-11-15T22:39:29.891917+00:00",
+  "scope": "native Windows x64 installation on big-box; no public release",
+  "installation": {
+    "Computer": "DESKTOP-JEL",
+    "Account": "DESKTOP-JEL\\Phil",
+    "Executable": "C:\\Users\\User\\AppData\\Local\\Programs\\GridstatorNative\\bin\\gridstator.exe",
+    "Build": {
+      "version": "2.0.0-dev.2",
+      "buildId": "dev-a78a23c8f4e8-1794782139819547203",
+      "sourceRevision": "a78a23c8f4e86bff626977c69a3b122ba6cea491",
+      "capabilities": [
+        "bridge-v1",
+        "native-controller",
+        "native-worker",
+        "snapshots",
+        "release-verification",
+        "local-setup-v1",
+        "worker-control-v1"
+      ],
+      "target": "windows/amd64",
+      "size": 83487425,
+      "sha256": "257750163cf31139506a8525453511b2f963c2fd12285c85ad21436f647f2fe9"
+    },
+    "Task": {
+      "Name": "GridstatorNativeWorker",
+      "State": "Running",
+      "LastTaskResult": 267009,
+      "SignInTriggerConfigured": true,
+      "LastRunTimeUtc": "2026-11-15T22:36:52.0000000Z"
+    },
+    "ActSha256": "7475C29A551B809E4A8CD0586EEA7FEB53648C435AC2BBDCD71DA568BA173EF7"
+  },
+  "node": {
+    "id": "01M73H8CW57VX01DZXK5KCAZFP",
+    "name": "big-box",
+    "status": "online",
+    "health": "ok",
+    "platform": "windows",
+    "build": {
+      "id": "dev-a78a23c8f4e8-1794782139819547203",
+      "version": "2.0.0-dev.2",
+      "sha256": "257750163cf31139506a8525453511b2f963c2fd12285c85ad21436f647f2fe9",
+      "target": "windows/amd64",
+      "managed": false,
+      "lastRollback": null,
+      "runtime": "rust",
+      "tools": {
+        "act": "0.2.97",
+        "managed": [],
+        "overrides": [
+          "act"
+        ]
+      }
+    },
+    "settings": {
+      "maxConcurrency": 4,
+      "reserved": {
+        "cpus": 1,
+        "memoryMb": 3164
+      },
+      "labels": [],
+      "schedulingMode": "enabled",
+      "autoUpdate": "inherit"
+    },
+    "executors": [
+      "command",
+      "docker-build",
+      "actions"
+    ],
+    "metrics": {
+      "ts": 1794782364837,
+      "cpuPercent": 12.564178466796877,
+      "memoryAvailableMb": 21022,
+      "diskFreeMb": 986570,
+      "diskTotalMb": 1906593,
+      "load1": 0.0,
+      "diskScope": "agent-data-host",
+      "executionDisk": null
+    },
+    "identityPreserved": true,
+    "settingsPreserved": true
+  },
+  "previousWslWorker": {
+    "service": "gridstator-native-agent.service",
+    "active": false,
+    "enabled": false,
+    "stateRetained": "/home/pj/.local/share/gridstator-v2/agent",
+    "inProgressJobCompletedBeforeStop": "01M7GMCHVE6RF4WV5SWKVAW81G"
+  },
+  "validation": {
+    "windowsTestsPassed": 8,
+    "linuxLibraryTestsPassed": 49,
+    "checkoutRegressionTestsPassed": 2,
+    "windowsClippy": "passed",
+    "isolatedWindowsWorkloads": [
+      {
+        "id": "01M7GMVB5RC8NYAE5SWCTMKKBK",
+        "name": "native-windows-install-smoke",
+        "kind": "command",
+        "state": "succeeded",
+        "nodeId": "01M7GMSA9281MRXJ5D366NNWCM",
+        "exitCode": 0,
+        "startedAt": 1794781330265,
+        "finishedAt": 1794781331023
+      },
+      {
+        "id": "01M7GNFQPX6JPVND51PADHTPS8",
+        "name": "native-windows-buildkit-smoke",
+        "kind": "docker-build",
+        "state": "succeeded",
+        "nodeId": "01M7GMSA9281MRXJ5D366NNWCM",
+        "exitCode": 0,
+        "startedAt": 1794781995001,
+        "finishedAt": 1794781995393
+      },
+      {
+        "id": "01M7GNFQTR7F0G5XYZXFA71YX3",
+        "name": "native-windows-actions-smoke",
+        "kind": "actions",
+        "state": "succeeded",
+        "nodeId": "01M7GMSA9281MRXJ5D366NNWCM",
+        "exitCode": 0,
+        "startedAt": 1794781996080,
+        "finishedAt": 1794781997496
+      }
+    ],
+    "productionWorkload": {
+      "id": "01M7GNQGY5N34KP5QVR4MFYMDC",
+      "name": "native-windows-install-verification",
+      "state": "succeeded",
+      "nodeId": "01M73H8CW57VX01DZXK5KCAZFP",
+      "nodeName": "big-box",
+      "exitCode": 0
+    },
+    "actualSignInCycleTested": false
+  },
+  "dockerDesktop": {
+    "ubuntuIntegration": false,
+    "priorWslEnginePreserved": true
+  },
+  "sourceFixes": [
+    "Normalize verbatim Windows paths before launching act",
+    "Compare canonical disk mount paths for Windows host metrics",
+    "Read /etc/machine-id only on Unix",
+    "Restore Linux executable bits after local checkout while preserving checkout condition, path and failure tolerance"
+  ]
+}
