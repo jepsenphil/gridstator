@@ -300,7 +300,7 @@ pub fn resolved_act(dir: Option<&Path>) -> PathBuf {
     {
         return path.into();
     }
-    "act".into()
+    if cfg!(windows) { "act.exe" } else { "act" }.into()
 }
 fn build_metadata() -> Result<Value> {
     static HASH: OnceLock<String> = OnceLock::new();
@@ -479,6 +479,8 @@ impl LogSpool {
             options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
         }
         let file = options.open(path)?;
+        #[cfg(windows)]
+        crate::windows_security::protect_path(path)?;
         let disk_bytes = file.metadata()?.len();
         Ok(Self {
             file,
@@ -721,7 +723,7 @@ async fn node_info_for(dir: Option<&Path>) -> Result<Value> {
             _ => json!({"available":false,"error":format!("{bin} unavailable or timed out")}),
         }
     };
-    let (docker, buildx, act, git) = tokio::join!(
+    let (mut docker, buildx, act, git) = tokio::join!(
         probe(
             executor::docker_binary(),
             vec!["version", "--format", "{{.Server.Version}}"]
@@ -734,6 +736,7 @@ async fn node_info_for(dir: Option<&Path>) -> Result<Value> {
         probe("git".into(), vec!["--version"])
     );
     let mut capacity = Value::Null;
+    let mut linux_containers = false;
     if docker["available"] == true
         && let Ok(Ok(output)) = tokio::time::timeout(
             Duration::from_secs(5),
@@ -747,7 +750,11 @@ async fn node_info_for(dir: Option<&Path>) -> Result<Value> {
         && let Ok(info) = serde_json::from_slice::<Value>(&output.stdout)
         && let (Some(cpus), Some(bytes)) = (info["NCPU"].as_u64(), info["MemTotal"].as_u64())
     {
+        linux_containers = info["OSType"] == "linux";
         capacity = json!({"cpus":cpus,"memoryTotalMb":bytes/1024/1024,"memoryAvailableMb":null,"diskFreeMb":null,"diskTotalMb":null});
+    }
+    if cfg!(windows) && docker["available"] == true && !linux_containers {
+        docker = json!({"available":false,"error":"Windows workers require Docker Desktop running Linux containers and a readable Docker capacity probe"});
     }
     let mut executors = vec![];
     if docker["available"] == true {
@@ -759,7 +766,7 @@ async fn node_info_for(dir: Option<&Path>) -> Result<Value> {
             executors.push("actions");
         }
     }
-    if cfg!(target_os = "macos") && capacity.is_null() {
+    if cfg!(any(target_os = "macos", windows)) && capacity.is_null() {
         executors.clear();
     }
     let mut build = tokio::task::spawn_blocking(build_metadata).await??;
@@ -790,12 +797,13 @@ async fn node_info_for(dir: Option<&Path>) -> Result<Value> {
     Ok(info)
 }
 pub(crate) fn machine_id() -> String {
-    std::fs::read_to_string("/etc/machine-id")
-        .ok()
-        .map(|s| s.trim().into())
-        .unwrap_or_else(|| {
-            crate::workspace::digest_of(sysinfo::System::host_name().unwrap_or_default())
-        })
+    // A Windows process launched from a WSL UNC working directory can otherwise read that
+    // distribution's /etc/machine-id instead of identifying its Windows host.
+    #[cfg(unix)]
+    if let Ok(id) = std::fs::read_to_string("/etc/machine-id") {
+        return id.trim().into();
+    }
+    crate::workspace::digest_of(sysinfo::System::host_name().unwrap_or_default())
 }
 pub async fn join(
     dir: &Path,
@@ -836,6 +844,7 @@ pub async fn join(
     if joined["clusterId"].is_string() {
         state["clusterId"] = joined["clusterId"].clone();
     }
+    state::private_dir(dir)?;
     state::write_json(&dir.join("agent.json"), &state)?;
     Ok(json!({"nodeId":joined["nodeId"],"name":joined["name"]}))
 }
@@ -1281,7 +1290,28 @@ fn evict_cache(dir: &Path, active: &ActiveJobs, maximum: Option<u64>) {
 }
 async fn sample_metrics(dir: &Path, previous: Arc<Mutex<sysinfo::System>>) -> Result<Value> {
     let dir = dir.to_owned();
-    tokio::task::spawn_blocking(move||{let mut system=previous.lock().unwrap();system.refresh_cpu_usage();system.refresh_memory();let disks=sysinfo::Disks::new_with_refreshed_list();let disk=disks.iter().filter(|disk|dir.starts_with(disk.mount_point())).max_by_key(|disk|disk.mount_point().as_os_str().len());json!({"ts":state::now(),"cpuPercent":system.global_cpu_usage(),"memoryAvailableMb":host_available_memory_bytes(&system)/1024/1024,"diskFreeMb":disk.map_or(0,|disk|disk.available_space()/1024/1024),"diskTotalMb":disk.map_or(0,|disk|disk.total_space()/1024/1024),"load1":sysinfo::System::load_average().one,"diskScope":"agent-data-host","executionDisk":null})}).await.map_err(Into::into)
+    tokio::task::spawn_blocking(move || {
+        let mut system = previous.lock().unwrap();
+        system.refresh_cpu_usage();
+        system.refresh_memory();
+        let disks = sysinfo::Disks::new_with_refreshed_list();
+        let disk = disks
+            .iter()
+            .filter(|disk| {
+                // canonical Windows worker paths use the verbatim namespace (\\?\C:\...),
+                // while sysinfo reports ordinary drive paths (C:\). Compare one namespace.
+                #[cfg(windows)]
+                let mount = std::fs::canonicalize(disk.mount_point())
+                    .unwrap_or_else(|_| disk.mount_point().to_owned());
+                #[cfg(not(windows))]
+                let mount = disk.mount_point();
+                dir.starts_with(mount)
+            })
+            .max_by_key(|disk| disk.mount_point().as_os_str().len());
+        json!({"ts":state::now(),"cpuPercent":system.global_cpu_usage(),"memoryAvailableMb":host_available_memory_bytes(&system)/1024/1024,"diskFreeMb":disk.map_or(0,|disk|disk.available_space()/1024/1024),"diskTotalMb":disk.map_or(0,|disk|disk.total_space()/1024/1024),"load1":sysinfo::System::load_average().one,"diskScope":"agent-data-host","executionDisk":null})
+    })
+    .await
+    .map_err(Into::into)
 }
 
 pub async fn start(dir: PathBuf, drain: bool) -> Result<()> {
@@ -1404,7 +1434,9 @@ pub async fn run_with_shutdown(
                 use std::os::unix::fs::OpenOptionsExt;
                 options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
             }
-            let file = options.open(lock_path)?;
+            let file = options.open(&lock_path)?;
+            #[cfg(windows)]
+            crate::windows_security::protect_path(&lock_path)?;
             // Offline bridge requests briefly claim this lock while reading or updating local
             // state. A worker launched at that instant should wait for the request to finish.
             let deadline = Instant::now() + Duration::from_secs(2);
@@ -1675,6 +1707,17 @@ pub async fn run_with_shutdown(
 #[cfg(test)]
 mod admission_tests {
     use super::*;
+
+    #[cfg(windows)]
+    #[tokio::test]
+    async fn windows_metrics_find_disk_for_canonical_worker_directory() {
+        let temporary = tempfile::tempdir().unwrap();
+        let directory = temporary.path().canonicalize().unwrap();
+        let previous = Arc::new(Mutex::new(sysinfo::System::new_all()));
+        let metrics = sample_metrics(&directory, previous).await.unwrap();
+        assert!(metrics["diskTotalMb"].as_u64().unwrap() > 0, "{metrics}");
+        assert!(metrics["diskFreeMb"].as_u64().unwrap() > 0, "{metrics}");
+    }
 
     #[tokio::test]
     async fn controller_rename_rejects_a_welcome_for_another_worker() -> Result<()> {

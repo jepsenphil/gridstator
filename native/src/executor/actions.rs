@@ -318,6 +318,7 @@ async fn prepare_workflows(
     workflow: &Path,
     slug: Option<&str>,
     logs: &mpsc::Sender<(String, String)>,
+    executable_paths: &[String],
 ) -> Result<PathBuf> {
     let dir = src.join(".github/workflows");
     let mut listing = match tokio::fs::read_dir(&dir).await {
@@ -339,7 +340,8 @@ async fn prepare_workflows(
         }
         let source = tokio::fs::read_to_string(file.path()).await?;
         let (text, rewrites) = rewrite_local_checkouts(&source, slug)?;
-        any_rewrites |= !rewrites.is_empty();
+        let (text, restored) = restore_executable_step(&text, executable_paths)?;
+        any_rewrites |= !rewrites.is_empty() || restored;
         for entry in rewrites {
             system(
                 logs,
@@ -384,6 +386,47 @@ async fn prepare_workflows(
     }
     let name = workflow.file_name().context("Workflow has no filename")?;
     Ok(destination.join(name))
+}
+
+fn restore_executable_step(source: &str, paths: &[String]) -> Result<(String, bool)> {
+    use base64::Engine;
+    if paths.is_empty() {
+        return Ok((source.into(), false));
+    }
+    let Ok(mut document) = serde_yaml_ng::from_str::<Yaml>(source) else {
+        return Ok((source.into(), false));
+    };
+    let mut bytes = Vec::new();
+    for path in paths {
+        bytes.extend_from_slice(path.as_bytes());
+        bytes.push(0);
+    }
+    // Encoding protects filenames from both shell syntax and workflow expression expansion.
+    // NUL-separated xargs also batches chmod calls below the container's argument limit.
+    let encoded = base64::engine::general_purpose::STANDARD.encode(bytes);
+    let step = serde_yaml_ng::to_value(json!({
+        "name": "Restore snapshot executable permissions",
+        "shell": "sh",
+        "working-directory": "${{ github.workspace }}",
+        "run": format!("printf '%s' '{encoded}' | base64 -d | xargs -0 chmod +x --"),
+    }))?;
+    let mut changed = false;
+    if let Some(jobs) = document.get_mut("jobs").and_then(Yaml::as_mapping_mut) {
+        for (_, job) in jobs {
+            if let Some(steps) = job.get_mut("steps").and_then(Yaml::as_sequence_mut) {
+                steps.insert(0, step.clone());
+                changed = true;
+            }
+        }
+    }
+    Ok((
+        if changed {
+            serialize_workflow(&document, source)?
+        } else {
+            source.into()
+        },
+        changed,
+    ))
 }
 
 async fn git(src: &Path, home: &Path, args: &[String]) -> Result<()> {
@@ -548,6 +591,10 @@ pub async fn execute(
     logs: &mpsc::Sender<(String, String)>,
 ) -> Result<ExecutionResult> {
     let src = stage(ctx).await?;
+    // act maps drive-letter working directories to Linux paths. Its converter does not
+    // recognize Rust's verbatim Windows prefix and would pass a Windows path to Docker.
+    #[cfg(windows)]
+    let src = windows_tool_path(&src);
     let workflow = resolve_inside(
         &src,
         ctx.spec["workflow"]
@@ -575,6 +622,29 @@ pub async fn execute(
     )
     .await?;
     git(&src, &home, &["add".into(), "-A".into()]).await?;
+    #[cfg(windows)]
+    if let Some(manifest) = &ctx.manifest {
+        let mut args = vec!["update-index".into(), "--chmod=+x".into(), "--".into()];
+        let mut length = 0;
+        for entry in &manifest.entries {
+            if let crate::workspace::ManifestEntry::File(file) = entry
+                && file.executable
+            {
+                // Leave ample room below Windows' command-line limit, including quoting.
+                let size = file.path.encode_utf16().count() * 2 + 3;
+                if length + size > 16_000 && args.len() > 3 {
+                    git(&src, &home, &args).await?;
+                    args.truncate(3);
+                    length = 0;
+                }
+                args.push(file.path.clone());
+                length += size;
+            }
+        }
+        if args.len() > 3 {
+            git(&src, &home, &args).await?;
+        }
+    }
     git(
         &src,
         &home,
@@ -601,7 +671,28 @@ pub async fn execute(
         )
         .await?;
     }
-    let workflow = prepare_workflows(&src, &workflow, repo_slug(remote).as_deref(), logs).await?;
+    let executable_paths = if cfg!(windows) {
+        ctx.manifest
+            .iter()
+            .flat_map(|manifest| manifest.entries.iter())
+            .filter_map(|entry| match entry {
+                crate::workspace::ManifestEntry::File(file) if file.executable => {
+                    Some(file.path.clone())
+                }
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+    } else {
+        Vec::new()
+    };
+    let workflow = prepare_workflows(
+        &src,
+        &workflow,
+        repo_slug(remote).as_deref(),
+        logs,
+        &executable_paths,
+    )
+    .await?;
     let artifact_dir = ctx.work_dir.join("actions-artifacts");
     private_dir(&artifact_dir).await?;
     let private = ctx.work_dir.join("act-private");
@@ -644,6 +735,7 @@ pub async fn execute(
     let parser = Arc::new(Mutex::new(ActLogParser::default()));
     let result = process::run(
         Run {
+            stdin: None,
             bin: &ctx
                 .act_bin
                 .as_ref()
@@ -706,11 +798,17 @@ pub async fn execute(
                         let path = entry.path();
                         let relative = path
                             .strip_prefix(&root)?
-                            .to_str()
-                            .context("Artifact path requires UTF-8")?;
+                            .components()
+                            .map(|part| {
+                                part.as_os_str()
+                                    .to_str()
+                                    .context("Artifact path requires UTF-8")
+                            })
+                            .collect::<Result<Vec<_>>>()?
+                            .join("/");
                         let name = relative
                             .split_once('/')
-                            .map_or(relative, |(_, rest)| rest)
+                            .map_or(relative.as_str(), |(_, rest)| rest)
                             .to_owned();
                         crate::workspace::check_snapshot_path(&name)?;
                         files.push(ArtifactFile { name, path });
@@ -728,6 +826,45 @@ pub async fn execute(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn executable_restore_precedes_user_steps_and_encodes_shell_and_expression_syntax() {
+        use base64::Engine;
+        let source = "jobs:\n  test:\n    steps:\n      - run: ./run.sh\n  reused:\n    uses: ./.github/workflows/shared.yml\n";
+        let paths = vec![
+            "scripts/it's executable.sh".into(),
+            "${{ secrets.TOKEN }}.sh".into(),
+        ];
+        let (text, changed) = restore_executable_step(source, &paths).unwrap();
+        assert!(changed);
+        assert!(!text.contains("secrets.TOKEN"));
+        let document: Yaml = serde_yaml_ng::from_str(&text).unwrap();
+        let step = &document["jobs"]["test"]["steps"][0];
+        assert_eq!(
+            step["working-directory"].as_str(),
+            Some("${{ github.workspace }}")
+        );
+        assert_eq!(
+            document["jobs"]["test"]["steps"][1]["run"].as_str(),
+            Some("./run.sh")
+        );
+        assert!(document["jobs"]["reused"].get("steps").is_none());
+        let run = step["run"].as_str().unwrap();
+        let encoded = run
+            .strip_prefix("printf '%s' '")
+            .unwrap()
+            .split('\'')
+            .next()
+            .unwrap();
+        let decoded = base64::engine::general_purpose::STANDARD
+            .decode(encoded)
+            .unwrap();
+        assert_eq!(decoded, format!("{}\0{}\0", paths[0], paths[1]).as_bytes());
+        assert_eq!(
+            restore_executable_step(source, &[]).unwrap(),
+            (source.into(), false)
+        );
+    }
     use tempfile::TempDir;
 
     const WORKFLOW: &str = r#"# keep this comment
@@ -849,6 +986,7 @@ jobs:
             &dir.join("checks.yml"),
             Some("acme/widgets"),
             &send,
+            &[],
         )
         .await
         .unwrap();
@@ -906,7 +1044,7 @@ jobs:
         let workflow = root.path().join(".github/workflows/lint.yml");
         let (send, _) = mpsc::channel(16);
         assert_eq!(
-            prepare_workflows(root.path(), &workflow, None, &send)
+            prepare_workflows(root.path(), &workflow, None, &send, &[])
                 .await
                 .unwrap(),
             workflow
@@ -918,7 +1056,7 @@ jobs:
         )
         .unwrap();
         assert_eq!(
-            prepare_workflows(root.path(), &workflow, None, &send)
+            prepare_workflows(root.path(), &workflow, None, &send, &[])
                 .await
                 .unwrap(),
             workflow

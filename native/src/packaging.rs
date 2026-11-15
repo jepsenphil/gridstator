@@ -42,7 +42,12 @@ pub fn assemble(
         if !directory.exists() {
             continue;
         }
-        let binary = directory.join("gridstator");
+        let executable_name = if target.starts_with("windows/") {
+            "gridstator.exe"
+        } else {
+            "gridstator"
+        };
+        let binary = directory.join(executable_name);
         ensure!(
             fs::symlink_metadata(&binary)?.file_type().is_file(),
             "release executable must be a regular file"
@@ -88,7 +93,7 @@ pub fn assemble(
                 "macOS notarization did not succeed"
             );
         }
-        let executable = digest("gridstator", &binary)?;
+        let executable = digest(executable_name, &binary)?;
         ensure!(
             info["sha256"] == executable.sha256 && info["size"] == executable.size,
             "build metadata must describe final signed executable bytes"
@@ -99,7 +104,7 @@ pub fn assemble(
             .mtime(0)
             .write(fs::File::create(&path)?, Compression::default());
         let mut archive = tar::Builder::new(gzip);
-        append(&mut archive, "gridstator", &fs::read(binary)?, 0o755)?;
+        append(&mut archive, executable_name, &fs::read(binary)?, 0o755)?;
         append(
             &mut archive,
             "LICENSE",
@@ -122,11 +127,12 @@ pub fn assemble(
             "stable release requires both Linux targets"
         );
         ensure!(
-            artifacts.keys().all(|target| target.starts_with("linux/"))
-                || release::SUPPORTED_TARGETS
-                    .iter()
-                    .all(|target| artifacts.contains_key(*target)),
-            "stable release cannot include only one macOS architecture"
+            ["darwin", "windows"].iter().all(|os| {
+                let amd64 = artifacts.contains_key(&format!("{os}/amd64"));
+                let arm64 = artifacts.contains_key(&format!("{os}/arm64"));
+                amd64 == arm64
+            }),
+            "stable release requires both architectures for each additional operating system"
         );
     }
     let manifest = ReleaseManifest {

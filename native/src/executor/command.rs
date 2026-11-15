@@ -202,6 +202,7 @@ async fn run(
     system(logs, &format!("Creating container on {}", ctx.node_name)).await;
     let created = process::run(
         Run {
+            stdin: None,
             bin: &docker_binary(),
             args: &args,
             env: &plan.pass_through,
@@ -277,6 +278,7 @@ async fn run(
     let args = vec!["start".into(), "--attach".into(), name.clone()];
     let outcome = process::run(
         Run {
+            stdin: None,
             bin: &docker_binary(),
             args: &args,
             env: &BTreeMap::new(),

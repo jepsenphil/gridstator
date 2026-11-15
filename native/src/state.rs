@@ -10,6 +10,16 @@ use std::{
 pub fn now() -> i64 {
     chrono::Utc::now().timestamp_millis()
 }
+
+/// Flush directory entries where the host supports directory fsync. Windows flushes each
+/// written file above; opening directories through std::fs::File is not supported there.
+pub fn sync_directory(path: &Path) -> std::io::Result<()> {
+    #[cfg(unix)]
+    fs::File::open(path)?.sync_all()?;
+    #[cfg(not(unix))]
+    let _ = path;
+    Ok(())
+}
 pub async fn shutdown_signal() {
     #[cfg(unix)]
     {
@@ -50,6 +60,8 @@ pub fn config_path() -> PathBuf {
 }
 pub fn private_dir(path: &Path) -> Result<()> {
     fs::create_dir_all(path)?;
+    #[cfg(windows)]
+    crate::windows_security::protect_path(path)?;
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
@@ -94,10 +106,13 @@ pub fn write_atomic(path: &Path, contents: &[u8]) -> Result<()> {
             options.mode(0o600);
         }
         let mut file = options.open(&temporary)?;
+        #[cfg(windows)]
+        crate::windows_security::protect_path(&temporary)?;
         file.write_all(contents)?;
         file.sync_all()?;
+        drop(file);
         fs::rename(&temporary, path)?;
-        fs::File::open(parent)?.sync_all()?;
+        sync_directory(parent)?;
         Ok(())
     })();
     if result.is_err() {
@@ -124,7 +139,9 @@ pub fn update_json(path: &Path, update: impl FnOnce(&mut Value) -> Result<()>) -
         use std::os::unix::fs::OpenOptionsExt;
         options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
     }
-    let lock = options.open(lock_path)?;
+    let lock = options.open(&lock_path)?;
+    #[cfg(windows)]
+    crate::windows_security::protect_path(&lock_path)?;
     fs2::FileExt::lock_exclusive(&lock)?;
     let mut value = if path.exists() {
         read_json(path)?

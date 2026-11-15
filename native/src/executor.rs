@@ -280,6 +280,29 @@ async fn stage(ctx: &ExecutionContext) -> Result<PathBuf> {
     Ok(destination)
 }
 
+#[cfg(windows)]
+fn windows_tool_path(path: &Path) -> PathBuf {
+    use std::ffi::OsString;
+    use std::path::{Component, Prefix};
+    let mut components = path.components();
+    let Some(Component::Prefix(prefix)) = components.next() else {
+        return path.to_owned();
+    };
+    let mut ordinary = match prefix.kind() {
+        Prefix::VerbatimDisk(drive) => OsString::from(format!("{}:", drive as char)),
+        Prefix::VerbatimUNC(server, share) => {
+            let mut prefix = OsString::from(r"\\");
+            prefix.push(server);
+            prefix.push(r"\");
+            prefix.push(share);
+            prefix
+        }
+        _ => return path.to_owned(),
+    };
+    ordinary.push(components.as_path());
+    ordinary.into()
+}
+
 /// Cleanup is always selected by managed+node ownership labels, optionally by job. Shared cache
 /// volumes are never removed. Startup may keep active job IDs; all other jobs belong to this node.
 pub async fn cleanup_managed(node_id: &str, keep_jobs: &HashSet<String>) -> Result<usize> {

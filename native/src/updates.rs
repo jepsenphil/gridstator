@@ -1339,8 +1339,8 @@ fn import_bundle_file_with_active(
     let mut expanded = 0u64;
     for (index, entry) in archive.entries()?.enumerate() {
         ensure!(
-            index < 5,
-            "BAD_REQUEST: native bundle may contain at most one manifest and four target archives"
+            index < crate::release::SUPPORTED_TARGETS.len() + 1,
+            "BAD_REQUEST: native bundle has too many target archives"
         );
         let mut entry = entry?;
         ensure!(

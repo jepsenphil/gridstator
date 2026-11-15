@@ -429,7 +429,7 @@ fn source_016_unmanaged_same_build_ignores_managed_act_drift() {
 }
 
 fn executable(target: &str) -> Vec<u8> {
-    let mut bytes = vec![0u8; 64];
+    let mut bytes = vec![0u8; 128];
     if target.starts_with("linux/") {
         bytes[..4].copy_from_slice(b"\x7fELF");
         bytes[4] = 2;
@@ -442,6 +442,19 @@ fn executable(target: &str) -> Vec<u8> {
             })
             .to_le_bytes(),
         );
+    } else if target.starts_with("windows/") {
+        bytes[..2].copy_from_slice(b"MZ");
+        bytes[60..64].copy_from_slice(&64_u32.to_le_bytes());
+        bytes[64..68].copy_from_slice(b"PE\0\0");
+        let machine: u16 = if target.ends_with("amd64") {
+            0x8664
+        } else {
+            0xaa64
+        };
+        bytes[68..70].copy_from_slice(&machine.to_le_bytes());
+        bytes[84..86].copy_from_slice(&2_u16.to_le_bytes());
+        bytes[86..88].copy_from_slice(&2_u16.to_le_bytes());
+        bytes[88..90].copy_from_slice(&0x20b_u16.to_le_bytes());
     } else {
         bytes[..4].copy_from_slice(&[0xcf, 0xfa, 0xed, 0xfe]);
         bytes[4..8].copy_from_slice(
@@ -1236,6 +1249,8 @@ async fn source_015_actual_act_override_is_checked_against_upstream_checksums() 
         "linux/arm64" => "act_Linux_arm64.tar.gz",
         "darwin/amd64" => "act_Darwin_x86_64.tar.gz",
         "darwin/arm64" => "act_Darwin_arm64.tar.gz",
+        "windows/amd64" => "act_Windows_x86_64.zip",
+        "windows/arm64" => "act_Windows_arm64.zip",
         _ => unreachable!(),
     };
     let checksums = reqwest::get(format!(

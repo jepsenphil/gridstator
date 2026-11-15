@@ -85,6 +85,7 @@ impl BlobStore {
         temp.as_file().sync_all()?;
         match temp.persist_noclobber(&destination) {
             Ok(_) => {
+                #[cfg(unix)]
                 File::open(parent)?.sync_all()?;
                 Ok(true)
             }
@@ -467,7 +468,16 @@ fn materialize_platform(manifest: &Manifest, store: &BlobStore, destination: &Pa
     Ok(())
 }
 
-#[cfg(not(unix))]
+#[cfg(windows)]
+fn materialize_platform(manifest: &Manifest, store: &BlobStore, destination: &Path) -> Result<()> {
+    windows::materialize(manifest, store, destination)
+}
+
+#[cfg(windows)]
+#[path = "windows.rs"]
+mod windows;
+
+#[cfg(not(any(unix, windows)))]
 fn materialize_platform(_: &Manifest, _: &BlobStore, _: &Path) -> Result<()> {
-    bail!("Safe materialization is supported on Linux and macOS targets")
+    bail!("Safe materialization is unsupported on this operating system")
 }

@@ -81,3 +81,57 @@ jobs:
             native/evidence/
           if-no-files-found: error
           retention-days: 14
+
+  windows-worker:
+    name: Native Windows worker ${{ matrix.key }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2025
+            target: x86_64-pc-windows-msvc
+            key: windows-amd64
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            key: windows-arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: native
+        shell: bash
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_BUILD_TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install pinned Rust toolchain
+        run: |
+          toolchain=$(sed -n 's/^channel = "\([^"]*\)"/\1/p' rust-toolchain.toml)
+          test -n "$toolchain"
+          rustup toolchain install "$toolchain" --profile minimal --component rustfmt --component clippy
+          rustup target add --toolchain "$toolchain" "$CARGO_BUILD_TARGET"
+          rustc -vV
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --lib --bin gridstator --test native_worker_platform --test packaging_contract -- -D warnings
+      - name: Windows filesystem, ACL and descendant cancellation tests
+        run: cargo test --locked --lib windows -- --test-threads=1
+      - name: Same-account worker control over native named pipes
+        run: cargo test --locked --lib local_transport_controls_policy_and_refuses_duplicate_listener -- --test-threads=1
+      - name: Native worker registration, advertisement, control and artifact contracts
+        run: cargo test --locked --test native_worker_platform --test packaging_contract -- --test-threads=1
+      - name: Build native Windows executable
+        run: cargo build --locked --release
+      - name: Record actual Windows build identity
+        run: |
+          mkdir -p evidence
+          "target/$CARGO_BUILD_TARGET/release/gridstator.exe" build-info --json > evidence/build-info.json
+          "target/$CARGO_BUILD_TARGET/release/gridstator.exe" --version
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-development-${{ matrix.target }}
+          path: |
+            native/target/${{ matrix.target }}/release/gridstator.exe
+            native/evidence/build-info.json
+          if-no-files-found: error
+          retention-days: 14

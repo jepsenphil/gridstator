@@ -6,7 +6,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs::File,
-    io::{self, Read},
+    io::{self, Read, Seek, SeekFrom},
     path::{Component, Path},
 };
 
@@ -16,8 +16,14 @@ pub const MANIFEST_VERSION: u32 = 1;
 pub const UPDATE_PROTOCOL_VERSION: u32 = 1;
 pub const MAX_ARTIFACT_BYTES: u64 = 512 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: u64 = 1024 * 1024;
-pub const SUPPORTED_TARGETS: [&str; 4] =
-    ["linux/amd64", "linux/arm64", "darwin/amd64", "darwin/arm64"];
+pub const SUPPORTED_TARGETS: [&str; 6] = [
+    "linux/amd64",
+    "linux/arm64",
+    "darwin/amd64",
+    "darwin/arm64",
+    "windows/amd64",
+    "windows/arm64",
+];
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -200,11 +206,13 @@ pub fn target_for(os: &str, arch: &str) -> Option<&'static str> {
         ("linux", "arm64" | "aarch64") => Some("linux/arm64"),
         ("macos" | "darwin", "x64" | "x86_64" | "amd64") => Some("darwin/amd64"),
         ("macos" | "darwin", "arm64" | "aarch64") => Some("darwin/arm64"),
+        ("windows" | "win32", "x64" | "x86_64" | "amd64") => Some("windows/amd64"),
+        ("windows" | "win32", "arm64" | "aarch64") => Some("windows/arm64"),
         _ => None,
     }
 }
 
-/// Check ELF/Mach-O architecture without executing an incoming file. Universal Mach-O and scripts
+/// Check ELF/Mach-O/PE architecture without executing an incoming file. Universal Mach-O and scripts
 /// are intentionally not single-target native release executables.
 pub fn verify_executable_target(path: impl AsRef<Path>, target: &str) -> io::Result<()> {
     let mut bytes = [0u8; 64];
@@ -221,6 +229,30 @@ pub fn verify_executable_target(path: impl AsRef<Path>, target: &str) -> io::Res
         match u32::from_le_bytes(bytes[4..8].try_into().expect("fixed header slice")) {
             0x0100_0007 => "darwin/amd64",
             0x0100_000c => "darwin/arm64",
+            _ => "unsupported",
+        }
+    } else if &bytes[..2] == b"MZ" {
+        let offset = u32::from_le_bytes(bytes[60..64].try_into().expect("DOS header slice"));
+        if offset < 64 || u64::from(offset) + 26 > file.metadata()?.len() {
+            return Err(invalid("invalid PE header offset"));
+        }
+        file.seek(SeekFrom::Start(u64::from(offset)))?;
+        let mut pe = [0_u8; 26];
+        file.read_exact(&mut pe)
+            .map_err(|_| invalid("PE header is truncated"))?;
+        // Require an executable PE32+ image, never a DLL or a COFF object.
+        let flags = u16::from_le_bytes([pe[22], pe[23]]);
+        if &pe[..4] != b"PE\0\0"
+            || flags & 0x0002 == 0
+            || flags & 0x2000 != 0
+            || u16::from_le_bytes([pe[20], pe[21]]) < 2
+            || u16::from_le_bytes([pe[24], pe[25]]) != 0x20b
+        {
+            return Err(invalid("invalid native PE executable"));
+        }
+        match u16::from_le_bytes([pe[4], pe[5]]) {
+            0x8664 => "windows/amd64",
+            0xaa64 => "windows/arm64",
             _ => "unsupported",
         }
     } else {
@@ -382,7 +414,7 @@ impl ArtifactMirror {
             staged.write_all(bytes)?;
             staged.as_file().sync_all()?;
             staged.persist(&path).map_err(|error| error.error)?;
-            File::open(&directory)?.sync_all()?;
+            crate::state::sync_directory(&directory)?;
         }
         drop(lock);
         Ok(manifest)
@@ -440,7 +472,7 @@ impl ArtifactMirror {
         artifact.archive.verify(staged.path())?;
         staged.as_file().sync_all()?;
         staged.persist(&path).map_err(|error| error.error)?;
-        File::open(parent)?.sync_all()?;
+        crate::state::sync_directory(parent)?;
         Ok(path)
     }
 
@@ -491,13 +523,16 @@ fn verify_distribution_artifact(
 }
 
 fn private_mirror_directory(path: &Path) -> io::Result<()> {
+    #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
+    #[cfg(unix)]
     let created = !path.exists();
     std::fs::create_dir_all(path)?;
     let metadata = std::fs::symlink_metadata(path)?;
     if !metadata.is_dir() || metadata.file_type().is_symlink() {
         return Err(invalid("mirror directory must not be a symlink"));
     }
+    #[cfg(unix)]
     if created {
         std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700))?;
     }
@@ -505,15 +540,14 @@ fn private_mirror_directory(path: &Path) -> io::Result<()> {
 }
 
 fn mirror_lock(directory: &Path) -> io::Result<File> {
-    use std::os::unix::fs::OpenOptionsExt;
-    let file = std::fs::OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .mode(0o600)
-        .custom_flags(libc::O_NOFOLLOW)
-        .open(directory.join("mirror.lock"))?;
+    let mut options = std::fs::OpenOptions::new();
+    options.read(true).write(true).create(true).truncate(false);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
+    }
+    let file = options.open(directory.join("mirror.lock"))?;
     fs2::FileExt::lock_exclusive(&file)?;
     Ok(file)
 }

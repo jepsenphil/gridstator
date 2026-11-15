@@ -39,6 +39,8 @@ pub(crate) fn owned_regular_file(path: &Path) -> Result<()> {
             "FORBIDDEN: local worker state must be private to this account"
         );
     }
+    #[cfg(windows)]
+    crate::windows_security::owned_path(path, true)?;
     Ok(())
 }
 
@@ -60,6 +62,8 @@ pub(crate) fn owned_directory(path: &Path) -> Result<PathBuf> {
             "FORBIDDEN: this account does not own the worker directory"
         );
     }
+    #[cfg(windows)]
+    crate::windows_security::owned_path(path, false)?;
     Ok(fs::canonicalize(path)?)
 }
 
@@ -137,6 +141,7 @@ pub(crate) fn socket_path(dir: &Path) -> PathBuf {
 pub(crate) fn embedded_socket_path(dir: &Path) -> PathBuf {
     runtime_socket(dir, "embedded")
 }
+#[cfg(unix)]
 fn runtime_socket(dir: &Path, kind: &str) -> PathBuf {
     use sha2::Digest;
     let digest = hex::encode(sha2::Sha256::digest(dir.as_os_str().as_encoded_bytes()));
@@ -146,6 +151,19 @@ fn runtime_socket(dir: &Path, kind: &str) -> PathBuf {
         .join(format!("gridstator-control-{}", unsafe { libc::geteuid() }))
         .join(format!("{kind}-{}.sock", &digest[..24]))
 }
+#[cfg(windows)]
+fn runtime_socket(dir: &Path, kind: &str) -> PathBuf {
+    use sha2::Digest;
+    let canonical = fs::canonicalize(dir).unwrap_or_else(|_| dir.to_owned());
+    let identity = format!(
+        "{}:{}",
+        crate::windows_security::current_sid().expect("current account SID"),
+        canonical.display()
+    );
+    let digest = hex::encode(sha2::Sha256::digest(identity.as_bytes()));
+    PathBuf::from(format!(r"\\.\pipe\gridstator-{kind}-{}", &digest[..32]))
+}
+#[cfg(unix)]
 pub(crate) fn prepare_socket_parent(path: &Path) -> Result<()> {
     let parent = path.parent().context("control socket requires a parent")?;
     match fs::create_dir(parent) {
@@ -235,10 +253,20 @@ pub(crate) fn manually_stopped(dir: &Path) -> Result<bool> {
     let value = state::read_json(&path)?;
     Ok(value["version"] == VERSION && value["session"] == session_id() && value["stopped"] == true)
 }
+#[cfg(unix)]
 fn session_id() -> String {
     format!(
         "{}:{}",
         unsafe { libc::geteuid() },
+        sysinfo::System::boot_time()
+    )
+}
+
+#[cfg(windows)]
+fn session_id() -> String {
+    format!(
+        "{}:{}",
+        crate::windows_security::current_sid().unwrap_or_default(),
         sysinfo::System::boot_time()
     )
 }
@@ -251,9 +279,14 @@ fn process_alive(pid: u64) -> bool {
     {
         unsafe { libc::kill(pid as i32, 0) == 0 }
     }
-    #[cfg(not(unix))]
+    #[cfg(windows)]
     {
-        false
+        let mut system = sysinfo::System::new();
+        system.refresh_processes(
+            sysinfo::ProcessesToUpdate::Some(&[sysinfo::Pid::from_u32(pid as u32)]),
+            true,
+        );
+        system.process(sysinfo::Pid::from_u32(pid as u32)).is_some()
     }
 }
 
@@ -452,20 +485,43 @@ pub(crate) fn logs(dir: &Path, request: &Value) -> Result<LogPage> {
     })
 }
 
-#[cfg(unix)]
 pub(crate) async fn send_socket(path: &Path, request: &Value) -> Result<Value> {
-    use std::os::unix::fs::{FileTypeExt, MetadataExt};
-    let metadata = fs::symlink_metadata(path)?;
-    ensure!(
-        metadata.file_type().is_socket() && metadata.uid() == unsafe { libc::geteuid() },
-        "FORBIDDEN: worker control socket owner/type mismatch"
-    );
-    let stream = tokio::net::UnixStream::connect(path).await?;
-    ensure!(
-        stream.peer_cred()?.uid() == unsafe { libc::geteuid() },
-        "FORBIDDEN: worker control peer owner mismatch"
-    );
-    let (mut reader, mut writer) = stream.into_split();
+    #[cfg(unix)]
+    let stream = {
+        use std::os::unix::fs::{FileTypeExt, MetadataExt};
+        let metadata = fs::symlink_metadata(path)?;
+        ensure!(
+            metadata.file_type().is_socket() && metadata.uid() == unsafe { libc::geteuid() },
+            "FORBIDDEN: worker control socket owner/type mismatch"
+        );
+        let stream = tokio::net::UnixStream::connect(path).await?;
+        ensure!(
+            stream.peer_cred()?.uid() == unsafe { libc::geteuid() },
+            "FORBIDDEN: worker control peer owner mismatch"
+        );
+        stream
+    };
+    #[cfg(windows)]
+    let stream = {
+        use std::os::windows::io::AsRawHandle;
+        use tokio::net::windows::named_pipe::ClientOptions;
+        let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
+        let stream = loop {
+            match ClientOptions::new().open(path) {
+                Ok(stream) => break stream,
+                Err(error)
+                    if error.raw_os_error() == Some(231)
+                        && tokio::time::Instant::now() < deadline =>
+                {
+                    tokio::time::sleep(Duration::from_millis(20)).await;
+                }
+                Err(error) => return Err(error.into()),
+            }
+        };
+        crate::windows_security::verify_pipe_peer(stream.as_raw_handle(), false)?;
+        stream
+    };
+    let (mut reader, mut writer) = tokio::io::split(stream);
     let mut data = serde_json::to_vec(request)?;
     ensure!(data.len() < MAX_MESSAGE, "worker request too large");
     data.push(b'\n');
@@ -524,6 +580,11 @@ pub(crate) fn validate_identity(config: &Value, request: &Value) -> Result<()> {
 
 pub async fn execute(request: Value) -> Result<Value> {
     let action = request["action"].as_str().unwrap_or("list");
+    #[cfg(windows)]
+    ensure!(
+        action != "setStartup",
+        "Start at sign-in is not supported on native Windows; run agent start in the foreground"
+    );
     if action == "join" {
         return Box::pin(crate::cli::join_local_worker(&request)).await;
     }
@@ -564,7 +625,7 @@ pub async fn execute(request: Value) -> Result<Value> {
         let mut offline_guard = None;
         let ready_deadline = tokio::time::Instant::now() + Duration::from_secs(5);
         loop {
-            if socket.exists() {
+            if control_endpoint_exists(&socket) {
                 match send_socket(&socket, &request).await {
                     Ok(value) => {
                         live_value = Some(value);
@@ -623,7 +684,7 @@ pub async fn execute(request: Value) -> Result<Value> {
         // A service may take a moment to create its control endpoint after Start.
         if action == "start" {
             for _ in 0..40 {
-                if socket.exists()
+                if control_endpoint_exists(&socket)
                     && let Ok(value) = send_socket(&socket, &json!({"action":"status"})).await
                 {
                     snapshots.push(serde_json::from_value(value["snapshot"].clone())?);
@@ -651,9 +712,18 @@ fn claim_offline_instance(dir: &Path) -> Result<Option<fs::File>> {
     let path = dir.join("agent.lock");
     let mut options = fs::OpenOptions::new();
     options.read(true).write(true).create(true).truncate(false);
-    use std::os::unix::fs::OpenOptionsExt;
-    options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
+    }
+    #[cfg(windows)]
+    let created = !path.exists();
     let file = options.open(&path)?;
+    #[cfg(windows)]
+    if created {
+        crate::windows_security::protect_path(&path)?;
+    }
     owned_regular_file(&path)?;
     match fs2::FileExt::try_lock_exclusive(&file) {
         Ok(()) => Ok(Some(file)),
@@ -690,10 +760,24 @@ fn agent_service_config(dir: &Path) -> Result<ServiceConfig> {
         root,
         dir.to_owned(),
         dirs::home_dir().context("local account home unavailable")?,
-        unsafe { libc::geteuid() },
+        current_uid(),
     ))
 }
 
+#[cfg(unix)]
+fn current_uid() -> u32 {
+    unsafe { libc::geteuid() }
+}
+#[cfg(windows)]
+fn current_uid() -> u32 {
+    0
+}
+
+#[cfg(windows)]
+pub(crate) fn validate_service_definition(_: &ServiceConfig) -> Result<()> {
+    bail!("Worker services are not supported on native Windows; run agent start in the foreground")
+}
+#[cfg(unix)]
 pub(crate) fn validate_service_definition(config: &ServiceConfig) -> Result<()> {
     let path = config.definition_path(crate::services::ServicePlatform::current()?)?;
     owned_regular_file(&path).or_else(|error| {
@@ -765,6 +849,7 @@ async fn start(dir: &Path) -> Result<()> {
     Ok(())
 }
 
+#[cfg(unix)]
 pub(crate) async fn set_service_startup(dir: &Path, enabled: bool) -> Result<()> {
     let config = agent_service_config(dir)?;
     let path = config.definition_path(crate::services::ServicePlatform::current()?)?;
@@ -809,14 +894,33 @@ pub(crate) async fn set_service_startup(dir: &Path, enabled: bool) -> Result<()>
     Ok(())
 }
 
+#[cfg(windows)]
+pub(crate) async fn set_service_startup(_: &Path, _: bool) -> Result<()> {
+    bail!("Start at sign-in is not supported on native Windows; run agent start in the foreground")
+}
+
+pub(crate) fn control_endpoint_exists(path: &Path) -> bool {
+    #[cfg(unix)]
+    {
+        path.exists()
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::ffi::OsStrExt;
+        let path: Vec<u16> = path.as_os_str().encode_wide().chain(Some(0)).collect();
+        // A busy pipe is still live. Missing endpoints fail immediately with ERROR_FILE_NOT_FOUND.
+        let ready = unsafe { windows_sys::Win32::System::Pipes::WaitNamedPipeW(path.as_ptr(), 1) };
+        ready != 0 || std::io::Error::last_os_error().raw_os_error() == Some(121)
+    }
+}
+
 pub async fn host(request: &Value) -> Result<Value> {
     let mut idle = std::time::Instant::now();
     loop {
         let targets = candidates(request)?;
-        let alive = targets.iter().any(|dir| {
-            std::os::unix::net::UnixStream::connect(socket_path(dir)).is_ok()
-                || controller_running(dir)
-        });
+        let alive = targets
+            .iter()
+            .any(|dir| control_endpoint_exists(&socket_path(dir)) || controller_running(dir));
         // A controller can be running before its embedded registration is written.
         let controller = state::read_json(&state::data_dir("controller").join("runtime.json"))
             .ok()

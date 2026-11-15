@@ -342,7 +342,7 @@ fn release_fixture(root: &std::path::Path, build: &str) -> gridstator::release::
     use std::{collections::BTreeMap, io::Write};
     let mut artifacts = BTreeMap::new();
     for target in gridstator::release::SUPPORTED_TARGETS {
-        let mut executable = vec![0u8; 64];
+        let mut executable = vec![0u8; 128];
         if target.starts_with("linux/") {
             executable[..4].copy_from_slice(b"\x7fELF");
             executable[4] = 2;
@@ -355,6 +355,19 @@ fn release_fixture(root: &std::path::Path, build: &str) -> gridstator::release::
                 })
                 .to_le_bytes(),
             );
+        } else if target.starts_with("windows/") {
+            executable[..2].copy_from_slice(b"MZ");
+            executable[60..64].copy_from_slice(&64_u32.to_le_bytes());
+            executable[64..68].copy_from_slice(b"PE\0\0");
+            let machine: u16 = if target.ends_with("amd64") {
+                0x8664
+            } else {
+                0xaa64
+            };
+            executable[68..70].copy_from_slice(&machine.to_le_bytes());
+            executable[84..86].copy_from_slice(&2_u16.to_le_bytes());
+            executable[86..88].copy_from_slice(&2_u16.to_le_bytes());
+            executable[88..90].copy_from_slice(&0x20b_u16.to_le_bytes());
         } else {
             executable[..4].copy_from_slice(&[0xcf, 0xfa, 0xed, 0xfe]);
             executable[4..8].copy_from_slice(

@@ -10,22 +10,27 @@ use crate::release::{
 use flate2::read::GzDecoder;
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
+#[cfg(unix)]
+use std::process::Stdio;
 use std::{
     collections::{BTreeMap, HashSet},
     ffi::OsString,
     fs::{self, File, OpenOptions},
     io::{self, Read, Write},
     path::{Path, PathBuf},
-    process::Stdio,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use tempfile::{Builder, NamedTempFile};
+#[cfg(unix)]
 use tokio::process::{Child, Command};
 
 pub const RESTART_EXIT_CODE: i32 = 75;
 pub const INSTALL_STATE_VERSION: u32 = 1;
 pub const DEFAULT_MAX_ATTEMPTS: u32 = 3;
+#[cfg(unix)]
 const EXECUTABLE: &str = "gridstator";
+#[cfg(windows)]
+const EXECUTABLE: &str = "gridstator.exe";
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -647,6 +652,7 @@ impl InstallStore {
         atomic_write(&self.root.join("state.json"), &json_bytes(state)?)
     }
 
+    #[cfg(unix)]
     fn prepare_launch(&self, max_attempts: u32) -> io::Result<InstalledRelease> {
         let _lock = self.lock()?;
         let mut state = self
@@ -702,6 +708,7 @@ impl InstallStore {
         Ok(installed)
     }
 
+    #[cfg(unix)]
     fn rollback_if_pending(&self, build_id: &str, reason: RollbackReason) -> io::Result<bool> {
         let _lock = self.lock()?;
         let Some(mut state) = self.read_state()? else {
@@ -719,6 +726,7 @@ impl InstallStore {
         Ok(true)
     }
 
+    #[cfg(unix)]
     fn rollback_state(&self, state: &mut InstallState, reason: RollbackReason) -> io::Result<()> {
         let failed = state.current.clone();
         let pending = state
@@ -783,6 +791,7 @@ pub struct SupervisorExit {
 /// The stable executable's hidden supervisor command calls this. A dedicated supervisor lock
 /// prevents two launchers from owning the same installation. Payload mutations use a different,
 /// short-lived lock, so health confirmation is never blocked by the supervisor waiting for a child.
+#[cfg(unix)]
 pub async fn supervise(
     store: &InstallStore,
     options: SupervisorOptions,
@@ -901,6 +910,7 @@ pub async fn supervise(
     }
 }
 
+#[cfg(unix)]
 fn supervisor_exit(store: &InstallStore, build_id: &str, code: i32) -> io::Result<SupervisorExit> {
     Ok(SupervisorExit {
         code,
@@ -909,6 +919,7 @@ fn supervisor_exit(store: &InstallStore, build_id: &str, code: i32) -> io::Resul
     })
 }
 
+#[cfg(unix)]
 enum PayloadExit {
     Exited(std::process::ExitStatus),
     Shutdown(i32),
@@ -916,6 +927,7 @@ enum PayloadExit {
     TimedOut,
 }
 
+#[cfg(unix)]
 async fn wait_for_payload(
     store: &InstallStore,
     build_id: &str,
@@ -948,12 +960,14 @@ async fn wait_for_payload(
     }
 }
 
+#[cfg(unix)]
 struct SignalListeners {
     term: Option<tokio::signal::unix::Signal>,
     interrupt: Option<tokio::signal::unix::Signal>,
     hangup: Option<tokio::signal::unix::Signal>,
 }
 
+#[cfg(unix)]
 impl SignalListeners {
     fn new(enabled: bool) -> io::Result<Self> {
         use tokio::signal::unix::{SignalKind, signal};
@@ -984,10 +998,12 @@ impl SignalListeners {
     }
 }
 
+#[cfg(unix)]
 struct PayloadSession {
     id: libc::pid_t,
     armed: bool,
 }
+#[cfg(unix)]
 impl PayloadSession {
     fn new(pid: Option<u32>) -> io::Result<Self> {
         let id = pid
@@ -1061,6 +1077,7 @@ impl PayloadSession {
         }
     }
 }
+#[cfg(unix)]
 impl Drop for PayloadSession {
     fn drop(&mut self) {
         if self.armed {
@@ -1091,6 +1108,7 @@ impl Drop for PayloadSession {
     }
 }
 
+#[cfg(unix)]
 fn signal_group(pid: Option<u32>, signal: i32) -> io::Result<()> {
     let Some(pid) = pid else {
         return Ok(());
@@ -1107,6 +1125,7 @@ fn signal_group(pid: Option<u32>, signal: i32) -> io::Result<()> {
     Ok(())
 }
 
+#[cfg(unix)]
 async fn terminate(child: &mut Child, grace: Duration) -> io::Result<()> {
     if child.try_wait()?.is_some() {
         return Ok(());
@@ -1135,6 +1154,14 @@ async fn terminate(child: &mut Child, grace: Duration) -> io::Result<()> {
         }
     }
     Ok(())
+}
+
+#[cfg(windows)]
+pub async fn supervise(_: &InstallStore, _: SupervisorOptions) -> io::Result<SupervisorExit> {
+    Err(io::Error::new(
+        io::ErrorKind::Unsupported,
+        "Managed supervision is not supported on native Windows; run agent start in the foreground",
+    ))
 }
 
 pub(crate) fn extract_executable(
@@ -1212,44 +1239,60 @@ pub(crate) fn extract_executable(
 }
 
 fn private_directory(path: &Path) -> io::Result<()> {
+    #[cfg(unix)]
     let created = !path.exists();
     fs::create_dir_all(path)?;
     let metadata = fs::symlink_metadata(path)?;
     if !metadata.is_dir() || metadata.file_type().is_symlink() {
         return Err(invalid("install directory must be a real directory"));
     }
+    #[cfg(unix)]
     if created {
         use std::os::unix::fs::PermissionsExt;
         fs::set_permissions(path, fs::Permissions::from_mode(0o700))?;
     }
+    #[cfg(windows)]
+    crate::windows_security::protect_path(path)?;
     Ok(())
 }
 
 fn private_file(path: &Path) -> io::Result<File> {
-    use std::os::unix::fs::OpenOptionsExt;
-    OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .mode(0o600)
-        .custom_flags(libc::O_NOFOLLOW)
-        .open(path)
+    let mut options = OpenOptions::new();
+    options.write(true).create_new(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
+    }
+    let file = options.open(path)?;
+    #[cfg(windows)]
+    crate::windows_security::protect_path(path)?;
+    Ok(file)
 }
 
 fn lock_file(path: &Path) -> io::Result<File> {
-    use std::os::unix::fs::OpenOptionsExt;
-    OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .mode(0o600)
-        .custom_flags(libc::O_NOFOLLOW)
-        .open(path)
+    let mut options = OpenOptions::new();
+    options.read(true).write(true).create(true).truncate(false);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600).custom_flags(libc::O_NOFOLLOW);
+    }
+    let file = options.open(path)?;
+    #[cfg(windows)]
+    crate::windows_security::protect_path(path)?;
+    Ok(file)
 }
 
 fn set_executable(path: &Path) -> io::Result<()> {
-    use std::os::unix::fs::PermissionsExt;
-    fs::set_permissions(path, fs::Permissions::from_mode(0o755))
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(path, fs::Permissions::from_mode(0o755))?;
+    }
+    #[cfg(windows)]
+    let _ = path;
+    Ok(())
 }
 
 fn write_new_file(path: &Path, bytes: &[u8]) -> io::Result<()> {
@@ -1270,7 +1313,11 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> io::Result<()> {
 }
 
 fn sync_directory(path: &Path) -> io::Result<()> {
-    File::open(path)?.sync_all()
+    #[cfg(unix)]
+    File::open(path)?.sync_all()?;
+    #[cfg(windows)]
+    let _ = path;
+    Ok(())
 }
 fn json_bytes(value: &impl Serialize) -> io::Result<Vec<u8>> {
     let mut bytes = serde_json::to_vec_pretty(value).map_err(invalid)?;
@@ -1295,7 +1342,7 @@ pub fn running_executable_digest() -> io::Result<(u64, String)> {
     hash_file(std::env::current_exe()?)
 }
 
-#[cfg(test)]
+#[cfg(all(test, unix))]
 mod termination_tests {
     use super::*;
     use tokio::io::AsyncReadExt;

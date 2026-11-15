@@ -21,6 +21,19 @@ fn inputs_for(root: &Path, version: &str, targets: &[&str]) -> Result<()> {
                 })
                 .to_le_bytes(),
             );
+        } else if target.starts_with("windows/") {
+            bytes[..2].copy_from_slice(b"MZ");
+            bytes[60..64].copy_from_slice(&64_u32.to_le_bytes());
+            bytes[64..68].copy_from_slice(b"PE\0\0");
+            let machine: u16 = if target.ends_with("amd64") {
+                0x8664
+            } else {
+                0xaa64
+            };
+            bytes[68..70].copy_from_slice(&machine.to_le_bytes());
+            bytes[84..86].copy_from_slice(&2_u16.to_le_bytes());
+            bytes[86..88].copy_from_slice(&2_u16.to_le_bytes());
+            bytes[88..90].copy_from_slice(&0x20b_u16.to_le_bytes());
         } else {
             bytes[..4].copy_from_slice(&[0xcf, 0xfa, 0xed, 0xfe]);
             bytes[4..8].copy_from_slice(
@@ -32,7 +45,11 @@ fn inputs_for(root: &Path, version: &str, targets: &[&str]) -> Result<()> {
                 .to_le_bytes(),
             );
         }
-        let executable = directory.join("gridstator");
+        let executable = directory.join(if target.starts_with("windows/") {
+            "gridstator.exe"
+        } else {
+            "gridstator"
+        });
         fs::write(&executable, bytes)?;
         let (size, hash) = release::hash_file(&executable)?;
         fs::write(
@@ -72,7 +89,7 @@ fn stable_linux_pair_and_unsigned_mac_preview_have_distinct_manifests() -> Resul
     Ok(())
 }
 #[test]
-fn deterministic_four_target_archives_and_bundle_are_consumable() -> Result<()> {
+fn deterministic_native_archives_and_bundle_are_consumable() -> Result<()> {
     let temp = tempfile::tempdir()?;
     let input = temp.path().join("input");
     inputs(&input, "2.0.0-rc.1")?;
@@ -108,12 +125,20 @@ fn deterministic_four_target_archives_and_bundle_are_consumable() -> Result<()> 
             .entries()?
             .map(|entry| Ok(entry?.path()?.into_owned()))
             .collect::<Result<Vec<_>>>()?;
-        assert_eq!(names, vec![Path::new("gridstator"), Path::new("LICENSE")]);
+        let executable_name = if target.starts_with("windows/") {
+            "gridstator.exe"
+        } else {
+            "gridstator"
+        };
+        assert_eq!(
+            names,
+            vec![Path::new(executable_name), Path::new("LICENSE")]
+        );
         assert_eq!(
             artifact.executable,
             release::FileDigest::from_path(
-                "gridstator",
-                input.join(target.replace('/', "-")).join("gridstator")
+                executable_name,
+                input.join(target.replace('/', "-")).join(executable_name)
             )?
         );
     }

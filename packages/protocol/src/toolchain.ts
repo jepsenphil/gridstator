@@ -14,11 +14,17 @@ export const TOOL_NAMES: readonly ToolName[] = ToolNameSchema.options;
 export const ToolPlatformSchema = z.enum(['linux-x64', 'linux-arm64']);
 export type ToolPlatform = z.infer<typeof ToolPlatformSchema>;
 
-/** Read-only update metadata describes native Rust mirrors. Managed tool downloads
- * currently support Linux; reported native targets include macOS. */
+/** Read-only update metadata describes native Rust mirrors, including macOS and Windows. */
 export const ReportedToolPlatformSchema = z.union([
   ToolPlatformSchema,
-  z.enum(['linux/amd64', 'linux/arm64', 'darwin/amd64', 'darwin/arm64']),
+  z.enum([
+    'linux/amd64',
+    'linux/arm64',
+    'darwin/amd64',
+    'darwin/arm64',
+    'windows/amd64',
+    'windows/arm64',
+  ]),
 ]);
 
 export function toolPlatform(platform: string, arch: string): ToolPlatform | null {

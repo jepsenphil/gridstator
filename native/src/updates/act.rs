@@ -11,6 +11,8 @@ fn target_file(target: &str) -> Result<&'static str> {
         "linux/arm64" => "act_Linux_arm64.tar.gz",
         "darwin/amd64" => "act_Darwin_x86_64.tar.gz",
         "darwin/arm64" => "act_Darwin_arm64.tar.gz",
+        "windows/amd64" => "act_Windows_x86_64.zip",
+        "windows/arm64" => "act_Windows_arm64.zip",
         _ => bail!("unsupported managed act target"),
     })
 }
@@ -20,6 +22,8 @@ fn pin(target: &str) -> Result<&'static str> {
         "linux/arm64" => "44d48e3d4a6409053fdec6fc6518322467d79a2d5be8f72c021b0421e2ac113d",
         "darwin/amd64" => "cba9cf071f69c47b2fef60a4c735002b6cbd416533920406f72eac0cf7ffec3a",
         "darwin/arm64" => "6dbb1ef34a7e34bb1ee0db188d1682ea35b82d9d9012626497f6c659e55a7cb5",
+        "windows/amd64" => "07cb9bbecc5604452dc50e2a485e17e02e38c3735c47ce8adc8ac550ab968a8a",
+        "windows/arm64" => "88a5e8620699c97077b95bb1474ad162bb5687406a9cb4c6d7701bf46b585608",
         _ => bail!("unsupported managed act target"),
     })
 }
@@ -138,7 +142,7 @@ async fn prepare(
             .join(&version)
             .join(target.replace('/', "-"));
         state::private_dir(&directory)?;
-        let path = directory.join("act.tar.gz");
+        let path = directory.join(file);
         if let Ok((size, digest)) = crate::release::hash_file(&path)
             && digest == expected
         {
@@ -303,6 +307,9 @@ pub async fn artifact(controller: &Controller, version: &str, target: &str) -> R
 
 /// Safe extraction reads only the selected regular executable. It never materializes member paths.
 pub fn install_archive(archive: &Path, destination: &Path, target: &str) -> Result<String> {
+    if target.starts_with("windows/") {
+        return install_windows_archive(archive, destination, target);
+    }
     let decoder = flate2::read::GzDecoder::new(fs::File::open(archive)?);
     let mut tar = tar::Archive::new(decoder);
     let parent = destination
@@ -354,9 +361,59 @@ pub fn install_archive(archive: &Path, destination: &Path, target: &str) -> Resu
     temporary
         .persist(destination)
         .map_err(|error| error.error)?;
-    fs::File::open(parent)?.sync_all()?;
+    state::sync_directory(parent)?;
     Ok(digest)
 }
+/// Windows act releases are ZIPs. Validate every member but extract only the executable.
+fn install_windows_archive(archive: &Path, destination: &Path, target: &str) -> Result<String> {
+    let parent = destination
+        .parent()
+        .context("act destination needs a parent")?;
+    state::private_dir(parent)?;
+    let mut zip = zip::ZipArchive::new(fs::File::open(archive)?)?;
+    ensure!(zip.len() <= 1024, "Too many managed act archive entries");
+    let mut total = 0_u64;
+    let mut extracted = None;
+    for index in 0..zip.len() {
+        let mut entry = zip.by_index(index)?;
+        ensure!(
+            entry.enclosed_name().is_some() && !entry.name()?.contains('\\'),
+            "Unsafe managed act archive path"
+        );
+        ensure!(
+            !entry.is_symlink(),
+            "Managed act archive links are not allowed"
+        );
+        total = total
+            .checked_add(entry.size())
+            .context("Managed act archive overflow")?;
+        ensure!(
+            total <= MAX_TOOL,
+            "Managed act archive expansion exceeds limit"
+        );
+        if entry.name()? == "act.exe" && entry.is_file() {
+            ensure!(extracted.is_none(), "Duplicate managed act executable");
+            let mut temporary = tempfile::NamedTempFile::new_in(parent)?;
+            let size = entry.size();
+            let copied = std::io::copy(
+                &mut std::io::Read::take(&mut entry, MAX_TOOL + 1),
+                &mut temporary,
+            )?;
+            ensure!(copied == size, "Managed act executable size mismatch");
+            temporary.as_file().sync_all()?;
+            crate::release::verify_executable_target(temporary.path(), target)?;
+            extracted = Some(temporary);
+        }
+    }
+    let temporary = extracted.context("Managed act archive has no regular act.exe executable")?;
+    let (_, digest) = crate::release::hash_file(temporary.path())?;
+    temporary
+        .persist(destination)
+        .map_err(|error| error.error)?;
+    state::sync_directory(parent)?;
+    Ok(digest)
+}
+
 pub async fn sync_worker(check: &crate::worker::UpdateCheck) -> Result<bool> {
     if std::env::var_os("GRIDSTATOR_ACT").is_some() {
         return Ok(false);
@@ -411,7 +468,11 @@ pub async fn sync_worker(check: &crate::worker::UpdateCheck) -> Result<bool> {
         .join("toolchain/act")
         .join(version)
         .join(target.replace('/', "-"))
-        .join("act");
+        .join(if target.starts_with("windows/") {
+            "act.exe"
+        } else {
+            "act"
+        });
     let config = state::read_json(&config_path)?;
     if config["managedActVersion"] == version
         && config["managedActPath"] == destination.to_string_lossy().as_ref()

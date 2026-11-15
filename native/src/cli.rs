@@ -2033,6 +2033,7 @@ fn service_command(role: &str, action: &str, matches: &ArgMatches) -> Result<i32
     let mut uid = unsafe { libc::geteuid() };
     #[cfg(not(unix))]
     let uid = 0;
+    #[allow(unused_mut)]
     let mut home = dirs::home_dir().context("CONFIG: service account home unavailable")?;
     let user = if flag(matches, "system") {
         let user = text(matches, "user")
@@ -2531,6 +2532,7 @@ fn local_service_config(directory: &Path) -> Result<crate::services::ServiceConf
         uid,
     ))
 }
+#[cfg(any(unix, test))]
 pub(crate) fn service_words(text: &str) -> Option<Vec<String>> {
     let mut words = Vec::new();
     let mut word = String::new();
@@ -2587,6 +2589,7 @@ fn service_owns_environment(
     service_directory(tokens, config, environment, has_environment_files)
         .is_some_and(|directory| normalize(&directory) == normalize(&config.data_dir))
 }
+#[cfg(any(unix, test))]
 fn service_directory(
     tokens: &[String],
     config: &crate::services::ServiceConfig,
@@ -2666,6 +2669,9 @@ fn service_directory(
 }
 
 async fn local_service_view(config: &crate::services::ServiceConfig) -> Value {
+    #[cfg(not(unix))]
+    let _ = config;
+    #[allow(unused_mut)]
     let mut view = json!({"installed":false,"state":"unknown","scope":"user","canManage":false,"reason":"No native controller user service is installed."});
     #[cfg(target_os = "linux")]
     {

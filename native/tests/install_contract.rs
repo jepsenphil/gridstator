@@ -141,15 +141,13 @@ fn release_identity_is_independent_of_digest_and_protocol_names_are_explicit() {
     assert_ne!(value.build_id, value.sha256().unwrap());
     assert_eq!(target_for("linux", "x64"), Some("linux/amd64"));
     assert_eq!(target_for("macos", "aarch64"), Some("darwin/arm64"));
-    assert_eq!(target_for("windows", "x86_64"), None);
+    assert_eq!(target_for("windows", "x86_64"), Some("windows/amd64"));
     let mut incomplete = value.clone();
     incomplete.artifacts.clear();
     assert!(incomplete.validate().is_err());
     let mut unsupported = value.clone();
     let artifact = unsupported.artifacts["linux/amd64"].clone();
-    unsupported
-        .artifacts
-        .insert("windows/amd64".into(), artifact);
+    unsupported.artifacts.insert("plan9/amd64".into(), artifact);
     assert!(unsupported.validate().is_err());
     let mut traversal = value.clone();
     traversal
@@ -830,6 +828,20 @@ fn target_header(target: &str) -> Vec<u8> {
                 0x0100_000cu32
             };
             bytes[4..8].copy_from_slice(&architecture.to_le_bytes());
+        }
+        "windows/amd64" | "windows/arm64" => {
+            bytes[..2].copy_from_slice(b"MZ");
+            bytes[60..64].copy_from_slice(&64_u32.to_le_bytes());
+            bytes[64..68].copy_from_slice(b"PE\0\0");
+            let machine: u16 = if target.ends_with("amd64") {
+                0x8664
+            } else {
+                0xaa64
+            };
+            bytes[68..70].copy_from_slice(&machine.to_le_bytes());
+            bytes[84..86].copy_from_slice(&2_u16.to_le_bytes());
+            bytes[86..88].copy_from_slice(&2_u16.to_le_bytes());
+            bytes[88..90].copy_from_slice(&0x20b_u16.to_le_bytes());
         }
         _ => panic!("unsupported test target"),
     }

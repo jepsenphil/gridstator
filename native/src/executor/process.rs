@@ -10,6 +10,10 @@ use tokio::process::Command;
 use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 
+#[cfg(windows)]
+#[path = "windows.rs"]
+mod windows;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StopReason {
     Cancelled,
@@ -34,6 +38,7 @@ pub enum OutputMode {
 
 pub struct Run<'a> {
     pub bin: &'a str,
+    pub stdin: Option<std::fs::File>,
     pub args: &'a [String],
     pub env: &'a BTreeMap<String, String>,
     pub cwd: Option<&'a Path>,
@@ -55,7 +60,7 @@ pub async fn run(
     command
         .args(options.args)
         .envs(options.env)
-        .stdin(Stdio::null())
+        .stdin(options.stdin.map_or_else(Stdio::null, Stdio::from))
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .kill_on_drop(true);
@@ -64,12 +69,24 @@ pub async fn run(
         use std::os::unix::process::CommandExt;
         command.as_std_mut().process_group(0);
     }
+    #[cfg(windows)]
+    let job = {
+        use windows_sys::Win32::System::Threading::{CREATE_NO_WINDOW, CREATE_SUSPENDED};
+        command.creation_flags(CREATE_NO_WINDOW | CREATE_SUSPENDED);
+        windows::Job::new()?
+    };
     if let Some(cwd) = options.cwd {
         command.current_dir(cwd);
     }
     let mut child = command
         .spawn()
         .with_context(|| format!("Could not start {}", options.bin))?;
+    #[cfg(windows)]
+    if let Err(error) = job.start(&child) {
+        let _ = child.start_kill();
+        let _ = child.wait().await;
+        return Err(error.context("Could not contain workload in a Windows job"));
+    }
     let stdout = child.stdout.take().context("child stdout missing")?;
     let stderr = child.stderr.take().context("child stderr missing")?;
     let (stdout_stream, stderr_stream) = match options.output_mode {
@@ -106,13 +123,17 @@ pub async fn run(
         _ = cancel.cancelled() => {
             stop = Some(StopReason::Cancelled);
             cancelled_at = Some(chrono::Utc::now().timestamp_millis());
-            stop_child(&mut child, &options.stop_action, logs, "Cancelling: stopping the process").await?
+            stop_child(&mut child, &options.stop_action, logs, "Cancelling: stopping the process", #[cfg(windows)] &job).await?
         }
         _ = &mut deadline => {
             stop = Some(StopReason::Timeout);
-            stop_child(&mut child, &options.stop_action, logs, &format!("Timed out after {}s; stopping", options.timeout.unwrap_or(0))).await?
+            stop_child(&mut child, &options.stop_action, logs, &format!("Timed out after {}s; stopping", options.timeout.unwrap_or(0)), #[cfg(windows)] &job).await?
         }
     };
+    // A tool may exit while its descendants retain the inherited log pipe handles. Closing
+    // the job before waiting for readers terminates those descendants and closes their pipes.
+    #[cfg(windows)]
+    drop(job);
     // Readers keep consuming through graceful termination and final pipe close.
     out.await.context("stdout reader task failed")??;
     err.await.context("stderr reader task failed")??;
@@ -128,6 +149,7 @@ async fn stop_child(
     action: &StopAction,
     logs: &mpsc::Sender<(String, String)>,
     message: &str,
+    #[cfg(windows)] job: &windows::Job,
 ) -> Result<ExitStatus> {
     system(logs, message).await;
     match action {
@@ -139,7 +161,9 @@ async fn stop_child(
                     libc::kill(-(id as libc::pid_t), libc::SIGINT);
                 }
             }
-            #[cfg(not(unix))]
+            #[cfg(windows)]
+            job.terminate()?;
+            #[cfg(not(any(unix, windows)))]
             {
                 child.start_kill()?;
             }
@@ -163,6 +187,8 @@ async fn stop_child(
     match tokio::time::timeout(Duration::from_secs(grace), child.wait()).await {
         Ok(status) => Ok(status?),
         Err(_) => {
+            #[cfg(windows)]
+            job.terminate()?;
             #[cfg(unix)]
             if let Some(id) = child.id() {
                 // SAFETY: the child's dedicated process group has the child's PID.
@@ -304,5 +330,85 @@ mod tests {
                 ("stdout".into(), "partial\n".into())
             ]
         );
+    }
+
+    #[cfg(windows)]
+    #[tokio::test]
+    async fn windows_cancellation_and_timeout_reap_descendants_and_close_log_pipes() {
+        use windows_sys::Win32::{
+            Foundation::{CloseHandle, STILL_ACTIVE},
+            System::Threading::{
+                GetExitCodeProcess, OpenProcess, PROCESS_QUERY_LIMITED_INFORMATION,
+            },
+        };
+        for timed_out in [false, true] {
+            let args = vec![
+                "-NoProfile".into(), "-NonInteractive".into(), "-Command".into(),
+                "$child = Start-Process -FilePath ping.exe -ArgumentList '-n','60','127.0.0.1' -NoNewWindow -PassThru; Write-Output ('CHILD:' + $child.Id); Start-Sleep -Seconds 60".into(),
+            ];
+            let (send, mut receive) = mpsc::channel(128);
+            let cancel = CancellationToken::new();
+            let token = cancel.clone();
+            let task = tokio::spawn(async move {
+                run(
+                    Run {
+                        bin: "powershell.exe",
+                        stdin: None,
+                        args: &args,
+                        env: &BTreeMap::new(),
+                        cwd: None,
+                        timeout: timed_out.then_some(5),
+                        phase_running: false,
+                        stop_action: StopAction::Interrupt(1),
+                        act_parser: None,
+                        output_mode: OutputMode::Job,
+                    },
+                    &token,
+                    &send,
+                )
+                .await
+            });
+            let pid = tokio::time::timeout(Duration::from_secs(15), async {
+                while let Some((_, line)) = receive.recv().await {
+                    if let Some(pid) = line.trim().strip_prefix("CHILD:") {
+                        return pid.parse::<u32>().unwrap();
+                    }
+                }
+                panic!("workload exited before spawning a descendant");
+            })
+            .await
+            .unwrap();
+            // Hold a process handle so termination can be checked without PID reuse.
+            let handle = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
+            assert!(!handle.is_null());
+            if !timed_out {
+                cancel.cancel();
+            }
+            let drain = tokio::spawn(async move { while receive.recv().await.is_some() {} });
+            let result = tokio::time::timeout(Duration::from_secs(15), task)
+                .await
+                .unwrap()
+                .unwrap()
+                .unwrap();
+            drain.await.unwrap();
+            assert_eq!(
+                result.stop,
+                Some(if timed_out {
+                    StopReason::Timeout
+                } else {
+                    StopReason::Cancelled
+                })
+            );
+            let mut exit_code = STILL_ACTIVE as u32;
+            let inspected = unsafe { GetExitCodeProcess(handle, &mut exit_code) };
+            unsafe {
+                CloseHandle(handle);
+            }
+            assert_ne!(inspected, 0);
+            assert_ne!(
+                exit_code, STILL_ACTIVE as u32,
+                "descendant survived stopping its workload"
+            );
+        }
     }
 }

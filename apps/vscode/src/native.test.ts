@@ -161,6 +161,8 @@ describe('native workspace-host adapter', () => {
     ).toBe('rust');
     expect(ToolchainSettingsSchema.parse({ act: null })).toEqual({ act: null, node: null });
     expect(ReportedToolPlatformSchema.parse('darwin/arm64')).toBe('darwin/arm64');
+    expect(ReportedToolPlatformSchema.parse('windows/amd64')).toBe('windows/amd64');
+    expect(ReportedToolPlatformSchema.parse('windows/arm64')).toBe('windows/arm64');
     expect(ToolPlatformSchema.safeParse('darwin/arm64').success).toBe(false);
   });
   it('uses the native configuration by default and honors an explicit path', () => {

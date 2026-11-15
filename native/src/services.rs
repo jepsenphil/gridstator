@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     collections::BTreeMap,
     ffi::OsString,
-    fs::{self, File},
+    fs,
     io::{self, Write},
     path::{Path, PathBuf},
     process::{Command, Output},
@@ -509,7 +509,7 @@ impl ServiceManager {
         }
         fs::remove_file(&path)?;
         if let Some(parent) = path.parent() {
-            File::open(parent)?.sync_all()?;
+            crate::state::sync_directory(parent)?;
         }
         if self.platform == ServicePlatform::Systemd {
             systemctl(config, &["daemon-reload"]).checked()?;
@@ -588,7 +588,10 @@ fn launchd_target(config: &ServiceConfig) -> String {
 
 fn ensure_scope_account(config: &ServiceConfig) -> io::Result<()> {
     config.validate()?;
+    #[cfg(unix)]
     let uid = unsafe { libc::geteuid() };
+    #[cfg(not(unix))]
+    let uid = config.uid;
     if config.scope == ServiceScope::System && uid != 0 {
         return Err(io::Error::new(
             io::ErrorKind::PermissionDenied,
@@ -605,17 +608,19 @@ fn ensure_scope_account(config: &ServiceConfig) -> io::Result<()> {
 }
 
 fn write_definition(path: &Path, bytes: &[u8]) -> io::Result<()> {
+    #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
     let parent = path
         .parent()
         .ok_or_else(|| invalid("service definition has no parent"))?;
     let mut temp = NamedTempFile::new_in(parent)?;
     temp.write_all(bytes)?;
+    #[cfg(unix)]
     temp.as_file()
         .set_permissions(fs::Permissions::from_mode(0o644))?;
     temp.as_file().sync_all()?;
     temp.persist(path).map_err(|e| e.error)?;
-    File::open(parent)?.sync_all()
+    crate::state::sync_directory(parent)
 }
 
 fn path_string(path: &Path) -> io::Result<String> {

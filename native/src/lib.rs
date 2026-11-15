@@ -24,3 +24,6 @@ pub mod transfer;
 pub mod updates;
 pub mod worker;
 pub mod workspace;
+
+#[cfg(windows)]
+pub(crate) mod windows_security;

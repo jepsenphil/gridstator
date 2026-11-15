@@ -157,6 +157,11 @@ impl Live {
         let config = self.endpoint.config();
         local_worker::validate_identity(&config, request)?;
         let action = request["action"].as_str().unwrap_or("status");
+        #[cfg(windows)]
+        ensure!(
+            action != "setStartup",
+            "Start at sign-in is not supported on native Windows; run agent start in the foreground"
+        );
         let mut logs = None;
         match action {
             "list" | "status" | "start" => {}
@@ -215,6 +220,7 @@ impl Drop for Server {
     }
 }
 
+#[cfg(unix)]
 pub(crate) fn bind_socket(path: &Path) -> Result<tokio::net::UnixListener> {
     local_worker::prepare_socket_parent(path)?;
     if path.exists() {
@@ -238,6 +244,50 @@ pub(crate) fn bind_socket(path: &Path) -> Result<tokio::net::UnixListener> {
     Ok(listener)
 }
 
+#[cfg(windows)]
+pub(crate) struct PipeListener {
+    path: PathBuf,
+    pending: tokio::sync::Mutex<tokio::net::windows::named_pipe::NamedPipeServer>,
+}
+#[cfg(windows)]
+impl PipeListener {
+    async fn accept(
+        &self,
+    ) -> std::io::Result<(tokio::net::windows::named_pipe::NamedPipeServer, ())> {
+        let mut pending = self.pending.lock().await;
+        pending.connect().await?;
+        // Keep the connected instance alive until a replacement exists, preserving ownership of
+        // the pipe name for the lifetime of this listener.
+        let next = crate::windows_security::create_pipe(&self.path, false)?;
+        Ok((std::mem::replace(&mut *pending, next), ()))
+    }
+}
+#[cfg(windows)]
+pub(crate) fn bind_socket(path: &Path) -> Result<PipeListener> {
+    let pending = crate::windows_security::create_pipe(path, true)?;
+    Ok(PipeListener {
+        path: path.to_owned(),
+        pending: tokio::sync::Mutex::new(pending),
+    })
+}
+
+#[cfg(unix)]
+fn verify_peer(stream: &tokio::net::UnixStream) -> Result<()> {
+    ensure!(
+        stream.peer_cred()?.uid() == unsafe { libc::geteuid() },
+        "FORBIDDEN: local control account mismatch"
+    );
+    Ok(())
+}
+#[cfg(windows)]
+fn verify_peer(stream: &tokio::net::windows::named_pipe::NamedPipeServer) -> Result<()> {
+    use std::os::windows::io::AsRawHandle;
+    Ok(crate::windows_security::verify_pipe_peer(
+        stream.as_raw_handle(),
+        true,
+    )?)
+}
+
 pub(crate) fn serve(live: Arc<Live>, finish: CancellationToken) -> Result<Server> {
     let path = local_worker::socket_path(&live.dir);
     let listener = bind_socket(&path)?;
@@ -251,11 +301,8 @@ pub(crate) fn serve(live: Arc<Live>, finish: CancellationToken) -> Result<Server
             let stopped = stopped.clone();
             tokio::spawn(async move {
                 let operation = async {
-                    ensure!(
-                        stream.peer_cred()?.uid() == unsafe { libc::geteuid() },
-                        "FORBIDDEN: local control account mismatch"
-                    );
-                    let (reader, mut writer) = stream.into_split();
+                    verify_peer(&stream)?;
+                    let (reader, mut writer) = tokio::io::split(stream);
                     let mut input = vec![];
                     tokio::io::BufReader::new(reader)
                         .take(65_537)
@@ -304,11 +351,8 @@ impl EmbeddedSupervisor {
                 let notify = notify.clone();
                 tokio::spawn(async move {
                     let operation = async {
-                        ensure!(
-                            stream.peer_cred()?.uid() == unsafe { libc::geteuid() },
-                            "FORBIDDEN: local control account mismatch"
-                        );
-                        let (reader, mut writer) = stream.into_split();
+                        verify_peer(&stream)?;
+                        let (reader, mut writer) = tokio::io::split(stream);
                         let mut input = vec![];
                         tokio::io::BufReader::new(reader)
                             .take(4097)
@@ -385,6 +429,84 @@ mod tests {
             pins: Arc::new(Mutex::new(std::collections::BTreeSet::new())),
         }
     }
+    #[tokio::test]
+    async fn local_transport_controls_policy_and_refuses_duplicate_listener() -> Result<()> {
+        let dir = tempfile::tempdir()?;
+        let live = fixture(dir.path())?;
+        let finish = CancellationToken::new();
+        let server = serve(live.clone(), finish)?;
+        let endpoint = local_worker::socket_path(dir.path());
+        assert!(
+            bind_socket(&endpoint).is_err(),
+            "a second listener must not take the worker endpoint"
+        );
+        let paused = local_worker::send_socket(&endpoint, &json!({"action":"pause"})).await?;
+        assert_eq!(paused["snapshot"]["paused"], true);
+        assert!(live.admit(job("held", 1.0, 512), false).is_err());
+        let resumed = local_worker::send_socket(&endpoint, &json!({"action":"resume"})).await?;
+        assert_eq!(resumed["snapshot"]["paused"], false);
+        live.admit(job("accepted", 1.0, 512), false)?;
+        let mismatch = local_worker::send_socket(
+            &endpoint,
+            &json!({"action":"pause","nodeId":"another-worker"}),
+        )
+        .await;
+        assert!(mismatch.is_err());
+        assert!(!live.policy.snapshot().paused);
+        let cancellation = live
+            .active
+            .lock()
+            .unwrap()
+            .get("accepted")
+            .unwrap()
+            .cancel
+            .clone();
+        local_worker::send_socket(&endpoint, &json!({"action":"cancel","jobId":"accepted"}))
+            .await?;
+        assert!(cancellation.is_cancelled());
+        assert!(
+            local_worker::send_socket(&endpoint, &json!({"action":"forceStop"}))
+                .await
+                .is_err()
+        );
+        assert!(!live.shutdown.is_cancelled());
+        let stopping =
+            local_worker::send_socket(&endpoint, &json!({"action":"forceStop","confirmed":true}))
+                .await?;
+        assert_eq!(stopping["snapshot"]["draining"], true);
+        assert!(live.shutdown.is_cancelled());
+        drop(server);
+        Ok(())
+    }
+
+    #[cfg(windows)]
+    #[tokio::test]
+    async fn windows_transport_rejects_unsupported_startup_without_mutating_policy() -> Result<()> {
+        let dir = tempfile::tempdir()?;
+        let live = fixture(dir.path())?;
+        let before = live.policy.snapshot();
+        let server = serve(live.clone(), CancellationToken::new())?;
+        let endpoint = local_worker::socket_path(dir.path());
+        let result = local_worker::send_socket(
+            &endpoint,
+            &json!({"action":"setStartup","startAtSignIn":true}),
+        )
+        .await;
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("not supported on native Windows")
+        );
+        assert_eq!(
+            live.policy.snapshot().start_at_sign_in,
+            before.start_at_sign_in
+        );
+        assert_eq!(live.policy.snapshot().generation, before.generation);
+        drop(server);
+        Ok(())
+    }
+
     #[test]
     fn pause_ack_fences_concurrent_assignment_acceptance() -> Result<()> {
         let dir = tempfile::tempdir()?;

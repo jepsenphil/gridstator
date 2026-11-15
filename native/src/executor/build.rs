@@ -135,10 +135,48 @@ async fn run(
     }
     let metadata = ctx.work_dir.join("metadata.json");
     let args = build_args(ctx, &context, &dockerfile, &metadata)?;
+    #[cfg(windows)]
+    let (args, input) = {
+        // Tar input retains Unix executable bits that cannot be represented on NTFS.
+        let manifest = ctx.manifest.clone().context("Build requires a snapshot")?;
+        let root = tokio::fs::canonicalize(&src).await?;
+        let context_name = context
+            .strip_prefix(&root)?
+            .to_string_lossy()
+            .replace('\\', "/");
+        let file_name = dockerfile
+            .strip_prefix(&root)?
+            .to_string_lossy()
+            .replace('\\', "/");
+        let (selected, dockerfile_name) = context_manifest(&manifest, &context_name, &file_name)?;
+        let input_file = ctx.work_dir.join("build-context.tar");
+        let output = input_file.clone();
+        let store = ctx.blobs.clone();
+        tokio::task::spawn_blocking(move || -> Result<()> {
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(output)?;
+            crate::workspace::workspace_tar(&selected, &store, &mut file)?;
+            Ok(())
+        })
+        .await??;
+        let mut args = args;
+        let flag = args
+            .iter()
+            .position(|arg| arg == "--file")
+            .context("Build file argument missing")?;
+        args[flag + 1] = dockerfile_name;
+        *args.last_mut().context("Build context argument missing")? = "-".into();
+        (args, Some(std::fs::File::open(input_file)?))
+    };
+    #[cfg(not(windows))]
+    let input = None;
     let mut env = secrets;
     env.insert("BUILDX_NO_DEFAULT_ATTESTATIONS".into(), "1".into());
     let built = process::run(
         Run {
+            stdin: input,
             bin: &docker_binary(),
             args: &args,
             env: &env,
@@ -185,6 +223,7 @@ async fn run(
         save.extend(refs);
         let saved = process::run(
             Run {
+                stdin: None,
                 bin: &docker_binary(),
                 args: &save,
                 env: &BTreeMap::new(),
@@ -213,6 +252,82 @@ async fn run(
         });
     }
     Ok(result)
+}
+
+/// Preserve file modes in tar contexts. An external Dockerfile is copied under an unused
+/// internal name so the rest of its source directory remains unavailable to COPY.
+#[cfg(any(windows, test))]
+fn context_manifest(
+    manifest: &Manifest,
+    context: &str,
+    dockerfile: &str,
+) -> Result<(Manifest, String)> {
+    use crate::workspace::ManifestEntry;
+    let prefix = if context.is_empty() {
+        String::new()
+    } else {
+        format!("{context}/")
+    };
+    let mut entries = Vec::new();
+    for entry in &manifest.entries {
+        let Some(path) = entry.path().strip_prefix(&prefix) else {
+            continue;
+        };
+        if path.is_empty() {
+            continue;
+        }
+        let mut entry = entry.clone();
+        match &mut entry {
+            ManifestEntry::File(file) => file.path = path.into(),
+            ManifestEntry::Symlink(link) => link.path = path.into(),
+        }
+        entries.push(entry);
+    }
+    let name = if let Some(relative) = dockerfile.strip_prefix(&prefix) {
+        relative.to_owned()
+    } else {
+        let Some(ManifestEntry::File(file)) = manifest
+            .entries
+            .iter()
+            .find(|entry| entry.path() == dockerfile)
+        else {
+            bail!("Build Dockerfile must resolve to a regular snapshot file");
+        };
+        let mut index = 0;
+        let name = loop {
+            let candidate = format!(".gridstator-dockerfile-{index}");
+            if !entries.iter().any(|entry| {
+                [candidate.as_str(), &format!("{candidate}.dockerignore")]
+                    .iter()
+                    .any(|name| {
+                        entry.path() == *name || entry.path().starts_with(&format!("{name}/"))
+                    })
+            }) {
+                break candidate;
+            }
+            index += 1;
+        };
+        let mut file = file.clone();
+        file.path = name.clone();
+        entries.push(ManifestEntry::File(file));
+        if let Some(ManifestEntry::File(ignore)) = manifest
+            .entries
+            .iter()
+            .find(|entry| entry.path() == format!("{dockerfile}.dockerignore"))
+        {
+            let mut ignore = ignore.clone();
+            ignore.path = format!("{name}.dockerignore");
+            entries.push(ManifestEntry::File(ignore));
+        }
+        name
+    };
+    entries.sort_by(|a, b| a.path().as_bytes().cmp(b.path().as_bytes()));
+    let selected = Manifest {
+        version: manifest.version,
+        entries,
+    };
+    selected.validate()?;
+    Ok((selected, name))
 }
 
 async fn inspect_image_size(id: &str) -> Option<u64> {
@@ -281,6 +396,49 @@ fn image_id<'a>(metadata: &'a Value, output_mode: &str) -> Option<&'a str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn tar_context_preserves_executable_files_and_external_dockerfile() {
+        use crate::workspace::{FileEntry, MANIFEST_VERSION, ManifestEntry, digest_of};
+        let file = |path: &str, executable| {
+            ManifestEntry::File(FileEntry {
+                path: path.into(),
+                size: 7,
+                digest: digest_of(b"content"),
+                executable,
+            })
+        };
+        let manifest = Manifest {
+            version: MANIFEST_VERSION,
+            entries: vec![
+                file("Dockerfile", false),
+                file("src/.gridstator-dockerfile-0", false),
+                file("src/run.sh", true),
+                file("unrelated/secret", false),
+            ],
+        };
+        let (selected, name) = context_manifest(&manifest, "src", "Dockerfile").unwrap();
+        assert_eq!(name, ".gridstator-dockerfile-1");
+        assert_eq!(selected.entries.len(), 3);
+        assert!(
+            !selected
+                .entries
+                .iter()
+                .any(|entry| entry.path().contains("secret"))
+        );
+        let ManifestEntry::File(script) = selected
+            .entries
+            .iter()
+            .find(|entry| entry.path() == "run.sh")
+            .unwrap()
+        else {
+            panic!()
+        };
+        assert!(script.executable);
+        let (selected, name) = context_manifest(&manifest, "", "Dockerfile").unwrap();
+        assert_eq!(selected, manifest);
+        assert_eq!(name, "Dockerfile");
+    }
 
     #[tokio::test]
     async fn local_image_resolution_uses_addressable_digest_when_config_is_not_inspectable() {
