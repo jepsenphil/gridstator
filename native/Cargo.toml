@@ -11,7 +11,7 @@ gridstator-local-control-protocol = { path = "local-control-protocol" }
 anyhow = "1"
 axum = { version = "0.8", features = ["ws"] }
 axum-server = { version = "0.7", default-features = false, features = ["tls-rustls-no-provider"] }
-base64 = "0.22"
+base64 = "0.23"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive", "env"] }
 dirs = "6"
