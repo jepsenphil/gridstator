@@ -23,7 +23,7 @@ hex = "0.4"
 ignore = "0.4"
 libc = "0.2"
 quick-xml = { version = "0.42", features = ["serialize"] }
-rand = "0.9"
+rand = "0.10"
 rcgen = { version = "0.14", features = ["x509-parser", "pem"] }
 regex = "1"
 # Pin the upstream execution-budget API needed for bounded ECMAScript pattern matching.
