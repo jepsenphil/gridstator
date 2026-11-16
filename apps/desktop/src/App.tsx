@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { desktop, errorMessage } from './api.js';
+import { WindowsPreparation } from './WindowsPreparation.js';
+import type { PreparedTarget } from './WindowsPreparation.js';
 import type { Budget, Job, Logs, SetupRequest, Snapshot, Worker, WorkerAction } from './api.js';
 
 function Mark() {
@@ -305,6 +307,20 @@ export function App() {
           </Notice>
         )}
         {snapshot?.error && <Notice error>{snapshot.error}</Notice>}
+        {snapshot?.platform === 'windows' &&
+          snapshot.workers.length > 0 &&
+          !setup &&
+          snapshot.prerequisites &&
+          ['running', 'restartRequired', 'actionRequired', 'failed'].includes(
+            snapshot.prerequisites.phase,
+          ) && (
+            <Notice>
+              {snapshot.prerequisites.message}{' '}
+              <button className="text-button" onClick={() => setSetup(true)}>
+                Resume Windows setup
+              </button>
+            </Notice>
+          )}
         {stale && snapshot && (
           <Notice>Showing the last known worker status. Refresh to check its current state.</Notice>
         )}
@@ -346,7 +362,6 @@ export function App() {
                 desktop.settings({ nativeCliPath }),
               )
             }
-            onRefresh={() => void refresh()}
           />
         ) : (
           worker && (
@@ -368,6 +383,11 @@ export function App() {
                     ))}
                   </select>
                 </div>
+                {snapshot.platform === 'windows' && (
+                  <Button kind="quiet" disabled={Boolean(busy)} onClick={() => setSetup(true)}>
+                    Check setup
+                  </Button>
+                )}
                 <Button
                   kind="quiet"
                   icon="plus"
@@ -952,40 +972,52 @@ function Resources({
   );
 }
 
-function Setup({
-  snapshot,
-  busy,
-  onBack,
-  onSubmit,
-  onInstall,
-  onNativePath,
-  onRefresh,
-}: {
+type SetupProps = {
   snapshot: Snapshot;
   busy: boolean;
   onBack?: () => void;
   onSubmit: (request: SetupRequest) => Promise<void>;
   onInstall: (request: { distribution?: string; linuxUser?: string }) => void;
   onNativePath: (path: string) => void;
-  onRefresh: () => void;
-}) {
+};
+
+function Setup(props: SetupProps) {
+  if (props.snapshot.platform === 'windows') {
+    return (
+      <WindowsPreparation snapshot={props.snapshot} onBack={props.onBack}>
+        {(prepared) => <ConnectionSetup {...props} prepared={prepared} />}
+      </WindowsPreparation>
+    );
+  }
+  return <ConnectionSetup {...props} />;
+}
+
+function ConnectionSetup({
+  snapshot,
+  busy,
+  onBack,
+  onSubmit,
+  onInstall,
+  onNativePath,
+  prepared,
+}: SetupProps & { prepared?: PreparedTarget }) {
   const [mode, setMode] = useState<'join' | 'create'>('join');
   const [manual, setManual] = useState(false);
   const [distribution, setDistribution] = useState(
     () =>
+      prepared?.distribution ??
       snapshot.wslDistributions.find(
         (entry) => entry.version === 2 && entry.state !== 'unavailable',
-      )?.name ?? '',
+      )?.name ??
+      '',
   );
   const [validation, setValidation] = useState('');
   const windows = snapshot.platform === 'windows';
-  const hasWsl2 = snapshot.wslDistributions.some(
-    (entry) => entry.version === 2 && entry.state !== 'unavailable',
-  );
-  const blocked = windows && (!hasWsl2 || !distribution);
+  const blocked = windows && !prepared;
   const form = useRef<HTMLFormElement>(null);
   const nativePath = useRef<HTMLInputElement>(null);
   useEffect(() => {
+    if (prepared) return;
     if (
       !snapshot.wslDistributions.some(
         (entry) =>
@@ -998,7 +1030,7 @@ function Setup({
         )?.name ?? '',
       );
     }
-  }, [distribution, snapshot.wslDistributions]);
+  }, [distribution, prepared, snapshot.wslDistributions]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1006,7 +1038,7 @@ function Setup({
     const value = (name: string) => formText(data, name);
     const request: SetupRequest = {
       mode,
-      ...(windows ? { distribution, linuxUser: value('linuxUser') || undefined } : {}),
+      ...(windows ? { distribution, linuxUser: prepared?.linuxUser } : {}),
       name: value('name') || undefined,
     };
     if (mode === 'join') {
@@ -1056,61 +1088,21 @@ function Setup({
         Join an existing Gridstator controller, or create one here with a local worker. You stay in
         control of this machine’s workload.
       </p>
-      {windows && !hasWsl2 && (
-        <Notice>
-          <strong>A WSL2 distribution is needed.</strong>
-          <p>
-            Install WSL from Windows Terminal with <code>wsl --install</code>, then finish the
-            distribution’s first-run account setup. Restart Windows if prompted.
-          </p>
-          {snapshot.wslDistributions.some((entry) => entry.version === 1) && (
-            <p>
-              Your WSL1 distributions cannot run this worker. Convert a distribution to WSL2
-              yourself before selecting it.
-            </p>
-          )}
-          <Button disabled={busy} icon="refresh" onClick={onRefresh}>
-            Check WSL again
-          </Button>
-        </Notice>
-      )}
       <form ref={form} onSubmit={(event) => void submit(event)}>
         <fieldset disabled={busy} className="setup-fields">
-          {windows && (
-            <div className="host-fields">
-              <label>
-                WSL2 distribution
-                <select
-                  aria-label="WSL2 distribution"
-                  value={distribution}
-                  onChange={(event) => setDistribution(event.target.value)}
-                  required
-                >
-                  <option value="">Choose a distribution</option>
-                  {snapshot.wslDistributions.map((entry) => (
-                    <option
-                      value={entry.name}
-                      key={entry.name}
-                      disabled={entry.version !== 2 || entry.state === 'unavailable'}
-                    >
-                      {entry.name} · {entry.version === 1 ? 'WSL1 — unsupported' : entry.state}
-                    </option>
-                  ))}
-                </select>
-                <span className="field-hint">
-                  Setup runs inside this distribution. Other distributions are left alone.
-                </span>
-              </label>
-              <label>
-                Linux account <span className="optional">(optional)</span>
-                <input
-                  name="linuxUser"
-                  aria-label="Linux account"
-                  autoComplete="off"
-                  placeholder="Distribution’s default account"
-                />
-                <span className="field-hint">Use the account that will own this worker.</span>
-              </label>
+          {windows && prepared && (
+            <div className="prepared-host">
+              <p>
+                <strong>Environment ready</strong> · {prepared.distribution}
+              </p>
+              <button
+                className="text-button"
+                type="button"
+                disabled={busy}
+                onClick={prepared.onReview}
+              >
+                Review environment
+              </button>
             </div>
           )}
           <fieldset className="setup-choice">
@@ -1233,7 +1225,7 @@ function Setup({
               placeholder="Use this machine’s name"
             />
           </label>
-          {!snapshot.nativeAvailable && (
+          {!snapshot.nativeAvailable && !windows && (
             <div className="install-note">
               <strong>The native CLI is needed for setup.</strong>
               <p>Setup installs and verifies the native CLI for this account before continuing.</p>

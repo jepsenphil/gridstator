@@ -20,6 +20,8 @@ Make local worker activity visible and let its owner pause admissions, inspect j
 
 The confirmed decisions and acceptance checks are in ../../docs/DESKTOP_COMPANION_PLAN.md. Local pause persists across reboots. Stop drains jobs; force-stop and cancellation require confirmation. Worker controls preserve the controller. Quit closes only the companion. Resource settings limit accepted workload, not total machine usage. Desktop setup offers Join a controller and Create a controller here. Headless installs stay headless. Tokens are never persisted in webview storage.
 
+Windows first-run setup follows ../../docs/WINDOWS_SETUP.md: preserve existing workers, prepare a dedicated Ubuntu environment by default, and offer Docker Engine or Docker Desktop while keeping the managed worker in WSL2. Setup retains progress across failures and approved restarts. Uninstall retains build data unless separately and explicitly deleted.
+
 ## Brand Commitments
 
 Extend the existing Gridstator identity in ../vscode/webview/styles.css and ../vscode/media/gridstator.svg: compact system typography, four-square mark, restrained blue actions, explicit textual states and native utility controls.

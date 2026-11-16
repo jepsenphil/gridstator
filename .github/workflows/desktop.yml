@@ -136,6 +136,13 @@ jobs:
           cargo clippy --locked --all-targets --no-default-features -- -D warnings
       - name: Build desktop application and platform package
         run: pnpm --filter @gridstator/desktop exec tauri build --target '${{ matrix.target }}' --bundles '${{ matrix.bundles }}'
+      - name: Test Windows prerequisite dispatch without changing the machine
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-Content -Raw apps/desktop/src-tauri/windows/prerequisites.ps1 |
+            powershell.exe -NoProfile -NonInteractive -File apps/desktop/src-tauri/windows/prerequisites.tests.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify Windows desktop does not allocate a console in debug builds
         if: runner.os == 'Windows'
         working-directory: apps/desktop/src-tauri

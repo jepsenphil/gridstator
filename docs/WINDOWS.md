@@ -68,6 +68,11 @@ A WSL worker dials the controller, so it needs no incoming worker port. WSL memo
 
 ## VS Code and desktop
 
+The Windows desktop installer installs the companion. Its first-run wizard can prepare WSL2,
+a dedicated Ubuntu LTS environment and Docker, with review, restart recovery and preservation of
+existing workers. Docker Desktop is an alternative engine for the same managed WSL2 worker.
+See [Windows first-run setup](WINDOWS_SETUP.md) for defaults, recovery and verification scope.
+
 Install the native extension and CLI on the **workspace side** of a Remote WSL window.
 Opening a Windows-local VS Code window against a Windows folder does not make the Linux
 worker binary available on that host. The [desktop companion](../apps/desktop/README.md)

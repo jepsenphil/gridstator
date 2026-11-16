@@ -1,5 +1,5 @@
 use crate::{
-    bridge,
+    bridge, prerequisites,
     settings::{self, Settings, Target},
     wsl::{self, Distribution},
 };
@@ -18,6 +18,8 @@ pub struct Snapshot {
     pub wsl_distributions: Vec<Distribution>,
     pub settings: PublicSettings,
     pub native_available: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prerequisites: Option<prerequisites::Status>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
 }
@@ -187,16 +189,23 @@ impl Backend {
                 native_cli_path: settings.native_cli_path.clone(),
             },
             native_available: false,
+            prerequisites: if cfg!(windows) {
+                prerequisites::persisted(&self.settings_path)
+            } else {
+                None
+            },
             error: None,
         };
         if cfg!(windows) {
             let distributions = match wsl::distributions().await {
                 Ok(entries) => entries,
                 Err(error) => {
-                    snapshot.error = Some(format!(
-                        "WSL is unavailable. Install WSL2 and a Linux distribution, then retry. {}",
-                        bridge::redact(&error.to_string())
-                    ));
+                    if !settings.targets.is_empty() {
+                        snapshot.error = Some(format!(
+                            "The configured WSL host is unavailable. Use Check setup to inspect it. {}",
+                            bridge::redact(&error.to_string())
+                        ));
+                    }
                     vec![]
                 }
             };
@@ -394,6 +403,27 @@ impl Backend {
             .get("logs")
             .context("No logs were returned for this job")?
             .clone())
+    }
+    pub async fn prerequisites(
+        &self,
+        request: prerequisites::Request,
+    ) -> Result<prerequisites::Status> {
+        let _guard = self.operation.lock().await;
+        let mut settings = settings::load(&self.settings_path)?;
+        let deleting = request.action == "delete";
+        let status = prerequisites::execute(
+            self.settings_path.clone(),
+            request,
+            settings.targets.clone(),
+        )
+        .await?;
+        if deleting {
+            settings
+                .targets
+                .retain(|target| target.distribution != status.distribution);
+            settings::save(&self.settings_path, &settings)?;
+        }
+        Ok(status)
     }
     pub async fn change_settings(&self, request: ChangeSettings) -> Result<Snapshot> {
         let _guard = self.operation.lock().await;
@@ -612,9 +642,10 @@ impl Backend {
                 settings.targets.push(saved);
             }
         }
-        settings::save(&self.settings_path, settings)
+        settings::save(&self.settings_path, settings)?;
+        prerequisites::remember_workers(&self.settings_path, &settings.targets)
     }
-    pub async fn setup(&self, setup: Setup) -> Result<Snapshot> {
+    pub async fn setup(&self, mut setup: Setup) -> Result<Snapshot> {
         let _guard = self.operation.lock().await;
         ensure!(
             ["join", "create"].contains(&setup.mode.as_str()),
@@ -631,6 +662,28 @@ impl Backend {
             None
         };
         let mut settings = settings::load(&self.settings_path)?;
+        if cfg!(windows) {
+            let (distribution, linux_user) = prerequisites::prepared_target(&self.settings_path)?
+                .context(
+                "Prepare this Windows environment before joining or creating a controller",
+            )?;
+            ensure!(
+                setup
+                    .distribution
+                    .as_ref()
+                    .is_none_or(|selected| selected == &distribution),
+                "The runtime plan belongs to another distribution; review setup before continuing"
+            );
+            ensure!(
+                setup
+                    .linux_user
+                    .as_ref()
+                    .is_none_or(|selected| Some(selected) == linux_user.as_ref()),
+                "The runtime plan belongs to another Linux account; review setup before continuing"
+            );
+            setup.distribution = Some(distribution);
+            setup.linux_user = linux_user;
+        }
         let install = Install {
             distribution: setup.distribution,
             linux_user: setup.linux_user,
@@ -666,7 +719,24 @@ impl Backend {
         self.execute_target(&settings, target.as_ref(), &request)
             .await?;
         if let Some(target) = target {
-            self.remember_wsl(&mut settings, &target).await?;
+            let deadline = tokio::time::Instant::now() + Duration::from_secs(30);
+            loop {
+                self.remember_wsl(&mut settings, &target).await?;
+                if settings.targets.iter().any(|saved| {
+                    saved.registration == target.registration
+                        && saved.linux_user == target.linux_user
+                        && saved.cached["connected"] == true
+                        && saved.cached["info"]["build"]["managed"] == true
+                        && saved.cached["info"]["docker"]["available"] == true
+                }) {
+                    break;
+                }
+                ensure!(
+                    tokio::time::Instant::now() < deadline,
+                    "The worker was enrolled but its verified managed service has not connected yet. Use the existing worker controls to inspect or repair it; its registration was retained."
+                );
+                tokio::time::sleep(Duration::from_millis(250)).await;
+            }
         }
         self.snapshot_inner(&mut settings).await
     }

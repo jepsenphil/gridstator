@@ -5,8 +5,8 @@ Gridstator workers. It shows connection state, active/recent jobs and logs, and 
 Pause, resource admission budgets, graceful Stop, confirmed force-stop, cancellation and startup
 settings. Closing the window or quitting the companion leaves workers running.
 
-Windows uses a native companion with account-specific WSL2 worker registrations. Setup offers a
-choice of existing WSL2 distributions, then Join a controller or Create a controller here. Linux and
+Windows uses a native companion with account-specific WSL2 worker registrations. First-run setup
+prepares WSL2, Ubuntu and Docker before Join a controller or Create a controller here. Linux and
 macOS use their native Gridstator CLI. CLI/server installations remain headless.
 
 This is an unsigned development preview. Actual macOS and Windows sign-in, tray and WSL lifecycle
@@ -29,10 +29,21 @@ are supplementary developer artifacts.
 | macOS | `Gridstator_<version>_<arch>.dmg` | Open the disk image, drag Gridstator to Applications, then launch it. |
 | Ubuntu/Debian Linux | `Gridstator_<version>_<arch>.deb` | Open with the system's package installer, or run `sudo apt install ./Gridstator_<version>_<arch>.deb`. Dependencies and application launcher are installed by the package manager. |
 
-After installation, launch Gridstator and choose Join a controller or Create a controller here.
-Windows setup selects an existing WSL2 distribution and guides missing prerequisites; the setup
-wizard installs the native companion. Worker/controller setup takes place inside the chosen WSL2
-distribution. Companion and worker sign-in preferences remain separate.
+After installation, launch Gridstator. Windows first-run setup preserves existing workers and
+prefers a working compatible engine. Otherwise it defaults to Docker Engine if WSL2 is already
+available, or Docker Desktop if WSL2 is missing. Both choices use a managed Linux worker in WSL2.
+Setup defaults to a dedicated `Gridstator-Ubuntu` Ubuntu 24.04 LTS environment with an automatically
+created non-root account; compatible existing Ubuntu can also be selected. Review the changes and
+Docker terms when applicable, then let setup prepare the runtime. Windows may request administrator
+approval; restarts require a separate confirmation and the selected plan resumes after sign-in.
+Docker Desktop integration has a guided manual fallback. Failed setup retains progress for Retry
+or an explicit engine change. Then choose Join a controller or Create a controller here.
+See [Windows setup behavior and verification](../../docs/WINDOWS_SETUP.md).
+
+Uninstall retains the dedicated distribution and its build data. **Check setup → Remove the
+dedicated environment** offers a separate explicit deletion, after its workers and controllers
+have stopped. Existing user distributions, WSL2 and shared Docker installations are retained.
+Companion and worker sign-in preferences remain separate.
 
 Updates replace the companion without reinstalling native workers or erasing their data. On
 Windows, an in-place update reattaches the configured background host without applying sign-in
@@ -58,8 +69,8 @@ pnpm desktop:installer
 `desktop:installer` (also `desktop:build`) selects NSIS on Windows, DMG on macOS and Debian on
 Linux through the platform Tauri configuration. Build each platform on its matching host. Output
 is copied to the repository root at `distro/<version>/`, with a checksum manifest per OS and
-architecture. For example, `distro/2.0.0-dev.1/` contains the current Windows setup executable and
-Linux Debian package. New builds update their own files there while keeping other platforms and
+architecture. For example, `distro/2.0.0-dev.3/` contains the Windows x64 development installer;
+previously built packages remain in their original version directories. New builds update their own files there while keeping other platforms and
 versions. The folder is generated and ignored by Git.
 
 Original bundles also remain under `apps/desktop/src-tauri/target/release/bundle/`; an explicit Rust

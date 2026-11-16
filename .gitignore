@@ -74,6 +74,7 @@ playwright/.cache/
 /apps/vscode/test/ui/screenshots/
 /apps/vscode/test/ui/.fixture.html
 /apps/desktop/test/screenshots/
+/.impeccable/review/
 
 # Generated VS Code webview assets (source icons remain versioned)
 /apps/vscode/media/dashboard.*

@@ -79,6 +79,9 @@ pub fn load(path: &Path) -> Result<Settings> {
     }
 }
 pub fn save(path: &Path, settings: &Settings) -> Result<()> {
+    save_json(path, settings)
+}
+pub(crate) fn save_json(path: &Path, value: &impl Serialize) -> Result<()> {
     let directory = path
         .parent()
         .context("Desktop settings need a parent directory")?;
@@ -90,7 +93,11 @@ pub fn save(path: &Path, settings: &Settings) -> Result<()> {
         fs::set_permissions(directory, fs::Permissions::from_mode(0o700))?;
     }
     reject_symlink(path)?;
-    let temporary = directory.join(format!(".settings-{}.tmp", std::process::id()));
+    // Background preparation and worker snapshots save different files concurrently in the
+    // same process. Each atomic write needs its own temporary file.
+    static TEMP_SEQUENCE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let sequence = TEMP_SEQUENCE.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let temporary = directory.join(format!(".settings-{}-{sequence}.tmp", std::process::id()));
     let mut options = fs::OpenOptions::new();
     options.write(true).create_new(true);
     #[cfg(unix)]
@@ -100,7 +107,7 @@ pub fn save(path: &Path, settings: &Settings) -> Result<()> {
     }
     let result = (|| {
         let mut file = options.open(&temporary)?;
-        file.write_all(&serde_json::to_vec(settings)?)?;
+        file.write_all(&serde_json::to_vec(value)?)?;
         file.sync_all()?;
         #[cfg(windows)]
         {
@@ -143,6 +150,29 @@ pub fn save(path: &Path, settings: &Settings) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn background_progress_and_settings_can_save_concurrently() -> Result<()> {
+        let root = tempfile::tempdir()?;
+        let barrier = std::sync::Arc::new(std::sync::Barrier::new(12));
+        let writers: Vec<_> = (0..12)
+            .map(|index| {
+                let path = root.path().join(format!("state-{index}.json"));
+                let barrier = barrier.clone();
+                std::thread::spawn(move || -> Result<()> {
+                    barrier.wait();
+                    let expected = serde_json::json!({"writer":index,"progress":"x".repeat(16384)});
+                    save_json(&path, &expected)?;
+                    let actual: serde_json::Value = serde_json::from_slice(&fs::read(path)?)?;
+                    ensure!(actual == expected, "Concurrent state save was corrupted");
+                    Ok(())
+                })
+            })
+            .collect();
+        for writer in writers {
+            writer.join().expect("state writer panicked")?;
+        }
+        Ok(())
+    }
     #[test]
     fn round_trip_and_corrupt_settings_are_not_reset() -> Result<()> {
         let directory = tempfile::tempdir()?;

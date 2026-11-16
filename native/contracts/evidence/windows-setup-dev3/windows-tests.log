@@ -1,0 +1,32 @@
+
+running 27 tests
+test backend::tests::names_are_labels_and_identity_includes_cluster ... ok
+test backend::tests::rejects_arbitrary_actions_and_unconfirmed_force_stop ... ok
+test bridge::tests::join_parser_never_accepts_client_tokens_or_shell_commands ... ok
+test bridge::tests::offline_bundle_selection_requires_the_packaged_target_and_resources ... ok
+test bridge::tests::rejects_old_helpers_and_relative_overrides ... ok
+test host_identity::tests::updated_installation_does_not_connect_to_a_portable_previews_host ... ok
+test prerequisites::tests::approved_setup_resumes_after_reboot_with_same_engine ... ok
+test prerequisites::tests::concurrent_requests_cannot_start_duplicate_installers ... ok
+test prerequisites::tests::defaults_preserve_initial_wsl_detection_and_working_engine_precedence ... ok
+test prerequisites::tests::desktop_login_startup_requires_reviewed_plan_and_worker_opt_in ... ok
+test prerequisites::tests::embedded_windows_helper_fits_the_windows_process_argument_limit ... ok
+test prerequisites::tests::explicit_new_distribution_survives_engine_changes_and_reopening ... ok
+test prerequisites::tests::failed_install_retries_same_plan_without_changing_engine ... ok
+test prerequisites::tests::failed_owned_distribution_can_be_explicitly_deleted_without_shared_cleanup ... ok
+test prerequisites::tests::manual_step_keeps_plan_and_does_not_advance_to_ready ... ok
+test prerequisites::tests::manual_verification_cannot_skip_required_reboot ... ok
+test prerequisites::tests::pending_restart_does_not_resume_before_a_new_windows_boot ... ok
+test prerequisites::tests::reboot_records_progress_before_request_and_retains_desktop_choice ... ok
+test prerequisites::tests::stale_review_and_missing_consent_cannot_execute_side_effects ... ok
+test prerequisites::tests::unavailable_wsl_after_reboot_becomes_actionable_failure ... ok
+test prerequisites::tests::unsupported_arbitrary_distribution_names_are_rejected ... ok
+test settings::tests::background_progress_and_settings_can_save_concurrently ... ok
+test settings::tests::round_trip_and_corrupt_settings_are_not_reset ... ok
+test windows_host::tests::authenticates_named_pipe_owner_before_private_requests ... ok
+test windows_host::tests::installed_companion_connects_to_its_host_when_a_preview_host_is_running ... ok
+test wsl::tests::rejects_control_characters_and_relative_helpers ... ok
+test wsl::tests::windows_utf16_non_ascii_and_distro_spaces ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+

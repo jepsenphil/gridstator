@@ -1,7 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import type { Snapshot } from '../src/api.js';
+import type { PrerequisiteStatus, Snapshot } from '../src/api.js';
 import { snapshot, worker } from './fixtures.js';
 
 const captures = 'test/screenshots';
@@ -11,14 +11,90 @@ async function open(page: Page, initial = snapshot, failAction = false) {
   await page.addInitScript(
     ({ initial, failAction }) => {
       const state = initial;
+      const hasWsl = state.wslDistributions.some((entry) => entry.version === 2);
+      if (state.platform === 'windows' && !state.prerequisites) {
+        state.prerequisites = {
+          supported: true,
+          revision: 'plan-one',
+          phase: 'review',
+          engine: hasWsl ? 'engine' : 'desktop',
+          distribution: 'Gridstator-Ubuntu',
+          linuxUser: 'gridstator',
+          wslAvailable: hasWsl,
+          existingWorker: false,
+          ownedDistribution: false,
+          message: 'Review this machine’s setup before installing prerequisites.',
+          error: null,
+          manualAction: null,
+          dockerTermsRequired: !hasWsl,
+          steps: ['WSL2', 'Ubuntu', 'Docker', 'Container access'].map((label, index) => ({
+            id: String(index),
+            label,
+            state: 'pending' as const,
+          })),
+          distributions: state.wslDistributions,
+          canRetry: false,
+          canRestart: false,
+          canDelete: false,
+        };
+      }
       const requests: { command: string; request?: Record<string, unknown> }[] = [];
       Object.assign(window, {
         __requests: requests,
+        __desktopState: state,
         __TAURI_INTERNALS__: {
           invoke: async (command: string, args?: { request?: Record<string, unknown> }) => {
             const request = args?.request;
             requests.push({ command, request });
             if (command === 'desktop_snapshot') return structuredClone(state);
+            if (command === 'desktop_prerequisites') {
+              const preparation = state.prerequisites!;
+              const gate = window as unknown as {
+                __holdInspect?: boolean;
+                __releaseInspect?: () => void;
+              };
+              if (request?.action === 'inspect' && gate.__holdInspect) {
+                await new Promise<void>((resolve) => {
+                  gate.__releaseInspect = resolve;
+                });
+              }
+
+              if (request?.action === 'inspect') {
+                if (request.engine) preparation.engine = request.engine as 'engine' | 'desktop';
+                if (typeof request.distribution === 'string') {
+                  preparation.distribution = request.distribution;
+                  preparation.linuxUser =
+                    preparation.distribution === 'Gridstator-Ubuntu'
+                      ? 'gridstator'
+                      : 'existing-user';
+                  preparation.existingWorker = false;
+                }
+                if (request.engine || request.distribution) {
+                  preparation.revision += '-changed';
+                  preparation.phase = 'review';
+                  preparation.dockerTermsRequired = preparation.engine === 'desktop';
+                }
+              }
+              if (
+                request?.action === 'start' ||
+                request?.action === 'retry' ||
+                request?.action === 'verify'
+              ) {
+                preparation.phase = 'ready';
+                preparation.message = 'The container runtime is ready.';
+                preparation.dockerTermsRequired = false;
+                preparation.steps.forEach((step) => {
+                  step.state = 'done';
+                });
+              }
+              if (request?.action === 'delete') {
+                preparation.canDelete = false;
+                preparation.ownedDistribution = false;
+                preparation.phase = 'review';
+                preparation.message = 'The dedicated environment was removed.';
+              }
+              return structuredClone(preparation);
+            }
             if (command === 'desktop_logs')
               return {
                 jobId: request?.jobId,
@@ -241,11 +317,11 @@ test('Windows onboarding selects WSL2 and clears a pasted join credential before
       { name: 'Legacy', version: 1, state: 'stopped' },
     ],
   });
-  await expect(page.getByLabel('WSL2 distribution')).toHaveValue('Ubuntu');
-  await expect(page.getByRole('option', { name: 'Legacy · WSL1 — unsupported' })).toHaveJSProperty(
-    'disabled',
-    true,
-  );
+  await expect(page.getByLabel('Ubuntu environment')).toHaveValue('Gridstator-Ubuntu');
+  await expect(page.getByRole('option', { name: /Legacy/ })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Install and prepare', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue to connection', exact: true }).click();
+  await expect(page.getByLabel('Linux account')).toHaveCount(0);
   await page
     .getByLabel('Worker join command', { exact: true })
     .fill(
@@ -257,7 +333,8 @@ test('Windows onboarding selects WSL2 and clears a pasted join credential before
     (await requests(page)).find((entry) => entry.command === 'desktop_setup')?.request,
   ).toMatchObject({
     mode: 'join',
-    distribution: 'Ubuntu',
+    distribution: 'Gridstator-Ubuntu',
+    linuxUser: 'gridstator',
     connection:
       'gridstator agent join https://controller.example:7443 --token join-test-secret --ca-fingerprint abc',
   });
@@ -282,11 +359,23 @@ test('manual join validates HTTPS; create never asks for login credentials', asy
   ).toEqual({ mode: 'create' });
 });
 
-test('missing WSL guides user installation and never starts setup', async ({ page }) => {
+test('missing WSL defaults Desktop and requires review before installation', async ({ page }) => {
   await open(page, { ...snapshot, platform: 'windows', workers: [], wslDistributions: [] });
-  await expect(page.getByText('A WSL2 distribution is needed.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Join controller', exact: true })).toBeDisabled();
+  await expect(page.getByRole('radio', { name: /^Docker Desktop/ })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'Install and prepare' })).toBeDisabled();
+  await expect(page.getByLabel('Worker join command')).toHaveCount(0);
   expect((await requests(page)).some((entry) => entry.command === 'desktop_setup')).toBe(false);
+  await page.getByRole('checkbox', { name: /I accept the Docker Subscription/ }).check();
+  await page.getByRole('button', { name: 'Install and prepare' }).click();
+  expect(
+    (await requests(page)).find((entry) => entry.request?.action === 'start')?.request,
+  ).toMatchObject({
+    revision: 'plan-one',
+    engine: 'desktop',
+    distribution: 'Gridstator-Ubuntu',
+    confirmed: true,
+    acceptDockerTerms: true,
+  });
 });
 
 test('an installed helper can be selected and automatic discovery restored without overwriting it', async ({
@@ -346,4 +435,270 @@ test('dark, light and narrow worker windows fit their viewport', async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
+});
+
+function preparation(overrides: Partial<PrerequisiteStatus> = {}): PrerequisiteStatus {
+  return {
+    supported: true,
+    revision: 'reviewed-plan',
+    phase: 'review',
+    engine: 'engine',
+    distribution: 'Gridstator-Ubuntu',
+    linuxUser: 'gridstator',
+    wslAvailable: true,
+    existingWorker: false,
+    ownedDistribution: false,
+    dockerTermsRequired: false,
+    message: 'Review this machine’s setup before installing prerequisites.',
+    error: null,
+    manualAction: null,
+    canRetry: false,
+    canRestart: false,
+    canDelete: false,
+    distributions: [{ name: 'Ubuntu', version: 2, state: 'running' }],
+    steps: ['Prepare WSL2', 'Prepare Ubuntu', 'Prepare Docker', 'Verify container access'].map(
+      (label, index) => ({
+        id: String(index),
+        label,
+        state: 'pending',
+      }),
+    ),
+    ...overrides,
+  };
+}
+
+async function changePreparation(page: Page, changes: Partial<PrerequisiteStatus>) {
+  await page.evaluate((changes) => {
+    const state = (window as unknown as { __desktopState: Snapshot }).__desktopState;
+    Object.assign(state.prerequisites!, changes);
+  }, changes);
+}
+
+test('working Desktop remains selected when WSL2 is already available; review is responsive', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({ engine: 'desktop', dockerTermsRequired: false }),
+  });
+  await expect(page.getByRole('radio', { name: /^Docker Desktop/ })).toBeChecked();
+  await expect(page.getByLabel('Ubuntu environment')).toHaveValue('Gridstator-Ubuntu');
+  await expect(page.getByLabel('Linux account')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Install and prepare' })).toBeEnabled();
+  await page.screenshot({ path: `${captures}/windows-setup-review-dark.png`, fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.screenshot({ path: `${captures}/windows-setup-review-narrow.png`, fullPage: true });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('background progress is polled and a saved restart still requires explicit confirmation', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({
+      phase: 'running',
+      engine: 'desktop',
+      message: 'Installing Ubuntu…',
+    }),
+  });
+  await expect(page.getByText('Installing Ubuntu…')).toBeVisible();
+  await changePreparation(page, {
+    message: 'Preparing Docker Desktop…',
+    steps: preparation().steps.map((step, index) => ({
+      ...step,
+      state: index < 2 ? 'done' : index === 2 ? 'running' : 'pending',
+    })),
+  });
+  await expect(page.getByText('Preparing Docker Desktop…')).toBeVisible();
+  await page.screenshot({ path: `${captures}/windows-setup-progress.png`, fullPage: true });
+  await changePreparation(page, {
+    phase: 'restartRequired',
+    canRestart: true,
+    message: 'Restart Windows when convenient. Your selected Docker Desktop setup will resume.',
+  });
+  await expect(page.getByRole('button', { name: 'Restart Windows…', exact: true })).toBeVisible();
+  await page.screenshot({ path: `${captures}/windows-setup-restart.png`, fullPage: true });
+  expect((await requests(page)).some((entry) => entry.request?.action === 'restart')).toBe(false);
+  await page.getByRole('button', { name: 'Restart Windows…', exact: true }).click();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect((await requests(page)).some((entry) => entry.request?.action === 'restart')).toBe(false);
+  await page.getByRole('button', { name: 'Restart Windows…', exact: true }).click();
+  await page.getByRole('button', { name: 'Restart Windows now', exact: true }).click();
+  expect(
+    (await requests(page)).find((entry) => entry.request?.action === 'restart')?.request,
+  ).toMatchObject({
+    engine: 'desktop',
+    revision: 'reviewed-plan',
+    confirmed: true,
+  });
+});
+
+test('reopening a failed setup retains the engine and retries its reviewed plan', async ({
+  page,
+}) => {
+  const initial: Snapshot = {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({
+      phase: 'failed',
+      engine: 'desktop',
+      canRetry: true,
+      message: 'Your progress has been retained.',
+      error: 'The download failed. Check your connection and retry.',
+    }),
+  };
+  await open(page, initial);
+  await page.reload();
+  await expect(page.getByRole('radio', { name: /^Docker Desktop/ })).toBeChecked();
+  await expect(page.getByRole('alert')).toContainText('The download failed');
+  await page.screenshot({ path: `${captures}/windows-setup-failed.png`, fullPage: true });
+  await page.getByRole('button', { name: 'Retry setup', exact: true }).click();
+  expect(
+    (await requests(page)).find((entry) => entry.request?.action === 'retry')?.request,
+  ).toMatchObject({
+    engine: 'desktop',
+    distribution: 'Gridstator-Ubuntu',
+    revision: 'reviewed-plan',
+    confirmed: true,
+  });
+});
+
+test('Desktop manual fallback verifies integration before collecting controller credentials', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({
+      phase: 'actionRequired',
+      engine: 'desktop',
+      canRetry: true,
+      manualAction:
+        'Enable Gridstator-Ubuntu in Docker Desktop > Settings > Resources > WSL integration.',
+    }),
+  });
+  await expect(page.getByLabel('Worker join command')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Open Docker Desktop', exact: true }).click();
+  expect((await requests(page)).some((entry) => entry.request?.action === 'openDocker')).toBe(true);
+  await page.getByRole('button', { name: 'Verify and continue', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue to connection', exact: true }).click();
+  await expect(page.getByLabel('Worker join command')).toBeVisible();
+  expect((await requests(page)).some((entry) => entry.command === 'desktop_setup')).toBe(false);
+});
+
+test('existing workers keep their dashboard and can return after an environment check', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    prerequisites: preparation({
+      phase: 'ready',
+      existingWorker: true,
+      distribution: 'Ubuntu',
+      linuxUser: 'existing-user',
+    }),
+  });
+  expect((await requests(page)).some((entry) => entry.command === 'desktop_prerequisites')).toBe(
+    false,
+  );
+  await page.getByRole('button', { name: 'Check setup', exact: true }).click();
+  await expect(page.getByText('Your existing worker is preserved.')).toBeVisible();
+  await page.getByRole('button', { name: 'Return to worker', exact: true }).click();
+  await expect(page.getByRole('heading', { name: worker.name, exact: true })).toBeVisible();
+  expect((await requests(page)).some((entry) => entry.command === 'desktop_setup')).toBe(false);
+});
+
+test('owned environment deletion requires explicit data-loss confirmation', async ({ page }) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({ phase: 'ready', ownedDistribution: true, canDelete: true }),
+  });
+  await page.getByText('Remove the dedicated environment', { exact: true }).click();
+  await page.getByRole('button', { name: 'Delete environment and data…', exact: true }).click();
+  await expect(page.getByRole('dialog')).toContainText('Permanently delete Gridstator-Ubuntu');
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  expect((await requests(page)).some((entry) => entry.request?.action === 'delete')).toBe(false);
+  await page.getByRole('button', { name: 'Delete environment and data…', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete environment and data', exact: true }).click();
+  expect(
+    (await requests(page)).find((entry) => entry.request?.action === 'delete')?.request,
+  ).toMatchObject({
+    distribution: 'Gridstator-Ubuntu',
+    revision: 'reviewed-plan',
+    confirmed: true,
+  });
+});
+
+test('a confirmed restart waits for an in-flight status poll instead of being dropped', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({ phase: 'restartRequired', engine: 'desktop', canRestart: true }),
+  });
+  await expect(page.getByRole('button', { name: 'Restart Windows…', exact: true })).toBeEnabled();
+  await page.evaluate(() => {
+    (window as unknown as { __holdInspect: boolean }).__holdInspect = true;
+  });
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        Boolean((window as unknown as { __releaseInspect?: () => void }).__releaseInspect),
+      ),
+    )
+    .toBe(true);
+  await page.getByRole('button', { name: 'Restart Windows…', exact: true }).click();
+  await page.getByRole('button', { name: 'Restart Windows now', exact: true }).click();
+  await page.evaluate(() => {
+    const gate = window as unknown as { __holdInspect: boolean; __releaseInspect: () => void };
+    gate.__holdInspect = false;
+    gate.__releaseInspect();
+  });
+  await expect
+    .poll(
+      async () =>
+        (await requests(page)).filter((entry) => entry.request?.action === 'restart').length,
+    )
+    .toBe(1);
+});
+
+test('blocked Desktop integration offers an explicit engine change without automatic fallback', async ({
+  page,
+}) => {
+  await open(page, {
+    ...snapshot,
+    platform: 'windows',
+    workers: [],
+    prerequisites: preparation({
+      phase: 'actionRequired',
+      engine: 'desktop',
+      canRetry: true,
+      manualAction: 'Your organization must enable WSL integration, or choose Docker Engine.',
+    }),
+  });
+  expect((await requests(page)).some((entry) => entry.request?.action === 'start')).toBe(false);
+  await page.getByRole('button', { name: 'Change setup choices', exact: true }).click();
+  await page.getByRole('radio', { name: /^Docker Engine/ }).check();
+  await expect(page.getByRole('radio', { name: /^Docker Engine/ })).toBeChecked();
+  await page.getByRole('button', { name: 'Install and prepare', exact: true }).click();
+  expect(
+    (await requests(page)).find((entry) => entry.request?.action === 'start')?.request,
+  ).toMatchObject({
+    engine: 'engine',
+    distribution: 'Gridstator-Ubuntu',
+    confirmed: true,
+  });
 });

@@ -47,8 +47,9 @@ the existing Linux/macOS worker execution model.
 ### Boundaries
 
 - Controller creation is an onboarding operation, not a full cluster administration dashboard.
-- No native Windows execution backend, managed WSL distribution, automatic distro conversion, or
-  automatic Docker installation. Missing prerequisites produce a clear next step.
+- The desktop worker remains inside WSL2. The subsequently confirmed
+  [Windows first-run setup](WINDOWS_SETUP.md) adds an owned Ubuntu environment and automatic
+  prerequisite installation. Existing WSL1 distributions are not converted automatically.
 - No changes to job submission, snapshots, container isolation, or remote-controller trust rules.
 - A local admission budget is not a strict combined usage cap, including across WSL distributions
   sharing host resources. Lowering a budget affects new assignments; existing jobs may exceed the

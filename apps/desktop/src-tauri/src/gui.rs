@@ -147,6 +147,25 @@ async fn desktop_install(
     }
 }
 #[tauri::command]
+async fn desktop_prerequisites(
+    backend: State<'_, Desktop>,
+    request: crate::prerequisites::Request,
+) -> Result<crate::prerequisites::Status, String> {
+    #[cfg(windows)]
+    {
+        let _ = backend;
+        let value =
+            crate::windows_host::request(crate::windows_host::HostRequest::Prerequisites(request))
+                .await
+                .map_err(safe)?;
+        serde_json::from_value(value).map_err(safe)
+    }
+    #[cfg(not(windows))]
+    {
+        backend.prerequisites(request).await.map_err(safe)
+    }
+}
+#[tauri::command]
 async fn desktop_settings(
     app: tauri::AppHandle,
     backend: State<'_, Desktop>,
@@ -278,6 +297,7 @@ pub fn run() {
             desktop_logs,
             desktop_setup,
             desktop_install,
+            desktop_prerequisites,
             desktop_settings
         ])
         .on_window_event(|window, event| {

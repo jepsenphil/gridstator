@@ -175,3 +175,27 @@ acceptance case has passed.
 - Complete Windows signing, macOS signing/notarization, downloaded-artifact qualification and
   architecture-specific installer checks. The new CI workflow creates previews and does not mark
   signing or lifecycle validation as passed.
+
+
+## Windows first-run prerequisites
+
+Desktop `2.0.0-dev.3`, build `desktop-windows-setup-dev3`, implements the subsequently confirmed
+[Windows setup design](WINDOWS_SETUP.md). Preparation runs in the independent Windows host, with
+revision-bound review, persistent engine selection/progress, explicit graceful reboot, startup
+recovery and an owned Ubuntu LTS account. Existing workers are preserved. Docker Desktop has a
+guided integration fallback and explicit engine-change path; failed setup retains progress.
+Owned data deletion is separately confirmed and refuses running workers/controllers.
+
+The unsigned Windows x64 development installer is
+`distro/2.0.0-dev.3/Gridstator_2.0.0-dev.3_x64-setup.exe`. Its NSIS archive integrity and GUI subsystem
+were checked, and the packaged application's metadata entry point ran successfully on Windows.
+Validation passed: 29 Linux Rust tests, 27 actual Windows Rust tests, 20 browser interaction tests,
+7 packaging tests, 2 actual PowerShell dispatch tests, TypeScript, scoped ESLint/formatting and
+portable/Windows GUI Clippy. Independent UI review returned `ship`; screenshots use fixture native
+transport and do not qualify Windows installation behavior.
+
+[Exact artifact and verification evidence](../native/contracts/evidence/windows-setup-dev3/verification.json)
+retains the final installer digest and source-file hashes. Fresh Windows installation, actual
+UAC/reboot/sign-in, Docker Desktop first-install/integration and destructive owned-environment
+cleanup remain disposable-machine qualification gates. No production worker was replaced or
+public release published by this implementation.

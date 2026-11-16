@@ -49,6 +49,7 @@ pub enum HostRequest {
     Logs(Logs),
     Setup(Setup),
     Install(Install),
+    Prerequisites(crate::prerequisites::Request),
     Settings(ChangeSettings),
 }
 #[derive(Serialize, Deserialize)]
@@ -276,6 +277,9 @@ async fn dispatch(backend: &Backend, request: HostRequest) -> Result<Value> {
         HostRequest::Logs(request) => backend.logs(request).await,
         HostRequest::Setup(request) => Ok(serde_json::to_value(backend.setup(request).await?)?),
         HostRequest::Install(request) => Ok(serde_json::to_value(backend.install(request).await?)?),
+        HostRequest::Prerequisites(request) => {
+            Ok(serde_json::to_value(backend.prerequisites(request).await?)?)
+        }
         HostRequest::Settings(request) => Ok(serde_json::to_value(
             backend.change_settings(request).await?,
         )?),
@@ -347,6 +351,15 @@ async fn startup(backend: &Backend) -> Result<()> {
     }
     settings.last_startup_session = Some(session);
     settings::save(&backend.settings_path, &settings)?;
+    if let Err(error) =
+        crate::prerequisites::start_runtime_at_sign_in(&backend.settings_path, &settings.targets)
+            .await
+    {
+        eprintln!(
+            "Gridstator runtime startup: {}",
+            bridge::redact(&error.to_string())
+        );
+    }
     let distributions = wsl::distributions().await?;
     for target in settings
         .targets
@@ -438,6 +451,26 @@ pub fn run() -> Result<()> {
             };
             let resources: Option<PathBuf> = std::env::current_exe()?.parent().map(PathBuf::from);
             let backend = Arc::new(Backend::new(resources)?);
+            // Resume an already-reviewed prerequisite plan even when the GUI opens on an
+            // existing worker dashboard. The journal checks the Windows boot identity before
+            // launching anything, so reopening the host before a reboot has no side effects.
+            if crate::prerequisites::persisted(&backend.settings_path)
+                .is_some_and(|status| status.phase == "restartRequired")
+            {
+                let setup_backend = backend.clone();
+                tokio::spawn(async move {
+                    let _ = setup_backend
+                        .prerequisites(crate::prerequisites::Request {
+                            action: "inspect".into(),
+                            revision: None,
+                            engine: None,
+                            distribution: None,
+                            confirmed: None,
+                            accept_docker_terms: None,
+                        })
+                        .await;
+                });
+            }
             if std::env::args().any(|argument| argument == "--startup") {
                 let _ = startup(&backend).await;
             }

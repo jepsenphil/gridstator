@@ -59,6 +59,45 @@ export interface Snapshot {
   settings: { startAtSignIn: boolean; nativeCliPath?: string };
   nativeAvailable: boolean;
   error?: string;
+  prerequisites?: PrerequisiteStatus | null;
+}
+
+export interface PrerequisiteStatus {
+  supported: boolean;
+  revision: string;
+  phase: 'review' | 'running' | 'restartRequired' | 'actionRequired' | 'ready' | 'failed';
+  engine: 'engine' | 'desktop' | null;
+  distribution: string;
+  linuxUser: string | null;
+  wslAvailable: boolean;
+  existingWorker: boolean;
+  ownedDistribution: boolean;
+  message: string;
+  error: string | null;
+  manualAction: string | null;
+  dockerTermsRequired: boolean;
+  steps: { id: string; label: string; state: 'pending' | 'running' | 'done' | 'blocked' }[];
+  distributions: Snapshot['wslDistributions'];
+  canRetry: boolean;
+  canRestart: boolean;
+  canDelete: boolean;
+}
+
+export interface PrerequisiteRequest {
+  action:
+    | 'inspect'
+    | 'start'
+    | 'retry'
+    | 'restart'
+    | 'verify'
+    | 'delete'
+    | 'openDocker'
+    | 'openDockerTerms';
+  revision?: string;
+  engine?: 'engine' | 'desktop';
+  distribution?: string;
+  confirmed?: boolean;
+  acceptDockerTerms?: boolean;
 }
 
 export type WorkerAction =
@@ -87,6 +126,8 @@ export interface Logs {
 
 // Commands are intentionally narrow. The webview has no shell, filesystem or network privileges.
 export const desktop = {
+  prerequisites: (request: PrerequisiteRequest) =>
+    invoke<PrerequisiteStatus>('desktop_prerequisites', { request }),
   snapshot: () => invoke<Snapshot>('desktop_snapshot'),
   action: (request: WorkerAction) => invoke<Snapshot>('desktop_action', { request }),
   logs: (request: { workerId: string; jobId: string; afterSeq?: number; limit?: number }) =>
