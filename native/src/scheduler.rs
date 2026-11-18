@@ -275,7 +275,20 @@ fn pending_reason(job: &Value, nodes: &[Node<'_>], rejections: &[(u8, String)]) 
             _ => {}
         }
     }
-    at_stage[0].1.clone()
+    let mut reason = at_stage[0].1.clone();
+    if stage == 6 {
+        // Say why the other nodes can never take the job, so a wait on one busy node is not
+        // mistaken for a scheduler delay.
+        let too_small: Vec<_> = rejections
+            .iter()
+            .filter(|r| r.0 == 5)
+            .map(|r| r.1.as_str())
+            .collect();
+        if !too_small.is_empty() {
+            reason = format!("{reason}; {}", too_small.join("; "));
+        }
+    }
+    reason
 }
 
 /// Place jobs in descending priority, FIFO order with backfill. Reservations made earlier in
