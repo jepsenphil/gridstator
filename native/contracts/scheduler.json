@@ -3516,7 +3516,7 @@
         ],
         "pending": {
           "j4": "waiting for capacity (4 CPU, 4 GiB)",
-          "j3": "node a is at its concurrency limit (2)",
+          "j3": "node a is at its concurrency limit (2); job needs 0.5 CPU, 8 GiB but node b allows at most 16 CPU, 7 GiB; job needs 0.5 CPU, 8 GiB but node c allows at most 15.5 CPU, 3 GiB",
           "j0": "node a is at its concurrency limit (2)",
           "j1": "node a rejected this job"
         }
@@ -3759,7 +3759,7 @@
         ],
         "pending": {
           "j1": "job needs 4 CPU, 4 GiB but node a allows at most 2 CPU, 4 GiB",
-          "j3": "node c is at its concurrency limit (1)",
+          "j3": "node c is at its concurrency limit (1); job needs 0.5 CPU, 8 GiB but node a allows at most 2 CPU, 4 GiB",
           "j4": "no node is large enough for 4 CPU, 4 GiB",
           "j0": "waiting for 0.5 CPU, 8 GiB on node b"
         }
@@ -7460,7 +7460,7 @@
           "j1": "no node is large enough for 4 CPU, 4 GiB",
           "j0": "node c is at its concurrency limit (2)",
           "j2": "no node is large enough for 2 CPU, 1 GiB",
-          "j4": "node c is at its concurrency limit (2)"
+          "j4": "node c is at its concurrency limit (2); job needs 0.5 CPU, 8 GiB but node a allows at most 1 CPU, 4 GiB"
         }
       }
     },
@@ -9909,7 +9909,7 @@
           "j1": "job needs 0.5 CPU, 8 GiB but node c allows at most 16 CPU, 3 GiB",
           "j3": "node a rejected this job",
           "j0": "no eligible node has label(s) gpu",
-          "j2": "node a is at its concurrency limit (1)"
+          "j2": "node a is at its concurrency limit (1); job needs 4 CPU, 4 GiB but node c allows at most 16 CPU, 3 GiB"
         }
       }
     },
@@ -10407,7 +10407,7 @@
         "pending": {
           "j1": "no eligible node has label(s) gpu",
           "j3": "node a rejected this job",
-          "j4": "node b has only 2 GiB memory available right now"
+          "j4": "node b has only 2 GiB memory available right now; job needs 0.5 CPU, 8 GiB but node a allows at most 16 CPU, 3 GiB; job needs 0.5 CPU, 8 GiB but node c allows at most 15 CPU, 3 GiB"
         }
       }
     },
