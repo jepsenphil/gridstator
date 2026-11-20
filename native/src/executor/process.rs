@@ -332,6 +332,43 @@ mod tests {
         );
     }
 
+    /// Find a grandchild of this test process by image name: workload (cmd.exe) -> `image`.
+    #[cfg(windows)]
+    fn windows_grandchild(image: &str) -> Option<u32> {
+        use std::os::windows::io::{AsRawHandle, FromRawHandle, OwnedHandle};
+        use windows_sys::Win32::{
+            Foundation::INVALID_HANDLE_VALUE,
+            System::Diagnostics::ToolHelp::{
+                CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW,
+                TH32CS_SNAPPROCESS,
+            },
+        };
+        // SAFETY: a process snapshot has no borrowed inputs; the handle is checked and owned.
+        let snapshot = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) };
+        if snapshot == INVALID_HANDLE_VALUE {
+            return None;
+        }
+        let snapshot = unsafe { OwnedHandle::from_raw_handle(snapshot) };
+        let mut entry: PROCESSENTRY32W = unsafe { std::mem::zeroed() };
+        entry.dwSize = std::mem::size_of_val(&entry) as u32;
+        let mut processes = Vec::new();
+        // SAFETY: entry is initialised with its size and outlives each synchronous call.
+        let mut found = unsafe { Process32FirstW(snapshot.as_raw_handle(), &mut entry) };
+        while found != 0 {
+            let length = entry.szExeFile.iter().position(|&c| c == 0).unwrap_or(0);
+            let name = String::from_utf16_lossy(&entry.szExeFile[..length]);
+            processes.push((entry.th32ProcessID, entry.th32ParentProcessID, name));
+            found = unsafe { Process32NextW(snapshot.as_raw_handle(), &mut entry) };
+        }
+        let this = std::process::id();
+        processes.iter().find_map(|(pid, parent, name)| {
+            let workload = processes
+                .iter()
+                .any(|(candidate, grandparent, _)| candidate == parent && *grandparent == this);
+            (workload && name.eq_ignore_ascii_case(image)).then_some(*pid)
+        })
+    }
+
     #[cfg(windows)]
     #[tokio::test]
     async fn windows_cancellation_and_timeout_reap_descendants_and_close_log_pipes() {
@@ -342,17 +379,17 @@ mod tests {
             },
         };
         for timed_out in [false, true] {
-            let args = vec![
-                "-NoProfile".into(), "-NonInteractive".into(), "-Command".into(),
-                "$child = Start-Process -FilePath ping.exe -ArgumentList '-n','60','127.0.0.1' -NoNewWindow -PassThru; Write-Output ('CHILD:' + $child.Id); Start-Sleep -Seconds 60".into(),
-            ];
+            // cmd.exe and ping.exe start in milliseconds even on Windows ARM64 runners, where a
+            // cold PowerShell took over 30s. ping inherits the workload's log pipe handles, so
+            // run() can only return once the job has terminated this descendant too.
+            let args = vec!["/d".into(), "/c".into(), "ping.exe -n 60 127.0.0.1".into()];
             let (send, mut receive) = mpsc::channel(128);
             let cancel = CancellationToken::new();
             let token = cancel.clone();
             let task = tokio::spawn(async move {
                 run(
                     Run {
-                        bin: "powershell.exe",
+                        bin: "cmd.exe",
                         stdin: None,
                         args: &args,
                         env: &BTreeMap::new(),
@@ -368,16 +405,18 @@ mod tests {
                 )
                 .await
             });
-            let pid = tokio::time::timeout(Duration::from_secs(15), async {
+            // ping's first output proves the descendant exists and holds the log pipe.
+            tokio::time::timeout(Duration::from_secs(30), async {
                 while let Some((_, line)) = receive.recv().await {
-                    if let Some(pid) = line.trim().strip_prefix("CHILD:") {
-                        return pid.parse::<u32>().unwrap();
+                    if line.contains("127.0.0.1") {
+                        return;
                     }
                 }
                 panic!("workload exited before spawning a descendant");
             })
             .await
-            .unwrap();
+            .expect("descendant produced no output");
+            let pid = windows_grandchild("PING.EXE").expect("ping.exe descendant not found");
             // Hold a process handle so termination can be checked without PID reuse.
             let handle = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
             assert!(!handle.is_null());
