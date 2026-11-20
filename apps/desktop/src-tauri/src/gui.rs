@@ -307,6 +307,9 @@ pub fn run() {
             }
         })
         .setup(|app| {
+            // The companion lives in the menu bar; keep it out of the Dock even when its window opens.
+            #[cfg(target_os = "macos")]
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
             let resources = app.path().resource_dir().ok();
             let backend = Arc::new(Backend::new(resources)?);
             let mut warning = crate::startup::register_worker_startup().err().map(|error|format!("Worker sign-in startup could not be registered. Reopen the companion to retry. {}",safe(error)));
