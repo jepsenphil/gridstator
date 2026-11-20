@@ -33,6 +33,10 @@ pub struct WorkerOptions {
     pub cache_max_bytes: Option<u64>,
     pub max_log_bytes: u64,
     pub heartbeat_interval: Duration,
+    /// Abandon a controller connection that delivers nothing (no welcome, frame or pong) for this
+    /// long. A host that slept can wake holding an ESTABLISHED socket the controller already
+    /// dropped; without a deadline the worker would wait on it forever.
+    pub liveness_timeout: Duration,
     pub reprobe_interval: Duration,
     pub update_interval: Duration,
     pub reconnect_min: Duration,
@@ -47,6 +51,7 @@ impl Default for WorkerOptions {
             cache_max_bytes: Some(DEFAULT_CACHE_BYTES),
             max_log_bytes: DEFAULT_LOG_BYTES,
             heartbeat_interval: Duration::from_secs(5),
+            liveness_timeout: Duration::from_secs(30),
             reprobe_interval: Duration::from_secs(15),
             update_interval: Duration::from_secs(30),
             reconnect_min: Duration::from_secs(1),
@@ -1173,6 +1178,22 @@ where
     .context("worker websocket send timed out")??;
     Ok(())
 }
+/// Probe the controller; its WebSocket layer answers with a pong that counts as inbound traffic.
+async fn send_ping<S>(sink: &Arc<tokio::sync::Mutex<S>>) -> Result<()>
+where
+    S: Sink<Message> + Unpin,
+    S::Error: std::error::Error + Send + Sync + 'static,
+{
+    tokio::time::timeout(Duration::from_secs(10), async {
+        sink.lock()
+            .await
+            .send(Message::Ping(Default::default()))
+            .await
+    })
+    .await
+    .context("worker websocket ping timed out")??;
+    Ok(())
+}
 async fn replay_job<S>(
     sink: &Arc<tokio::sync::Mutex<S>>,
     dir: &Path,
@@ -1413,6 +1434,7 @@ pub async fn run_with_shutdown(
     let dir = crate::local_worker::owned_directory(&dir)?;
     ensure!(
         !options.heartbeat_interval.is_zero()
+            && !options.liveness_timeout.is_zero()
             && !options.reprobe_interval.is_zero()
             && !options.update_interval.is_zero(),
         "worker intervals must be positive"
@@ -1607,11 +1629,15 @@ pub async fn run_with_shutdown(
  let heartbeat_ready=Arc::new(AtomicBool::new(false));
  let heartbeat_task={let ready=heartbeat_ready.clone();let sink=sink.clone();let active=active.clone();let sampler=sampler.clone();let dir=dir.clone();let events=events.clone();let interval=options.heartbeat_interval;tokio::spawn(async move{let mut timer=tokio::time::interval(interval);loop{timer.tick().await;if !ready.load(Ordering::Acquire){continue;}let metrics=match sample_metrics(&dir,sampler.clone()).await{Ok(metrics)=>metrics,Err(error)=>{eprintln!("worker heartbeat sample: {error}");continue;}};let jobs=active.lock().unwrap().keys().cloned().collect::<Vec<_>>();if send_frame(&sink,json!({"type":"heartbeat","metrics":metrics,"activeJobs":jobs})).await.is_err(){let _=events.send(Event::Reconnect);break;}}})};
  let mut finish_tick=tokio::time::interval(Duration::from_millis(100));
+ let mut last_inbound=tokio::time::Instant::now();
+ let mut liveness=tokio::time::interval(options.heartbeat_interval);liveness.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
  let session:Result<()>=async{loop{tokio::select!{
+ _=liveness.tick()=>{let silent=last_inbound.elapsed();if silent>=options.liveness_timeout{bail!("controller sent nothing for {}s{}; reconnecting",silent.as_secs(),if welcomed{""}else{" before welcome"});}send_ping(&sink).await?;},
  _=stop.cancelled(),if !lifecycle.stopping=>{lifecycle.stop(&active,&abandon,options.drain);stopping.store(true,Ordering::Release);send_frame(&sink,local_hello(&local,&info,&active,pending_results(&dir).await?,&endpoint.config(),true)).await?;}
  _=local.shutdown.cancelled(),if !lifecycle.stopping=>{lifecycle.stopping=true;lifecycle.local=true;stopping.store(true,Ordering::Release);send_frame(&sink,local_hello(&local,&info,&active,pending_results(&dir).await?,&endpoint.config(),true)).await?;}
  _=finish_tick.tick()=>{if lifecycle.exit(&dir,&active,&options).await?.is_some(){break;}},
  incoming=stream.next()=>{
+ last_inbound=tokio::time::Instant::now();
  let message=match incoming{Some(Ok(Message::Text(text)))=>serde_json::from_str::<Value>(&text)?,Some(Ok(Message::Ping(data)))=>{sink.lock().await.send(Message::Pong(data)).await?;continue;},Some(Ok(Message::Pong(_)))=>continue,_=>break};
  match message["type"].as_str(){
  Some("welcome")=>{

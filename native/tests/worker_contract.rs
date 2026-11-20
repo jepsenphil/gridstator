@@ -1327,3 +1327,136 @@ async fn independent_managed_worker_installs_restarts_rejoins_and_unmanaged_work
     );
     Ok(())
 }
+
+/// TCP proxy that can silently stall connections without closing them, like a peer that
+/// vanished while this host slept: the agent's socket stays ESTABLISHED but nothing arrives.
+struct StallingProxy {
+    url: String,
+    accepted: Arc<std::sync::atomic::AtomicUsize>,
+    live: Arc<Mutex<Vec<CancellationToken>>>,
+    task: tokio::task::JoinHandle<()>,
+}
+impl Drop for StallingProxy {
+    fn drop(&mut self) {
+        self.task.abort();
+    }
+}
+impl StallingProxy {
+    /// The first `stall_first` connections are accepted but never forwarded.
+    async fn start(upstream: &str, stall_first: usize) -> Result<Self> {
+        let upstream = url::Url::parse(upstream)?;
+        let target = format!(
+            "{}:{}",
+            upstream.host_str().context("host")?,
+            upstream.port().context("port")?
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
+        let url = format!("https://127.0.0.1:{}", listener.local_addr()?.port());
+        let accepted = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let live = Arc::new(Mutex::new(Vec::<CancellationToken>::new()));
+        let (count, tokens) = (accepted.clone(), live.clone());
+        let task = tokio::spawn(async move {
+            while let Ok((mut inbound, _)) = listener.accept().await {
+                let index = count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                let target = target.clone();
+                let token = CancellationToken::new();
+                if index >= stall_first {
+                    tokens.lock().unwrap().push(token.clone());
+                }
+                tokio::spawn(async move {
+                    if index < stall_first {
+                        std::future::pending::<()>().await;
+                    }
+                    let Ok(mut outbound) = tokio::net::TcpStream::connect(target).await else {
+                        return;
+                    };
+                    let stalled = tokio::select! {
+                        _ = tokio::io::copy_bidirectional(&mut inbound, &mut outbound) => false,
+                        _ = token.cancelled() => true,
+                    };
+                    if stalled {
+                        // Keep both sockets open and silent.
+                        std::future::pending::<()>().await;
+                    }
+                });
+            }
+        });
+        Ok(Self {
+            url,
+            accepted,
+            live,
+            task,
+        })
+    }
+    fn accepted(&self) -> usize {
+        self.accepted.load(std::sync::atomic::Ordering::SeqCst)
+    }
+    fn stall_all(&self) {
+        for token in self.live.lock().unwrap().drain(..) {
+            token.cancel();
+        }
+    }
+}
+
+#[tokio::test]
+async fn silent_half_open_controller_connections_are_abandoned_and_redialed() -> Result<()> {
+    let server = boot().await?;
+    let data = TempDir::new()?;
+    let node = pair(&server, data.path()).await?;
+    // The first dial is accepted but never answered (covered by the connect timeout).
+    let proxy = StallingProxy::start(&server.client.config.url, 1).await?;
+    let path = data.path().join("agent.json");
+    let mut config = state::read_json(&path)?;
+    config["controllerUrl"] = json!(proxy.url);
+    state::write_json(&path, &config)?;
+    let stop = CancellationToken::new();
+    let actor = tokio::spawn(worker::run_with_shutdown(
+        data.path().into(),
+        WorkerOptions {
+            liveness_timeout: Duration::from_secs(2),
+            ..options(false)
+        },
+        stop.clone(),
+        None,
+    ));
+    online(&server, &node).await?;
+    assert!(
+        proxy.accepted() >= 2,
+        "the unanswered first dial must be abandoned"
+    );
+    // A healthy but otherwise quiet connection is kept: pings are answered.
+    let settled = proxy.accepted();
+    tokio::time::sleep(Duration::from_secs(5)).await;
+    assert_eq!(
+        proxy.accepted(),
+        settled,
+        "a responsive controller connection must not be redialed"
+    );
+    // The controller vanishes mid-session without a FIN or RST reaching the agent.
+    proxy.stall_all();
+    let stalled_at = state::now();
+    tokio::time::timeout(Duration::from_secs(15), async {
+        while proxy.accepted() == settled {
+            tokio::time::sleep(Duration::from_millis(50)).await;
+        }
+    })
+    .await
+    .context("agent never redialed a silent controller connection")?;
+    // Heartbeats resume over the new connection.
+    tokio::time::timeout(Duration::from_secs(15), async {
+        loop {
+            let seen = online(&server, &node).await?["lastSeenAt"]
+                .as_i64()
+                .unwrap_or(0);
+            if seen > stalled_at + 2_500 {
+                return Ok::<_, anyhow::Error>(());
+            }
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+    })
+    .await
+    .context("heartbeats did not resume after redial")??;
+    stop.cancel();
+    tokio::time::timeout(Duration::from_secs(10), actor).await???;
+    Ok(())
+}
