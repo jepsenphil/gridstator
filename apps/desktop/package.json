@@ -13,13 +13,13 @@
     "desktop:build": "tauri build"
   },
   "dependencies": {
-    "@tauri-apps/api": "2.12.4",
+    "@tauri-apps/api": "2.12.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "2.12.4",
-    "@playwright/test": "1.64.1",
+    "@tauri-apps/cli": "2.12.6",
+    "@playwright/test": "1.65.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0"
   }
